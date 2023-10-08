@@ -1,6 +1,6 @@
 function Index() {
 
-  return (<div>555+++</div>)
+  return (<div>Index</div>)
 }
 
 export default Index

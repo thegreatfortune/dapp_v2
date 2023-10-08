@@ -1,6 +1,8 @@
 import React from 'react'
 import { PageContainer, ProLayout } from '@ant-design/pro-components'
-import logo from '../assets/uniswap.svg' 
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import logo from '../assets/uniswap.svg'   
+
 
 interface BasicLayoutProps {
   children: React.ReactNode
@@ -23,6 +25,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props: any) => {
       layout="top" // 设置为 'top' 以变为顶部导航栏
       title="CoinWave"
       logo={logo}
+      actionsRender={() => [
+        <ConnectButton />,
+      ]}
     >
       <PageContainer
         header={{
