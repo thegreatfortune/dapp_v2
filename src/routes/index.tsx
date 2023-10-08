@@ -1,14 +1,20 @@
 // 路由表配置：src/routes/index.tsx
-import { Navigate, type RouteObject } from 'react-router-dom'
+import type { RouteObject } from 'react-router-dom'
 import { lazy } from 'react'
+import BasicLayout from '../layouts/BasicLayout'
 
-const Home = lazy(() => import('../App'))
+const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
 const routes: RouteObject[] = [
-  { path: '/', element: <Navigate to='/home' /> },
-  { path: '/home', element: <Home /> },
-  { path: '*', element: <NotFound /> },
+  {
+    path: '/',
+    element: <BasicLayout><Index /></BasicLayout>,
+  },
+  {
+    path: '*',
+    element: <NotFound />,
+  },
 ]
 
 export default routes
