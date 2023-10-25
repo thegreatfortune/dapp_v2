@@ -1,3 +1,4 @@
+import 'uno.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
@@ -19,6 +20,7 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
+import '@/locale/i18n.ts'
 import App from './App.tsx'
 import './index.css'
 
@@ -42,18 +44,16 @@ const wagmiConfig = createConfig({
   publicClient,
 })
 
-// # rainbowkit
-
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains}>
-          <App />
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </BrowserRouter>
+      <BrowserRouter>
+        <WagmiConfig config={wagmiConfig}>
+          <RainbowKitProvider chains={chains}>
+            <App />
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </BrowserRouter>
   </React.StrictMode>,
 )
