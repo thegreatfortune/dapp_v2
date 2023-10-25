@@ -1,8 +1,7 @@
 import React from 'react'
 import { PageContainer, ProLayout } from '@ant-design/pro-components'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import logo from '../assets/uniswap.svg'   
-
+import logo from '../assets/uniswap.svg'
 
 interface BasicLayoutProps {
   children: React.ReactNode
@@ -31,7 +30,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props: any) => {
     >
       <PageContainer
         header={{
-          title:'',
+          title: '',
           breadcrumb: {}, // 添加面包屑导航配置
         }}
       >

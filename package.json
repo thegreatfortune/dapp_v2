@@ -1,11 +1,12 @@
 {
   "name": "wave-design-pro-react",
-  "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite --open",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "build:tsc": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
@@ -22,13 +23,14 @@
     "wagmi": "^1.4.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.43.0",
+    "@antfu/eslint-config": "^0.41.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.49.0",
     "ethers": "^6.7.1",
     "typescript": "^5.0.2",
+    "unocss": "^0.57.1",
     "vite": "^4.4.5"
   }
 }

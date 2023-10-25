@@ -1,8 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter  } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
-//# rainbowkit
 import '@rainbow-me/rainbowkit/styles.css'
 import {
   RainbowKitProvider,
@@ -31,7 +30,6 @@ const { chains, publicClient } = configureChains(
   ],
 )
 
-
 const { connectors } = getDefaultWallets({
   appName: 'My RainbowKit App',
   projectId: 'YOUR_PROJECT_ID',
@@ -44,19 +42,18 @@ const wagmiConfig = createConfig({
   publicClient,
 })
 
-//# rainbowkit
+// # rainbowkit
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
-
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <App />
-      </RainbowKitProvider>
-    </WagmiConfig>
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider chains={chains}>
+          <App />
+        </RainbowKitProvider>
+      </WagmiConfig>
     </BrowserRouter>
   </React.StrictMode>,
 )

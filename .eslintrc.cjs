@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['@antfu'],
-  rules:{
-    'no-console':0,
+  rules: {
+    'no-console': 0,
   },
 }
