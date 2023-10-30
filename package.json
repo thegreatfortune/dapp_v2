@@ -1,5 +1,5 @@
 {
-  "name": "wave-design-pro-react",
+  "name": "follow-peer-link-market",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -7,6 +7,7 @@
     "dev": "vite --open",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
+    "gen:api": "ts-node --esm openapi.config.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
@@ -14,8 +15,9 @@
   },
   "dependencies": {
     "@ant-design/pro-components": "^2.6.28",
-    "@rainbow-me/rainbowkit": "^1.0.11",
+    "@rainbow-me/rainbowkit": "^1.1.3",
     "antd": "^5.9.4",
+    "axios": "^1.6.0",
     "i18next": "^23.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -31,8 +33,9 @@
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.49.0",
     "ethers": "^6.7.1",
+    "openapi-genuu": "0.1.3",
     "typescript": "^5.0.2",
     "unocss": "^0.57.1",
-    "vite": "^4.4.5"
+    "vite": "^4.4.9"
   }
 }

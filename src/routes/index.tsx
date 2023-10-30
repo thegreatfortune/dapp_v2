@@ -1,4 +1,3 @@
-// 路由表配置：src/routes/index.tsx
 import type { RouteObject } from 'react-router-dom'
 import { lazy } from 'react'
 import BasicLayout from '../layouts/BasicLayout'

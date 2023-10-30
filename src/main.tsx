@@ -2,8 +2,11 @@ import 'uno.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { ConfigProvider } from 'antd'
+import '@/utils/request.ts'
 
 import '@rainbow-me/rainbowkit/styles.css'
+import type { Locale } from '@rainbow-me/rainbowkit'
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -23,6 +26,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import '@/locale/i18n.ts'
 import App from './App.tsx'
 import './index.css'
+import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 const { chains, publicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum, base, zora],
@@ -46,14 +50,18 @@ const wagmiConfig = createConfig({
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
+const browserLanguageLib = getLanguageLib()
+
 root.render(
   <React.StrictMode>
+    <ConfigProvider locale={browserLanguageLib.locale}>
       <BrowserRouter>
         <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains}>
+          <RainbowKitProvider chains={chains} locale={browserLanguageLib.browserLanguage as Locale} >
             <App />
           </RainbowKitProvider>
         </WagmiConfig>
       </BrowserRouter>
+      </ConfigProvider>
   </React.StrictMode>,
 )

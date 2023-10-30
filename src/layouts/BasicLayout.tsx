@@ -14,14 +14,13 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props: any) => {
       name: 'NFTs',
       icon: '',
     },
-    // Add more menu items as needed
   ]
 
   return (
     <ProLayout
       menuDataRender={() => menuData}
       location={{ pathname: '/' }}
-      layout="top" // 设置为 'top' 以变为顶部导航栏
+      layout="top"
       title="CoinWave"
       logo={logo}
       actionsRender={() => [
@@ -31,7 +30,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props: any) => {
       <PageContainer
         header={{
           title: '',
-          breadcrumb: {}, // 添加面包屑导航配置
+          breadcrumb: {},
         }}
       >
         {props.children}
