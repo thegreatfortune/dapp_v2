@@ -14,11 +14,7 @@ import {
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import {
   arbitrum,
-  base,
-  mainnet,
-  optimism,
-  polygon,
-  zora,
+  polygonMumbai,
 } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
@@ -29,7 +25,7 @@ import './index.css'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, base, zora],
+  [polygonMumbai, arbitrum],
   [
     alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_ID }),
     publicProvider(),
@@ -37,8 +33,8 @@ const { chains, publicClient } = configureChains(
 )
 
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
+  appName: 'Follow',
+  projectId: import.meta.env.VITE_PROJECT_ID_FOR_WALLETS,
   chains,
 })
 
