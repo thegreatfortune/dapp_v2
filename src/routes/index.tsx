@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom'
-import { lazy } from 'react'
-import BasicLayout from '../layouts/BasicLayout'
+import React, { lazy } from 'react'
+import { BasicLayout } from '@/layouts/BasicLayout'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -8,11 +8,21 @@ const NotFound = lazy(() => import('../pages/NotFound'))
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <BasicLayout><Index /></BasicLayout>,
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Index />
+        </React.Suspense>
+      </BasicLayout>
+    ),
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: (
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <NotFound />
+      </React.Suspense>
+    ),
   },
 ]
 
