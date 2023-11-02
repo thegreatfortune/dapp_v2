@@ -7,16 +7,16 @@ interface IProps {
 
 export const BasicLayout: React.FC<IProps> = (props) => {
   return (
-        <div className='mx-37'>
-                <header>
-                    <Navbar title={import.meta.env.VITE_DAPP_TITLE} />
-                </header>
-                <main >
-                    {props.children}
-                </main>
-                <footer>
-                    {/* Footer content or component */}
-                </footer>
-        </div>
+    <div className='mx-37'>
+      <header>
+        <Navbar title={import.meta.env.VITE_DAPP_TITLE} />
+      </header>
+      <main className='w-350 mx-auto text-center'>
+        {props.children}
+      </main>
+      <footer>
+        {/* Footer content or component */}
+      </footer>
+    </div>
   )
 }

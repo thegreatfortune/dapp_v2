@@ -15,24 +15,21 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                 <div className="text-xl font-size-10">{title}</div>
             </div>
 
-            <ul className="min-w-84.75 flex space-x-10 list-none text-[#D2D2D2]">
-                <li className="relative hover:text-white hover:font-bold">
+            <ul className="min-w-84.75 flex justify-around list-none text-[#D2D2D2]">
+                <li className="hover:text-white hover:font-bold inline-block transform transition-transform scale-100 hover:scale-110">
                     Home
                 </li>
-                <li className="relative hover:text-white hover:font-bold">
+                <li className="hover:text-white hover:font-bold inline-block transform transition-transform scale-100 hover:scale-110">
                     Marketplace
                 </li>
-                <li className="relative hover:text-white hover:font-bold">
+                <li className="hover:text-white hover:font-bold inline-block transform transition-transform scale-100 hover:scale-110">
                     Transaction
                 </li>
             </ul>
 
             <Input
                 placeholder="Basic usage"
-                className="w-145 h-15 p-0 inline-block c-white border-white bg-transparent placeholder-c-[#D2D2D2] placeholder-p7.5 placeholder-font-3.5"
-                suffix={
-                    <Avatar src={logo} >U</Avatar>
-                }
+                className="w-145 h-15 px-7.5 inline-block c-white border-white bg-transparent placeholder-c-[#D2D2D2]  placeholder-font-size-3.5"
             />
 
             <div className="space-x-4">
