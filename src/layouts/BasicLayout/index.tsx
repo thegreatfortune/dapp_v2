@@ -17,7 +17,7 @@ const BasicLayout: React.FC<IProps> = (props) => {
       <header>
         <Navbar title={t('nav.title')} />
       </header>
-      <main className='w-1400 mx-auto text-center'>
+      <main className='mx-auto w-1400 text-center'>
         {props.children}
       </main>
       <footer>

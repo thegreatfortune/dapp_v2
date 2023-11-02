@@ -1,4 +1,4 @@
-import { Carousel } from 'antd'
+import { Avatar, Button, Carousel } from 'antd'
 
 interface CardProps {
   imageSrc: string
@@ -6,13 +6,62 @@ interface CardProps {
   description: string
 }
 
+interface CustomAvatarProps {
+  src: string
+  name: string
+  twitter: string
+}
+
+const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
+  return (
+    <div className="flex items-center">
+      <Avatar src={src} className='h40 w40' />
+      <div className="ml-4">
+        <h2 className="m0 p0 text-14 font-semibold">{name}</h2>
+        <span className="text-12 text-gray-500">@{twitter}</span>
+      </div>
+    </div>
+  )
+}
+
 const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) => {
   return (
-    <div className="bg-transparent border-white p-4rem max-w-259 mx-auto">
-      <div className="w-full h-260 bg-cover bg-center" style={{ backgroundImage: `url(${imageSrc})` }}></div>
-      <div className="mt-4">
-        <h2 className="text-26 font-bold">{title}</h2>
-        <p className=" text-26 mt-2">{description}</p>
+    <div className="box-border h-429 w-315 flex flex-col border-2 border-[#D2D2D2] rounded-16 bg-[#171822] p-24">
+      <img
+        src={imageSrc}
+        alt={title}
+        className="h-232 w-266 rounded-16 object-cover"
+      />
+      <div className='text-left'>
+        <div className='h11 w-full'></div>
+        <h2 className="m0 h35 p0 text-24 font-semibold c-#37A4F8">{title}</h2>
+
+        <div className='flex justify-between'>
+          <ul className='m0 flex flex-col list-none gap-8 p0'>
+            <li className='h18 flex flex-col text-14 c-#999999'>
+              Apply for loan
+            </li>
+            <li className='h29 text-16 c-#FFFFFF'>
+              5632 USDT
+            </li>
+            <li>
+              <CustomAvatar src={'xsxas'} name={'xasxsa'} twitter={'xsaxas'} />
+            </li>
+          </ul>
+
+          <ul className='m0 flex flex-col list-none gap-8 p0'>
+            <li className='h18 flex flex-col text-14 c-#999999'>
+              Risk level
+            </li>
+            <li className='h29 text-16 c-#FFFFFF'>
+              low
+            </li>
+            <li>
+              <Button className='mt-10 h30 w-110 primary-btn'>Follow</Button>
+            </li>
+          </ul>
+
+        </div>
       </div>
     </div>
   )
@@ -20,7 +69,7 @@ const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) 
 
 const CardsContainer = () => {
   return (<div>
-    <div className='flex justify-between items-center h48'>
+    <div className='h48 flex items-center justify-between'>
       <div>
         <h2 className='font-size-34'>
           Title
@@ -32,11 +81,11 @@ const CardsContainer = () => {
       </div>
     </div>
 
-    <div className='h60 w-full'></div>
+    <div className='h23 w-full'></div>
 
-    <div className='flex flex-wrap'>
+    <div className='flex flex-wrap gap-x-46 gap-y-50'>
       {
-        Array.from(Array.from({ length: 10 }).keys()).map(e => <div className="w-1/4" key={e} > <TransparentCard imageSrc='https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5' title='555' description='62516' /></div>)
+        Array.from(Array.from({ length: 10 }).keys()).map(e => <div key={e} > <TransparentCard imageSrc='https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5' title='555' description='62516' /></div>)
       }
     </div>
 
@@ -45,25 +94,25 @@ const CardsContainer = () => {
 
 const Index = () => {
   return (
-    <div className="w-full mt76">
+    <div className="mt50 w-full">
       <Carousel autoplay>
         <div>
           <img
             src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"
             alt="Image 1"
-            className="w-full h280 object-cover"
+            className="h280 w-full object-cover"
           />
         </div>
         <div>
           <img
             src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"
             alt="Image 1"
-            className="w-full h280 object-cover"
+            className="h280 w-full object-cover"
           />
         </div>
       </Carousel>
 
-      <div className='h80 w-full'></div>
+      <div className='h63 w-full'></div>
 
       <CardsContainer />
 

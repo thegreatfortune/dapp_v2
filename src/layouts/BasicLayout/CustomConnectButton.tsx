@@ -5,7 +5,6 @@ const CustomConnectButton = () => {
     {({
       account,
       chain,
-      openAccountModal,
       openChainModal,
       openConnectModal,
       authenticationStatus,
@@ -37,7 +36,7 @@ const CustomConnectButton = () => {
             if (!connected) {
               return (
 
-                <button onClick={openConnectModal} type="button" className='primary-btn w181 h60 font-size-18' >
+                <button onClick={openConnectModal} type="button" className='h60 w181 font-size-18 primary-btn' >
                   Connect Wallet
                 </button>
               )
@@ -55,13 +54,13 @@ const CustomConnectButton = () => {
               <div style={{ display: 'flex', gap: 12 }} >
                 <button
                   onClick={openChainModal}
-                  className='w166 h40 text-14 c-purple bg-transparent rounded-full border-[#7189f7] '
+                  className='h40 w166 border-[#7189f7] rounded-full bg-transparent text-14 c-purple'
                   style={{ display: 'flex', alignItems: 'center' }}
                   type="button"
                 >
                   {chain.hasIcon && (
                     <div
-                      className='w20 h20'
+                      className='h20 w20'
                       style={{
                         background: chain.iconBackground,
                         borderRadius: 999,
@@ -73,7 +72,7 @@ const CustomConnectButton = () => {
                         <img
                           alt={chain.name ?? 'Chain icon'}
                           src={chain.iconUrl}
-                          className='w20 h20'
+                          className='h20 w20'
                         />
                       )}
                     </div>
