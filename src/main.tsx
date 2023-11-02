@@ -2,13 +2,14 @@ import 'uno.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, theme } from 'antd'
 import '@/utils/request.ts'
 
 import '@rainbow-me/rainbowkit/styles.css'
 import type { Locale } from '@rainbow-me/rainbowkit'
 import {
   RainbowKitProvider,
+  darkTheme,
   getDefaultWallets,
 } from '@rainbow-me/rainbowkit'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
@@ -65,10 +66,16 @@ const browserLanguageLib = getLanguageLib()
 
 root.render(
   <React.StrictMode>
-    <ConfigProvider locale={browserLanguageLib.locale}>
+    <ConfigProvider locale={browserLanguageLib.locale} theme={{
+      // 使用暗色算法
+      algorithm: theme.darkAlgorithm,
+      // token: {
+      //   colorPrimary: '#010101',
+      // },
+    }}>
       <BrowserRouter>
         <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains} locale={browserLanguageLib.browserLanguage as Locale} >
+          <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
             <App />
           </RainbowKitProvider>
         </WagmiConfig>

@@ -18,7 +18,7 @@ const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) 
   )
 }
 
-function CardsContainer() {
+const CardsContainer = () => {
   return (<div>
     <div className='flex justify-between items-center h48'>
       <div>
@@ -43,10 +43,17 @@ function CardsContainer() {
   </div>)
 }
 
-function Index() {
+const Index = () => {
   return (
     <div className="w-full mt76">
       <Carousel autoplay>
+        <div>
+          <img
+            src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"
+            alt="Image 1"
+            className="w-full h280 object-cover"
+          />
+        </div>
         <div>
           <img
             src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"

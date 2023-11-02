@@ -1,11 +1,16 @@
 import en from './en-US.json'
 import zh from './zh-CN.json'
 
+export enum LanguageType {
+  EN = 'en',
+  ZH = 'zh',
+}
+
 export const resources = {
-  en: {
+  [LanguageType.EN]: {
     translation: en,
   },
-  zh: {
+  [LanguageType.ZH]: {
     translation: zh,
   },
 }

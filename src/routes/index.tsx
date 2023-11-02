@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router-dom'
 import React, { lazy } from 'react'
-import { BasicLayout } from '@/layouts/BasicLayout'
+import BasicLayout from '@/layouts/BasicLayout'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))

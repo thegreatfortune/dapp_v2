@@ -1,4 +1,11 @@
-{
-  "hello": "Hello World!",
-  "greeting": "Welcome to our website."
+{ 
+  "nav.title": "Follow",
+  "nav.home": "Home",
+  "nav.marketplace": "Marketplace",
+  "nav.trade": "Trade",
+  "nav.input.placeholder": "Search item,collector,and more",
+  "nav.menu.loan": "My Loan",
+  "nav.menu.follow": "My Follow",
+  "nav.menu.transaction": "My Transaction",
+  "nav.menu.personalCenter": "Personal Center"
 }
