@@ -7,11 +7,11 @@ interface IProps {
 
 export const BasicLayout: React.FC<IProps> = (props) => {
   return (
-    <div className='mx-37'>
+    <div className='mx-147'>
       <header>
         <Navbar title={import.meta.env.VITE_DAPP_TITLE} />
       </header>
-      <main className='w-350 mx-auto text-center'>
+      <main className='w-1400 mx-auto text-center'>
         {props.children}
       </main>
       <footer>

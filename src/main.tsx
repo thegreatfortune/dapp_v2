@@ -19,9 +19,9 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
+import './index.css'
 import '@/locale/i18n.ts'
 import App from './App.tsx'
-import './index.css'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 const { chains, publicClient } = configureChains(
@@ -49,7 +49,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!)
 // 设置根元素字体大小的函数
 function setRootFontSize() {
   const width = document.documentElement.clientWidth
-  const rootFontSize = `${width / 120}px`
+  const rootFontSize = `${width / 480}px`
   document.documentElement.style.fontSize = rootFontSize
 }
 

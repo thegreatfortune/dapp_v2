@@ -9,13 +9,13 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   return (
-        <nav className="h25 mt-11 theme-color text-white flex justify-around items-center">
+        <nav className="h100 mt-44 theme-color text-white flex justify-around items-center">
             <div className="text-center flex items-center">
-                <Avatar src={logo} className='w15 h15 mx1.25'></Avatar>
-                <div className="text-xl font-size-10">{title}</div>
+                <Avatar src={logo} className='w60 h60 mx5'></Avatar>
+                <div className="text-xl font-size-40">{title}</div>
             </div>
 
-            <ul className="min-w-84.75 flex justify-around list-none text-[#D2D2D2]">
+            <ul className="min-w-339 flex justify-around list-none text-[#D2D2D2] font-size-20">
                 <li className="hover:text-white hover:font-bold inline-block transform transition-transform scale-100 hover:scale-110">
                     Home
                 </li>
@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
 
             <Input
                 placeholder="Basic usage"
-                className="w-145 h-15 px-7.5 inline-block c-white border-white bg-transparent placeholder-c-[#D2D2D2]  placeholder-font-size-3.5"
+                className="w-580 h-60 px-37 inline-block c-white border-white bg-transparent placeholder-c-[#D2D2D2]  placeholder-font-size-14"
             />
 
             <div className="space-x-4">
@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
                                   if (!connected) {
                                     return (
 
-                                            <button onClick={openConnectModal} type="button" className='primary-btn w45.25 h15' >
+                                            <button onClick={openConnectModal} type="button" className='primary-btn w181 h60 font-size-18' >
                                                 Connect Wallet
                                             </button>
                                     )

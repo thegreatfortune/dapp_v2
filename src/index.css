@@ -5,6 +5,7 @@
   line-height: 1.5;
   font-weight: 400;
 
+  font-size: 4px;
   background-color: #010101;
   color:white;
 
@@ -18,6 +19,7 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
 
 a {
   font-weight: 500;
