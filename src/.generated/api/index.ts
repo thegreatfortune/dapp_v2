@@ -4,3 +4,4 @@
 // API 唯一标识：
 export * from './User';
 export * from './CreditAddress';
+export * from './Metamask';
