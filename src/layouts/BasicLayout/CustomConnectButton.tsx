@@ -1,4 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import UserDropdown from './UserDropdown'
 
 const CustomConnectButton = () => {
   return <ConnectButton.Custom>
@@ -36,7 +37,7 @@ const CustomConnectButton = () => {
             if (!connected) {
               return (
 
-                <button onClick={openConnectModal} type="button" className='h60 w181 font-size-18 primary-btn' >
+                <button onClick={openConnectModal} type="button" className='h60 w181 rounded-6 font-size-18 primary-btn' >
                   Connect Wallet
                 </button>
               )
@@ -51,7 +52,7 @@ const CustomConnectButton = () => {
             }
 
             return (
-              <div style={{ display: 'flex', gap: 12 }} >
+              <div style={{ display: 'flex', gap: 12 }} className='items-center' >
                 <button
                   onClick={openChainModal}
                   className='h40 w166 border-[#7189f7] rounded-full bg-transparent text-14 c-purple'
@@ -86,6 +87,8 @@ const CustomConnectButton = () => {
                                   ? ` (${account.displayBalance})`
                                   : ''}
                             </button> */}
+
+                <UserDropdown />
               </div>
             )
           })()}

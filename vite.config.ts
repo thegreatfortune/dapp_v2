@@ -21,6 +21,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     plugins: [UnoCSS(), react()],
 
     server: {
+      host: true,
       proxy: {
         '/api/': {
           target: VITE_BASE_URL,

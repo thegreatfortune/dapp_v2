@@ -1,5 +1,7 @@
 import { Avatar, Button, Carousel } from 'antd'
 
+import bannerImg from '../../assets/images/banner.png'
+
 interface CardProps {
   imageSrc: string
   title: string
@@ -26,7 +28,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 
 const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) => {
   return (
-    <div className="box-border h-429 w-315 flex flex-col border-2 border-[#D2D2D2] rounded-16 bg-[#171822] p-24">
+    <div className="box-border h-429 w-315 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
       <img
         src={imageSrc}
         alt={title}
@@ -57,7 +59,7 @@ const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) 
               low
             </li>
             <li>
-              <Button className='mt-10 h30 w-110 primary-btn'>Follow</Button>
+              <Button className='mt-10 h30 w-110 text-12 primary-btn'>Follow</Button>
             </li>
           </ul>
 
@@ -98,9 +100,9 @@ const Index = () => {
       <Carousel autoplay>
         <div>
           <img
-            src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"
+            src={bannerImg}
             alt="Image 1"
-            className="h280 w-full object-cover"
+            className="h280 w-full rounded-20 object-cover"
           />
         </div>
         <div>
