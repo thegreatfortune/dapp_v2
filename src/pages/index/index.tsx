@@ -1,5 +1,6 @@
-import { Avatar, Button, Carousel } from 'antd'
-
+import Button from 'antd/es/button'
+import Carousel from 'antd/es/carousel'
+import Avatar from 'antd/es/avatar'
 import bannerImg from '../../assets/images/banner.png'
 
 interface CardProps {

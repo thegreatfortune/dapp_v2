@@ -3,11 +3,19 @@ import React, { lazy } from 'react'
 import BasicLayout from '@/layouts/BasicLayout'
 import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
+import ApplyLoan from '@/pages/apply-loan'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
-const routes: RouteObject[] = [
+interface IRouterMeta {
+  title?: string
+  icon?: string
+  showInMenu?: boolean
+  showInput?: boolean
+}
+
+const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/',
     element: <Navigate to="/market" replace={true} />,
@@ -36,10 +44,22 @@ const routes: RouteObject[] = [
   },
   {
     path: '/personal-center',
+    meta: { showInput: false },
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div>Loading...</div>}>
           <PersonalCenter />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+  },
+  {
+    path: '/apply-loan',
+    meta: { showInput: false },
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <ApplyLoan />
         </React.Suspense>
       </BasicLayout>
     ),

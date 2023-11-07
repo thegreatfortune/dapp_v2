@@ -1,0 +1,26 @@
+.ant-select-selection-item {
+    font-size: 24px; 
+  }
+
+  .ant-select-item-option-content {
+    font-size: 24px;
+  }
+
+  .ant-select-selector {
+    background-color: #171822 !important; 
+  }
+
+   .ant-select-selection-search {
+    background-color: #171822;
+  }
+
+
+  /* .ant-select-dropdown {
+    border: 1px solid #00a7efab !important;
+    background-color: red !important;
+    background: red !important;
+}
+
+.ant-select-dropdown-menu-item{
+    background-color: red !important;
+} */

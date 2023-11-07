@@ -1,5 +1,6 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit'
-import { Dropdown, type MenuProps } from 'antd'
+import Dropdown from 'antd/es/dropdown'
+import type { MenuProps } from 'antd/es/menu'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 

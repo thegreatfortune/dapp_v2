@@ -13,11 +13,11 @@ const BasicLayout: React.FC<IProps> = (props) => {
   const { signer } = useEthers()
 
   return (
-    <div className='mx-147'>
-      <header>
+    <div className='flex flex-col items-center'>
+      <header className='w-1400'>
         <Navbar title={t('nav.title')} />
       </header>
-      <main className='mx-auto w-1400 text-center'>
+      <main className='w-1400 items-center'>
         {props.children}
       </main>
       <footer>

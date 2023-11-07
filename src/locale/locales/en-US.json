@@ -8,5 +8,27 @@
   "nav.menu.follow": "My Follow",
   "nav.menu.transaction": "My Transaction",
   "nav.menu.personalCenter": "Personal Center",
-  "nav.menu.signOut":"Disconnect & Sign Out"
+  "nav.menu.signOut":"Disconnect & Sign Out",
+
+  "applyLoan.formItem.upload.title": "Drag or Drop an image",
+  "applyLoan.formItem.upload.description": "PNG or JPG files recommended",
+
+  "applyLoan.formItem.item.label": "Item Title",
+  "applyLoan.formItem.item.placeholder": "Enter item title",
+  "applyLoan.formItem.item.description.label": "Description",
+  "applyLoan.formItem.item.description.placeholder": "Tell us the purpose of you loan",
+
+  "applyLoan.formItem.applyForLoan.label": "Apply for loan",
+  "applyLoan.formItem.cycle.label": "Cycle(day)",
+  "applyLoan.formItem.period.label": "Period",
+  "applyLoan.formItem.numberOfCopies.label": "Number of copies",
+  "applyLoan.formItem.minimumRequiredCopies.label": "Minimum required copies",
+  "applyLoan.formItem.interest.label": "Interest",
+  "applyLoan.formItem.number.unit": "share",
+  "applyLoan.formItem.dividend.label": "Dividend",
+  "applyLoan.formItem.raisingTime.label": "Raising time(day)",
+
+  "applyLoan.formItem.designatedTransaction.label": "Designated Transaction",
+
+  "applyLoan.btn.submit": "Publish Now"
 }
