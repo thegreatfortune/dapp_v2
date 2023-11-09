@@ -5,3 +5,4 @@
 export * from './User';
 export * from './CreditAddress';
 export * from './Metamask';
+export * from './Loan';

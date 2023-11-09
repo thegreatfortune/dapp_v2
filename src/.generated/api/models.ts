@@ -4,7 +4,29 @@ export namespace Models {
     accessToken?: string = undefined;
   }
 
-  export class CreditScoreGETParams {
+  export class CreditAddressQueryAddressCreditScoreGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    id?: number = 0;
+    /** 地址id */
+    addressId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
+  export class CreditAddressQueryAddressExceptionGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    id?: number = 0;
+    /** 地址id */
+    addressId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
+  export class CreditAddressQueryAddressPageGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
@@ -22,15 +44,82 @@ export namespace Models {
     repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' = undefined;
   }
 
-  export class ExceptionGETParams {
+  export class LoanConfirmParam {
+    userId?: number = 0;
+    address: string = '';
+    /** 名称 */
+    loanName: string = '';
+    /** 简介 */
+    loanIntro?: string = undefined;
+    /** 交易形式 */
+    tradingFormType: 'Empty' | 'SpotGoods' | 'Contract' = 'Empty';
+    /** 交易平台 */
+    tradingPlatformType: 'Empty' | 'Uniswap' | 'GMX' = 'Empty';
+    /** 展示的平台账号 */
+    showPlatforms?: 'Twitter'[] = undefined;
+  }
+
+  export class LoanContractVO {
+    id?: number = 0;
+    userId?: number = 0;
+    /** 生效状态 */
+    state?: 'Following' | 'Trading' | 'PaidOff' | 'Blacklist' = undefined;
+    /** 合约地址 */
+    contractAddress?: string = undefined;
+    /** 获取接收贷款的地址 */
+    receiveAddress?: string = undefined;
+    /** 交易平台, 如果trading_form不指定则不需要指定这里 */
+    tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
+    /** 交易形式, 或者不指定 */
+    tradingForm?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
+    /** 借款合同名称 */
+    loanName?: string = undefined;
+    /** 贷款金额 */
+    loanPrice?: number = 0;
+    /** 利息 */
+    interest?: number = 0;
+    /** 借款周期(天) */
+    loanCycle?: number = 0;
+    /** 还款期数(比如180天分10期还, 每18天还一次) */
+    periods?: number = 0;
+    /** 可以选择让多人提供贷款资金，不填默认只能1个人提供贷款资金 */
+    loanProvidePeople?: number = 0;
+    /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
+    minSuccessfulQuantity?: number = 0;
+    /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
+    fundraisingDays?: number = 0;
+    /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
+    dividendRatio?: number = 0;
+    /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
+    transactionPairs?: string[] = undefined;
+    /** 是否展示绑定的平台用户, 如果不展示则是空数组, 里面是bind表的id */
+    showPlatformUser?: number[] = undefined;
+    /** 用途介绍 */
+    usageIntro?: string = undefined;
+    createDate?: string = undefined;
+    showPlatformUserList?: PlatformUserVo[] = undefined;
+  }
+
+  export class LoanPageGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
+    minLoanPrice?: number = 0;
+    maxLoanPrice?: number = 0;
+    /** 根据用户昵称筛选 */
+    userNickname?: string = undefined;
+    /** 根据绑定平台昵称筛选 */
+    bindPlatform?: string = undefined;
+    /** 根据绑定平台昵称筛选
+Twitter :Twitter */
+    platformType?: string = undefined;
+    /** 根据构造地址筛选 */
+    contractAddress?: string = undefined;
+    /** 根据借款合同名称筛选 */
+    loanName?: string = undefined;
     orderItemList?: Array<OrderItem> = [];
+    tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
   export class LoginDto {}
@@ -56,50 +145,42 @@ export namespace Models {
     asc?: boolean = false;
   }
 
-  export class PageGETParams {
-    /** 分页查询页码 */
-    page?: number = 0;
-    /** 分页查询每页数量 */
-    limit?: number = 0;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
-  }
-
-  export class PageResultCreditScoreVo {
+  export class PageResult<T> {
     /** 查询数据列表 */
-    records?: CreditScoreVo[] = undefined;
+    records?: T[] = undefined;
     /** 总数 */
     total?: number = 0;
     /** 每页显示条数，默认 10 */
     size?: number = 0;
     /** 当前页 */
     current?: number = 0;
-    /** 排序字段信息 */
-    orders?: OrderItem[] = undefined;
-    /** 自动优化 COUNT SQL */
-    optimizeCountSql?: boolean = false;
-    /** 是否进行 count 查询 */
-    searchCount?: boolean = false;
-    /** {@link #optimizeJoinOfCountSql()} */
-    optimizeJoinOfCountSql?: boolean = false;
-    /** 单页分页条数限制 */
-    maxLimit?: number = 0;
-    /** countId */
-    countId?: string = undefined;
+  }
+
+  export enum PlatformType {
+    'Twitter' = 'Twitter',
+  }
+
+  export class PlatformUserVo {
+    userName?: string = undefined;
+    platformType?: 'Twitter' = undefined;
   }
 
   export enum RepaymentState {
-    '未还款' = 0,
-    '已还款' = 1,
-    '逾期' = 2,
+    'UNPAID' = 'UNPAID',
+    'REPAID' = 'REPAID',
+    'OVERDUE' = 'OVERDUE',
   }
 
-  export class ResultCreditScoreVo {
+  export class Result<T> {
     code?: number = 0;
     message?: string = undefined;
     /** com.sszh.modules.credit.vo.CreditScoreVo */
-    data?: CreditScoreVo = undefined;
+    data?: T = undefined;
+  }
+
+  export enum TradingFormType {
+    'Empty' = 'Empty',
+    'SpotGoods' = 'SpotGoods',
+    'Contract' = 'Contract',
   }
 }

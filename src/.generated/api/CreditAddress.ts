@@ -5,9 +5,9 @@ import { Models } from './models';
 
 export class CreditAddressService {
   /** 获取地址的信用分 GET /api/creditAddress/query/address/creditScore */
-  static async CreditScore_GET(
+  static async CreditAddressQueryAddressCreditScore_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: Models.CreditScoreGETParams,
+    params: Models.CreditAddressQueryAddressCreditScoreGETParams,
     options?: { [key: string]: any },
   ) {
     return request<Models.CreditScoreVo>({
@@ -21,9 +21,9 @@ export class CreditAddressService {
   }
 
   /** 固定抛出异常接口 GET /api/creditAddress/query/address/exception */
-  static async Exception_GET(
+  static async CreditAddressQueryAddressException_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: Models.ExceptionGETParams,
+    params: Models.CreditAddressQueryAddressExceptionGETParams,
     options?: { [key: string]: any },
   ) {
     return request<Models.CreditScoreVo>({
@@ -37,12 +37,12 @@ export class CreditAddressService {
   }
 
   /** queryPage GET /api/creditAddress/query/address/page */
-  static async Page_GET(
+  static async CreditAddressQueryAddressPage_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: Models.PageGETParams,
+    params: Models.CreditAddressQueryAddressPageGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResultCreditScoreVo>({
+    return request<Models.PageResult<Models.CreditScoreVo>>({
       url: '/api/creditAddress/query/address/page',
       method: 'GET',
       params: {

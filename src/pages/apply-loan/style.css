@@ -1,14 +1,24 @@
 .ant-select-selection-item {
-    font-size: 24px; 
+    font-size: 6rem; 
   }
 
   .ant-select-item-option-content {
     font-size: 24px;
   }
 
-  .ant-select-selector {
+  .ant-select-selection-item {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+  }
+
+.ant-select-selector {
     background-color: #171822 !important; 
   }
+
+.ant-input-number {
+    background-color: #171822;
+    font-size: 6rem;
+}
 
    .ant-select-selection-search {
     background-color: #171822;

@@ -5,7 +5,7 @@ import { Models } from './models';
 
 export class MetamaskService {
   /** 获取nonce POST /api/metamask/getVerifyNonce */
-  static async GetVerifyNonce_POST(
+  static async MetamaskGetVerifyNonce_POST(
     body: Models.MetaMaskVerifyParam,
     options?: { [key: string]: any },
   ) {
@@ -21,7 +21,10 @@ export class MetamaskService {
   }
 
   /** 使用metamask登录 POST /api/metamask/login */
-  static async Login_POST(body: Models.MetaMaskLoginParam, options?: { [key: string]: any }) {
+  static async MetamaskLogin_POST(
+    body: Models.MetaMaskLoginParam,
+    options?: { [key: string]: any },
+  ) {
     return request<Models.AuthResult>({
       url: '/api/metamask/login',
       method: 'POST',

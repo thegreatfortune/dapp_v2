@@ -1,7 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import Navbar from './Navbar'
-import useEthers from '@/hooks/useEthers'
 
 interface IProps {
   children: React.ReactNode
@@ -9,8 +8,6 @@ interface IProps {
 
 const BasicLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
-
-  const { signer } = useEthers()
 
   return (
     <div className='flex flex-col items-center'>

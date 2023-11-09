@@ -1,0 +1,141 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_ERC3525Contract",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "AlreadyWithdraw",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotBorrower",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotEndTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotLendMoney",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotProfit",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotThisTokenOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotWithdrawRepay",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "OverEndTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ZeroAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "borrowerWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "holdShare",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "lenderWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "lenderWithdrawRepay",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_FollowCapitalPool",
+				"type": "address"
+			}
+		],
+		"name": "setFollowCapitalPool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "supply",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

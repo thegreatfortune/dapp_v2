@@ -1,0 +1,133 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_followManage",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_followFactory",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "AbsentTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "BalanceZero",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "BlackList",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "CollectEndTimeError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotBorrower",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotCapitalPool",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotCurrentRepayTime",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ZeroAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
+		],
+		"name": "getThisTokenBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "capitalPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tradeId",
+				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "buyOrSell",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint24",
+				"name": "_fee",
+				"type": "uint24"
+			}
+		],
+		"name": "swapERC20",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountOut",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "v2ERC20Swap",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

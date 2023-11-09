@@ -70,7 +70,7 @@ root.render(
       // 使用暗色算法
       algorithm: theme.darkAlgorithm,
       // token: {
-      //   colorPrimary: '#010101',
+      //   colorPrimary: '#171822',
       // },
     }}>
       <BrowserRouter>

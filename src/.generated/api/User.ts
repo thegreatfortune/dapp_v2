@@ -5,7 +5,7 @@ import { Models } from './models';
 
 export class UserService {
   /** login POST /api/user/login */
-  static async Login_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
+  static async UserLogin_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
     return request<Record<string, any>>({
       url: '/api/user/login',
       method: 'POST',
@@ -18,7 +18,7 @@ export class UserService {
   }
 
   /** uploadFile POST /api/user/upload */
-  static async Upload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
+  static async UserUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
     const formData = new FormData();
 
     if (file) {

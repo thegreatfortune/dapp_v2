@@ -1,12 +1,10 @@
-import type { JsonRpcSigner } from 'ethers'
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
 
-let provider: ethers.BrowserProvider | null = null
+let provider: ethers.BrowserProvider | undefined
 
-const useEthers = () => {
-  const [signer, setSigner] = useState<JsonRpcSigner>()
+let signer: ethers.JsonRpcSigner | undefined
 
+export async function useEthers() {
   function getProvide(): ethers.BrowserProvider | null {
     if (provider)
       return provider
@@ -14,21 +12,17 @@ const useEthers = () => {
     return provider = new ethers.BrowserProvider(window.ethereum)
   }
 
-  useEffect(() => {
-    async function getSigner() {
-      try {
-        const signer = await provider?.getSigner()
-        setSigner(signer)
-      }
-      catch (error) {
-        console.error('Error getting signer:', error)
-      }
+  async function getSigner(): Promise<ethers.JsonRpcSigner | undefined> {
+    try {
+      if (signer)
+        return signer
+
+      return signer = await provider?.getSigner()
     }
+    catch (error) {
+      console.error('Error getting signer:', error)
+    }
+  }
 
-    getSigner()
-  }, [])
-
-  return { getProvide, signer }
+  return { getProvide, getSigner }
 }
-
-export default useEthers
