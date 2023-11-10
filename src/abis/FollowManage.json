@@ -1,5 +1,10 @@
 [
 	{
+		"inputs": [],
+		"name": "CapitalAddressError",
+		"type": "error"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -22,6 +27,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "SenderNotCaptitalPool",
+		"type": "error"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -41,7 +51,13 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_captitalPool",
+				"type": "address"
+			}
+		],
 		"name": "addId",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -169,6 +185,30 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "captitalPool",
+				"type": "address"
+			}
+		],
+		"name": "getborrowerAllOrdersId",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -190,6 +230,29 @@
 			}
 		],
 		"name": "setAllowTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_captitalPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			}
+		],
+		"name": "setBorrowerOrders",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -254,12 +317,17 @@
 				"type": "address"
 			},
 			{
+				"internalType": "address",
+				"name": "_captitalPool",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
 				"name": "orderId",
 				"type": "uint256"
 			}
 		],
-		"name": "setUserOrders",
+		"name": "setUserDoOrders",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

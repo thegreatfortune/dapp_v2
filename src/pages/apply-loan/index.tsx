@@ -12,11 +12,12 @@ import Modal from 'antd/es/modal'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import Checkbox from 'antd/es/checkbox'
 import type { JsonRpcSigner } from 'ethers'
+import { message } from 'antd'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
 import { BrowserContractService } from '@/contract/BrowserContractService'
-import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
-import type { FollowFactory } from '@/abis/types'
+import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
+import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
@@ -30,9 +31,54 @@ const ApplyLoan = () => {
 
   const [followFactoryContract, setFollowFactoryContract] = useState<FollowFactory>()
 
+  const [followCapitalPoolContract, setFollowCapitalPoolContract] = useState<FollowCapitalPool>()
+
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>()
 
   const [publishBtnLoading, setPublishBtnLoading] = useState<boolean>(false)
+
+  const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
+
+  const [createLoading, setCreateLoading] = useState<boolean>(false)
+
+  const [loanRequisitionEditModel, setLoanRequisitionEditModel] = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
+
+  const [coin] = useState([
+    {
+      icon: '',
+      coin: 'BTC',
+    },
+    {
+      icon: '',
+      coin: 'XRP',
+    },
+    {
+      icon: '',
+      coin: 'SQL',
+    },
+    {
+      icon: '',
+      coin: 'XRP',
+    },
+    {
+      icon: '',
+      coin: 'ETH',
+    },
+    {
+      icon: '',
+      coin: 'SQL',
+    },
+  ])
+
+  async function reSet() {
+    // 重置
+    try {
+      await followCapitalPoolContract?.initCreateTrade()
+    }
+    catch (error) {
+      console.log('%c [ error ]-75', 'font-size:13px; background:#69bdf3; color:#adffff;', error)
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,12 +87,18 @@ const ApplyLoan = () => {
 
         const signer = await BrowserContractService.getSigner()
 
+        const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(signer?.address ?? '')
+
+        setCapitalPoolAddress(capitalPoolAddress)
+        console.log('%c [ capitalPoolAddress ]-94', 'font-size:13px; background:#81a282; color:#c5e6c6;', capitalPoolAddress)
+
+        const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract(capitalPoolAddress!)
+
+        setFollowCapitalPoolContract(followCapitalPoolContract)
+
         setSigner(signer)
 
         setFollowFactoryContract(followFactoryContract)
-
-        // const sxs = await followFactoryContract.getIfCreate('0xd6E8698Db7C223557Fd1bBF3bb4ecF2C858b3Bbf')
-        // console.log('%c [ sxs ]-38', 'font-size:13px; background:#69a758; color:#adeb9c;', sxs)
       }
       catch (error) {
         console.error('Error:', error)
@@ -56,23 +108,43 @@ const ApplyLoan = () => {
     fetchData()
   }, [])
 
-  const onFinish = async (value: LoanRequisitionEditModel) => {
-    setPublishBtnLoading(true)
+  async function checkDoublePoolCreated() {
     try {
+      // 检查是否创建资金池
       if (!capitalPoolChecked) {
         const isCreated = (await followFactoryContract?.getIfCreate(signer?.address ?? '')) === BigInt(1)
 
+        if (!isCreated)
+          await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
         setCapitalPoolChecked(isCreated)
       }
 
+      // 检查是否创建还款池
       if (!repaymentPoolChecked) {
         const followRefundFactoryContract = await BrowserContractService.getFollowRefundFactoryContract()
 
-        const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(signer?.address ?? '')) === BigInt(1)
+        const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(capitalPoolAddress ?? '')) === BigInt(1)
+        if (!isCreated)
+          await followRefundFactoryContract.createRefundPool()
 
         setRepaymentPoolChecked(isCreated)
       }
 
+      setPublishBtnLoading(false)
+      setIsModalOpen(true)
+    }
+    catch (error) {
+      message.error(JSON.stringify(error))
+      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
+    }
+  }
+
+  const onFinish = async (value: LoanRequisitionEditModel) => {
+    setPublishBtnLoading(true)
+    try {
+      await checkDoublePoolCreated()
+
+      setLoanRequisitionEditModel(value)
       setPublishBtnLoading(false)
       setIsModalOpen(true)
     }
@@ -82,50 +154,36 @@ const ApplyLoan = () => {
   }
 
   const handleOk = async () => {
+    setCreateLoading(true)
+
     try {
-      // 检查是否创建资金池
-      if (!capitalPoolChecked) {
-        const isCreated = (await followFactoryContract?.getIfCreate(signer?.address ?? '')) === BigInt(1)
+      checkDoublePoolCreated()
 
-        if (!isCreated)
-          await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
+      if (capitalPoolChecked && repaymentPoolChecked) {
+        loanRequisitionEditModel.raisingTime = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
 
-        setCapitalPoolChecked(isCreated)
+        const res = await followCapitalPoolContract?.createOrder(
+          [BigInt(loanRequisitionEditModel.cycle),
+            BigInt(loanRequisitionEditModel.period)],
+          [BigInt(loanRequisitionEditModel.interest),
+            BigInt(loanRequisitionEditModel.dividend),
+            BigInt(loanRequisitionEditModel.numberOfCopies),
+            BigInt(loanRequisitionEditModel.minimumRequiredCopies)],
+          BigInt(loanRequisitionEditModel.raisingTime),
+          BigInt(loanRequisitionEditModel.applyLoan),
+        )
+
+        const result = await res?.wait()
+        console.log('%c [ result ]-180', 'font-size:13px; background:#b79c17; color:#fbe05b;', result)
       }
     }
     catch (error) {
-      console.log('%c [ error ]-63', 'font-size:13px; background:#79fddf; color:#bdffff;', error)
+      message.error(JSON.stringify(error))
+      console.log('%c [ error ]-99', 'font-size:13px; background:#daf6df; color:#ffffff;', error)
     }
-
-    try {
-      if (capitalPoolChecked && !repaymentPoolChecked) {
-        const followRefundFactoryContract = await BrowserContractService.getFollowRefundFactoryContract()
-
-        const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(signer?.address ?? '')) === BigInt(1)
-
-        if (!isCreated) {
-          console.log('创建还款池')
-
-          await followRefundFactoryContract.createRefundPool()
-        }
-
-        setRepaymentPoolChecked(isCreated)
-      }
+    finally {
+      setCreateLoading(false)
     }
-    catch (error) {
-      console.log('%c [ error ]-77', 'font-size:13px; background:#f8d8c0; color:#ffffff;', error)
-    }
-
-    // try {
-
-    //   // if (capitalPoolChecked && repaymentPoolChecked) {
-    //   //   followFactoryContract?.createOrder()
-    //   // }
-
-    // }
-    // catch (error) {
-    //   console.log('%c [ error ]-99', 'font-size:13px; background:#daf6df; color:#ffffff;', error)
-    // }
   }
 
   const handleCancel = () => {
@@ -146,24 +204,28 @@ const ApplyLoan = () => {
 
   return (
     <div>
-      <Modal okText="Create" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+      <Button onClick={reSet}>重置（test）</Button>
+      <Modal confirmLoading={createLoading} okText="Create" width={1164} maskClosable={false} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <div className='mt165 box-border h-300 w-full text-center text-16'>
+          <p>
+            Please confirm that it cannot be modified after submission.
+          </p>
+          <p>
+            Creating the document requires gas fees to create:
+          </p>
 
-        <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>Capital pool contract</Checkbox>
-        <Checkbox disabled checked={repaymentPoolChecked} onChange={onChange}>Create a repayment pool</Checkbox>
+          <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>Capital pool contract</Checkbox>
+          <Checkbox disabled checked={repaymentPoolChecked} onChange={onChange}>Create a repayment pool</Checkbox>
+        </div>
       </Modal>
       <div className="h112"></div>
       <Form
         form={form}
+        // initialValues={loanRequisitionEditModel}
         layout='vertical'
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         name="apply-loan-form"
-        initialValues={{
-          remember: true,
-        }}
         onFinish={onFinish}
       >
         <div className="w-full flex justify-between">
@@ -203,7 +265,7 @@ const ApplyLoan = () => {
 
           <div className="w-735">
             <Form.Item
-              name="loanName"
+              name="itemTitle"
               className='w-full'
               label={<span className="text-24">{t('applyLoan.formItem.item.label')}</span>}
               rules={[
@@ -244,7 +306,7 @@ const ApplyLoan = () => {
 
         <div className='box-border h-502 w-full flex flex-wrap gap-x-52 from-#0E0F14 to-#16273B bg-gradient-to-br px30 py-44 text-24'>
           <Form.Item
-            name="loanAmount"
+            name="applyLoan"
             rules={[
               {
                 required: true,
@@ -263,7 +325,7 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='loanCycle'
+            name='cycle'
             rules={[
               {
                 required: true,
@@ -274,12 +336,12 @@ const ApplyLoan = () => {
               popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
               className='box-border h68 s-container text-24 !w412'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              options={[{ value: 10, label: 10 }, { value: 20, label: 20 }, { value: 30, label: 30 }, { value: 60, label: 60 }, { value: 90, label: 90 }, { value: 180, label: 180 }]}
+              options={[{ value: 0, label: 10 }, { value: 1, label: 20 }, { value: 2, label: 30 }, { value: 3, label: 60 }, { value: 4, label: 90 }, { value: 5, label: 180 }]}
             />
           </Form.Item>
 
           <Form.Item
-            name='installmentCount'
+            name='period'
             rules={[
               {
                 required: true,
@@ -295,7 +357,8 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='loanParts'
+            name='numberOfCopies'
+            initialValue={1}
             label={<span className="text-24">{t('applyLoan.formItem.numberOfCopies.label')}</span>} >
             <InputNumber
               defaultValue={1}
@@ -309,10 +372,12 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='minCompletionParts'
+            name='minimumRequiredCopies'
+            initialValue={1}
             label={<span className="text-24">{t('applyLoan.formItem.minimumRequiredCopies.label')}</span>} >
             <InputNumber
-              min={2}
+              defaultValue={1}
+              // min={2}
               max={10000}
               className='box-border h68 w412 items-center s-container px-30 pr-106 text-24'
               suffix={
@@ -322,7 +387,7 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='interestRate'
+            name='interest'
             rules={[
               {
                 required: true,
@@ -341,7 +406,8 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='dividendPercentage'
+            name='dividend'
+            initialValue={0}
             label={<span className="text-24">{t('applyLoan.formItem.dividend.label')}</span>} >
             <InputNumber
               min={0}
@@ -354,7 +420,7 @@ const ApplyLoan = () => {
           </Form.Item>
 
           <Form.Item
-            name='fundraisingTime'
+            name='raisingTime'
             rules={[
               {
                 required: true,
@@ -374,7 +440,7 @@ const ApplyLoan = () => {
 
         <div className='flex items-end gap-x-59'>
           <Form.Item
-            initialValue='YES'
+            initialValue={true}
             rules={[
               {
                 required: true,
@@ -385,8 +451,8 @@ const ApplyLoan = () => {
               popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
               className='box-border h68 s-container text-24 !w306'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              defaultValue="YES"
-              options={[{ value: 'YES', label: 'NO' }]}
+              defaultValue={true}
+              options={[{ value: true, label: 'YES' }, { value: false, label: 'NO' }]}
             />
           </Form.Item>
 
@@ -400,8 +466,7 @@ const ApplyLoan = () => {
               popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
               className='box-border h68 s-container text-24 !w306'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              defaultValue="lucy"
-              options={[{ value: 'lucy', label: 'Lucy' }]}
+              options={[{ value: 'SpotGoods', label: 'Spot goods' }]}
             />
           </Form.Item>
 
@@ -415,8 +480,7 @@ const ApplyLoan = () => {
               popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
               className='box-border h68 s-container text-24 !w306'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              defaultValue="lucy"
-              options={[{ value: 'lucy', label: 'Lucy' }]}
+              options={[{ value: 'Uniswap', label: 'Uniswap' }]}
             />
           </Form.Item>
 
@@ -430,7 +494,6 @@ const ApplyLoan = () => {
               popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
               className='box-border h68 s-container text-24 !w306'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              defaultValue="lucy"
               options={[{ value: 'lucy', label: 'Lucy' }]}
             />
           </Form.Item>
@@ -439,7 +502,7 @@ const ApplyLoan = () => {
         <div className='h50' />
 
         <div className='flex gap-x-64'>
-          {Array.from({ length: 6 }).fill(Symbol('555')).map((e, i) => <div key={i} className='h68 w180 s-container'></div>)}
+          {coin.map((e, i) => <div key={i} className='h68 w180 s-container text-center text-24 line-height-70'>{e.coin}</div>)}
         </div>
 
         <div className='h156' />

@@ -288,9 +288,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint32",
+				"internalType": "uint256",
 				"name": "_id",
-				"type": "uint32"
+				"type": "uint256"
 			}
 		],
 		"name": "getPersonlLend",
@@ -421,6 +421,19 @@
 			}
 		],
 		"name": "singleClearing",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

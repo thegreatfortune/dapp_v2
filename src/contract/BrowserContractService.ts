@@ -1,9 +1,10 @@
 import { Contract, ethers } from 'ethers'
-import type { FollowCapitalPool, FollowFactory, FollowRefundFactory, FollowRefundPool } from '@/abis/types'
+import type { FollowCapitalPool, FollowFactory, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
 import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
+import processCenter_ABI from '@/abis/ProcessCenter.json'
 
 function createContract<T>(
   address: string,
@@ -14,8 +15,21 @@ function createContract<T>(
 }
 
 export class BrowserContractService {
+  /**
+   *
+   *@deprecated 不要直接使用未初始化的值 使用getterProvider
+   * @static
+   * @type {(ethers.BrowserProvider | undefined)}
+   * @memberof BrowserContractService
+   */
   static provider: ethers.BrowserProvider | undefined
 
+  /**
+   *@deprecated 不要直接使用未初始化的值 使用getSigner
+   * @static
+   * @type {(ethers.JsonRpcSigner | undefined)}
+   * @memberof BrowserContractService
+   */
   static signer: ethers.JsonRpcSigner | undefined
 
   static get getterProvider(): ethers.BrowserProvider | undefined {
@@ -29,6 +43,9 @@ export class BrowserContractService {
     if (this.signer)
       return this.signer
 
+    // if (import.meta.env.MODE === 'development')
+    //   return ({ address: import.meta.env.VITE_OFFICIAL_PRIVATE_ADDRESS }) as any
+
     return this.signer = await this.getterProvider?.getSigner()
   }
 
@@ -39,9 +56,9 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  static async getFollowCapitalPoolContract() {
+  static async getFollowCapitalPoolContract(capitalPoolAddress: string) {
     return createContract<FollowCapitalPool>(
-      import.meta.env.VITE_FOLLOW_CAPITAL_POOL_ADDRESS,
+      capitalPoolAddress,
       followCapitalPool_ABI,
       (await this.getSigner())!,
     )
@@ -84,10 +101,25 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowRefundPool>}
    * @memberof BrowserContractService
    */
-  static async getFollowRefundPoolContract(): Promise<FollowRefundPool> {
+  static async getFollowRefundPoolContract(refundPoolAddress: string): Promise<FollowRefundPool> {
     return createContract<FollowRefundPool>(
-      import.meta.env.VITE_FOLLOW_REFUND_POOL_ADDRESS,
+      refundPoolAddress,
       followRefundPool_ABI,
+      (await this.getSigner())!,
+    )
+  }
+
+  /**
+   *ProcessCenter
+   *
+   * @static
+   * @return {*}  {Promise<ProcessCenter>}
+   * @memberof BrowserContractService
+   */
+  static async getProcessCenterContract(): Promise<ProcessCenter> {
+    return createContract<ProcessCenter>(
+      import.meta.env.VITE_PROCESS_CENTER_ADDRESS,
+      processCenter_ABI,
       (await this.getSigner())!,
     )
   }

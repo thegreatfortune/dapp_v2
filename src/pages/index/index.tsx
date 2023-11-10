@@ -1,7 +1,9 @@
 import Button from 'antd/es/button'
 import Carousel from 'antd/es/carousel'
 import Avatar from 'antd/es/avatar'
+import { useEffect } from 'react'
 import bannerImg from '../../assets/images/banner.png'
+import { BrowserContractService } from '@/contract/BrowserContractService'
 
 interface CardProps {
   imageSrc: string
@@ -71,6 +73,15 @@ const TransparentCard: React.FC<CardProps> = ({ imageSrc, title, description }) 
 }
 
 const CardsContainer = () => {
+  useEffect(() => {
+    const mounted = async () => {
+      const processCenterContract = await BrowserContractService.getProcessCenterContract()
+
+      // processCenterContract.
+    }
+    mounted()
+  }, [])
+
   return (<div>
     <div className='h48 flex items-center justify-between'>
       <div>
