@@ -3,13 +3,13 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_tradePairOwner",
+				"name": "_captitalPoolOwner",
 				"type": "address"
 			},
 			{
-				"internalType": "address[]",
-				"name": "_tokenGroup",
-				"type": "address[]"
+				"internalType": "address",
+				"name": "_refundFactory",
+				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -326,19 +326,6 @@
 	{
 		"inputs": [],
 		"name": "initCreateTrade",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_repayPool",
-				"type": "address"
-			}
-		],
-		"name": "initRepayPool",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

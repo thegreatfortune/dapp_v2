@@ -47,7 +47,17 @@
 	},
 	{
 		"inputs": [],
+		"name": "NoCreatePool",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NonERC721Receiver",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "NotCapitalPool",
 		"type": "error"
 	},
 	{
@@ -274,11 +284,6 @@
 				"internalType": "address",
 				"name": "to_",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "slot_",
-				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
@@ -611,6 +616,19 @@
 			}
 		],
 		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_followFactory",
+				"type": "address"
+			}
+		],
+		"name": "setFollowFactory",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

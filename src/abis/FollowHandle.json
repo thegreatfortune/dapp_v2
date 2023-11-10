@@ -124,9 +124,46 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "v2ERC20Swap",
-		"outputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "capitalPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tradeId",
+				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "buyOrSell",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountIn",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "slip",
+				"type": "uint256"
+			}
+		],
+		"name": "v2SwapERC20",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "outAmount",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}

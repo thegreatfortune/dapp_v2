@@ -16,21 +16,9 @@
 		"type": "constructor"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_poolId",
-				"type": "uint256"
-			}
-		],
+		"inputs": [],
 		"name": "createRefundPool",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "hat",
-				"type": "address"
-			}
-		],
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -42,7 +30,7 @@
 				"type": "address"
 			}
 		],
-		"name": "getIfCreate",
+		"name": "getIfCreateRefundPool",
 		"outputs": [
 			{
 				"internalType": "uint256",
