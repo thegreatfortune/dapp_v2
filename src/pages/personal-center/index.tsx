@@ -13,6 +13,10 @@ const PersonalCenter = () => {
       <Button type="primary" onClick={navigateToHomePage}>
         Apply for a loan
       </Button>
+
+      <Button type="primary" onClick={() => navigate('/lend')}>
+        Lend
+      </Button>
     </div>
   )
 }

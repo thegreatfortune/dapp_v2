@@ -3,7 +3,7 @@ import Carousel from 'antd/es/carousel'
 import Avatar from 'antd/es/avatar'
 import { useEffect } from 'react'
 import bannerImg from '../../assets/images/banner.png'
-import { BrowserContractService } from '@/contract/BrowserContractService'
+import { BrowserContractService } from '@/contract/browserContractService'
 
 interface CardProps {
   imageSrc: string

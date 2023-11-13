@@ -14,11 +14,15 @@ import Checkbox from 'antd/es/checkbox'
 import type { JsonRpcSigner } from 'ethers'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { LoanService } from '../../.generated/api/Loan'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
-import { BrowserContractService } from '@/contract/BrowserContractService'
+import { BrowserContractService } from '@/contract/browserContractService'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
+import { Models } from '@/.generated/api/models'
+import logo from '@/assets/react.svg'
+import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
@@ -32,15 +36,9 @@ const ApplyLoan = () => {
 
   const [repaymentPoolChecked, setRepaymentPoolChecked] = useState(false)
 
-  const [followFactoryContract, setFollowFactoryContract] = useState<FollowFactory>()
-
-  const [followCapitalPoolContract, setFollowCapitalPoolContract] = useState<FollowCapitalPool>()
-
-  const [signer, setSigner] = useState<JsonRpcSigner | undefined>()
+  const [documentChecked, setDocumentChecked] = useState(false)
 
   const [publishBtnLoading, setPublishBtnLoading] = useState<boolean>(false)
-
-  const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
 
   const [capitalPoolLoading, setCapitalPoolLoading] = useState<boolean>(false)
 
@@ -48,34 +46,76 @@ const ApplyLoan = () => {
 
   const [createLoading, setCreateLoading] = useState<boolean>(false)
 
+  const [documentLoading, setDocumentLoading] = useState<boolean>(false)
+
+  const [followFactoryContract, setFollowFactoryContract] = useState<FollowFactory>()
+
+  const [followCapitalPoolContract, setFollowCapitalPoolContract] = useState<FollowCapitalPool>()
+
+  const [signer, setSigner] = useState<JsonRpcSigner | undefined>()
+
+  const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
+
   const [loanRequisitionEditModel, setLoanRequisitionEditModel] = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
 
-  const [coin] = useState([
+  const [tradingPair, setTradingPair] = useState([[
     {
-      icon: '',
-      coin: 'BTC',
+      logo: BTC_logo,
+      name: 'BTC',
     },
     {
-      icon: '',
-      coin: 'XRP',
+      logo: '',
+      name: 'ETH',
     },
     {
-      icon: '',
-      coin: 'SQL',
+      logo: '',
+      name: 'ARB',
     },
     {
-      icon: '',
-      coin: 'XRP',
+      logo: '',
+      name: 'LINK',
     },
     {
-      icon: '',
-      coin: 'ETH',
+      logo: '',
+      name: 'UNI',
+    },
+  ],
+  [
+    {
+      logo: '',
+      name: 'LDO',
     },
     {
-      icon: '',
-      coin: 'SQL',
+      logo: '',
+      name: 'MKR',
     },
-  ])
+    {
+      logo: '',
+      name: 'AAVE',
+    },
+  ],
+  [
+    {
+      logo: '',
+      name: 'SOL',
+    },
+    {
+      logo: '',
+      name: 'DOGE',
+    },
+    {
+      logo: '',
+      name: 'XRB',
+    },
+    {
+      logo: '',
+      name: 'LTC',
+    },
+  ]])
+
+  const [tradingPairBase, tradingPairSpotGoods, tradingPairContract] = tradingPair
+
+  const [loanConfirm, setLoanConfirm] = useState(new Models.LoanConfirmParam())
 
   async function reSet() {
     // 重置
@@ -90,14 +130,6 @@ const ApplyLoan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        window.ethereum.on('accountsChanged', () => {
-          window.location.reload()
-          // form.resetFields()
-          // setCapitalPoolChecked(false)
-          // setRepaymentPoolChecked(false)
-          // console.log('%c [  window.location.reload() ]-88', 'font-size:13px; background:#068b54; color:#4acf98;')
-        })
-
         const followFactoryContract = await BrowserContractService.getFollowFactoryContract()
 
         const signer = await BrowserContractService.getSigner()
@@ -105,9 +137,8 @@ const ApplyLoan = () => {
         const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(signer?.address ?? '')
 
         setCapitalPoolAddress(capitalPoolAddress)
-        console.log('%c [ capitalPoolAddress ]-94', 'font-size:13px; background:#81a282; color:#c5e6c6;', capitalPoolAddress)
 
-        const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract(capitalPoolAddress!)
+        const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract()
 
         setFollowCapitalPoolContract(followCapitalPoolContract)
 
@@ -123,106 +154,61 @@ const ApplyLoan = () => {
     fetchData()
   }, [])
 
-  async function checkDoublePoolCreated() {
-    console.log('%c [ signer ]-121', 'font-size:13px; background:#7230e5; color:#b674ff;', signer)
-
-    try {
-      console.log('%c [ await followFactoryContract?.getIfCreate(signer?.address ?? "") ]-125', 'font-size:13px; background:#ab79d9; color:#efbdff;', await followFactoryContract?.getIfCreate(signer?.address ?? ''))
-
-      // 检查是否创建资金池
-      if (!capitalPoolChecked) {
-        setCapitalPoolLoading(true)
-        const isCreated = (await followFactoryContract?.getIfCreate(signer?.address ?? '')) === BigInt(1)
-
-        if (!isCreated) {
-          setIsModalOpen(true)
-
-          const res = await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
-
-          const result = await res?.wait()
-
-          setCapitalPoolChecked(isCreated)
-
-          if (result?.status === 1)
-            setCapitalPoolChecked(true)
-        }
-        else {
-          setCapitalPoolChecked(false)
-        }
-
-        setCapitalPoolLoading(false)
-      }
-
-      // 检查是否创建还款池
-      if (!repaymentPoolChecked) {
-        const followRefundFactoryContract = await BrowserContractService.getFollowRefundFactoryContract()
-
-        const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(capitalPoolAddress ?? '')) === BigInt(1)
-        if (!isCreated) {
-          setRepaymentPoolLoading(true)
-          setIsModalOpen(true)
-          const res = await followRefundFactoryContract.createRefundPool()
-          const result = await res?.wait()
-
-          setRepaymentPoolChecked(isCreated)
-          setRepaymentPoolLoading(false)
-
-          if (result?.status === 1)
-            setRepaymentPoolChecked(true)
-        }
-        else {
-          setRepaymentPoolChecked(false)
-        }
-      }
-
-      setPublishBtnLoading(false)
-    }
-    catch (error) {
-      message.error(JSON.stringify(error))
-      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
-    }
-  }
-
-  const onFinish = async (value: LoanRequisitionEditModel) => {
-    setPublishBtnLoading(true)
-    try {
-      await checkDoublePoolCreated()
-
-      setLoanRequisitionEditModel(value)
-      setPublishBtnLoading(false)
-      setIsModalOpen(true)
-    }
-    catch (error) {
-      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
-    }
-  }
-
   const handleOk = async () => {
+    await checkDoublePoolIsCreated()
+
     setCreateLoading(true)
 
     try {
-      checkDoublePoolCreated()
+      setIsModalOpen(true)
 
-      if (capitalPoolChecked && repaymentPoolChecked) {
-        loanRequisitionEditModel.raisingTime = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
+      loanRequisitionEditModel.raisingTime = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
 
-        const res = await followCapitalPoolContract?.createOrder(
-          [BigInt(loanRequisitionEditModel.cycle),
-            BigInt(loanRequisitionEditModel.period)],
-          [BigInt(loanRequisitionEditModel.interest),
-            BigInt(loanRequisitionEditModel.dividend),
-            BigInt(loanRequisitionEditModel.numberOfCopies),
-            BigInt(loanRequisitionEditModel.minimumRequiredCopies)],
-          BigInt(loanRequisitionEditModel.raisingTime),
-          BigInt(loanRequisitionEditModel.applyLoan),
-        )
+      loanRequisitionEditModel.interest = loanRequisitionEditModel.interest * 100
 
-        const result = await res?.wait()
+      const res = await followCapitalPoolContract?.createOrder(
+        [BigInt(loanRequisitionEditModel.cycle),
+          BigInt(loanRequisitionEditModel.period)],
+        [BigInt(loanRequisitionEditModel.interest),
+          BigInt(loanRequisitionEditModel.dividend),
+          BigInt(loanRequisitionEditModel.numberOfCopies),
+          BigInt(loanRequisitionEditModel.minimumRequiredCopies)],
+        BigInt(loanRequisitionEditModel.raisingTime),
+        BigInt(loanRequisitionEditModel.applyLoan),
+      )
 
-        if (result?.status === 1)
-          navigate('/my-loan')
+      const result = await res?.wait()
 
-        console.log('%c [ result ]-180', 'font-size:13px; background:#b79c17; color:#fbe05b;', result)
+      if (result?.status === 1) {
+        const followManageContract = await BrowserContractService.getFollowManageContract()
+
+        await followManageContract.getborrowerAllOrdersId(signer ?? '', capitalPoolAddress)
+
+        // const loanConfirmT = new Models.LoanConfirmParam()
+
+        // loanConfirmT.loanName = value.itemTitle!
+        // loanConfirmT.loanIntro = value.description!
+        // loanConfirmT.transactionPairs = value.transactionPairs
+        // loanConfirmT.tradingFormType = value.tradingFormType
+        // loanConfirmT.tradingPlatformType = value.tradingPlatformType
+
+        console.log('%c [ loanRequisitionEditModel ]-201', 'font-size:13px; background:#0d9e51; color:#51e295;', loanRequisitionEditModel)
+
+        // setLoanConfirm({
+        //   ...loanConfirm,
+        //   loanName: loanRequisitionEditModel.itemTitle ?? 'itemTitle',
+        //   loanIntro: loanRequisitionEditModel.description ?? 'description',
+        //   transactionPairs: loanRequisitionEditModel.transactionPairs,
+        //   tradingFormType: loanRequisitionEditModel.tradingFormType ?? 'SpotGoods',
+        //   tradingPlatformType: loanRequisitionEditModel.tradingPlatformType ?? 'Uniswap',
+        // })
+        // console.log('%c [ loanConfirm ]-188', 'font-size:13px; background:#09ad24; color:#4df168;', loanConfirm)
+
+        // await LoanService.ApiLoanConfirm_POST(loanConfirm)
+
+        setDocumentChecked(true)
+
+        navigate('/my-loan')
       }
     }
     catch (error) {
@@ -231,6 +217,102 @@ const ApplyLoan = () => {
     }
     finally {
       setCreateLoading(false)
+    }
+  }
+
+  async function checkDoublePoolIsCreated() {
+    try {
+      // 检查是否创建资金池
+      if (!capitalPoolChecked) {
+        setCapitalPoolLoading(true)
+        const isCreated = (await followFactoryContract?.getIfCreate(signer?.address ?? '')) === BigInt(1)
+
+        console.log('%c [ capitalPoolChecked ]-211', 'font-size:13px; background:#137113; color:#57b557;', capitalPoolChecked)
+
+        setCapitalPoolChecked(isCreated)
+        console.log('%c [ capitalPoolChecked ]-211', 'font-size:13px; background:#137113; color:#57b557;', capitalPoolChecked)
+
+        if (isCreated === false) {
+          setIsModalOpen(true)
+
+          const res = await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
+
+          const result = await res?.wait()
+
+          setCapitalPoolChecked(result?.status === 1)
+        }
+
+        setCapitalPoolLoading(false)
+      }
+
+      console.log('%c [ capitalPoolChecked ]-211', 'font-size:13px; background:#137113; color:#57b557;', capitalPoolChecked)
+
+      // 检查是否创建还款池
+      if (!repaymentPoolChecked) {
+        setRepaymentPoolLoading(true)
+
+        const followRefundFactoryContract = await BrowserContractService.getFollowRefundFactoryContract()
+
+        const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(capitalPoolAddress ?? '')) === BigInt(1)
+
+        setRepaymentPoolChecked(isCreated)
+
+        if (!isCreated) {
+          setIsModalOpen(true)
+          const res = await followRefundFactoryContract.createRefundPool()
+          const result = await res?.wait()
+
+          setRepaymentPoolChecked(result?.status === 1)
+        }
+        setRepaymentPoolLoading(false)
+      }
+
+      // if (repaymentPoolChecked && !documentChecked) {
+      //   setDocumentLoading(true)
+
+      //   // TODO 如果已有订单 并且未清算则不能继续创建订单 (还有黑名单检查)
+
+      //   await handleOk()
+
+      //   setDocumentLoading(false)
+      // }
+
+      setPublishBtnLoading(false)
+    }
+    catch (error) {
+      message.error(JSON.stringify(error))
+      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
+    }
+    finally {
+      setPublishBtnLoading(false)
+      setRepaymentPoolLoading(false)
+      setCapitalPoolLoading(false)
+    }
+  }
+
+  const onFinish = async (value: LoanRequisitionEditModel) => {
+    setPublishBtnLoading(true)
+    setLoanRequisitionEditModel(value)
+
+    setLoanConfirm({
+      ...loanConfirm,
+      loanName: value.itemTitle ?? '',
+      loanIntro: value.description ?? '',
+      transactionPairs: value.transactionPairs,
+      tradingFormType: value.tradingFormType,
+      tradingPlatformType: value.tradingPlatformType,
+    })
+
+    try {
+      // await checkDoublePoolIsCreated()
+
+      await handleOk()
+
+      setPublishBtnLoading(false)
+      setIsModalOpen(true)
+    }
+    catch (error) {
+      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
     }
   }
 
@@ -250,18 +332,25 @@ const ApplyLoan = () => {
     return true
   }
 
+  function onTradingPairChange(v: string[]) {
+    setLoanRequisitionEditModel(prevState => ({
+      ...prevState,
+      transactionPairs: v,
+    }))
+  }
+
   return (
     <div>
       <Button onClick={reSet}>重置（test）</Button>
       <Modal
-       footer={(_, { OkBtn, CancelBtn }) => (
-        <>
-          {/* <Button>Custom Button</Button> */}
-          <CancelBtn />
-          <Button onClick={handleOk} loading={createLoading} disabled ={repaymentPoolLoading || capitalPoolLoading}>Confirm</Button>
-        </>
-       )}
-       confirmLoading={createLoading} okText="Create" width={1164} maskClosable={false} open={isModalOpen} onCancel={handleCancel}>
+        footer={(_, { OkBtn, CancelBtn }) => (
+          <>
+            {/* <Button>Custom Button</Button> */}
+            <CancelBtn />
+            <Button onClick={handleOk} loading={createLoading} disabled={repaymentPoolLoading || capitalPoolLoading}>Confirm</Button>
+          </>
+        )}
+        confirmLoading={createLoading} okText="Create" width={1164} maskClosable={false} open={isModalOpen} onCancel={handleCancel}>
         <div className='mt165 box-border h-300 w-full text-center text-16'>
           <p>
             Please confirm that it cannot be modified after submission.
@@ -271,7 +360,6 @@ const ApplyLoan = () => {
           </p>
 
           <div>
-
             {capitalPoolLoading
               ? <Button
                 type="primary"
@@ -293,6 +381,18 @@ const ApplyLoan = () => {
                 : null
             }
             <Checkbox disabled checked={repaymentPoolChecked} onChange={onChange}>Create a repayment pool</Checkbox>
+          </div>
+
+          <div>
+            {
+              createLoading
+                ? <Button
+                  type="primary"
+                  loading={createLoading}
+                />
+                : null
+            }
+            <Checkbox disabled checked={documentChecked} onChange={onChange}>Create document</Checkbox>
           </div>
         </div>
 
@@ -531,57 +631,94 @@ const ApplyLoan = () => {
               className='box-border h68 s-container text-24 !w306'
               suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
               defaultValue={true}
+              onChange={v => setLoanRequisitionEditModel(prevState => ({
+                ...prevState,
+                designatedTransaction: v,
+              }))}
               options={[{ value: true, label: 'YES' }, { value: false, label: 'NO' }]}
             />
           </Form.Item>
 
-          <Form.Item rules={[
-            {
-              required: true,
-              message: 'Please input content!',
-            },
-          ]} className='m0'>
-            <Select
-              popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
-              className='box-border h68 s-container text-24 !w306'
-              suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              options={[{ value: 'SpotGoods', label: 'Spot goods' }]}
-            />
-          </Form.Item>
+          <div style={{ display: loanRequisitionEditModel.designatedTransaction ? 'block' : 'none' }}>
+            <div className='flex items-end gap-x-59'>
+              <Form.Item rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
+              ]}
+                initialValue={Models.TradingFormType.SpotGoods}
+                className='m0'>
+                <Select
+                  popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
+                  className='box-border h68 s-container text-24 !w306'
+                  suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
+                  defaultValue={Models.TradingFormType.SpotGoods}
+                  onChange={v => setLoanRequisitionEditModel(prevState => ({
+                    ...prevState,
+                    tradingFormType: v,
+                  }))}
+                  options={[{ value: Models.TradingFormType.SpotGoods, label: 'Spot goods' }, { value: Models.TradingFormType.Contract, label: 'Contract' }]}
+                />
+              </Form.Item>
 
-          <Form.Item rules={[
-            {
-              required: true,
-              message: 'Please input content!',
-            },
-          ]} className='m0' >
-            <Select
-              popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
-              className='box-border h68 s-container text-24 !w306'
-              suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              options={[{ value: 'Uniswap', label: 'Uniswap' }]}
-            />
-          </Form.Item>
+              <Form.Item rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
+              ]}
+                initialValue='Uniswap'
+                className='m0' >
+                <Select
+                  popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
+                  className='box-border h68 s-container text-24 !w306'
+                  suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
+                  defaultValue='Uniswap'
+                  disabled
+                  value={
+                    loanRequisitionEditModel.tradingFormType === Models.TradingFormType.SpotGoods
+                      ? 'Uniswap'
+                      : 'GMX'
+                  }
+                  options={[{ value: 'Uniswap', label: 'Uniswap' }, { value: 'GMX', label: 'GMX' }]}
+                />
+              </Form.Item>
 
-          <Form.Item rules={[
-            {
-              required: true,
-              message: 'Please input content!',
-            },
-          ]} className='m0' >
-            <Select
-              popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
-              className='box-border h68 s-container text-24 !w306'
-              suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
-              options={[{ value: 'lucy', label: 'Lucy' }]}
-            />
-          </Form.Item>
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input content!',
+                  },
+                ]}
+                initialValue='BTC'
+                className='m0' >
+                <Select
+                  mode="multiple"
+                  popupClassName='bg-#111a2c border-2 border-#303241 border-solid px30'
+                  className='box-border h68 s-container text-24 !w306'
+                  suffixIcon={<img src={jmtzDown} alt="jmtzDown" className='px30' />}
+                  // value='USDC-BTC'
+                  maxTagCount={1}
+                  options={(loanRequisitionEditModel.tradingFormType === Models.TradingFormType.SpotGoods ? [...tradingPairBase, ...tradingPairSpotGoods] : [...tradingPairBase, ...tradingPairContract]).map(e => ({ value: e.name, label: e.name }))}
+                  onChange={
+                    onTradingPairChange
+                  }
+                />
+              </Form.Item>
+            </div>
+          </div>
         </div>
 
         <div className='h50' />
 
-        <div className='flex gap-x-64'>
-          {coin.map((e, i) => <div key={i} className='h68 w180 s-container text-center text-24 line-height-70'>{e.coin}</div>)}
+        <div style={{ display: loanRequisitionEditModel.designatedTransaction ? 'block' : 'none' }}>
+          <div className='flex flex-wrap gap-x-60 gap-y-30' >
+            {loanRequisitionEditModel.transactionPairs?.map((e, i) => <div key={i} className='h68 w180 s-container text-center text-24 line-height-70'>
+            <Image preview= {false} width={24} height={24} src={tradingPair.flat().find(p => p.name === e)?.logo}></Image>
+            {e}</div>)}
+          </div>
         </div>
 
         <div className='h156' />

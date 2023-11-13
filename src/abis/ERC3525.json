@@ -305,19 +305,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "metadataDescriptor_",
-				"type": "address"
-			}
-		],
-		"name": "_setMetadataDescriptor",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256",
 				"name": "_tokenId",
 				"type": "uint256"
@@ -508,19 +495,6 @@
 	},
 	{
 		"inputs": [],
-		"name": "metadataDescriptor",
-		"outputs": [
-			{
-				"internalType": "contract IERC3525MetadataDescriptor",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "name",
 		"outputs": [
 			{
@@ -623,12 +597,53 @@
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "_uri",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_contractName",
+				"type": "string"
+			}
+		],
+		"name": "setContractUri",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_followFactory",
 				"type": "address"
 			}
 		],
 		"name": "setFollowFactory",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_slotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_uri",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_titleName",
+				"type": "string"
+			}
+		],
+		"name": "setSlotUri",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -656,7 +671,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "slot_",
+				"name": "_slotId",
 				"type": "uint256"
 			}
 		],

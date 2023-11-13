@@ -9,6 +9,10 @@ interface IProps {
 const BasicLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
 
+  window.ethereum.on('accountsChanged', () => {
+    window.location.reload()
+  })
+
   return (
     <div className='flex flex-col items-center'>
       <header className='w-1400'>

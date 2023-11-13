@@ -3,7 +3,7 @@
 import request from '../../utils/request';
 import { Models } from './models';
 
-export class metamaskService {
+export class MetamaskService {
   /** 获取nonce POST /api/metamask/getVerifyNonce */
   static async ApiMetamaskGetVerifyNonce_POST(
     body: Models.MetaMaskVerifyParam,

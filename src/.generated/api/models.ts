@@ -42,8 +42,10 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    minLoanPrice?: number = 0;
-    maxLoanPrice?: number = 0;
+    /** 筛选出贷款金额大于该值的 */
+    minLoanPrice?: string = undefined;
+    /** 筛选出贷款金额小于该值的 */
+    maxLoanPrice?: string = undefined;
     /** 根据用户昵称筛选 */
     userNickname?: string = undefined;
     /** 根据绑定平台昵称筛选 */
