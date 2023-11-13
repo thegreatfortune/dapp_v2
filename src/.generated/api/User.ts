@@ -5,8 +5,8 @@ import { Models } from './models';
 
 export class UserService {
   /** login POST /api/user/login */
-  static async UserLogin_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
-    return request<Record<string, any>>({
+  static async ApiUserLogin_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
+    return request<Models.AuthResult>({
       url: '/api/user/login',
       method: 'POST',
       headers: {
@@ -18,7 +18,7 @@ export class UserService {
   }
 
   /** uploadFile POST /api/user/upload */
-  static async UserUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
+  static async ApiUserUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
     const formData = new FormData();
 
     if (file) {

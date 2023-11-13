@@ -13,6 +13,7 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import Checkbox from 'antd/es/checkbox'
 import type { JsonRpcSigner } from 'ethers'
 import { message } from 'antd'
+import { useNavigate } from 'react-router-dom'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
 import { BrowserContractService } from '@/contract/BrowserContractService'
@@ -22,6 +23,8 @@ import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 const ApplyLoan = () => {
   const [form] = Form.useForm()
   const { t } = useTranslation()
+
+  const navigate = useNavigate()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -38,6 +41,10 @@ const ApplyLoan = () => {
   const [publishBtnLoading, setPublishBtnLoading] = useState<boolean>(false)
 
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
+
+  const [capitalPoolLoading, setCapitalPoolLoading] = useState<boolean>(false)
+
+  const [repaymentPoolLoading, setRepaymentPoolLoading] = useState<boolean>(false)
 
   const [createLoading, setCreateLoading] = useState<boolean>(false)
 
@@ -83,6 +90,14 @@ const ApplyLoan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        window.ethereum.on('accountsChanged', () => {
+          window.location.reload()
+          // form.resetFields()
+          // setCapitalPoolChecked(false)
+          // setRepaymentPoolChecked(false)
+          // console.log('%c [  window.location.reload() ]-88', 'font-size:13px; background:#068b54; color:#4acf98;')
+        })
+
         const followFactoryContract = await BrowserContractService.getFollowFactoryContract()
 
         const signer = await BrowserContractService.getSigner()
@@ -109,14 +124,33 @@ const ApplyLoan = () => {
   }, [])
 
   async function checkDoublePoolCreated() {
+    console.log('%c [ signer ]-121', 'font-size:13px; background:#7230e5; color:#b674ff;', signer)
+
     try {
+      console.log('%c [ await followFactoryContract?.getIfCreate(signer?.address ?? "") ]-125', 'font-size:13px; background:#ab79d9; color:#efbdff;', await followFactoryContract?.getIfCreate(signer?.address ?? ''))
+
       // 检查是否创建资金池
       if (!capitalPoolChecked) {
+        setCapitalPoolLoading(true)
         const isCreated = (await followFactoryContract?.getIfCreate(signer?.address ?? '')) === BigInt(1)
 
-        if (!isCreated)
-          await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
-        setCapitalPoolChecked(isCreated)
+        if (!isCreated) {
+          setIsModalOpen(true)
+
+          const res = await followFactoryContract?.magicNewCapitalPool(signer?.address ?? '')
+
+          const result = await res?.wait()
+
+          setCapitalPoolChecked(isCreated)
+
+          if (result?.status === 1)
+            setCapitalPoolChecked(true)
+        }
+        else {
+          setCapitalPoolChecked(false)
+        }
+
+        setCapitalPoolLoading(false)
       }
 
       // 检查是否创建还款池
@@ -124,14 +158,24 @@ const ApplyLoan = () => {
         const followRefundFactoryContract = await BrowserContractService.getFollowRefundFactoryContract()
 
         const isCreated = (await followRefundFactoryContract.getIfCreateRefundPool(capitalPoolAddress ?? '')) === BigInt(1)
-        if (!isCreated)
-          await followRefundFactoryContract.createRefundPool()
+        if (!isCreated) {
+          setRepaymentPoolLoading(true)
+          setIsModalOpen(true)
+          const res = await followRefundFactoryContract.createRefundPool()
+          const result = await res?.wait()
 
-        setRepaymentPoolChecked(isCreated)
+          setRepaymentPoolChecked(isCreated)
+          setRepaymentPoolLoading(false)
+
+          if (result?.status === 1)
+            setRepaymentPoolChecked(true)
+        }
+        else {
+          setRepaymentPoolChecked(false)
+        }
       }
 
       setPublishBtnLoading(false)
-      setIsModalOpen(true)
     }
     catch (error) {
       message.error(JSON.stringify(error))
@@ -174,6 +218,10 @@ const ApplyLoan = () => {
         )
 
         const result = await res?.wait()
+
+        if (result?.status === 1)
+          navigate('/my-loan')
+
         console.log('%c [ result ]-180', 'font-size:13px; background:#b79c17; color:#fbe05b;', result)
       }
     }
@@ -205,7 +253,15 @@ const ApplyLoan = () => {
   return (
     <div>
       <Button onClick={reSet}>重置（test）</Button>
-      <Modal confirmLoading={createLoading} okText="Create" width={1164} maskClosable={false} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+       footer={(_, { OkBtn, CancelBtn }) => (
+        <>
+          {/* <Button>Custom Button</Button> */}
+          <CancelBtn />
+          <Button onClick={handleOk} loading={createLoading} disabled ={repaymentPoolLoading || capitalPoolLoading}>Confirm</Button>
+        </>
+       )}
+       confirmLoading={createLoading} okText="Create" width={1164} maskClosable={false} open={isModalOpen} onCancel={handleCancel}>
         <div className='mt165 box-border h-300 w-full text-center text-16'>
           <p>
             Please confirm that it cannot be modified after submission.
@@ -214,9 +270,32 @@ const ApplyLoan = () => {
             Creating the document requires gas fees to create:
           </p>
 
-          <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>Capital pool contract</Checkbox>
-          <Checkbox disabled checked={repaymentPoolChecked} onChange={onChange}>Create a repayment pool</Checkbox>
+          <div>
+
+            {capitalPoolLoading
+              ? <Button
+                type="primary"
+                loading={capitalPoolLoading}
+              />
+              : null
+
+            }
+            <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>Capital pool contract</Checkbox>
+          </div>
+
+          <div>
+            {
+              capitalPoolChecked && repaymentPoolLoading
+                ? <Button
+                  type="primary"
+                  loading={capitalPoolChecked && repaymentPoolLoading}
+                />
+                : null
+            }
+            <Checkbox disabled checked={repaymentPoolChecked} onChange={onChange}>Create a repayment pool</Checkbox>
+          </div>
         </div>
+
       </Modal>
       <div className="h112"></div>
       <Form

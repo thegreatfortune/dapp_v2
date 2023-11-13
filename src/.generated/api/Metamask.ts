@@ -3,9 +3,9 @@
 import request from '../../utils/request';
 import { Models } from './models';
 
-export class MetamaskService {
+export class metamaskService {
   /** 获取nonce POST /api/metamask/getVerifyNonce */
-  static async MetamaskGetVerifyNonce_POST(
+  static async ApiMetamaskGetVerifyNonce_POST(
     body: Models.MetaMaskVerifyParam,
     options?: { [key: string]: any },
   ) {
@@ -21,7 +21,7 @@ export class MetamaskService {
   }
 
   /** 使用metamask登录 POST /api/metamask/login */
-  static async MetamaskLogin_POST(
+  static async ApiMetamaskLogin_POST(
     body: Models.MetaMaskLoginParam,
     options?: { [key: string]: any },
   ) {
