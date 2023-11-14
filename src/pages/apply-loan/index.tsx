@@ -139,10 +139,6 @@ const ApplyLoan = () => {
   }
 
   useEffect(() => {
-    checkDoublePoolIsCreated()
-  }, [capitalPoolChecked, repaymentPoolChecked])
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         const followFactoryContract
@@ -175,20 +171,13 @@ const ApplyLoan = () => {
   }, [])
 
   const handleOk = async () => {
-    console.log(
-      '%c [ loanRequisitionEditModel ]-201',
-      'font-size:13px; background:#0d9e51; color:#51e295;',
-      loanRequisitionEditModel,
-    )
+    // const loanConfirmParam = new Models.LoanConfirmParam()
 
-    const loanConfirmParam = new Models.LoanConfirmParam()
-
-    loanConfirmParam.loanName = loanRequisitionEditModel.itemTitle!
-    loanConfirmParam.loanIntro = loanRequisitionEditModel.description!
-    // loanConfirmParam.transactionPairs = loanRequisitionEditModel.transactionPairs
-    // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
-    // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
-    console.log('%c [ loanConfirmParam ]-181', 'font-size:13px; background:#0f6639; color:#53aa7d;', loanConfirmParam)
+    // loanConfirmParam.loanName = loanRequisitionEditModel.itemTitle!
+    // loanConfirmParam.loanIntro = loanRequisitionEditModel.description!
+    // // loanConfirmParam.transactionPairs = loanRequisitionEditModel.transactionPairs
+    // // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
+    // // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
 
     setLoanConfirm({
       ...loanConfirm,
@@ -199,13 +188,6 @@ const ApplyLoan = () => {
       tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
     })
 
-    console.log(
-      '%c [ loanConfirm ]-188',
-      'font-size:13px; background:#09ad24; color:#4df168;',
-      loanConfirm,
-    )
-
-    return
     await checkDoublePoolIsCreated()
 
     setCreateLoading(true)
@@ -298,18 +280,7 @@ const ApplyLoan = () => {
           = (await followFactoryContract?.getIfCreate(signer?.address ?? ''))
           === BigInt(1)
 
-        console.log(
-          '%c [ capitalPoolChecked ]-211',
-          'font-size:13px; background:#137113; color:#57b557;',
-          capitalPoolChecked,
-        )
-
         setCapitalPoolChecked(isCreated)
-        console.log(
-          '%c [ capitalPoolChecked ]-211',
-          'font-size:13px; background:#137113; color:#57b557;',
-          capitalPoolChecked,
-        )
 
         if (isCreated === false) {
           setIsModalOpen(true)
@@ -327,8 +298,6 @@ const ApplyLoan = () => {
       }
 
       // 检查是否创建还款池
-      console.log('%c [ capitalPoolChecked ]-331', 'font-size:13px; background:#81afb0; color:#c5f3f4;', capitalPoolChecked)
-
       if (capitalPoolChecked && !repaymentPoolChecked) {
         setRepaymentPoolLoading(true)
 
@@ -347,7 +316,7 @@ const ApplyLoan = () => {
           const res = await followRefundFactoryContract.createRefundPool()
           const result = await res?.wait()
 
-          setRepaymentPoolChecked(reuslt?.status === 1)
+          setRepaymentPoolChecked(result?.status === 1)
         }
         setRepaymentPoolLoading(false)
       }
@@ -398,7 +367,7 @@ const ApplyLoan = () => {
     // })
 
     try {
-      // await checkDoublePoolIsCreated()
+      await checkDoublePoolIsCreated()
 
       await handleOk()
 

@@ -1,0 +1,44 @@
+{
+  "prettier.enable": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": false
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "vite.config.*": "pages.config.*, manifest.config.*, uno.config.*, volar.config.*, *.env, .env.*"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#7004bf",
+    "activityBar.background": "#7004bf",
+    "activityBar.foreground": "#ffffff",
+    "activityBar.inactiveForeground": "#ffffff99",
+    "activityBarBadge.background": "#1f1201",
+    "activityBarBadge.foreground": "#ffffff",
+    "commandCenter.border": "#ffffff99",
+    "panel.border": "#7004bf",
+    "sash.hoverBorder": "#7004bf",
+    "statusBar.background": "#53038d",
+    "statusBar.border": "#53038d",
+    "statusBar.debuggingBackground": "#3d8d03",
+    "statusBar.debuggingBorder": "#3d8d03",
+    "statusBar.debuggingForeground": "#ffffff",
+    "statusBar.foreground": "#ffffff",
+    "statusBarItem.hoverBackground": "#7004bf",
+    "statusBarItem.remoteBackground": "#53038d",
+    "statusBarItem.remoteForeground": "#ffffff",
+    "tab.activeBorder": "#7004bf",
+    "titleBar.activeBackground": "#53038d",
+    "titleBar.activeForeground": "#ffffff",
+    "titleBar.border": "#53038d",
+    "titleBar.inactiveBackground": "#53038d99",
+    "titleBar.inactiveForeground": "#ffffff99"
+  },
+  "peacock.color": "#53038d",
+  "i18n-ally.localesPaths": [
+    "src/locale",
+    "src/locale/locales"
+  ],
+  "i18n-ally.keystyle": "nested"
+}
