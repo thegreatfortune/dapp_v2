@@ -1,24 +1,38 @@
-import { useMemo } from 'react'
-import { Contract, JsonRpcProvider } from 'ethers'
+import { ethers } from 'ethers'
+import { useEffect, useState } from 'react'
+import { BrowserContractService } from '../contract/browserContractService'
 
-export const useBrowserContract = <T>(
-  contractAddress: string,
-  abi: any,
-) => {
-  return useMemo(() => {
-    const provider = new JsonRpcProvider(import.meta.env.VITE_RPC)
+const useBrowserContract = () => {
+  const [provider, setProvider] = useState<ethers.BrowserProvider>()
+  const [signer, setSigner] = useState<ethers.JsonRpcSigner>()
+  const [browserContractService, setBrowserContractService] = useState<BrowserContractService>()
 
-    if (!contractAddress || !abi)
-      return null
-
-    try {
-      const contract = new Contract(contractAddress, abi, provider) as T
-
-      return contract
+  useEffect(() => {
+    const initializeProvider = async () => {
+      if (!provider) {
+        const newProvider = new ethers.BrowserProvider(window.ethereum)
+        setProvider(newProvider)
+      }
     }
-    catch (error) {
-      console.error('Error connecting to contract:', error)
-      return null
+
+    const initializeSigner = async () => {
+      if (!signer && provider) {
+        const newSigner = await provider.getSigner()
+        const newBrowserContractService = new BrowserContractService(newSigner)
+        setBrowserContractService(() => newBrowserContractService)
+        setSigner(newSigner)
+      }
     }
-  }, [contractAddress, abi])
+
+    initializeProvider()
+    initializeSigner()
+  }, [provider, signer])
+
+  return {
+    provider,
+    signer,
+    browserContractService,
+  }
 }
+
+export default useBrowserContract

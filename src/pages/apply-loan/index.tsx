@@ -11,24 +11,23 @@ import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import Checkbox from 'antd/es/checkbox'
-import type { JsonRpcSigner } from 'ethers'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { LoanService } from '../../.generated/api/Loan'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
-import { BrowserContractService } from '@/contract/browserContractService'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 import { Models } from '@/.generated/api/models'
-import logo from '@/assets/react.svg'
 import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
+import useBrowserContract from '@/hooks/useBrowserContract'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
   const { t } = useTranslation()
 
   const navigate = useNavigate()
+
+  const { browserContractService } = useBrowserContract()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -54,8 +53,6 @@ const ApplyLoan = () => {
 
   const [followCapitalPoolContract, setFollowCapitalPoolContract]
     = useState<FollowCapitalPool>()
-
-  const [signer, setSigner] = useState<JsonRpcSigner | undefined>()
 
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
 
@@ -142,23 +139,20 @@ const ApplyLoan = () => {
     const fetchData = async () => {
       try {
         const followFactoryContract
-          = await BrowserContractService.getFollowFactoryContract()
-
-        const signer = await BrowserContractService.getSigner()
+          = await browserContractService?.getFollowFactoryContract()
 
         const capitalPoolAddress
           = await followFactoryContract?.AddressGetCapitalPool(
-            signer?.address ?? '',
+            browserContractService?.getSigner ?? '',
           )
 
-        setCapitalPoolAddress(capitalPoolAddress)
+        setCapitalPoolAddress(capitalPoolAddress!)
+        console.log('%c [ capitalPoolAddress ]-153', 'font-size:13px; background:#ab1dee; color:#ef61ff;', capitalPoolAddress)
 
         const followCapitalPoolContract
-          = await BrowserContractService.getFollowCapitalPoolContract()
+          = await browserContractService?.getFollowCapitalPoolContract()
 
         setFollowCapitalPoolContract(followCapitalPoolContract)
-
-        setSigner(signer)
 
         setFollowFactoryContract(followFactoryContract)
       }
@@ -168,7 +162,7 @@ const ApplyLoan = () => {
     }
 
     fetchData()
-  }, [])
+  }, [browserContractService])
 
   const handleOk = async () => {
     // const loanConfirmParam = new Models.LoanConfirmParam()
@@ -220,10 +214,10 @@ const ApplyLoan = () => {
 
       if (result?.status === 1) {
         const followManageContract
-          = await BrowserContractService.getFollowManageContract()
+          = await browserContractService?.getFollowManageContract()
 
-        await followManageContract.getborrowerAllOrdersId(
-          signer ?? '',
+        await followManageContract?.getborrowerAllOrdersId(
+          browserContractService?.getSigner ?? '',
           capitalPoolAddress,
         )
 
@@ -275,10 +269,17 @@ const ApplyLoan = () => {
     try {
       // 检查是否创建资金池
       if (!capitalPoolChecked) {
+        console.log('%c [ capitalPoolChecked ]-280', 'font-size:13px; background:#272a72; color:#6b6eb6;', capitalPoolChecked)
+        console.log('%c [ followFactoryContract ]-284', 'font-size:13px; background:#ca1ac4; color:#ff5eff;', followFactoryContract)
+
+        console.log('%c [ signer?.address ]-286', 'font-size:13px; background:#6bed6c; color:#afffb0;', browserContractService?.getSigner?.address)
+
         setCapitalPoolLoading(true)
         const isCreated
-          = (await followFactoryContract?.getIfCreate(signer?.address ?? ''))
+          = (await followFactoryContract?.getIfCreate(browserContractService?.getSigner?.address ?? ''))
           === BigInt(1)
+
+        console.log('%c [ isCreated ]-283', 'font-size:13px; background:#ac8222; color:#f0c666;', isCreated)
 
         setCapitalPoolChecked(isCreated)
 
@@ -286,7 +287,7 @@ const ApplyLoan = () => {
           setIsModalOpen(true)
 
           const res = await followFactoryContract?.magicNewCapitalPool(
-            signer?.address ?? '',
+            browserContractService?.getSigner?.address ?? '',
           )
 
           const result = await res?.wait()
@@ -297,15 +298,17 @@ const ApplyLoan = () => {
         setCapitalPoolLoading(false)
       }
 
+      return
+
       // 检查是否创建还款池
       if (capitalPoolChecked && !repaymentPoolChecked) {
         setRepaymentPoolLoading(true)
 
         const followRefundFactoryContract
-          = await BrowserContractService.getFollowRefundFactoryContract()
+          = await browserContractService?.getFollowRefundFactoryContract()
 
         const isCreated
-          = (await followRefundFactoryContract.getIfCreateRefundPool(
+          = (await followRefundFactoryContract?.getIfCreateRefundPool(
             capitalPoolAddress ?? '',
           )) === BigInt(1)
 
@@ -313,7 +316,7 @@ const ApplyLoan = () => {
 
         if (!isCreated) {
           setIsModalOpen(true)
-          const res = await followRefundFactoryContract.createRefundPool()
+          const res = await followRefundFactoryContract?.createRefundPool()
           const result = await res?.wait()
 
           setRepaymentPoolChecked(result?.status === 1)
@@ -349,11 +352,6 @@ const ApplyLoan = () => {
   }
 
   const onFinish = async (value: LoanRequisitionEditModel) => {
-    console.log(
-      '%c [ value ]-369',
-      'font-size:13px; background:#4dc1b1; color:#91fff5;',
-      value,
-    )
     setPublishBtnLoading(true)
     setLoanRequisitionEditModel(value)
 
@@ -407,8 +405,6 @@ const ApplyLoan = () => {
   }
 
   function onValuesChange(val: Record<string, any>) {
-    console.log('%c [ val ]-442', 'font-size:13px; background:#8eb7e7; color:#d2fbff;', val)
-
     setLoanRequisitionEditModel(prevState => ({
       ...prevState,
       ...val,
