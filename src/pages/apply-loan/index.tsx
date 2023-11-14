@@ -20,14 +20,19 @@ import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 import { Models } from '@/.generated/api/models'
 import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import { LoanService } from '@/.generated/api/Loan'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
+
   const { t } = useTranslation()
 
   const navigate = useNavigate()
 
   const { browserContractService } = useBrowserContract()
+
+  const [loanRequisitionEditModel, setLoanRequisitionEditModel]
+    = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -46,18 +51,13 @@ const ApplyLoan = () => {
 
   const [createLoading, setCreateLoading] = useState<boolean>(false)
 
-  const [documentLoading, setDocumentLoading] = useState<boolean>(false)
-
   const [followFactoryContract, setFollowFactoryContract]
     = useState<FollowFactory>()
 
   const [followCapitalPoolContract, setFollowCapitalPoolContract]
-    = useState<FollowCapitalPool>()
+    = useState<FollowCapitalPool | undefined>()
 
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
-
-  const [loanRequisitionEditModel, setLoanRequisitionEditModel]
-    = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
 
   const [tradingPair, setTradingPair] = useState([
     [
@@ -143,7 +143,7 @@ const ApplyLoan = () => {
 
         const capitalPoolAddress
           = await followFactoryContract?.AddressGetCapitalPool(
-            browserContractService?.getSigner ?? '',
+            browserContractService?.getSigner.address ?? '',
           )
 
         setCapitalPoolAddress(capitalPoolAddress!)
@@ -151,6 +151,8 @@ const ApplyLoan = () => {
 
         const followCapitalPoolContract
           = await browserContractService?.getFollowCapitalPoolContract()
+
+        console.log('%c [ followCapitalPoolContract ]-153', 'font-size:13px; background:#e39075; color:#ffd4b9;', followCapitalPoolContract)
 
         setFollowCapitalPoolContract(followCapitalPoolContract)
 
@@ -162,7 +164,7 @@ const ApplyLoan = () => {
     }
 
     fetchData()
-  }, [browserContractService])
+  }, [browserContractService, followCapitalPoolContract])
 
   const handleOk = async () => {
     setLoanConfirm({
@@ -173,6 +175,8 @@ const ApplyLoan = () => {
       tradingFormType: loanRequisitionEditModel.tradingFormType,
       tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
     })
+
+    console.log('%c [ loanConfirm ]-169', 'font-size:13px; background:#d0af30; color:#fff374;', loanConfirm)
 
     await checkDoublePoolIsCreated()
 
@@ -190,6 +194,12 @@ const ApplyLoan = () => {
       loanRequisitionEditModel.interest
         = loanRequisitionEditModel.interest * 100
 
+      const followCapitalPoolContract
+        = await browserContractService?.getFollowCapitalPoolContract()
+
+      // console.log('%c [ followCapitalPoolContract ]-198', 'font-size:13px; background:#a0fe02; color:#e4ff46;', followCapitalPoolContract)
+
+      console.log('%c [ followCapitalPoolContract ]-203', 'font-size:13px; background:#32c5a8; color:#76ffec;', followCapitalPoolContract)
       const res = await followCapitalPoolContract?.createOrder(
         [
           BigInt(loanRequisitionEditModel.cycle),
@@ -206,15 +216,18 @@ const ApplyLoan = () => {
       )
 
       const result = await res?.wait()
+      console.log('%c [end browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
+
+      console.log('%c [ result ]-218', 'font-size:13px; background:#b0456d; color:#f489b1;', result)
 
       if (result?.status === 1) {
-        const followManageContract
-          = await browserContractService?.getFollowManageContract()
+        // const followManageContract
+        //   = await browserContractService?.getFollowManageContract()
 
-        await followManageContract?.getborrowerAllOrdersId(
-          browserContractService?.getSigner ?? '',
-          capitalPoolAddress,
-        )
+        // await followManageContract?.getborrowerAllOrdersId(
+        //   browserContractService?.getSigner.address ?? '',
+        //   capitalPoolAddress,
+        // )
 
         // await LoanService.ApiLoanConfirm_POST(loanConfirm)
 
@@ -261,9 +274,10 @@ const ApplyLoan = () => {
 
         setCapitalPoolLoading(false)
       }
+      console.log('%c [pre browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
 
       // 检查是否创建还款池
-      if (capitalPoolChecked && !repaymentPoolChecked) {
+      if (!repaymentPoolChecked) {
         setRepaymentPoolLoading(true)
 
         const followRefundFactoryContract
@@ -285,6 +299,8 @@ const ApplyLoan = () => {
         }
         setRepaymentPoolLoading(false)
       }
+
+      console.log('%c [ browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
 
       // if (repaymentPoolChecked && !documentChecked) {
       //   setDocumentLoading(true)
@@ -314,21 +330,13 @@ const ApplyLoan = () => {
   }
 
   const onFinish = async (value: LoanRequisitionEditModel) => {
+    console.log('%c [ value ]-319', 'font-size:13px; background:#115dc6; color:#55a1ff;', value)
     setPublishBtnLoading(true)
-    setLoanRequisitionEditModel(value)
-
-    // setLoanConfirm({
-    //   ...loanConfirm,
-    //   loanName: value.itemTitle ?? '',
-    //   loanIntro: value.description ?? '',
-    //   transactionPairs: value.transactionPairs,
-    //   tradingFormType: value.tradingFormType,
-    //   tradingPlatformType: value.tradingPlatformType,
-    // })
+    setLoanRequisitionEditModel(preState =>
+      ({ ...preState, ...value }),
+    )
 
     try {
-      await checkDoublePoolIsCreated()
-
       await handleOk()
 
       setPublishBtnLoading(false)
@@ -404,7 +412,7 @@ const ApplyLoan = () => {
           <div>
             {capitalPoolLoading
               ? (
-              <Button type="primary" loading={capitalPoolLoading} />
+                <Button type="primary" loading={capitalPoolLoading} />
                 )
               : null}
             <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>
@@ -415,10 +423,10 @@ const ApplyLoan = () => {
           <div>
             {capitalPoolChecked && repaymentPoolLoading
               ? (
-              <Button
-                type="primary"
-                loading={capitalPoolChecked && repaymentPoolLoading}
-              />
+                <Button
+                  type="primary"
+                  loading={capitalPoolChecked && repaymentPoolLoading}
+                />
                 )
               : null}
             <Checkbox
@@ -433,7 +441,7 @@ const ApplyLoan = () => {
           <div>
             {createLoading
               ? (
-              <Button type="primary" loading={createLoading} />
+                <Button type="primary" loading={createLoading} />
                 )
               : null}
             <Checkbox disabled checked={documentChecked} onChange={onChange}>
@@ -451,7 +459,7 @@ const ApplyLoan = () => {
         wrapperCol={{ span: 24 }}
         name="apply-loan-form"
         onFinish={onFinish}
-        onValuesChange = {onValuesChange}
+        onValuesChange={onValuesChange}
       >
         <div className="w-full flex justify-between">
           <Form.Item
@@ -459,12 +467,12 @@ const ApplyLoan = () => {
             className="m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822"
             valuePropName="fileList"
             getValueFromEvent={e => e.fileList}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: 'Please upload your file!',
-            //   },
-            // ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'Please upload your file!',
+          //   },
+          // ]}
           >
             <div className="m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822">
               <Dragger
@@ -829,7 +837,7 @@ const ApplyLoan = () => {
                   disabled
                   value={
                     loanRequisitionEditModel.tradingFormType
-                    === Models.TradingFormType.SpotGoods
+                      === Models.TradingFormType.SpotGoods
                       ? 'Uniswap'
                       : 'GMX'
                   }
@@ -855,7 +863,7 @@ const ApplyLoan = () => {
                   defaultValue={['USDC-BTC']}
                   maxTagCount={1}
                   options={(loanRequisitionEditModel.tradingFormType
-                  === Models.TradingFormType.SpotGoods
+                    === Models.TradingFormType.SpotGoods
                     ? [...tradingPairBase, ...tradingPairSpotGoods]
                     : [...tradingPairBase, ...tradingPairContract]
                   ).map(e => ({ value: e.name, label: e.name }))}

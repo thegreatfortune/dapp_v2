@@ -8,6 +8,8 @@ import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 
+const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 function createContract<T>(
   address: string,
   abi: any,
@@ -77,19 +79,27 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowCapitalPool>}
    * @memberof BrowserContractService
    */
-  async getFollowCapitalPoolContract(): Promise<FollowCapitalPool> {
-    if (this._followCapitalPoolContract)
-      return this._followCapitalPoolContract
+  async getFollowCapitalPoolContract(): Promise<FollowCapitalPool | undefined> {
+    // if (this._followCapitalPoolContract && this._followCapitalPoolContract.target !== BLACK_HOLE_ADDRESS)
+    //   return this._followCapitalPoolContract
 
     const followFactoryContract = await this.getFollowFactoryContract()
+    console.log('%c [ followFactoryContract ]-87', 'font-size:13px; background:#2f2db7; color:#7371fb;', followFactoryContract)
 
-    const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.signer)
+    const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    console.log('%c [ capitalPoolAddress ]-87', 'font-size:13px; background:#0719a0; color:#4b5de4;', capitalPoolAddress, this.getSigner.address)
 
-    return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
+    if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
+      return
+
+    this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
       followCapitalPool_ABI,
       this.signer,
     )
+
+    console.log('%c [!!! this._followCapitalPoolContract ]-96', 'font-size:13px; background:#649981; color:#a8ddc5;', this._followCapitalPoolContract)
+    return this._followCapitalPoolContract
   }
 
   /**

@@ -4,21 +4,21 @@ import { BrowserContractService } from '@/contract/browserContractService'
 const Lend = () => {
   useEffect(() => {
     async function mounted() {
-      const followFactoryContract = await BrowserContractService.getFollowFactoryContract()
+      // const followFactoryContract = await BrowserContractService.getFollowFactoryContract()
 
-      const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract()
+      // const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract()
 
-      const signer = await BrowserContractService.getSigner()
+      // const signer = await BrowserContractService.getSigner()
 
-      const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(signer?.address ?? '')
+      // const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(signer?.address ?? '')
 
-      const followManageContract = await BrowserContractService.getFollowManageContract()
+      // const followManageContract = await BrowserContractService.getFollowManageContract()
 
-      const tId = await followManageContract.getUserAllOrdersId(signer?.address ?? '', capitalPoolAddress)
-      console.log('%c [ tId ]-16', 'font-size:13px; background:#c5c6ac; color:#fffff0;', tId)
+      // const tId = await followManageContract.getUserAllOrdersId(signer?.address ?? '', capitalPoolAddress)
+      // console.log('%c [ tId ]-16', 'font-size:13px; background:#c5c6ac; color:#fffff0;', tId)
 
-      const sss = await followCapitalPoolContract.getList(tId?.at(-1) ?? BigInt(0))
-      console.log('%c [ sss ]-21', 'font-size:13px; background:#c7a852; color:#ffec96;', sss)
+      // const sss = await followCapitalPoolContract.getList(tId?.at(-1) ?? BigInt(0))
+      // console.log('%c [ sss ]-21', 'font-size:13px; background:#c7a852; color:#ffec96;', sss)
 
       //   sss.14
       //   if(sss.14 > sss.13 ) {

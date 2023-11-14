@@ -14,12 +14,10 @@ const Index = () => {
 
   // const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
-  const [isViewAll, setIsViewAll] = useState<boolean>(false)
-
   useEffect(() => {
     async function fetchData() {
       const params = new Models.ApiLoanPageLoanContractGETParams()
-      params.limit = 8
+      params.limit = 100
 
       if (isContractAddress(queryString ?? ''))
         params.capitalPoolContract = queryString
