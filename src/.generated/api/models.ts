@@ -50,11 +50,11 @@ export namespace Models {
     userNickname?: string = undefined;
     /** 根据绑定平台昵称筛选 */
     bindPlatform?: string = undefined;
+    /** 资金池地址 */
+    capitalPoolContract?: string = undefined;
     /** 根据绑定平台昵称筛选
 Twitter :推特 */
     platformType?: string = undefined;
-    /** 根据构造地址筛选 */
-    contractAddress?: string = undefined;
     /** 根据借款订单名称筛选 */
     loanName?: string = undefined;
     orderItemList?: Array<OrderItem> = [];
@@ -142,6 +142,7 @@ Twitter :推特 */
 
   export class LoanOrderVO {
     id?: number = 0;
+    /** 借方id */
     userId?: number = 0;
     /** 在合约中的订单id */
     tradeId?: number = 0;
@@ -180,6 +181,8 @@ Twitter :推特 */
     /** 用途介绍 */
     usageIntro?: string = undefined;
     createDate?: string = undefined;
+    /** 订单结束时间(清算时间) */
+    endTime?: number = 0;
     showPlatformUserList?: PlatformUserVo[] = undefined;
   }
 

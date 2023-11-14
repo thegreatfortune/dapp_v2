@@ -165,14 +165,6 @@ const ApplyLoan = () => {
   }, [browserContractService])
 
   const handleOk = async () => {
-    // const loanConfirmParam = new Models.LoanConfirmParam()
-
-    // loanConfirmParam.loanName = loanRequisitionEditModel.itemTitle!
-    // loanConfirmParam.loanIntro = loanRequisitionEditModel.description!
-    // // loanConfirmParam.transactionPairs = loanRequisitionEditModel.transactionPairs
-    // // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
-    // // loanConfirmParam.loanIntro = loanRequisitionEditModel.description
-
     setLoanConfirm({
       ...loanConfirm,
       loanName: loanRequisitionEditModel.itemTitle ?? '',
@@ -188,6 +180,9 @@ const ApplyLoan = () => {
 
     try {
       setIsModalOpen(true)
+
+      // TODO: decimals
+      loanRequisitionEditModel.applyLoan = loanRequisitionEditModel.applyLoan * 10 ** 18
 
       loanRequisitionEditModel.raisingTime
         = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
@@ -221,30 +216,6 @@ const ApplyLoan = () => {
           capitalPoolAddress,
         )
 
-        // const loanConfirmT = new Models.LoanConfirmParam()
-
-        // loanConfirmT.loanName = value.itemTitle!
-        // loanConfirmT.loanIntro = value.description!
-        // loanConfirmT.transactionPairs = value.transactionPairs
-        // loanConfirmT.tradingFormType = value.tradingFormType
-        // loanConfirmT.tradingPlatformType = value.tradingPlatformType
-
-        // console.log(
-        //   '%c [ loanRequisitionEditModel ]-201',
-        //   'font-size:13px; background:#0d9e51; color:#51e295;',
-        //   loanRequisitionEditModel,
-        // )
-
-        // setLoanConfirm({
-        //   ...loanConfirm,
-        //   loanName: loanRequisitionEditModel.itemTitle ?? 'itemTitle',
-        //   loanIntro: loanRequisitionEditModel.description ?? 'description',
-        //   transactionPairs: loanRequisitionEditModel.transactionPairs,
-        //   tradingFormType: loanRequisitionEditModel.tradingFormType ?? 'SpotGoods',
-        //   tradingPlatformType: loanRequisitionEditModel.tradingPlatformType ?? 'Uniswap',
-        // })
-        // console.log('%c [ loanConfirm ]-188', 'font-size:13px; background:#09ad24; color:#4df168;', loanConfirm)
-
         // await LoanService.ApiLoanConfirm_POST(loanConfirm)
 
         setDocumentChecked(true)
@@ -269,17 +240,10 @@ const ApplyLoan = () => {
     try {
       // 检查是否创建资金池
       if (!capitalPoolChecked) {
-        console.log('%c [ capitalPoolChecked ]-280', 'font-size:13px; background:#272a72; color:#6b6eb6;', capitalPoolChecked)
-        console.log('%c [ followFactoryContract ]-284', 'font-size:13px; background:#ca1ac4; color:#ff5eff;', followFactoryContract)
-
-        console.log('%c [ signer?.address ]-286', 'font-size:13px; background:#6bed6c; color:#afffb0;', browserContractService?.getSigner?.address)
-
         setCapitalPoolLoading(true)
         const isCreated
           = (await followFactoryContract?.getIfCreate(browserContractService?.getSigner?.address ?? ''))
           === BigInt(1)
-
-        console.log('%c [ isCreated ]-283', 'font-size:13px; background:#ac8222; color:#f0c666;', isCreated)
 
         setCapitalPoolChecked(isCreated)
 
@@ -297,8 +261,6 @@ const ApplyLoan = () => {
 
         setCapitalPoolLoading(false)
       }
-
-      return
 
       // 检查是否创建还款池
       if (capitalPoolChecked && !repaymentPoolChecked) {

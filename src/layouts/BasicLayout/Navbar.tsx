@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { NavLink } from 'react-router-dom'
 import Avatar from 'antd/es/avatar'
 import Input from 'antd/es/input'
+import Image from 'antd/es/image'
+import Button from 'antd/es/button'
+import { AutoComplete } from 'antd'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/react.svg'
+import searchImg from '@/assets/images/search.svg'
 import './navBar.css'
+import useNavbarQueryStore from '@/store/useNavbarQueryStore'
 
 interface NavbarProps {
   title: string
@@ -14,6 +19,20 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
   const { t } = useTranslation()
+
+  const { updateQuery } = useNavbarQueryStore()
+
+  const [options, setOptions] = useState<{ value: string }[]>([])
+
+  const getPanelValue = (searchText: string) => {
+    return [{ value: searchText }]
+  }
+
+  const onSelect = (data: string) => {
+    updateQuery(data)
+
+    console.log('onSelect', data)
+  }
 
   return (
         <nav className="h120 w-full flex items-center theme-color text-white" id='navBar'>
@@ -44,10 +63,21 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
 
             <div className='h-full w-337' />
 
-            <Input
-                placeholder="Basic usage"
-                className="inline-block h-60 w-410 rounded-30 bg-#191d36 px-37 c-white placeholder-font-size-14 placeholder-c-[#D2D2D2]"
+            <AutoComplete
+                options={options}
+                onSelect={onSelect}
+                onSearch={text => setOptions(getPanelValue(text))}
+                placeholder="Search Twitter account, document name, contract address"
+                className="h-60 w-full rounded-30 px-37 c-white placeholder-font-size-14 placeholder-c-[#D2D2D2]"
             />
+{/*
+            <Input
+                placeholder="Search Twitter account, document name, contract address"
+                className="h-60 rounded-30 px-37 c-white placeholder-font-size-14 placeholder-c-[#D2D2D2]"
+                suffix={
+                    <Image preview={false} src={searchImg} alt="Search" className='cursor-pointer' />
+                }
+            /> */}
 
             <div className='h-full w-44' />
 
