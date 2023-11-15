@@ -84,13 +84,13 @@ export class BrowserContractService {
     //   return this._followCapitalPoolContract
 
     const followFactoryContract = await this.getFollowFactoryContract()
-    console.log('%c [ followFactoryContract ]-87', 'font-size:13px; background:#2f2db7; color:#7371fb;', followFactoryContract)
 
     const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
     console.log('%c [ capitalPoolAddress ]-87', 'font-size:13px; background:#0719a0; color:#4b5de4;', capitalPoolAddress, this.getSigner.address)
 
     if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
       return
+    console.log('%c [ return ]-94', 'font-size:13px; background:#d9ee12; color:#ffff56;', 'return')
 
     this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
@@ -109,8 +109,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getFollowFactoryContract(): Promise<FollowFactory> {
-    if (this._followFactoryContract)
-      return this._followFactoryContract
+    // if (this._followFactoryContract)
+    //   return this._followFactoryContract
 
     return this._followFactoryContract = createContract<FollowFactory>(
       import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,

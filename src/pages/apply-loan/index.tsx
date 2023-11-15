@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next'
 import InputNumber from 'antd/es/input-number'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
-import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import Checkbox from 'antd/es/checkbox'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -36,11 +35,7 @@ const ApplyLoan = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [capitalPoolChecked, setCapitalPoolChecked] = useState(false)
-
-  const [repaymentPoolChecked, setRepaymentPoolChecked] = useState(false)
-
-  const [documentChecked, setDocumentChecked] = useState(false)
+  const [checkers, setCheckers] = useState([false, false, false])
 
   const [publishBtnLoading, setPublishBtnLoading] = useState<boolean>(false)
 
@@ -116,10 +111,47 @@ const ApplyLoan = () => {
     ],
   ])
 
+  const [loanConfirm, setLoanConfirm] = useState(new Models.LoanConfirmParam())
+
   const [tradingPairBase, tradingPairSpotGoods, tradingPairContract]
     = tradingPair
+  const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
 
-  const [loanConfirm, setLoanConfirm] = useState(new Models.LoanConfirmParam())
+  useEffect(() => {
+    createLoan()
+  }, [checkers])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const followFactoryContract
+          = await browserContractService?.getFollowFactoryContract()
+
+        const capitalPoolAddress
+          = await followFactoryContract?.AddressGetCapitalPool(
+            browserContractService?.getSigner.address ?? '',
+          )
+
+        setCapitalPoolAddress(capitalPoolAddress!)
+
+        const followCapitalPoolContract
+          = await browserContractService?.getFollowCapitalPoolContract()
+
+        setFollowCapitalPoolContract(followCapitalPoolContract)
+
+        setFollowFactoryContract(followFactoryContract)
+      }
+      catch (error) {
+        console.error('Error:', error)
+      }
+    }
+
+    fetchData()
+  }, [browserContractService])
+
+  // useEffect(() => {
+  //   createLoan()
+  // }, [loanRequisitionEditModel])
 
   async function reSet() {
     // 重置
@@ -135,38 +167,16 @@ const ApplyLoan = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const followFactoryContract
-          = await browserContractService?.getFollowFactoryContract()
-
-        const capitalPoolAddress
-          = await followFactoryContract?.AddressGetCapitalPool(
-            browserContractService?.getSigner.address ?? '',
-          )
-
-        setCapitalPoolAddress(capitalPoolAddress!)
-        console.log('%c [ capitalPoolAddress ]-153', 'font-size:13px; background:#ab1dee; color:#ef61ff;', capitalPoolAddress)
-
-        const followCapitalPoolContract
-          = await browserContractService?.getFollowCapitalPoolContract()
-
-        console.log('%c [ followCapitalPoolContract ]-153', 'font-size:13px; background:#e39075; color:#ffd4b9;', followCapitalPoolContract)
-
-        setFollowCapitalPoolContract(followCapitalPoolContract)
-
-        setFollowFactoryContract(followFactoryContract)
-      }
-      catch (error) {
-        console.error('Error:', error)
-      }
-    }
-
-    fetchData()
-  }, [browserContractService, followCapitalPoolContract])
-
   const handleOk = async () => {
+    await checkDoublePoolIsCreated()
+    await createLoan()
+  }
+
+  async function createLoan() {
+    console.log('%c [ d stata ]-179', 'font-size:13px; background:#75dde6; color:#b9ffff;', capitalPoolChecked, repaymentPoolChecked)
+    if (!capitalPoolChecked || !repaymentPoolChecked)
+      return
+
     setLoanConfirm({
       ...loanConfirm,
       loanName: loanRequisitionEditModel.itemTitle ?? '',
@@ -176,62 +186,66 @@ const ApplyLoan = () => {
       tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
     })
 
-    console.log('%c [ loanConfirm ]-169', 'font-size:13px; background:#d0af30; color:#fff374;', loanConfirm)
-
-    await checkDoublePoolIsCreated()
-
     setCreateLoading(true)
 
     try {
       setIsModalOpen(true)
 
       // TODO: decimals
-      loanRequisitionEditModel.applyLoan = loanRequisitionEditModel.applyLoan * 10 ** 18
+      // loanRequisitionEditModel.applyLoan = loanRequisitionEditModel.applyLoan * 10 ** 18
 
-      loanRequisitionEditModel.raisingTime
-        = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
+      // loanRequisitionEditModel.raisingTime
+      //   = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
 
-      loanRequisitionEditModel.interest
-        = loanRequisitionEditModel.interest * 100
+      // loanRequisitionEditModel.interest
+      //   = loanRequisitionEditModel.interest * 100
+
+      const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(browserContractService?.getSigner.address ?? '')
+      // console.log('%c [ followFactoryContract ]-202', 'font-size:13px; background:#f1a5e2; color:#ffe9ff;', followFactoryContract)
 
       const followCapitalPoolContract
         = await browserContractService?.getFollowCapitalPoolContract()
 
       // console.log('%c [ followCapitalPoolContract ]-198', 'font-size:13px; background:#a0fe02; color:#e4ff46;', followCapitalPoolContract)
 
-      console.log('%c [ followCapitalPoolContract ]-203', 'font-size:13px; background:#32c5a8; color:#76ffec;', followCapitalPoolContract)
       const res = await followCapitalPoolContract?.createOrder(
         [
           BigInt(loanRequisitionEditModel.cycle),
           BigInt(loanRequisitionEditModel.period),
         ],
         [
-          BigInt(loanRequisitionEditModel.interest),
+          BigInt((loanRequisitionEditModel.interest * 100)),
           BigInt(loanRequisitionEditModel.dividend),
           BigInt(loanRequisitionEditModel.numberOfCopies),
           BigInt(loanRequisitionEditModel.minimumRequiredCopies),
         ],
-        BigInt(loanRequisitionEditModel.raisingTime),
-        BigInt(loanRequisitionEditModel.applyLoan),
+        BigInt((loanRequisitionEditModel.raisingTime * 24 * 60 * 60)),
+        BigInt((loanRequisitionEditModel.applyLoan * 10 ** 18)),
       )
 
       const result = await res?.wait()
-      console.log('%c [end browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
 
       console.log('%c [ result ]-218', 'font-size:13px; background:#b0456d; color:#f489b1;', result)
 
       if (result?.status === 1) {
-        // const followManageContract
-        //   = await browserContractService?.getFollowManageContract()
+        const followManageContract
+          = await browserContractService?.getFollowManageContract()
 
-        // await followManageContract?.getborrowerAllOrdersId(
+        // const tids = await followManageContract?.getborrowerAllOrdersId(
         //   browserContractService?.getSigner.address ?? '',
         //   capitalPoolAddress,
         // )
 
-        // await LoanService.ApiLoanConfirm_POST(loanConfirm)
+        loanConfirm.tradeId && (loanConfirm.tradeId = 1)
 
-        setDocumentChecked(true)
+        const res = await LoanService.ApiLoanConfirm_POST(loanConfirm)
+        console.log('%c [ res ]-244', 'font-size:13px; background:#011256; color:#45569a;', res)
+
+        setCheckers((prevState) => {
+          const newArray = [...prevState]
+          newArray[2] = true
+          return newArray
+        })
 
         navigate('/my-loan')
       }
@@ -249,59 +263,79 @@ const ApplyLoan = () => {
     }
   }
 
+  async function checkRepaymentPoolChecked() {
+    // 检查是否创建还款池
+    if (!repaymentPoolChecked) {
+      setRepaymentPoolLoading(true)
+
+      const followRefundFactoryContract
+        = await browserContractService?.getFollowRefundFactoryContract()
+
+      const isCreated
+        = (await followRefundFactoryContract?.getIfCreateRefundPool(
+          capitalPoolAddress ?? '',
+        )) === BigInt(1)
+
+      setCheckers((prevState) => {
+        const newArray = [...prevState]
+        newArray[1] = isCreated
+        return newArray
+      })
+
+      if (!isCreated) {
+        setIsModalOpen(true)
+        const res = await followRefundFactoryContract?.createRefundPool()
+        const result = await res?.wait()
+
+        setCheckers((prevState) => {
+          const newArray = [...prevState]
+          newArray[1] = result?.status === 1
+          return newArray
+        })
+      }
+      setRepaymentPoolLoading(false)
+    }
+  }
+
+  async function checkCapitalPoolChecked() {
+    // 检查是否创建资金池
+    if (!capitalPoolChecked) {
+      setCapitalPoolLoading(true)
+      const isCreated
+        = (await followFactoryContract?.getIfCreate(browserContractService?.getSigner?.address ?? ''))
+        === BigInt(1)
+
+      setCheckers((prevState) => {
+        const newArray = [...prevState]
+        newArray[0] = isCreated
+        return newArray
+      })
+
+      if (isCreated === false) {
+        setIsModalOpen(true)
+
+        const res = await followFactoryContract?.magicNewCapitalPool(
+          browserContractService?.getSigner?.address ?? '',
+        )
+
+        const result = await res?.wait()
+
+        setCheckers((prevState) => {
+          const newArray = [...prevState]
+          newArray[0] = result?.status === 1
+          return newArray
+        })
+      }
+
+      setCapitalPoolLoading(false)
+    }
+  }
+
   async function checkDoublePoolIsCreated() {
     try {
-      // 检查是否创建资金池
-      if (!capitalPoolChecked) {
-        setCapitalPoolLoading(true)
-        const isCreated
-          = (await followFactoryContract?.getIfCreate(browserContractService?.getSigner?.address ?? ''))
-          === BigInt(1)
+      await checkCapitalPoolChecked()
 
-        setCapitalPoolChecked(isCreated)
-
-        if (isCreated === false) {
-          setIsModalOpen(true)
-
-          const res = await followFactoryContract?.magicNewCapitalPool(
-            browserContractService?.getSigner?.address ?? '',
-          )
-
-          const result = await res?.wait()
-
-          setCapitalPoolChecked(result?.status === 1)
-        }
-
-        setCapitalPoolLoading(false)
-      }
-      console.log('%c [pre browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
-
-      // 检查是否创建还款池
-      if (!repaymentPoolChecked) {
-        setRepaymentPoolLoading(true)
-
-        const followRefundFactoryContract
-          = await browserContractService?.getFollowRefundFactoryContract()
-
-        const isCreated
-          = (await followRefundFactoryContract?.getIfCreateRefundPool(
-            capitalPoolAddress ?? '',
-          )) === BigInt(1)
-
-        setRepaymentPoolChecked(isCreated)
-
-        if (!isCreated) {
-          setIsModalOpen(true)
-          const res = await followRefundFactoryContract?.createRefundPool()
-          const result = await res?.wait()
-
-          setRepaymentPoolChecked(result?.status === 1)
-        }
-        setRepaymentPoolLoading(false)
-      }
-
-      console.log('%c [ browserContractService ]-215', 'font-size:13px; background:#8d7a2e; color:#d1be72;', browserContractService)
-
+      await checkRepaymentPoolChecked()
       // if (repaymentPoolChecked && !documentChecked) {
       //   setDocumentLoading(true)
 
@@ -332,11 +366,16 @@ const ApplyLoan = () => {
   const onFinish = async (value: LoanRequisitionEditModel) => {
     console.log('%c [ value ]-319', 'font-size:13px; background:#115dc6; color:#55a1ff;', value)
     setPublishBtnLoading(true)
-    setLoanRequisitionEditModel(preState =>
-      ({ ...preState, ...value }),
-    )
 
     try {
+      // await checkDoublePoolIsCreated()
+
+      // await createLoan()
+
+      setLoanRequisitionEditModel(preState =>
+        ({ ...preState, ...value }),
+      )
+
       await handleOk()
 
       setPublishBtnLoading(false)
@@ -353,10 +392,6 @@ const ApplyLoan = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false)
-  }
-
-  const onChange = (e: CheckboxChangeEvent) => {
-    console.log(`checked = ${e.target.checked}`)
   }
 
   const beforeUpload = () => {
@@ -415,7 +450,7 @@ const ApplyLoan = () => {
                 <Button type="primary" loading={capitalPoolLoading} />
                 )
               : null}
-            <Checkbox disabled checked={capitalPoolChecked} onChange={onChange}>
+            <Checkbox disabled checked={capitalPoolChecked} >
               Capital pool contract
             </Checkbox>
           </div>
@@ -432,7 +467,6 @@ const ApplyLoan = () => {
             <Checkbox
               disabled
               checked={repaymentPoolChecked}
-              onChange={onChange}
             >
               Create a repayment pool
             </Checkbox>
@@ -444,7 +478,7 @@ const ApplyLoan = () => {
                 <Button type="primary" loading={createLoading} />
                 )
               : null}
-            <Checkbox disabled checked={documentChecked} onChange={onChange}>
+            <Checkbox disabled checked={documentChecked} >
               Create document
             </Checkbox>
           </div>
