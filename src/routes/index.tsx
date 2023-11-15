@@ -3,11 +3,11 @@ import React, { lazy } from 'react'
 import BasicLayout from '@/layouts/BasicLayout'
 import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
-import ApplyLoan from '@/pages/apply-loan'
+import ApplyLoan from '@/pages/loan/apply-loan'
 import MyLoan from '@/pages/personal-center/my-loan'
 import Lend from '@/pages/lend'
 import OrderViewAll from '@/pages/index/order-view-all'
-import LoanDetails from '@/pages/loan-details'
+import LoanDetails from '@/pages/loan/loan-details'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))

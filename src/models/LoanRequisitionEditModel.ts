@@ -35,11 +35,11 @@ export class LoanRequisitionEditModel {
   designatedTransaction = true
 
   /** 交易形式 */
-  tradingFormType: 'Empty' | 'SpotGoods' | 'Contract' = 'Empty'
+  tradingFormType: 'Empty' | 'SpotGoods' | 'Contract' | null = 'SpotGoods'
   /** 交易平台 */
-  tradingPlatformType: 'Empty' | 'Uniswap' | 'GMX' = 'Empty'
+  tradingPlatformType: 'Empty' | 'Uniswap' | 'GMX' | null = 'Uniswap'
   /** 展示的平台账号 */
   showPlatforms?: 'Twitter'[] = undefined
   /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
-  transactionPairs?: string[] = []
+  transactionPairs?: string[] = ['BTC']
 }

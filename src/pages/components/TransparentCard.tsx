@@ -17,10 +17,15 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
   return (
       <div className="flex items-center">
         <Avatar src={src} className='h40 w40' />
-        <div className="ml-4">
+        {
+          name && twitter
+            ? <div className="ml-4">
           <h2 className="m0 p0 text-14 font-semibold">{name}</h2>
           <span className="text-12 text-gray-500">@{twitter}</span>
         </div>
+            : 'Not bound'
+        }
+
       </div>
   )
 }
@@ -29,7 +34,7 @@ const TransparentCard: React.FC<CardProps> = ({ item }) => {
   const navigate = useNavigate()
 
   return (
-      <div className="box-border h-429 w-315 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
+      <div className="box-border h-429 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
         <img
           src={item?.picUrl}
           alt={item.loanName}

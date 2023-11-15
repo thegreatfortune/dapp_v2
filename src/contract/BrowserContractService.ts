@@ -73,6 +73,17 @@ export class BrowserContractService {
 
   private _followManageContract: FollowManage | undefined
 
+  async getCapitalPoolAddress(): Promise<string | undefined> {
+    const followFactoryContract = await this.getFollowFactoryContract()
+
+    const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+
+    if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
+      return
+
+    return capitalPoolAddress
+  }
+
   /**
    *资金池
    *
@@ -86,11 +97,9 @@ export class BrowserContractService {
     const followFactoryContract = await this.getFollowFactoryContract()
 
     const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
-    console.log('%c [ capitalPoolAddress ]-87', 'font-size:13px; background:#0719a0; color:#4b5de4;', capitalPoolAddress, this.getSigner.address)
 
     if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
       return
-    console.log('%c [ return ]-94', 'font-size:13px; background:#d9ee12; color:#ffff56;', 'return')
 
     this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
@@ -98,7 +107,6 @@ export class BrowserContractService {
       this.signer,
     )
 
-    console.log('%c [!!! this._followCapitalPoolContract ]-96', 'font-size:13px; background:#649981; color:#a8ddc5;', this._followCapitalPoolContract)
     return this._followCapitalPoolContract
   }
 
@@ -109,8 +117,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getFollowFactoryContract(): Promise<FollowFactory> {
-    // if (this._followFactoryContract)
-    //   return this._followFactoryContract
+    if (this._followFactoryContract)
+      return this._followFactoryContract
 
     return this._followFactoryContract = createContract<FollowFactory>(
       import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,

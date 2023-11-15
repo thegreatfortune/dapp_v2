@@ -183,7 +183,7 @@ const ApplyLoan = () => {
     try {
       setIsModalOpen(true)
 
-      // TODO: decimals
+      // TODO: decimals token标志位
 
       const followCapitalPoolContract
         = await browserContractService?.getFollowCapitalPoolContract()
@@ -199,8 +199,8 @@ const ApplyLoan = () => {
           BigInt(loanRequisitionEditModel.numberOfCopies),
           BigInt(loanRequisitionEditModel.minimumRequiredCopies),
         ],
-        BigInt((loanRequisitionEditModel.raisingTime * 24 * 60 * 60)),
-        BigInt((loanRequisitionEditModel.applyLoan * 10 ** 18)),
+        BigInt(loanRequisitionEditModel.raisingTime) * BigInt(24 * 60 * 60),
+        BigInt(loanRequisitionEditModel.applyLoan) * BigInt(10 ** 18),
       )
 
       const result = await res?.wait()
@@ -330,7 +330,7 @@ const ApplyLoan = () => {
       // if (repaymentPoolChecked && !documentChecked) {
       //   setDocumentLoading(true)
 
-      //   // TODO 如果已有订单 并且未清算则不能继续创建订单 (还有黑名单检查)
+      // TODO 检查订单状态 如果已有订单 并且未清算则不能继续创建订单 (还有黑名单检查)
 
       //   await handleOk()
 
@@ -400,10 +400,40 @@ const ApplyLoan = () => {
   }
 
   function onValuesChange(val: Record<string, any>) {
-    setLoanRequisitionEditModel(prevState => ({
-      ...prevState,
-      ...val,
-    }))
+    setLoanRequisitionEditModel((prevState) => {
+      if ('tradingFormType' in val) {
+        return ({
+          ...prevState,
+          ...val,
+          tradingPlatformType: val.tradingFormType === 'SpotGoods' ? 'Uniswap' : 'GMX',
+        })
+      }
+
+      return ({
+        ...prevState,
+        ...val,
+      })
+    })
+  }
+
+  // TODO 重置数据
+  function designatedTransactionChange(v: boolean) {
+    setLoanRequisitionEditModel((prevState) => {
+      if (!v && !prevState.tradingPlatformType) {
+        return ({
+          ...prevState,
+          tradingFormType: 'SpotGoods',
+          tradingPlatformType: 'Uniswap',
+        })
+      }
+
+      return ({
+        ...prevState,
+        designatedTransaction: v,
+        tradingFormType: 'Empty',
+        tradingPlatformType: 'Empty',
+      })
+    })
   }
 
   return (
@@ -795,10 +825,8 @@ const ApplyLoan = () => {
               }
               defaultValue={true}
               onChange={v =>
-                setLoanRequisitionEditModel(prevState => ({
-                  ...prevState,
-                  designatedTransaction: v,
-                }))
+                designatedTransactionChange(v)
+
               }
               options={[
                 { value: true, label: 'YES' },
@@ -827,12 +855,17 @@ const ApplyLoan = () => {
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
                   defaultValue={Models.TradingFormType.SpotGoods}
-                  onChange={v =>
-                    setLoanRequisitionEditModel(prevState => ({
-                      ...prevState,
-                      tradingFormType: v,
-                    }))
-                  }
+                  // onChange={(v) => {
+                  //   console.log('%c [ v ]-833', 'font-size:13px; background:#79619f; color:#bda5e3;', v)
+                  //   setLoanRequisitionEditModel(prevState => ({
+                  //     ...prevState,
+                  //     tradingFormType: v,
+                  //     // tradingPlatformType: v === 'SpotGoods'
+                  //     //   ? 'Uniswap'
+                  //     //   : 'GMX',
+                  //   }))
+                  // }
+                  // }
                   options={[
                     {
                       value: Models.TradingFormType.SpotGoods,
@@ -851,19 +884,24 @@ const ApplyLoan = () => {
                 initialValue="Uniswap"
                 className="m0"
               >
+                 {/* START 冗余 为了页面更新 */}
+                <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span>
+                {/* END */}
                 <Select
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
                   className="box-border h68 s-container text-24 !w306"
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
+                  key={ loanRequisitionEditModel.tradingPlatformType}
                   defaultValue="Uniswap"
                   disabled
+
                   value={
-                    loanRequisitionEditModel.tradingFormType
-                      === Models.TradingFormType.SpotGoods
-                      ? 'Uniswap'
-                      : 'GMX'
+                    loanRequisitionEditModel.tradingPlatformType
+                      // === Models.TradingFormType.SpotGoods
+                      // ? 'Uniswap'
+                      // : 'GMX'
                   }
                   options={[
                     { value: 'Uniswap', label: 'Uniswap' },
