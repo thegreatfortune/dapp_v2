@@ -45,7 +45,7 @@ const TransparentCard: React.FC<CardProps> = ({ item }) => {
                 Apply for loan
               </li>
               <li className='h29 text-16 c-#FFFFFF'>
-                {item.loanMoney} USDT
+                {(item.loanMoney ?? 0) / 10 ** 18} USDT
               </li>
               <li>
                 <CustomAvatar src={'item.'} name={'xasxsa'} twitter={'xsaxas'} />

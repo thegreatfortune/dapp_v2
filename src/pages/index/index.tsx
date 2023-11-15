@@ -17,7 +17,7 @@ const Index = () => {
   useEffect(() => {
     async function fetchData() {
       const params = new Models.ApiLoanPageLoanContractGETParams()
-      params.limit = 100
+      params.limit = 8
 
       if (isContractAddress(queryString ?? ''))
         params.capitalPoolContract = queryString
@@ -26,10 +26,7 @@ const Index = () => {
       else
         params.loanName = queryString
 
-      console.log('%c [ params ]-31', 'font-size:13px; background:#b902b6; color:#fd46fa;', params)
-
       const res = await LoanService.ApiLoanPageLoanContract_GET(params)
-      console.log('%c [ res ]-47', 'font-size:13px; background:#1ddde1; color:#61ffff;', res)
 
       res.records && setLoanOrderVO(res.records)
     }
@@ -57,9 +54,9 @@ const Index = () => {
 
       <div className='h63 w-full'></div>
 
-      <CardsContainer title='🔥 High Credit' records={loanOrderVO} to='/view-all?title=🔥 High Credit' />
-      <CardsContainer title='💥 Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
-      <CardsContainer title='Blacklist' records={loanOrderVO} to='/view-all?title=Blacklist' />
+      <CardsContainer key='HighCredit' title='🔥 High Credit' records={loanOrderVO} to='/view-all?title=🔥 High Credit' />
+      <CardsContainer key='PopularToFollow' title='💥 Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
+      <CardsContainer key='Blacklist' title='Blacklist' records={loanOrderVO} to='/view-all?title=Blacklist' />
 
     </div>
   )

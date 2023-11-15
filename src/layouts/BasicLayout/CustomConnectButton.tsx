@@ -1,7 +1,35 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { debounce } from 'lodash-es'
+import { UserService } from '../../.generated/api/User'
 import UserDropdown from './UserDropdown'
+import useUserStore from '@/store/userStore'
 
 const CustomConnectButton = () => {
+  const { signIn } = useUserStore()
+
+  if (!window.ethereum._accountsChangedHandler) {
+    window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
+      const [address] = addressList
+
+      if (address) {
+        try {
+          const res = await UserService.ApiUserLogin_POST({ address })
+          console.log('%c [ res ]-17', 'font-size:13px; background:#641442; color:#a85886;', res)
+
+          if (res.success)
+            signIn({ address, accessToken: res.accessToken })
+        }
+        catch (error) {
+          console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
+        }
+      }
+
+      window.location.reload()
+    }, 1000)
+  }
+
+  window.ethereum.on('accountsChanged', window.ethereum._accountsChangedHandler)
+
   return <ConnectButton.Custom>
     {({
       account,

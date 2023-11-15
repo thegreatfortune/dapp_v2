@@ -8,7 +8,7 @@ const OrderViewAll = () => {
   const [title] = params.getAll('title')
   return (
     <div>
-        <CardsContainer title={title} isViewAll={true} records = {[
+        <CardsContainer key='sas' title={title} isViewAll={true} records = {[
           {
             userId: 2023111400000006100,
             tradeId: 18,

@@ -54,7 +54,7 @@ const ApplyLoan = () => {
 
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
 
-  const [tradingPair, setTradingPair] = useState([
+  const [tradingPair] = useState([
     [
       {
         logo: BTC_logo,
@@ -111,15 +111,9 @@ const ApplyLoan = () => {
     ],
   ])
 
-  const [loanConfirm, setLoanConfirm] = useState(new Models.LoanConfirmParam())
-
   const [tradingPairBase, tradingPairSpotGoods, tradingPairContract]
     = tradingPair
   const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
-
-  useEffect(() => {
-    createLoan()
-  }, [checkers])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,9 +143,9 @@ const ApplyLoan = () => {
     fetchData()
   }, [browserContractService])
 
-  // useEffect(() => {
-  //   createLoan()
-  // }, [loanRequisitionEditModel])
+  useEffect(() => {
+    createLoan()
+  }, [loanRequisitionEditModel])
 
   async function reSet() {
     // 重置
@@ -167,24 +161,22 @@ const ApplyLoan = () => {
     }
   }
 
-  const handleOk = async () => {
+  const handleOk = async (value: LoanRequisitionEditModel) => {
     await checkDoublePoolIsCreated()
-    await createLoan()
+    // await createLoan()
+    setLoanRequisitionEditModel(preState =>
+      ({ ...preState, ...value }),
+    )
   }
 
   async function createLoan() {
+    console.log('%c [ loanRequisitionEditModel ]-214', 'font-size:13px; background:#0c926b; color:#50d6af;', loanRequisitionEditModel)
     console.log('%c [ d stata ]-179', 'font-size:13px; background:#75dde6; color:#b9ffff;', capitalPoolChecked, repaymentPoolChecked)
+
     if (!capitalPoolChecked || !repaymentPoolChecked)
       return
 
-    setLoanConfirm({
-      ...loanConfirm,
-      loanName: loanRequisitionEditModel.itemTitle ?? '',
-      loanIntro: loanRequisitionEditModel.description ?? '',
-      transactionPairs: loanRequisitionEditModel.transactionPairs,
-      tradingFormType: loanRequisitionEditModel.tradingFormType,
-      tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
-    })
+    console.log('%c [ 执行 ]-181', 'font-size:13px; background:#896f7b; color:#cdb3bf;')
 
     setCreateLoading(true)
 
@@ -192,21 +184,9 @@ const ApplyLoan = () => {
       setIsModalOpen(true)
 
       // TODO: decimals
-      // loanRequisitionEditModel.applyLoan = loanRequisitionEditModel.applyLoan * 10 ** 18
-
-      // loanRequisitionEditModel.raisingTime
-      //   = loanRequisitionEditModel.raisingTime * 24 * 60 * 60
-
-      // loanRequisitionEditModel.interest
-      //   = loanRequisitionEditModel.interest * 100
-
-      const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(browserContractService?.getSigner.address ?? '')
-      // console.log('%c [ followFactoryContract ]-202', 'font-size:13px; background:#f1a5e2; color:#ffe9ff;', followFactoryContract)
 
       const followCapitalPoolContract
         = await browserContractService?.getFollowCapitalPoolContract()
-
-      // console.log('%c [ followCapitalPoolContract ]-198', 'font-size:13px; background:#a0fe02; color:#e4ff46;', followCapitalPoolContract)
 
       const res = await followCapitalPoolContract?.createOrder(
         [
@@ -228,15 +208,26 @@ const ApplyLoan = () => {
       console.log('%c [ result ]-218', 'font-size:13px; background:#b0456d; color:#f489b1;', result)
 
       if (result?.status === 1) {
+        const loanConfirm = {
+          ...new Models.LoanConfirmParam(),
+          loanName: loanRequisitionEditModel.itemTitle ?? '',
+          loanIntro: loanRequisitionEditModel.description ?? '',
+          transactionPairs: loanRequisitionEditModel.transactionPairs,
+          tradingFormType: loanRequisitionEditModel.tradingFormType,
+          tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
+        }
+
+        const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(browserContractService?.getSigner.address ?? '')
+
         const followManageContract
           = await browserContractService?.getFollowManageContract()
 
-        // const tids = await followManageContract?.getborrowerAllOrdersId(
-        //   browserContractService?.getSigner.address ?? '',
-        //   capitalPoolAddress,
-        // )
+        const tids = await followManageContract?.getborrowerAllOrdersId(
+          browserContractService?.getSigner.address ?? '',
+          capitalPoolAddress ?? '',
+        )
 
-        loanConfirm.tradeId && (loanConfirm.tradeId = 1)
+        loanConfirm.tradeId = Number(tids?.at(-1)) ?? 0
 
         const res = await LoanService.ApiLoanConfirm_POST(loanConfirm)
         console.log('%c [ res ]-244', 'font-size:13px; background:#011256; color:#45569a;', res)
@@ -371,12 +362,11 @@ const ApplyLoan = () => {
       // await checkDoublePoolIsCreated()
 
       // await createLoan()
-
       setLoanRequisitionEditModel(preState =>
         ({ ...preState, ...value }),
       )
 
-      await handleOk()
+      await handleOk(value)
 
       setPublishBtnLoading(false)
       setIsModalOpen(true)
@@ -425,7 +415,7 @@ const ApplyLoan = () => {
             {/* <Button>Custom Button</Button> */}
             <CancelBtn />
             <Button
-              onClick={handleOk}
+              onClick={() => handleOk(loanRequisitionEditModel)}
               loading={createLoading}
               disabled={repaymentPoolLoading || capitalPoolLoading}
             >
