@@ -32,9 +32,8 @@ export namespace Models {
     orderItemList?: Array<OrderItem> = [];
   }
 
-  export class ApiLoanLoanInfoByTradeIdGETParams {
-    /** 订单id */
-    tradeId: string = '';
+  export class ApiLoanLoanInfoGETParams {
+    tradeId?: number = 0;
   }
 
   export class ApiLoanPageLoanContractGETParams {
@@ -78,6 +77,8 @@ Twitter :推特 */
   }
 
   export class ISysWallet {}
+
+  export class IUserWallet {}
 
   export class LoanConfirmParam {
     wallet?: ISysWallet = undefined;
@@ -188,6 +189,7 @@ Twitter :推特 */
 
   export class LoginDto {
     address?: string = undefined;
+    inviteCode?: string = undefined;
   }
 
   export class MetaMaskLoginParam {

@@ -73,15 +73,30 @@ export class BrowserContractService {
 
   private _followManageContract: FollowManage | undefined
 
+  /**
+   *资金池地址
+   *
+   * @private
+   * @type {(string | undefined)}
+   * @memberof BrowserContractService
+   */
+  private _capitalPoolAddress: string | undefined
+
+  /**
+   *获取资金池地址
+   *
+   * @return {*}  {(Promise<string | undefined>)}
+   * @memberof BrowserContractService
+   */
   async getCapitalPoolAddress(): Promise<string | undefined> {
     const followFactoryContract = await this.getFollowFactoryContract()
 
-    const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    this._capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
 
-    if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
+    if (this._capitalPoolAddress === BLACK_HOLE_ADDRESS)
       return
 
-    return capitalPoolAddress
+    return this._capitalPoolAddress
   }
 
   /**
@@ -91,23 +106,13 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getFollowCapitalPoolContract(): Promise<FollowCapitalPool | undefined> {
-    // if (this._followCapitalPoolContract && this._followCapitalPoolContract.target !== BLACK_HOLE_ADDRESS)
-    //   return this._followCapitalPoolContract
+    const capitalPoolAddress = await this.getCapitalPoolAddress()
 
-    const followFactoryContract = await this.getFollowFactoryContract()
-
-    const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
-
-    if (capitalPoolAddress === BLACK_HOLE_ADDRESS)
-      return
-
-    this._followCapitalPoolContract = createContract<FollowCapitalPool>(
+    return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
       followCapitalPool_ABI,
       this.signer,
     )
-
-    return this._followCapitalPoolContract
   }
 
   /**

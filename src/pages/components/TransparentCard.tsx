@@ -65,7 +65,7 @@ const TransparentCard: React.FC<CardProps> = ({ item }) => {
                 {item.tradingForm === 'SpotGoods' ? 'Low' : 'Hight' }
               </li>
               <li>
-                <Button className='mt-10 h30 w-110 text-12 primary-btn' onClick={() => navigate('/loan-details')}>Follow</Button>
+                <Button className='mt-10 h30 w-110 text-12 primary-btn'>Follow</Button>
               </li>
             </ul>
 

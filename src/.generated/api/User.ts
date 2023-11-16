@@ -49,4 +49,13 @@ export class UserService {
       ...(options || {}),
     });
   }
+
+  /** userInfo GET /api/user/userInfo */
+  static async ApiUserUserInfo_GET(options?: { [key: string]: any }) {
+    return request<Models.IUserWallet>({
+      url: '/api/user/userInfo',
+      method: 'GET',
+      ...(options || {}),
+    });
+  }
 }

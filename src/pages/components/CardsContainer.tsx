@@ -44,7 +44,7 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
 
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
         {
-          records.map(e => <div key={e.tradeId} onClick={() => navigate('/loan-details')} > <TransparentCard key={e.tradeId} item={e} /></div>)
+          records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
         }
       </div>
 

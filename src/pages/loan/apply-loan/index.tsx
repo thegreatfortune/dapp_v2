@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
-import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 import { Models } from '@/.generated/api/models'
 import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -45,14 +44,6 @@ const ApplyLoan = () => {
     = useState<boolean>(false)
 
   const [createLoading, setCreateLoading] = useState<boolean>(false)
-
-  const [followFactoryContract, setFollowFactoryContract]
-    = useState<FollowFactory>()
-
-  const [followCapitalPoolContract, setFollowCapitalPoolContract]
-    = useState<FollowCapitalPool | undefined>()
-
-  const [capitalPoolAddress, setCapitalPoolAddress] = useState<string>('')
 
   const [tradingPair] = useState([
     [
@@ -114,34 +105,6 @@ const ApplyLoan = () => {
   const [tradingPairBase, tradingPairSpotGoods, tradingPairContract]
     = tradingPair
   const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const followFactoryContract
-          = await browserContractService?.getFollowFactoryContract()
-
-        const capitalPoolAddress
-          = await followFactoryContract?.AddressGetCapitalPool(
-            browserContractService?.getSigner.address ?? '',
-          )
-
-        setCapitalPoolAddress(capitalPoolAddress!)
-
-        const followCapitalPoolContract
-          = await browserContractService?.getFollowCapitalPoolContract()
-
-        setFollowCapitalPoolContract(followCapitalPoolContract)
-
-        setFollowFactoryContract(followFactoryContract)
-      }
-      catch (error) {
-        console.error('Error:', error)
-      }
-    }
-
-    fetchData()
-  }, [browserContractService])
 
   useEffect(() => {
     createLoan()
@@ -217,7 +180,7 @@ const ApplyLoan = () => {
           tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
         }
 
-        const capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(browserContractService?.getSigner.address ?? '')
+        const capitalPoolAddress = await browserContractService?.getCapitalPoolAddress()
 
         const followManageContract
           = await browserContractService?.getFollowManageContract()
@@ -262,6 +225,8 @@ const ApplyLoan = () => {
       const followRefundFactoryContract
         = await browserContractService?.getFollowRefundFactoryContract()
 
+      const capitalPoolAddress = await browserContractService?.getCapitalPoolAddress()
+
       const isCreated
         = (await followRefundFactoryContract?.getIfCreateRefundPool(
           capitalPoolAddress ?? '',
@@ -291,6 +256,9 @@ const ApplyLoan = () => {
   async function checkCapitalPoolChecked() {
     // 检查是否创建资金池
     if (!capitalPoolChecked) {
+      const followFactoryContract
+        = await browserContractService?.getFollowFactoryContract()
+
       setCapitalPoolLoading(true)
       const isCreated
         = (await followFactoryContract?.getIfCreate(browserContractService?.getSigner?.address ?? ''))
@@ -884,7 +852,7 @@ const ApplyLoan = () => {
                 initialValue="Uniswap"
                 className="m0"
               >
-                 {/* START 冗余 为了页面更新 */}
+                {/* START 冗余 为了页面更新 */}
                 <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span>
                 {/* END */}
                 <Select
@@ -893,15 +861,15 @@ const ApplyLoan = () => {
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
-                  key={ loanRequisitionEditModel.tradingPlatformType}
+                  key={loanRequisitionEditModel.tradingPlatformType}
                   defaultValue="Uniswap"
                   disabled
 
                   value={
                     loanRequisitionEditModel.tradingPlatformType
-                      // === Models.TradingFormType.SpotGoods
-                      // ? 'Uniswap'
-                      // : 'GMX'
+                    // === Models.TradingFormType.SpotGoods
+                    // ? 'Uniswap'
+                    // : 'GMX'
                   }
                   options={[
                     { value: 'Uniswap', label: 'Uniswap' },
