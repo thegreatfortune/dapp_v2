@@ -16,7 +16,7 @@ const Index = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const params = new Models.ApiLoanPageLoanContractGETParams()
+      const params = { ...new Models.ApiLoanPageLoanContractGETParams(), borrowUserId: undefined }
       params.limit = 8
 
       if (isContractAddress(queryString ?? ''))

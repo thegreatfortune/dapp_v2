@@ -1,12 +1,13 @@
 import type { ethers } from 'ethers'
 import { Contract } from 'ethers'
-import type { FollowCapitalPool, FollowFactory, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
+import type { ERC20, FollowCapitalPool, FollowFactory, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
 import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
+import ERC20_ABI from '@/abis/ERC20.json'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -22,6 +23,13 @@ export class BrowserContractService {
   constructor(private signer: ethers.JsonRpcSigner) {
   }
 
+  /**
+   *not a address
+   *
+   * @readonly
+   * @type {ethers.JsonRpcSigner}
+   * @memberof BrowserContractService
+   */
   get getSigner(): ethers.JsonRpcSigner {
     return this.signer
   }
@@ -82,6 +90,8 @@ export class BrowserContractService {
    */
   private _capitalPoolAddress: string | undefined
 
+  private _ERC20Contract: ERC20 | undefined
+
   /**
    *获取资金池地址
    *
@@ -100,11 +110,20 @@ export class BrowserContractService {
   }
 
   /**
-   *资金池
+   *ERC20
    *
    * @return {*}  {Promise<FollowCapitalPool>}
    * @memberof BrowserContractService
    */
+  async getERC20Contract(): Promise<ERC20 | undefined> {
+    // const capitalPoolAddress = await this.getCapitalPoolAddress()
+    return this._ERC20Contract = createContract<ERC20>(
+      import.meta.env.VITE_USDC_ADDRESS,
+      ERC20_ABI,
+      this.signer,
+    )
+  }
+
   async getFollowCapitalPoolContract(): Promise<FollowCapitalPool | undefined> {
     const capitalPoolAddress = await this.getCapitalPoolAddress()
 

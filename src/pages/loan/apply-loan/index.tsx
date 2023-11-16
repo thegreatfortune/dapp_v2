@@ -113,6 +113,9 @@ const ApplyLoan = () => {
   async function reSet() {
     // 重置
     try {
+      const followCapitalPoolContract
+      = await browserContractService?.getFollowCapitalPoolContract()
+
       await followCapitalPoolContract?.initCreateTrade()
     }
     catch (error) {

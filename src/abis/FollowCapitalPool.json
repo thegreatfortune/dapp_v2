@@ -47,6 +47,16 @@
 	},
 	{
 		"inputs": [],
+		"name": "GoalMoneyError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "Locked",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "MinStockError",
 		"type": "error"
 	},
@@ -57,7 +67,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotBorrower",
+		"name": "NotCaller",
 		"type": "error"
 	},
 	{
@@ -312,12 +322,6 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "state",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
@@ -395,6 +399,34 @@
 			}
 		],
 		"name": "approveHandle",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint24",
+				"name": "_fee",
+				"type": "uint24"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "clearingMoney",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -536,6 +568,11 @@
 						"internalType": "uint256",
 						"name": "endMoney",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct IFollowCapitalPool.list",
@@ -560,25 +597,6 @@
 			}
 		],
 		"name": "getPersonlLend",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tradeId",
-				"type": "uint256"
-			}
-		],
-		"name": "getTokenId",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -617,23 +635,8 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint24",
-				"name": "_fee",
-				"type": "uint24"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
 				"type": "uint256"
 			}
 		],
@@ -671,19 +674,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_id",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint24",
-				"name": "_fee",
-				"type": "uint24"
 			}
 		],
 		"name": "singleClearing",

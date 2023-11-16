@@ -10,11 +10,13 @@ const PersonalCenter = () => {
 
   const checkLoanOrderAndUserState = async () => {
     try {
-      const followManageContract = await browserContractService?.getFollowManageContract()
+      // console.log('%c [ browserContractService ]-14', 'font-size:13px; background:#839a06; color:#c7de4a;', browserContractService)
+      // const followManageContract = await browserContractService?.getFollowManageContract()
+      // console.log('%c [ followManageContract ]-15', 'font-size:13px; background:#6eb443; color:#b2f887;', followManageContract)
 
-      followManageContract?.getborrowerAllOrdersId('', 'sa')
+      // followManageContract?.getborrowerAllOrdersId('', 'sa')
 
-      const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract()
+      // const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract()
 
       // followCapitalPoolContract?.getList()
 

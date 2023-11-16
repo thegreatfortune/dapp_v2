@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { BrowserContractService } from '../contract/browserContractService'
 
+// TODO: 单例模式缓存优化
 const useBrowserContract = () => {
   const [provider, setProvider] = useState<ethers.BrowserProvider>()
   const [signer, setSigner] = useState<ethers.JsonRpcSigner>()

@@ -10,6 +10,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "NotThisRefundPool",
+		"type": "error"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -29,6 +34,11 @@
 			}
 		],
 		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "refundNotCreate",
 		"type": "error"
 	},
 	{
@@ -245,12 +255,6 @@
 	{
 		"anonymous": false,
 		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "state",
-				"type": "uint256"
-			},
 			{
 				"indexed": false,
 				"internalType": "address",
@@ -477,11 +481,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "state",
-				"type": "uint256"
-			},
-			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
@@ -626,6 +625,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "getLockState",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getMultiFee",
 		"outputs": [
 			{
@@ -645,6 +657,44 @@
 				"internalType": "uint8",
 				"name": "",
 				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTokenIdIfWithdraw",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTradeIdToCapitalPool",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -753,6 +803,11 @@
 				"internalType": "address",
 				"name": "_followFactory",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_followRefundFactory",
+				"type": "address"
 			}
 		],
 		"name": "setFactory",
@@ -769,6 +824,13 @@
 			}
 		],
 		"name": "setFeeAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "setLock",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -795,6 +857,24 @@
 			}
 		],
 		"name": "setSingleFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "refundPool",
+				"type": "address"
+			}
+		],
+		"name": "setTokenIdIfWithdraw",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

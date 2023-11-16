@@ -45,9 +45,17 @@ export namespace Models {
     minLoanPrice?: string = undefined;
     /** 筛选出贷款金额小于该值的 */
     maxLoanPrice?: string = undefined;
+    /** 借款用户id筛选 */
+    borrowUserId?: number = 0;
+    /** 借款订单状态
+Following :跟随中, 正在筹款
+Trading :交易中, 已筹完
+PaidOff :已还清, 借款订单结束
+Blacklist :黑名单 */
+    state?: string = undefined;
     /** 根据用户昵称筛选 */
     userNickname?: string = undefined;
-    /** 根据绑定平台昵称筛选 */
+    /** 根据绑定平台名称筛选 */
     bindPlatform?: string = undefined;
     /** 资金池地址 */
     capitalPoolContract?: string = undefined;
@@ -185,6 +193,8 @@ Twitter :推特 */
     /** 订单结束时间(清算时间) */
     endTime?: number = 0;
     showPlatformUserList?: PlatformUserVo[] = undefined;
+    /** 已筹集份数 */
+    collectCopies?: number = 0;
   }
 
   export class LoginDto {
@@ -217,6 +227,15 @@ Twitter :推特 */
     asc?: boolean = false;
   }
 
+  export class PageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    loanId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
   export class PageResult<T> {
     /** 数据列表 */
     records?: T[] = undefined;
@@ -241,6 +260,19 @@ Twitter :推特 */
     'UNPAID' = 'UNPAID',
     'REPAID' = 'REPAID',
     'OVERDUE' = 'OVERDUE',
+  }
+
+  export class RepayPlanVo {
+    /** 订单id */
+    loanId?: number = 0;
+    /** 还款时间 */
+    repayTime?: string = undefined;
+    /** 0 == 未偿还 */
+    state?: 'UNPAID' | 'REPAID' | 'OVERDUE' = undefined;
+    /** 表示是第几期偿还 */
+    nowCount?: number = 0;
+    /** 偿还token */
+    repayFee?: number = 0;
   }
 
   export class Result<T> {

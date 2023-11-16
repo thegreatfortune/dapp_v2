@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --open & gen:type",
+    "dev": "vite --open & gen:abi",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
     "gen:api": "ts-node --esm openapi.config.ts",
     "lint:fix": "eslint . --fix",
-    "gen:type": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",
+    "gen:abi": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
@@ -19,6 +19,7 @@
     "ahooks": "^3.7.8",
     "antd": "^5.9.4",
     "axios": "^1.6.0",
+    "bignumber.js": "^9.1.2",
     "ethers": "^6.7.1",
     "i18next": "^23.6.0",
     "lodash-es": "^4.17.21",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",
+    "@types/bignumber.js": "^5.0.0",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/lodash-es": "^4.17.11",

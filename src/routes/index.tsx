@@ -8,6 +8,7 @@ import MyLoan from '@/pages/personal-center/my-loan'
 import Lend from '@/pages/lend'
 import OrderViewAll from '@/pages/index/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
+import MyLend from '@/pages/personal-center/my-lend'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -64,6 +65,17 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       <BasicLayout>
         <React.Suspense fallback={<div>Loading...</div>}>
           <MyLoan />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+  },
+  {
+    path: '/my-lend',
+    meta: { showInput: false },
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <MyLend />
         </React.Suspense>
       </BasicLayout>
     ),

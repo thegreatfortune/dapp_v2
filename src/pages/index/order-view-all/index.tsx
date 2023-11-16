@@ -11,7 +11,7 @@ const OrderViewAll = () => {
         <CardsContainer key='sas' title={title} isViewAll={true} records = {[
           {
             userId: 2023111400000006100,
-            tradeId: 18,
+            tradeId: 48,
             state: 'Following',
             tradingPlatform: 'Empty',
             tradingForm: 'Empty',
