@@ -53,6 +53,10 @@ const ApplyLoan = () => {
       },
       {
         logo: '',
+        name: 'FollowToken',
+      },
+      {
+        logo: '',
         name: 'ETH',
       },
       {

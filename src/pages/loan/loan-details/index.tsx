@@ -255,7 +255,7 @@ const LoanDetails = () => {
       <Radio.Button value="small">Room trade</Radio.Button>
     </Radio.Group>
 
-    <DesignatedPosition/>
+    <DesignatedPosition tradeId={tradeId ? BigInt(tradeId) : null} />
   </div>)
 }
 

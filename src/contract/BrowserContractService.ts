@@ -95,11 +95,17 @@ export class BrowserContractService {
   /**
    *获取资金池地址
    *
+   * @param {bigint} [tradeId]
    * @return {*}  {(Promise<string | undefined>)}
    * @memberof BrowserContractService
    */
-  async getCapitalPoolAddress(): Promise<string | undefined> {
+  async getCapitalPoolAddress(tradeId?: bigint): Promise<string | undefined> {
     const followFactoryContract = await this.getFollowFactoryContract()
+
+    if (Number(tradeId) >= 0 && tradeId) {
+      const followManageContract = await this.getFollowManageContract()
+      return followManageContract?.getTradeIdToCapitalPool(tradeId)
+    }
 
     const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
 
@@ -120,12 +126,12 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowCapitalPool>}
    * @memberof BrowserContractService
    */
-  async getERC20Contract(): Promise<ERC20 | undefined> {
-    if (this._ERC20Contract)
+  async getERC20Contract(token?: string): Promise<ERC20 | undefined> {
+    if (this._ERC20Contract && !token)
       return this._ERC20Contract
 
     return this._ERC20Contract = createContract<ERC20>(
-      import.meta.env.VITE_USDC_ADDRESS,
+      token ?? import.meta.env.VITE_USDC_ADDRESS,
       ERC20_ABI,
       this.signer,
     )
@@ -221,11 +227,6 @@ export class BrowserContractService {
     if (this._followManageContract)
       return this._followManageContract
 
-    // const provider = new JsonRpcProvider(import.meta.env.VITE_RPC)
-
-    // return new Contract(import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, followManage_ABI, provider) as unknown as FollowManage
-
-    // console.log('%c [ import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS ]-223', 'font-size:13px; background:#99e25d; color:#ddffa1;', import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS)
     return this._followManageContract = createContract<FollowManage>(
       import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS,
       followManage_ABI,
