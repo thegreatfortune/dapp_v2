@@ -3,6 +3,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
 import '@/utils/request.ts'
 
 import '@rainbow-me/rainbowkit/styles.css'
@@ -22,13 +25,23 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import './index.css'
 import '@/locale/i18n.ts'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import App from './App.tsx'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
+
+dayjs.extend(relativeTime)
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai, arbitrum],
   [
-    alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_ID }),
+    // alchemyProvider({
+    //   apiKey: import.meta.env.VITE_ALCHEMY_ID,
+    // }),
+    // jsonRpcProvider({
+    //   rpc: chain => ({
+    //     http: import.meta.env.VITE_ALCHEMY_ID,
+    //   }),
+    // }),
     publicProvider(),
   ],
 )

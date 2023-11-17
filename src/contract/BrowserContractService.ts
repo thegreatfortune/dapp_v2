@@ -1,5 +1,5 @@
 import type { ethers } from 'ethers'
-import { Contract } from 'ethers'
+import { Contract, JsonRpcProvider } from 'ethers'
 import type { ERC20, FollowCapitalPool, FollowFactory, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
@@ -101,22 +101,29 @@ export class BrowserContractService {
   async getCapitalPoolAddress(): Promise<string | undefined> {
     const followFactoryContract = await this.getFollowFactoryContract()
 
-    this._capitalPoolAddress = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
 
-    if (this._capitalPoolAddress === BLACK_HOLE_ADDRESS)
+    if (cp === BLACK_HOLE_ADDRESS) {
+      console.error('%cCapitalPoolAddress:', cp)
+
+      Promise.reject(new Error(`capital pool address is black hole: ${cp}`))
       return
+    }
 
-    return this._capitalPoolAddress
+    return this._capitalPoolAddress = cp
   }
 
   /**
    *ERC20
    *
+   * .
    * @return {*}  {Promise<FollowCapitalPool>}
    * @memberof BrowserContractService
    */
   async getERC20Contract(): Promise<ERC20 | undefined> {
-    // const capitalPoolAddress = await this.getCapitalPoolAddress()
+    if (this._ERC20Contract)
+      return this._ERC20Contract
+
     return this._ERC20Contract = createContract<ERC20>(
       import.meta.env.VITE_USDC_ADDRESS,
       ERC20_ABI,
@@ -124,8 +131,8 @@ export class BrowserContractService {
     )
   }
 
-  async getFollowCapitalPoolContract(): Promise<FollowCapitalPool | undefined> {
-    const capitalPoolAddress = await this.getCapitalPoolAddress()
+  async getFollowCapitalPoolContract(cp?: string): Promise<FollowCapitalPool | undefined> {
+    const capitalPoolAddress = cp ?? await this.getCapitalPoolAddress()
 
     return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
@@ -214,10 +221,28 @@ export class BrowserContractService {
     if (this._followManageContract)
       return this._followManageContract
 
+    // const provider = new JsonRpcProvider(import.meta.env.VITE_RPC)
+
+    // return new Contract(import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, followManage_ABI, provider) as unknown as FollowManage
+
+    // console.log('%c [ import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS ]-223', 'font-size:13px; background:#99e25d; color:#ddffa1;', import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS)
     return this._followManageContract = createContract<FollowManage>(
       import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS,
       followManage_ABI,
       this.signer,
     )
+  }
+
+  /**
+   *根据订单ID获取资金池合约
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getFollowCapitalPoolContractByTradeId(tradeId: bigint) {
+    const followManageContract = await this.getFollowManageContract()
+    const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+    return this.getFollowCapitalPoolContract(cp)
   }
 }

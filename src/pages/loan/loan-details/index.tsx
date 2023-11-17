@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import { InputNumber, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import InfoCard from './components/InfoCard'
+import Countdown from './components/Countdown'
+import DesignatedPosition from './components/DesignatedPosition'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -14,6 +16,8 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
+
+  // TODO 已筹集份数
 
   const navigate = useNavigate()
 
@@ -27,6 +31,8 @@ const LoanDetails = () => {
 
   const [lendState, setLendState] = useState<'Processing' | 'Success'>()
 
+  const [checkMaxLoading, setCheckMaxLoading] = useState(false)
+
   useEffect(() => {
     async function fetchData() {
       if (tradeId) {
@@ -38,6 +44,31 @@ const LoanDetails = () => {
     fetchData()
   }, [tradeId])
 
+  useEffect(() => {
+    async function checkMax() {
+      if (!tradeId || !checkMaxLoading)
+        return
+
+      try {
+        const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContractByTradeId(BigInt(tradeId))
+
+        const res = await followCapitalPoolContract?.getList(tradeId)
+
+        if (res) {
+          const copies = BigInt(res[9]) as unknown as number
+          setCopies(copies)
+        }
+      }
+      catch (error) {
+        console.log('%c [ error ]-107', 'font-size:13px; background:#64ed0c; color:#a8ff50;', error)
+      }
+      finally {
+        setCheckMaxLoading(false)
+      }
+    }
+    checkMax()
+  }, [checkMaxLoading])
+
   const handleOk = async () => {
     if (!tradeId || !copies)
       return
@@ -45,42 +76,65 @@ const LoanDetails = () => {
     setLendState('Processing')
 
     try {
-      const RC20Contract = await browserContractService?.getERC20Contract()
       if (!browserContractService?.getSigner.address)
         return
 
-      const cp = await browserContractService.getCapitalPoolAddress()
+      const ERC20Contract = await browserContractService?.getERC20Contract()
+
+      const followManageContract = await browserContractService?.getFollowManageContract()
+
+      const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+
+      console.log('%c [ cp ]-60', 'font-size:13px; background:#8ef2e0; color:#d2ffff;', cp)
 
       if (!cp)
         return
 
-      const approveRes = await RC20Contract?.approve(cp, BigInt(200 * 10 ** 6 * 10 ** 18))
-      if (!approveRes)
-        return
+      const allowance = await ERC20Contract?.allowance(cp, browserContractService?.getSigner.address)
+      console.log('%c [ allowance ]-67', 'font-size:13px; background:#ffc377; color:#ffffbb;', allowance)
 
-      const approveResult = await approveRes?.wait()
-      if (approveResult?.status === 1) {
-        const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract()
-        const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
-        const result = await res?.wait()
-        if (result?.status === 1) {
-          setLendState('Success')
+      if ((allowance ?? BigInt(0)) <= BigInt(0)) {
+        const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
+        if (!approveRes)
+          return
 
-          navigate('/my-lend')
+        const approveResult = await approveRes?.wait()
+
+        if (approveResult?.status !== 1) {
+          message.error('operation failure')
+          setLendState(undefined)
+          return
         }
       }
-      else {
-        message.error('授权失败')
-        setLendState(undefined)
-      }
+
+      const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract(cp)
+
+      const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
+
+      const result = await res?.wait()
+      if (result?.status === 1)
+        setLendState('Success')
+        // navigate('/my-lend')
+      else
+        message.error('operation failure')
     }
     catch (error) {
-      console.log('%c [ error ]-42', 'font-size:13px; background:#6dfa68; color:#b1ffac;', error)
-      setLendState(undefined)
+      console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }
-    finally {
-      setIsModalOpen(false)
-    }
+    // finally {
+    //   // setIsModalOpen(false)
+    //   // setLendState(undefined)
+    // }
+  }
+
+  async function onSetMax() {
+    setCheckMaxLoading(true)
+  }
+
+  function confirmLend() {
+    navigate('/my-lend')
+    setIsModalOpen(false)
+    setLendState(undefined)
   }
 
   return (<div className='w-full'>
@@ -91,14 +145,14 @@ const LoanDetails = () => {
       footer={lendState === 'Processing'
         ? null
         : [
-        <Button key="submit" type="primary" onClick={() => handleOk()}>
-          Follow
-        </Button>,
-        lendState === 'Success'
-          ? null
-          : <Button key="Cancel" onClick={() => setIsModalOpen(false)}>
-            Cancel
+          <Button key="submit" type="primary" onClick={() => handleOk()}>
+            Follow
           </Button>,
+          lendState === 'Success'
+            ? null
+            : <Button key="Cancel" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>,
           ]}
     >
       {
@@ -113,7 +167,7 @@ const LoanDetails = () => {
                 max={(loanInfo.goalCopies ?? 0) - (loanInfo.collectCopies ?? 0)}
                 onChange={v => setCopies(v)}
               />
-              <Button type='primary' onClick={() => setCopies((loanInfo.goalCopies ?? 0) - (loanInfo.collectCopies ?? 0))}>
+              <Button type='primary' loading={checkMaxLoading} onClick={onSetMax}>
                 MAX
               </Button>
             </div>
@@ -123,6 +177,7 @@ const LoanDetails = () => {
             : <div>
               <h2>Success</h2>
               {copies}Share
+              <Button className='primary-btn' onClick={confirmLend}>Confirm</Button>
             </div>
       }
     </SModal>
@@ -136,7 +191,7 @@ const LoanDetails = () => {
           <div>
             <div className='flex'>
               <Button className='mr-33'>Following</Button>
-              <span> follow end time</span>
+              <span> follow end time {<Countdown targetTimestamp={loanInfo.endTime ?? 0} />}</span>
             </div>
             <div className='mb20 mt30'>  Sound Wave V!</div>
 
@@ -176,7 +231,7 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Risk level</li>
-            <li> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'Hight'}</li>
+            <li> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
@@ -186,7 +241,7 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Purchased copies</li>
-            <li>loanInfo Purchased</li>
+            <li>{loanInfo.collectCopies}</li>
           </ul>
 
         </div>
@@ -200,6 +255,7 @@ const LoanDetails = () => {
       <Radio.Button value="small">Room trade</Radio.Button>
     </Radio.Group>
 
+    <DesignatedPosition/>
   </div>)
 }
 

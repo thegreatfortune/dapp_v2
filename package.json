@@ -20,6 +20,7 @@
     "antd": "^5.9.4",
     "axios": "^1.6.0",
     "bignumber.js": "^9.1.2",
+    "dayjs": "^1.11.10",
     "ethers": "^6.7.1",
     "i18next": "^23.6.0",
     "lodash-es": "^4.17.21",
@@ -33,9 +34,9 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",
-    "@types/bignumber.js": "^5.0.0",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
+    "@types/bignumber.js": "^5.0.0",
     "@types/lodash-es": "^4.17.11",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
