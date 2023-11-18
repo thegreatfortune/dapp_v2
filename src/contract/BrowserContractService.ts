@@ -1,5 +1,6 @@
 import type { ethers } from 'ethers'
-import { Contract, JsonRpcProvider } from 'ethers'
+import { Contract } from 'ethers'
+import { message } from 'antd'
 import type { ERC20, FollowCapitalPool, FollowFactory, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
@@ -50,7 +51,7 @@ export class BrowserContractService {
    * @type {(FollowFactory | undefined)}
    * @memberof BrowserContractService
    */
-  private _followFactoryContract: FollowFactory | undefined
+  private _FollowFactoryContract: FollowFactory | undefined
 
   /**
    *还款池
@@ -59,7 +60,7 @@ export class BrowserContractService {
    * @type {(FollowRefundPool | undefined)}
    * @memberof BrowserContractService
    */
-  private _followRefundPoolContract: FollowRefundPool | undefined
+  private _refundPoolContract: FollowRefundPool | undefined
 
   /**
    *还款池工厂
@@ -68,7 +69,7 @@ export class BrowserContractService {
    * @type {(FollowRefundFactory | undefined)}
    * @memberof BrowserContractService
    */
-  private _followRefundFactoryContract: FollowRefundFactory | undefined
+  private _refundFactoryContract: FollowRefundFactory | undefined
 
   /**
    *ProcessCenter
@@ -127,17 +128,17 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getERC20Contract(token?: string): Promise<ERC20 | undefined> {
-    if (this._ERC20Contract && !token)
-      return this._ERC20Contract
+    // if (this._ERC20Contract && !token)
+    //   return this._ERC20Contract
 
     return this._ERC20Contract = createContract<ERC20>(
-      token ?? import.meta.env.VITE_USDC_ADDRESS,
+      token ?? import.meta.env.VITE_USDC_TOKEN,
       ERC20_ABI,
       this.signer,
     )
   }
 
-  async getFollowCapitalPoolContract(cp?: string): Promise<FollowCapitalPool | undefined> {
+  async getCapitalPoolContract(cp?: string): Promise<FollowCapitalPool | undefined> {
     const capitalPoolAddress = cp ?? await this.getCapitalPoolAddress()
 
     return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
@@ -154,10 +155,10 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getFollowFactoryContract(): Promise<FollowFactory> {
-    if (this._followFactoryContract)
-      return this._followFactoryContract
+    if (this._FollowFactoryContract)
+      return this._FollowFactoryContract
 
-    return this._followFactoryContract = createContract<FollowFactory>(
+    return this._FollowFactoryContract = createContract<FollowFactory>(
       import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,
       followFactory_ABI,
       this.signer,
@@ -170,13 +171,13 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowRefundPool>}
    * @memberof BrowserContractService
    */
-  async getFollowRefundPoolContract(): Promise<FollowRefundPool> {
-    if (this._followRefundPoolContract)
-      return this._followRefundPoolContract
+  async getRefundPoolContract(): Promise<FollowRefundPool> {
+    if (this._refundPoolContract)
+      return this._refundPoolContract
 
     const refundPoolAddress: string = ''
 
-    return this._followRefundPoolContract = createContract<FollowRefundPool>(
+    return this._refundPoolContract = createContract<FollowRefundPool>(
       refundPoolAddress,
       followRefundPool_ABI,
       this.signer,
@@ -189,11 +190,11 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowRefundFactory>}
    * @memberof BrowserContractService
    */
-  async getFollowRefundFactoryContract(): Promise<FollowRefundFactory> {
-    if (this._followRefundFactoryContract)
-      return this._followRefundFactoryContract
+  async getRefundFactoryContract(): Promise<FollowRefundFactory> {
+    if (this._refundFactoryContract)
+      return this._refundFactoryContract
 
-    return this._followRefundFactoryContract = createContract<FollowRefundFactory>(
+    return this._refundFactoryContract = createContract<FollowRefundFactory>(
       import.meta.env.VITE_FOLLOW_REFUND_FACTORY_ADDRESS,
       followRefundFactory_ABI,
       this.signer,
@@ -241,9 +242,77 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async getFollowCapitalPoolContractByTradeId(tradeId: bigint) {
+  async getCapitalPoolContractByTradeId(tradeId: bigint) {
     const followManageContract = await this.getFollowManageContract()
     const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
-    return this.getFollowCapitalPoolContract(cp)
+    return this.getCapitalPoolContract(cp)
+  }
+
+  /**
+   * 未达成目标,贷款人取回token
+   *
+   * @param {bigint} tradeId 未完成筹款目标的最小份数的已创建订单id
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async capitalPool_Refund(tradeId: bigint) {
+    const cp = await this.getCapitalPoolAddress(tradeId)
+    if (!cp) {
+      message.error('capital pool address is undefined')
+      Promise.reject(new Error('capital pool address is undefined'))
+    }
+
+    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+
+    const res = await capitalPoolContract?.refund(tradeId)
+    return res?.wait()
+  }
+
+  /**
+   * 资金池授权handle
+   *
+   * @param {bigint} tradeId
+   * @param {string} token token为已被允许的token组任何一个包括USDC
+   * @param {string} handleAddress handleAddress handle合约地址
+   * @memberof BrowserContractService
+   */
+  async capitalPool_ApproveHandle(tradeId: bigint, token: string) {
+    console.log('%c [ token ]-278', 'font-size:13px; background:#83a63b; color:#c7ea7f;', token)
+    console.log('%c [ tradeId ]-278', 'font-size:13px; background:#5ffbe0; color:#a3ffff;', tradeId)
+    console.log('%c [  VITE__SPOT_GOODS_HANDLE_ADDRESS]-288', 'font-size:13px; background:#8405bb; color:#c849ff;', import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
+
+    const cp = await this.getCapitalPoolAddress(tradeId)
+    if (!cp) {
+      message.error('capital pool address is undefined')
+      Promise.reject(new Error('capital pool address is undefined'))
+    }
+
+    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+
+    const res = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
+    return res?.wait()
+  }
+
+  /**
+   * 分期性还款清算
+   * 借款人在资金池有充足的资金准备清算下可以完成所有清算次数
+   * 如果没有随便传一个已允许的token
+   *
+   * @param {bigint} tradeId 已创建的达成最小份数的订单id
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async capitalPool_MultiClearing(tradeId: bigint) {
+    const cp = await this.getCapitalPoolAddress(tradeId)
+
+    if (!cp) {
+      message.error('capital pool address is undefined')
+      Promise.reject(new Error('capital pool address is undefined'))
+    }
+
+    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+
+    const res = await capitalPoolContract?.multiClearing(tradeId)
+    return res?.wait()
   }
 }

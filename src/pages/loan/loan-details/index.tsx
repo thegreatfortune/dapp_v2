@@ -50,12 +50,13 @@ const LoanDetails = () => {
         return
 
       try {
-        const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContractByTradeId(BigInt(tradeId))
+        const followCapitalPoolContract = await browserContractService?.getCapitalPoolContractByTradeId(BigInt(tradeId))
 
         const res = await followCapitalPoolContract?.getList(tradeId)
+        console.log('%c [ res ]-56', 'font-size:13px; background:#41bf05; color:#85ff49;', res)
 
         if (res) {
-          const copies = BigInt(res[9]) as unknown as number
+          const copies = Number(BigInt(res[9]))
           setCopies(copies)
         }
       }
@@ -107,7 +108,7 @@ const LoanDetails = () => {
         }
       }
 
-      const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract(cp)
+      const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract(cp)
 
       const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
 
@@ -255,7 +256,7 @@ const LoanDetails = () => {
       <Radio.Button value="small">Room trade</Radio.Button>
     </Radio.Group>
 
-    <DesignatedPosition tradeId={tradeId ? BigInt(tradeId) : null} />
+    <DesignatedPosition loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
   </div>)
 }
 

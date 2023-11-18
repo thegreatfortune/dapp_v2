@@ -16,7 +16,7 @@ const PersonalCenter = () => {
 
       // followManageContract?.getborrowerAllOrdersId('', 'sa')
 
-      // const followCapitalPoolContract = await browserContractService?.getFollowCapitalPoolContract()
+      // const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract()
 
       // followCapitalPoolContract?.getList()
 

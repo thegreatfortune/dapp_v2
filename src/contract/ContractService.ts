@@ -13,7 +13,7 @@ export class ContractService {
    * @return {*}
    * @memberof ContractService
    */
-  static getFollowCapitalPoolContract() {
+  static getCapitalPoolContract() {
     return useJsonContract<FollowCapitalPool>(import.meta.env.VITE_FOLLOW_CAPITAL_POOL_ADDRESS, followCapitalPool_ABI)
   }
 

@@ -6,7 +6,7 @@ const Lend = () => {
     async function mounted() {
       // const followFactoryContract = await BrowserContractService.getFollowFactoryContract()
 
-      // const followCapitalPoolContract = await BrowserContractService.getFollowCapitalPoolContract()
+      // const followCapitalPoolContract = await BrowserContractService.getCapitalPoolContract()
 
       // const signer = await BrowserContractService.getSigner()
 

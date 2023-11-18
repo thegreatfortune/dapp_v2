@@ -1,64 +1,102 @@
 import { useEffect, useState } from 'react'
+import BigNumber from 'bignumber.js'
+import tradingPairTokenMap from './tradingPairTokenMap'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
   tradeId: bigint | null
+  transactionPair: string[]
+  loanMoney: number
 }
 
 class CoinInfo {
   name: string | undefined
-  USDC: number = 0
+  balance: number = 0
+  decimals: number = 0
 }
 
-const DesignatedPosition: React.FC<IProps> = (props) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney }) => {
   const { browserContractService } = useBrowserContract()
 
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
 
   useEffect(() => {
-    async function fetchData() {
-      if (!props?.tradeId)
-        return
-      const list: CoinInfo[] = []
-      const ERC20Contract = await browserContractService?.getERC20Contract('0xCfA09f923d29E41C4dCcb817A06D0BC3D73F6e1B')
+    if (!browserContractService || transactionPair.length <= 0 || !tradeId)
+      return
 
-      const cp = await browserContractService?.getCapitalPoolAddress(props.tradeId)
+    setCoinInfos([])
 
-      if (!cp)
-        return
+    const proList: Promise<CoinInfo>[] = []
 
-      const balance = await ERC20Contract?.balanceOf(cp)
-      console.log('%c [ balance ]-11', 'font-size:13px; background:#d6301a; color:#ff745e;', balance)
-
-      // 查询代币的符号和小数位数
-      const symbol = await ERC20Contract?.symbol()
-      const decimals = await ERC20Contract?.decimals()
-
-      if (decimals) {
-        list.push({
-          name: symbol,
-          USDC: Number(balance ?? BigInt(0) / BigInt(10 ** Number(decimals)) ?? 1),
-        })
-      }
-
-      console.log(`Symbol: ${symbol}`)
-      console.log(`Decimals: ${decimals}`)
-      console.log('%c [ list ]-17', 'font-size:13px; background:#f3e558; color:#ffff9c;', list)
+    if (!transactionPair.includes('USDC')) {
+      const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+      pro && proList.push(pro as Promise<CoinInfo>)
     }
 
-    fetchData()
-  }, [browserContractService])
+    for (let i = 0; i < transactionPair.length; i++) {
+      const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
+      if (coin in tradingPairTokenMap) {
+        const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
+        pro && proList.push(pro as Promise<CoinInfo>)
+      }
+    }
 
-  // function
+    Promise.all(proList).then((res) => {
+      setCoinInfos(preState => ([...preState, ...res]))
+    })
+  }, [browserContractService, transactionPair, tradeId])
+
+  async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<CoinInfo | undefined> {
+    const ERC20Contract = await browserContractService?.getERC20Contract(token)
+
+    const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
+
+    if (!cp)
+      return
+
+    const balance = await ERC20Contract?.balanceOf(cp)
+
+    // 查询代币的符号和小数位数
+    const symbol = await ERC20Contract?.symbol()
+    const decimals = await ERC20Contract?.decimals()
+    console.log('%c [ decimals ]-62', 'font-size:13px; background:#4e2dff; color:#9271ff;', decimals)
+
+    return {
+      name: name ?? symbol,
+      balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
+      decimals: Number(decimals) ?? 0,
+    }
+  }
 
   return (<div className="flex justify-between">
-        <div className="h560 w634"></div>
-        <div>
-            <ul className="m0 flex flex-wrap list-none s-container p0">
-                <li className="block h160 w321 p0">46546</li>
-            </ul>
-        </div>
-    </div>)
+    <div className="h560 w634">
+      {JSON.stringify(coinInfos)}
+    </div>
+    <div className="flex flex-wrap" >
+      {
+        coinInfos.map(item => (
+          <div key={item.name} className="h160 w321 s-container">
+            <div>
+              {item.name}({
+                // 如果余额大于零，则计算比例并显示结果
+                item.balance > 0
+                  ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
+                    .div(item.balance)
+                    .toFixed(2)
+                  : <span>
+                    0
+                  </span>
+
+              })
+              %
+            </div>
+            <div >$ {item.balance}</div>
+          </div>
+        ))
+      }
+    </div>
+
+  </div>)
 }
 
 export default DesignatedPosition

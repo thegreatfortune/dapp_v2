@@ -118,7 +118,7 @@ const ApplyLoan = () => {
     // 重置
     try {
       const followCapitalPoolContract
-      = await browserContractService?.getFollowCapitalPoolContract()
+      = await browserContractService?.getCapitalPoolContract()
 
       await followCapitalPoolContract?.initCreateTrade()
     }
@@ -156,7 +156,7 @@ const ApplyLoan = () => {
       // TODO: decimals token标志位
 
       const followCapitalPoolContract
-        = await browserContractService?.getFollowCapitalPoolContract()
+        = await browserContractService?.getCapitalPoolContract()
 
       const res = await followCapitalPoolContract?.createOrder(
         [
@@ -169,7 +169,7 @@ const ApplyLoan = () => {
           BigInt(loanRequisitionEditModel.numberOfCopies),
           BigInt(loanRequisitionEditModel.minimumRequiredCopies),
         ],
-        BigInt(loanRequisitionEditModel.raisingTime) * BigInt(24 * 60 * 60),
+        BigInt(loanRequisitionEditModel.raisingTime) * BigInt(100),
         BigInt(loanRequisitionEditModel.applyLoan) * BigInt(10 ** 18),
       )
 
@@ -230,7 +230,7 @@ const ApplyLoan = () => {
       setRepaymentPoolLoading(true)
 
       const followRefundFactoryContract
-        = await browserContractService?.getFollowRefundFactoryContract()
+        = await browserContractService?.getRefundFactoryContract()
 
       const capitalPoolAddress = await browserContractService?.getCapitalPoolAddress()
 
