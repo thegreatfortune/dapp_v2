@@ -34,9 +34,9 @@ dayjs.extend(relativeTime)
 const { chains, publicClient } = configureChains(
   [polygonMumbai, arbitrum],
   [
-    // alchemyProvider({
-    //   apiKey: import.meta.env.VITE_ALCHEMY_ID,
-    // }),
+    alchemyProvider({
+      apiKey: import.meta.env.VITE_ALCHEMY_ID,
+    }),
     // jsonRpcProvider({
     //   rpc: chain => ({
     //     http: import.meta.env.VITE_ALCHEMY_ID,

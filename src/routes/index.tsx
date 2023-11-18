@@ -5,7 +5,6 @@ import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
 import ApplyLoan from '@/pages/loan/apply-loan'
 import MyLoan from '@/pages/personal-center/my-loan'
-import Lend from '@/pages/lend'
 import OrderViewAll from '@/pages/index/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
@@ -109,17 +108,6 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       <BasicLayout>
         <React.Suspense fallback={<div>Loading...</div>}>
           <OrderViewAll />
-        </React.Suspense>
-      </BasicLayout>
-    ),
-  },
-  {
-    path: '/lend',
-    meta: { showInput: false },
-    element: (
-      <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Lend />
         </React.Suspense>
       </BasicLayout>
     ),

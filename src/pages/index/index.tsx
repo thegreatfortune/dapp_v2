@@ -27,8 +27,9 @@ const Index = () => {
         params.loanName = queryString
 
       const res = await LoanService.ApiLoanPageLoanContract_GET(params)
+      console.log('%c [ res ]-30', 'font-size:13px; background:#671ba4; color:#ab5fe8;', res)
 
-      res.records && setLoanOrderVO(res.records)
+      res?.records && setLoanOrderVO(res.records)
     }
     fetchData()
   }, [queryString])

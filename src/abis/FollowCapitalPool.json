@@ -452,6 +452,16 @@
 				"internalType": "uint256",
 				"name": "_goalMoney",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "uri",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
 			}
 		],
 		"name": "createOrder",

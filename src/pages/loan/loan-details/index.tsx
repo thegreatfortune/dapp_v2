@@ -50,13 +50,15 @@ const LoanDetails = () => {
         return
 
       try {
+        console.log('%c [ tradeId ]-54', 'font-size:13px; background:#1f4a47; color:#638e8b;', tradeId)
         const followCapitalPoolContract = await browserContractService?.getCapitalPoolContractByTradeId(BigInt(tradeId))
+        console.log('%c [ followCapitalPoolContract ]-54', 'font-size:13px; background:#d09b1d; color:#ffdf61;', followCapitalPoolContract)
 
         const res = await followCapitalPoolContract?.getList(tradeId)
         console.log('%c [ res ]-56', 'font-size:13px; background:#41bf05; color:#85ff49;', res)
 
         if (res) {
-          const copies = Number(BigInt(res[9]))
+          const copies = Number(BigInt(res[7]))
           setCopies(copies)
         }
       }
@@ -165,7 +167,6 @@ const LoanDetails = () => {
                 value={copies}
                 className='w-full'
                 min={1}
-                max={(loanInfo.goalCopies ?? 0) - (loanInfo.collectCopies ?? 0)}
                 onChange={v => setCopies(v)}
               />
               <Button type='primary' loading={checkMaxLoading} onClick={onSetMax}>

@@ -3,12 +3,12 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_captitalPoolOwner",
+				"name": "_followManage",
 				"type": "address"
 			},
 			{
 				"internalType": "address",
-				"name": "_refundFactory",
+				"name": "_followFactory",
 				"type": "address"
 			}
 		],
@@ -17,12 +17,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "AlreadyCreate",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "AlreadyDone",
+		"name": "AbsentTime",
 		"type": "error"
 	},
 	{
@@ -42,32 +37,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "GoalInConformity",
+		"name": "NotBorrower",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "GoalMoneyError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "Locked",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "MinStockError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NonReapy",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotCaller",
+		"name": "NotCapitalPool",
 		"type": "error"
 	},
 	{
@@ -77,52 +52,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotEndTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotSingleRepayTimes",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "OverPart",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "RadioLessFive",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ReachEndTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "RealLessMinStock",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ShareProfitRateError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "SingleRepayTimes",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "TokenBalanceZero",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "TokenError",
+		"name": "ZeroAddress",
 		"type": "error"
 	},
 	{
@@ -130,275 +60,71 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			}
-		],
-		"name": "_createOrder",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "borrower",
+				"name": "capitalPool",
 				"type": "address"
 			},
 			{
 				"indexed": false,
+				"internalType": "uint32",
+				"name": "_tradeId",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
 				"internalType": "address",
-				"name": "capitalPoolAddress",
+				"name": "_token",
 				"type": "address"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "orderId",
+				"name": "buyOrSell",
 				"type": "uint256"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "money",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
-		"name": "borrowerWithdrawProfit",
+		"name": "swapEvent",
 		"type": "event"
 	},
 	{
-		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
-			},
+			}
+		],
+		"name": "getThisTokenBalance",
+		"outputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "partAmount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "lendTime",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "lendEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "touchUser",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "multiClearTime",
-				"type": "uint256"
-			}
-		],
-		"name": "multiClearEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "state",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "repayOrSupplyEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "touchUser",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "clearMoney",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "singleClearTime",
-				"type": "uint256"
-			}
-		],
-		"name": "singleClearEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "userWithdrawEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "repayWithdrawTime",
-				"type": "uint256"
-			}
-		],
-		"name": "wthdrawRefundEvent",
-		"type": "event"
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "handleAddress",
+				"name": "_USDC",
 				"type": "address"
 			}
 		],
-		"name": "approveHandle",
+		"name": "setUsdc",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -407,280 +133,87 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "token",
+				"name": "capitalPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tradeId",
+				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "buyOrSell",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint24",
 				"name": "_fee",
 				"type": "uint24"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
 			}
 		],
-		"name": "clearingMoney",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8[2]",
-				"name": "periodAndRepayTimeAndPair",
-				"type": "uint8[2]"
-			},
-			{
-				"internalType": "uint16[4]",
-				"name": "rateAndGoalUsers",
-				"type": "uint16[4]"
-			},
-			{
-				"internalType": "uint56",
-				"name": "_collectEndTime",
-				"type": "uint56"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_goalMoney",
-				"type": "uint256"
-			}
-		],
-		"name": "createOrder",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getBorrower",
+		"name": "swapERC20",
 		"outputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "amountOut",
 				"type": "uint256"
 			}
 		],
-		"name": "getList",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "tradeId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint8",
-						"name": "ifClearing",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "timePeriod",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "repayTimes",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint8",
-						"name": "alreadyRepay",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint16",
-						"name": "profitRate",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "shareRate",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "goalCopies",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "minStock",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint16",
-						"name": "actualCopies",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint56",
-						"name": "collectEndTime",
-						"type": "uint56"
-					},
-					{
-						"internalType": "uint56",
-						"name": "endTime",
-						"type": "uint56"
-					},
-					{
-						"internalType": "uint256",
-						"name": "money",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "alreadyCollectMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "surplusMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "alreadyRepayMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "endMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct IFollowCapitalPool.list",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "userAddress",
+				"name": "capitalPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_tradeId",
+				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "buyOrSell",
 				"type": "uint256"
-			}
-		],
-		"name": "getPersonlLend",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "initCreateTrade",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint16",
-				"name": "partAmount",
-				"type": "uint16"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "amountIn",
 				"type": "uint256"
-			}
-		],
-		"name": "lend",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+			},
 			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "slip",
 				"type": "uint256"
 			}
 		],
-		"name": "multiClearing",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+		"name": "v2SwapERC20",
+		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "_id",
+				"name": "outAmount",
 				"type": "uint256"
 			}
 		],
-		"name": "refund",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "repay",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "singleClearing",
-		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
