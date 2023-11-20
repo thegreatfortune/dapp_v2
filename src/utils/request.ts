@@ -1,16 +1,11 @@
-import message from 'antd/es/message'
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
-import type { AxiosRequestConfig } from 'axios'
+import { message, notification } from 'antd'
 import useUserStore from '../store/userStore'
 
 enum HttpCode {
-  /**
-   *重试
-   */
   RETRY = 100404,
 }
-
-// TODO 重试
 
 interface IResponse<T> {
   code: number
@@ -18,91 +13,85 @@ interface IResponse<T> {
   data?: T
 }
 
-async function request<T>(config: AxiosRequestConfig): Promise<T | undefined> {
-  const RETRIES = 3 // 重试次数
-
-  const newConfig: AxiosRequestConfig = { ...config }
-
-  // while (RETRIES > 0) {
+async function request<T>(config: AxiosRequestConfig): Promise<T> {
   try {
-    const result = await axios.request<T>({
-      headers: {
-        'Content-Type': 'application/json',
-        ...newConfig.headers ?? {},
-      },
-      ...newConfig, // 使用新的副本，以免影响原来的配置
-    })
-
+    const result = await axios.request<T>({ headers: { 'Content-Type': 'application/json', ...config.headers }, ...config })
     const responseData = result.data as IResponse<T>
 
-    return responseData.data
+    if (responseData.code === HttpCode.RETRY) {
+      await handleRetry(config)
+      throw new Error(`${responseData.code}: ${responseData.message}`)
+    }
 
-    // if (responseData.code === HttpCode.RETRY && RETRIES > 0) {
-    //   message.error(`${responseData.message}`)
-
-    //   RETRIES--
-
-    //   // if(RETRIES === - 1) {
-    //   // Promise.reject((responseData.data as IResponse<T>).data as T)
-
-    //   // }
-    // }
-    // else {
-    //   RETRIES = -1
-
-    //   return (responseData.data as IResponse<T>).data as T
-    // }
+    return responseData.data as T
   }
   catch (error) {
     console.log('%c [ error ]-47', 'font-size:13px; background:#ef2b7a; color:#ff6fbe;', error)
-    // message.error('请求失败，请重试')
-
-    // // 如果没有重试次数，则抛出错误
-    // if (RETRIES === 0)
-    //   throw error
+    throw error
   }
-  // }
 }
+
+async function handleRetry<T>(config: AxiosRequestConfig): Promise<T> {
+  return new Promise((resolve, reject) => {
+    notification.open({
+      message: 'Please try again',
+      description: 'Request error, please try again',
+      onClick: async () => {
+        try {
+          const retryResult = await axios.request<T>({ headers: { 'Content-Type': 'application/json', ...config.headers }, ...config })
+          const retryResponseData = retryResult.data as IResponse<T>
+
+          if (retryResponseData.code === HttpCode.RETRY)
+            reject(new Error(`${retryResponseData.code}: ${retryResponseData.message}`))
+
+          resolve(retryResponseData.data as T)
+        }
+        catch (retryError) {
+          console.log('Retry error:', retryError)
+          reject(retryError)
+        }
+      },
+    })
+  })
+}
+
+// Interceptors
 
 axios.interceptors.request.use((config) => {
   const headers = config.headers || {}
-  if (!headers['Content-Type'])
-    headers['Content-Type'] = 'application/json'
-
-  if (!headers.Authorization)
-    headers.Authorization = useUserStore.getState().activeUser.accessToken
-
+  headers['Content-Type'] = headers['Content-Type'] || 'application/json'
+  headers.Authorization = headers.Authorization || useUserStore.getState().activeUser.accessToken
   config.headers = headers
-
   return config
 })
 
 axios.interceptors.response.use(
-  (response) => {
-    const responseData: IResponse<any> = response.data
-    if (response.status !== 200) {
-      message.error(`${response.status}: ${response.statusText}` || '请求失败，请重试')
-
-      return Promise.reject(responseData.data)
-    }
-
-    if (responseData.code !== 200) {
-      if (responseData.code === HttpCode.RETRY)
-        return response
-
-      message.error(`${responseData.code}: ${responseData.message}` || '请求失败，请重试')
-
-      console.log('%c [ responseData.data ]-49', 'font-size:13px; background:#26cf71; color:#6affb5;', responseData.data)
-      return Promise.reject(new Error(`${responseData.code}: ${responseData.message}`))
-    }
-
-    return response
-  },
-  (err) => {
-    message.error('请求失败，请重试')
-
-    return Promise.reject(err.response)
-  },
+  response => handleResponse(response),
+  error => handleError(error),
 )
+
+function handleResponse(response: AxiosResponse): AxiosResponse {
+  const responseData: IResponse<any> = response.data
+
+  if (response.status !== 200) {
+    message.error(`${response.status}: ${response.statusText}` || '请求失败，请重试')
+    throw responseData.data
+  }
+
+  if (responseData.code !== 200) {
+    if (responseData.code === HttpCode.RETRY)
+      return response
+
+    message.error(`${responseData.code}: ${responseData.message}` || '请求失败，请重试')
+    throw new Error(`${responseData.code}: ${responseData.message}`)
+  }
+
+  return response
+}
+
+function handleError(error: any): Promise<never> {
+  message.error('请求失败，请重试')
+  return Promise.reject(error.response)
+}
 
 export default request

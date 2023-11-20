@@ -1,6 +1,6 @@
 import type { ethers } from 'ethers'
 import { Contract, JsonRpcProvider } from 'ethers'
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import type { ERC20, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
@@ -19,6 +19,53 @@ function createContract<T>(
   signer: ethers.Signer,
 ): T {
   return new Contract(address, abi, signer) as T
+}
+
+async function handleTransaction(
+  transactionResponse: ethers.ContractTransactionResponse | undefined,
+  successMessage = 'Transaction Successful',
+  failureMessage = 'Transaction Failed',
+): Promise<ethers.ContractTransactionReceipt | undefined> {
+  if (!transactionResponse) {
+    console.error('Transaction response is undefined')
+    return
+  }
+
+  try {
+    const receipt = await transactionResponse.wait()
+
+    if (!receipt) {
+      console.error('Transaction receipt is undefined')
+      return
+    }
+
+    if (receipt.status === 1) {
+      // Transaction succeeded
+      notification.success({
+        message: successMessage,
+        description: 'Your transaction was successful!',
+      })
+    }
+    else {
+      // Transaction failed
+      notification.error({
+        message: failureMessage,
+        description: 'Your transaction failed. Please try again.',
+      })
+    }
+
+    return receipt
+  }
+  catch (error) {
+    console.error('Error while waiting for transaction receipt:', error)
+
+    notification.error({
+      message: 'Transaction Error',
+      description: 'An error occurred during the transaction. Please try again.',
+    })
+
+    return undefined
+  }
 }
 
 export class BrowserContractService {
@@ -101,7 +148,7 @@ export class BrowserContractService {
    * @return {*}  {(Promise<string | undefined>)}
    * @memberof BrowserContractService
    */
-  async getCapitalPoolAddress(tradeId?: bigint): Promise<string | undefined> {
+  async getCapitalPoolAddress(tradeId?: bigint): Promise<string> {
     const followFactoryContract = await this.getFollowFactoryContract()
 
     if (Number(tradeId) >= 0 && tradeId) {
@@ -113,9 +160,7 @@ export class BrowserContractService {
 
     if (cp === BLACK_HOLE_ADDRESS) {
       console.error('%cCapitalPoolAddress:', cp)
-
-      Promise.reject(new Error(`capital pool address is black hole: ${cp}`))
-      return
+      throw new Error(`capital pool address is black hole: ${cp}`)
     }
 
     return this._capitalPoolAddress = cp
@@ -282,26 +327,18 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_Refund(tradeId: bigint) {
-    console.log('%c [ tradeId ]-260', 'font-size:13px; background:#85d796; color:#c9ffda;', tradeId)
-    const cp = await this.getCapitalPoolAddress(tradeId)
+  async capitalPool_Refund(tradeId: bigint): Promise<ethers.ContractTransactionReceipt | undefined> {
+    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
-    const t = await this.getCapitalPoolContract(cp)
-    const getList = await t?.getList(tradeId)
-    console.log('%c [ aa ]-269', 'font-size:13px; background:#64b998; color:#a8fddc;', getList)
-
-    console.log('%c [ cp ]-262', 'font-size:13px; background:#fb770c; color:#ffbb50;', cp)
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
+    if (!capitalPoolAddress) {
+      message.error('Capital pool address is undefined')
+      throw new Error('Capital pool address is undefined')
     }
 
-    const capitalPoolContract = await this.getCapitalPoolContract(cp)
-    console.log('%c [ capitalPoolContract ]-269', 'font-size:13px; background:#b4370f; color:#f87b53;', capitalPoolContract)
+    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+    const transaction = await capitalPoolContract?.refund(tradeId)
 
-    const res = await capitalPoolContract?.refund(tradeId)
-    console.log('%c [ res ]-272', 'font-size:13px; background:#4073e1; color:#84b7ff;', res)
-    return res?.wait()
+    return handleTransaction(transaction)
   }
 
   /**
@@ -313,20 +350,13 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_ApproveHandle(tradeId: bigint, token: string) {
-    console.log('%c [ token ]-278', 'font-size:13px; background:#83a63b; color:#c7ea7f;', token)
-    console.log('%c [ tradeId ]-278', 'font-size:13px; background:#5ffbe0; color:#a3ffff;', tradeId)
-    console.log('%c [  VITE__SPOT_GOODS_HANDLE_ADDRESS]-288', 'font-size:13px; background:#8405bb; color:#c849ff;', import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
+    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
-    const cp = await this.getCapitalPoolAddress(tradeId)
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
+    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+    const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
 
-    const res = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
-    return res?.wait()
+    return handleTransaction(transaction)
   }
 
   /**
@@ -339,17 +369,13 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_MultiClearing(tradeId: bigint) {
-    const cp = await this.getCapitalPoolAddress(tradeId)
+    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
+    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+    const transaction = await capitalPoolContract?.multiClearing(tradeId)
 
-    const res = await capitalPoolContract?.multiClearing(tradeId)
-    return res?.wait()
+    return handleTransaction(transaction)
   }
 
   /**
@@ -371,8 +397,9 @@ export class BrowserContractService {
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
 
-    const res = await capitalPoolContract?.clearingMoney(token, tradeId, fee, amount)
-    return res?.wait()
+    const transaction = await capitalPoolContract?.clearingMoney(token, tradeId, fee, amount)
+
+    return handleTransaction(transaction)
   }
 
   /**
@@ -386,18 +413,14 @@ export class BrowserContractService {
   async capitalPool_singleClearing(tradeId: bigint) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
-
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
 
     const getList = await capitalPoolContract?.getList(tradeId)
     console.log('%c [ getList ]-381', 'font-size:13px; background:#5511ee; color:#9955ff;', getList)
 
-    const res = await capitalPoolContract?.singleClearing(tradeId)
-    return res?.wait()
+    const transaction = await capitalPoolContract?.singleClearing(tradeId)
+
+    return handleTransaction(transaction)
   }
 
   /**
@@ -410,23 +433,14 @@ export class BrowserContractService {
    */
   async capitalPool_Repay(tradeId: bigint) {
     const cp = await this.getCapitalPoolAddress(tradeId)
-    console.log('%c [ cp ]-398', 'font-size:13px; background:#635b7a; color:#a79fbe;', cp)
-
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
-    console.log('%c [ capitalPoolContract ]-406', 'font-size:13px; background:#5625af; color:#9a69f3;', capitalPoolContract)
 
-    const getList = await capitalPoolContract?.getList(tradeId)
-    console.log('%c [ getList ]-381', 'font-size:13px; background:#5511ee; color:#9955ff;', getList)
+    // const getList = await capitalPoolContract?.getList(tradeId)
 
-    const res = await capitalPoolContract?.repay(tradeId)
-    console.log('%c [ res ]-409', 'font-size:13px; background:#639496; color:#a7d8da;', res)
+    const transaction = await capitalPoolContract?.repay(tradeId)
 
-    return res?.wait()
+    return handleTransaction(transaction)
   }
 
   /**
@@ -443,14 +457,10 @@ export class BrowserContractService {
   async followHandle_SwapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
-
     const contract = await this.getFollowHandleContract()
 
-    const res = await contract.swapERC20(cp!, tradeId, swapToken, buyOrSell, amount, fee)
-    return res?.wait()
+    const transaction = await contract.swapERC20(cp!, tradeId, swapToken, buyOrSell, amount, fee)
+
+    return handleTransaction(transaction)
   }
 }
