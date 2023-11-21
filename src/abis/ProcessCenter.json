@@ -105,17 +105,12 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "refundAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "tradeId",
+				"name": "_tradeId",
 				"type": "uint256"
 			}
 		],
@@ -157,6 +152,25 @@
 			}
 		],
 		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "refundAddress",
+				"type": "address"
+			}
+		],
+		"name": "_getCreateRefundState",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -278,22 +292,12 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "refundAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "tradeId",
+				"name": "_tradeId",
 				"type": "uint256"
 			}
 		],
@@ -348,19 +352,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
 			},
 			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_tradeId",
-				"type": "uint256"
 			}
 		],
 		"name": "_getPersonlLend",
@@ -414,6 +413,25 @@
 				"internalType": "uint8",
 				"name": "",
 				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "_getTradeIdToCapitalPool",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -487,11 +505,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getBorrowerToProfit",
@@ -511,11 +524,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getEveryPayTime",
@@ -535,11 +543,6 @@
 				"internalType": "uint256",
 				"name": "_tokenId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getLenderToMoney",
@@ -559,11 +562,6 @@
 				"internalType": "uint256",
 				"name": "_tokenId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getLenderToRepayMoney",
@@ -579,11 +577,6 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
 			{
 				"internalType": "uint256",
 				"name": "_tradeId",
@@ -604,11 +597,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
@@ -628,11 +616,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
@@ -651,11 +634,6 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
 			{
 				"internalType": "uint256",
 				"name": "_tradeId",
@@ -679,11 +657,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getMultiProtocolFee",
@@ -703,11 +676,25 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
+			}
+		],
+		"name": "getOrderReapyMoney",
+		"outputs": [
 			{
-				"internalType": "address",
-				"name": "capitalAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
 			}
 		],
 		"name": "getOrderState",
@@ -727,11 +714,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getRemainEndSeconds",
@@ -751,11 +733,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getRemainSeconds",
@@ -775,11 +752,6 @@
 				"internalType": "uint256",
 				"name": "_tokenId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getShareProfit",
@@ -799,11 +771,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getSingleProtocolFee",
@@ -823,11 +790,6 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getTradeIdToEveryMultiFee",
@@ -847,11 +809,6 @@
 				"internalType": "uint256",
 				"name": "_tokenId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
 			}
 		],
 		"name": "getUserTotalMoney",

@@ -29,13 +29,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
     const proList: Promise<CoinInfo>[] = []
 
-    if (!transactionPair.includes('USDC')) {
+    if (proList.length <= 0) {
       const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
       pro && proList.push(pro as Promise<CoinInfo>)
     }
-    console.log('%c [ transactionPair ]-33', 'font-size:13px; background:#a1c97d; color:#e5ffc1;', transactionPair)
-
-    console.log('%c [ proList ]-35', 'font-size:13px; background:#232d94; color:#6771d8;', proList)
 
     for (let i = 0; i < transactionPair.length; i++) {
       const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
@@ -86,7 +83,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                     // 如果余额大于零，则计算比例并显示结果
                     item.balance > 0
                       ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
-                        .div(item.balance)
+                        .dividedBy(item.balance)
                         .toFixed(2)
                       : <span>
                         0

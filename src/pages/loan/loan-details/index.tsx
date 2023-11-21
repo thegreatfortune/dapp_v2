@@ -1,9 +1,6 @@
-import { Divider } from 'antd/lib'
-import Radio from 'antd/es/radio'
-import Button from 'antd/es/button'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { InputNumber, message } from 'antd'
+import { Button, Divider, InputNumber, Radio, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
@@ -16,8 +13,6 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
-
-  // TODO 已筹集份数
 
   const navigate = useNavigate()
 
@@ -50,15 +45,12 @@ const LoanDetails = () => {
         return
 
       try {
-        console.log('%c [ tradeId ]-54', 'font-size:13px; background:#1f4a47; color:#638e8b;', tradeId)
         const followCapitalPoolContract = await browserContractService?.getCapitalPoolContractByTradeId(BigInt(tradeId))
-        console.log('%c [ followCapitalPoolContract ]-54', 'font-size:13px; background:#d09b1d; color:#ffdf61;', followCapitalPoolContract)
 
         const res = await followCapitalPoolContract?.getList(tradeId)
-        console.log('%c [ res ]-56', 'font-size:13px; background:#41bf05; color:#85ff49;', res)
 
         if (res) {
-          const copies = Number(BigInt(res[7]))
+          const copies = Number(BigInt(res[7])) - Number(BigInt(res[9]))
           setCopies(copies)
         }
       }
@@ -113,14 +105,8 @@ const LoanDetails = () => {
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
-      // const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract(cp)
-
-      // const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
-
-      // const result = await res?.wait()
       if (result?.status === 1)
         setLendState('Success')
-        // navigate('/my-lend')
       else
         message.error('operation failure')
     }
@@ -129,10 +115,6 @@ const LoanDetails = () => {
       setLendState(undefined)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }
-    // finally {
-    //   // setIsModalOpen(false)
-    //   // setLendState(undefined)
-    // }
   }
 
   async function onSetMax() {
@@ -197,7 +179,7 @@ const LoanDetails = () => {
         <div className='flex justify-between'>
           <div>
             <div className='flex'>
-              <Button className='mr-33'>Following</Button>
+              <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
               <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime) } />}</span>
             </div>
             <div className='mb20 mt30'>  Sound Wave V!</div>

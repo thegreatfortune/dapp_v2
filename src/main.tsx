@@ -25,7 +25,6 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import './index.css'
 import '@/locale/i18n.ts'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import App from './App.tsx'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
 
@@ -37,11 +36,6 @@ const { chains, publicClient } = configureChains(
     alchemyProvider({
       apiKey: import.meta.env.VITE_ALCHEMY_ID,
     }),
-    // jsonRpcProvider({
-    //   rpc: chain => ({
-    //     http: import.meta.env.VITE_ALCHEMY_ID,
-    //   }),
-    // }),
     publicProvider(),
   ],
 )
