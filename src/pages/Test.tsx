@@ -67,7 +67,6 @@ const Test = () => {
   return (
 
     <div>
-
       Test
 
       订单id: {Number(tradeId)} <InputNumber onChange={inputChange} className='w-200' />

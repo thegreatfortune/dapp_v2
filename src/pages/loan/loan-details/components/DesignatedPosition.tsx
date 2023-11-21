@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { Button } from 'antd'
 import tradingPairTokenMap from './tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
+import SwapModal from './SwapModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
   tradeId: bigint | null
   transactionPair: string[]
   loanMoney: number
+  repayCount: number
 }
 
 class CoinInfo {
@@ -16,10 +19,12 @@ class CoinInfo {
   decimals: number = 0
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney }) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount }) => {
   const { browserContractService } = useBrowserContract()
 
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (!browserContractService || !tradeId)
@@ -71,6 +76,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
   return (
     <div>
+      <SwapModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
+
       <div className="flex justify-between">
         <div className="h560 w634">
         </div>
@@ -93,13 +100,14 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                   %
                 </div>
                 <div >$ {item.balance}</div>
+                <Button className='h30 w50 primary-btn' onClick={() => setIsModalOpen(true)}>swap</Button>
               </div>
             ))
           }
         </div>
       </div>
 
-      <RepaymentPlan tradeId={tradeId} />
+      <RepaymentPlan tradeId={tradeId} repayCount={repayCount} />
     </div>
   )
 }

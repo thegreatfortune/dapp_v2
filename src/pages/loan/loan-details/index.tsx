@@ -244,7 +244,7 @@ const LoanDetails = () => {
       <Radio.Button value="small">Room trade</Radio.Button>
     </Radio.Group>
 
-    <DesignatedPosition loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
+    <DesignatedPosition repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
 
   </div>)
 }

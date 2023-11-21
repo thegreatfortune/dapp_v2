@@ -9,9 +9,10 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
   tradeId: bigint | null
+  repayCount: number
 }
 
-const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
+const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount }) => {
   const { browserContractService } = useBrowserContract()
 
   const [pagination, setPagination] = useState({
@@ -27,6 +28,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [arrears, setArrears] = useState(0)
+
+  const [supplyAmount, setSupplyAmount] = useState(0)
 
   const [currentItem, setCurrentItem] = useState(new Models.RepayPlanVo())
 
@@ -98,6 +101,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
 
     if (currentItem.state === 'OVERDUE') {
       try {
+        console.log('%c [ tradeId ]-102', 'font-size:13px; background:#5fa642; color:#a3ea86;', tradeId)
+
         const res = await browserContractService?.capitalPool_repay(tradeId)
         message.error('succeed')
 
@@ -109,10 +114,10 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
         console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
       }
     }
-    else {
+    else if (currentItem.state === 'REPAID') {
       try {
-        const res = await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
-        message.error('succeed')
+        const res = await browserContractService?.refundPool_supply(BigInt(supplyAmount), tradeId)
+        message.success('succeed')
 
         console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
       }
@@ -120,6 +125,38 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
         message.error('operation failure')
 
         console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
+      }
+    }
+    else {
+      if (repayCount > 1) {
+        try {
+          console.log('%c [ tradeId ]-117', 'font-size:13px; background:#31b682; color:#75fac6;', tradeId)
+
+          const res = await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
+          message.success('succeed')
+
+          console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
+        }
+        catch (error) {
+          message.error('operation failure')
+
+          console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
+        }
+      }
+      else {
+        try {
+          console.log('%c [ tradeId ]-117', 'font-size:13px; background:#31b682; color:#75fac6;', tradeId)
+
+          const res = await browserContractService?.capitalPool_singleClearing(tradeId)
+          message.success('succeed')
+
+          console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
+        }
+        catch (error) {
+          message.error('operation failure')
+
+          console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
+        }
       }
     }
 
@@ -144,14 +181,19 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
                     </Button>
                 </div>}>
                 <div>
-                    <h1>Repayment</h1>
+                    <h1> {currentItem.state === 'REPAID' ? 'Supply' : 'Repayment'} </h1>
                     <div className='flex items-center justify-between text-center'>
-                        <h2>{BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber()}    </h2>
-                        {/* <InputNumber
-                            value={currentDue}
+
+                      {currentItem.state === 'REPAID'
+                        ? <div>
+                      <InputNumber
+                            value={supplyAmount}
+                            onChange={value => setSupplyAmount(value ?? 0)}
                             className='w-full'
                             min={1}
-                        /> */}
+                        />
+                      </div>
+                        : <h2>{BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber()} </h2>}
 
                     </div>
                 </div>
@@ -196,7 +238,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId }) => {
                                     <li>{item.state}</li>
                                     <li>compute</li>
                                     <li>{item.nowCount}</li>
-                                    <li><Button onClick={() => onOpenModal(item) } className='h30 w134 primary-btn'>{item.state === 'REPAID' ? 'Award' : 'Repayment'}</Button></li>
+                                    <li><Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>{item.state === 'REPAID' ? 'Supply' : 'Repayment'}</Button></li>
                                 </ul>
                             </List.Item>
                         )}

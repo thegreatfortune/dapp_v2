@@ -355,6 +355,39 @@ export class BrowserContractService {
   // write
 
   /**
+   *授权 true为已授权
+   *
+   * @param {bigint} tradeId
+   * @return {*}  {Promise<boolean>}
+   * @memberof BrowserContractService
+   */
+  async ERC20_approve(tradeId: bigint): Promise<boolean> {
+    const ERC20Contract = await this?.getERC20Contract()
+
+    const followManageContract = await this?.getFollowManageContract()
+
+    const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+
+    if (!cp)
+      return false
+
+    const allowance = await ERC20Contract?.allowance(cp, this?.getSigner.address)
+
+    if ((allowance ?? BigInt(0)) <= BigInt(0)) {
+      const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
+      if (!approveRes)
+        return false
+
+      const approveResult = await approveRes?.wait()
+
+      if (approveResult?.status !== 1)
+        return true
+    }
+
+    return true
+  }
+
+  /**
    * 贷款人存入份数数量(贷款人借出)
    * 使用订单ID对应的资金池地址来进行认购初始化合约
    *
@@ -485,6 +518,13 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_repay(tradeId: bigint) {
+    const approve = this.ERC20_approve(tradeId)
+
+    if (!approve) {
+      message.error('approve is error')
+      throw new Error('approve is error')
+    }
+
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
@@ -553,6 +593,29 @@ export class BrowserContractService {
 
     const transaction = await refundPoolContract.borrowerWithdraw(tradeId)
     console.log('%c [ transaction ]-529', 'font-size:13px; background:#f5a83f; color:#ffec83;', transaction)
+
+    return handleTransaction(transaction)
+  }
+
+  /**
+   * 供应(所有人皆可触发)
+   *
+   * @param {bigint} amount USDC数量
+   * @param {bigint} tradeId 订单id
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async refundPool_supply(amount: bigint, tradeId: bigint) {
+    const approve = this.ERC20_approve(tradeId)
+
+    if (!approve) {
+      message.error('approve is error')
+      throw new Error('approve is error')
+    }
+
+    const refundPoolContract = await this.getRefundPoolContract(tradeId)
+
+    const transaction = await refundPoolContract.supply(amount, tradeId)
 
     return handleTransaction(transaction)
   }
