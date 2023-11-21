@@ -115,10 +115,11 @@ const ApplyLoan = () => {
   }, [loanRequisitionEditModel])
 
   async function reSet() {
-    // 重置
     try {
+      // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
+
       const followCapitalPoolContract
-      = await browserContractService?.getCapitalPoolContract()
+        = await browserContractService?.getCapitalPoolContract()
 
       await followCapitalPoolContract?.initCreateTrade()
     }
@@ -169,7 +170,7 @@ const ApplyLoan = () => {
           BigInt(loanRequisitionEditModel.numberOfCopies),
           BigInt(loanRequisitionEditModel.minimumRequiredCopies),
         ],
-        BigInt(loanRequisitionEditModel.raisingTime) * BigInt(24 * 60 * 60), // TODO 秒数
+        BigInt(loanRequisitionEditModel.raisingTime) * BigInt(60), // TODO 秒数
         BigInt(loanRequisitionEditModel.applyLoan) * BigInt(10 ** 18),
         'https://6a32f35977ea4e1844ce0dbab6b9c6d9.ipfs.4everland.link/ipfs/bafybeidnzira46v3ebmq3qw7vlovr4lgx4ytwgsyzi5ym4pf43ycki2g3u',
         'image1',
@@ -193,7 +194,7 @@ const ApplyLoan = () => {
           const capitalPoolAddress = await browserContractService?.getCapitalPoolAddress()
 
           const followManageContract
-          = await browserContractService?.getFollowManageContract()
+            = await browserContractService?.getFollowManageContract()
 
           const tids = await followManageContract?.getborrowerAllOrdersId(
             browserContractService?.getSigner.address ?? '',
@@ -202,7 +203,7 @@ const ApplyLoan = () => {
           console.log('%c [ tids ]-196', 'font-size:13px; background:#5115c6; color:#9559ff;', tids)
 
           // loanConfirm.tradeId = (Number(tids?.at(-1)) ?? 0) + 1
-          loanConfirm.tradeId = Number(tids?.at(-1)) ?? 0
+          loanConfirm.tradeId = String(Number(tids?.at(-1)) ?? 0)
 
           const res = await LoanService.ApiLoanConfirm_POST(loanConfirm)
           console.log('%c [ res ]-244', 'font-size:13px; background:#011256; color:#45569a;', res)
@@ -221,7 +222,7 @@ const ApplyLoan = () => {
       }
     }
     catch (error) {
-      message.error(JSON.stringify(error))
+      message.error('操作失败')
       console.log(
         '%c [ error ]-99',
         'font-size:13px; background:#daf6df; color:#ffffff;',
@@ -324,7 +325,6 @@ const ApplyLoan = () => {
       setPublishBtnLoading(false)
     }
     catch (error) {
-      message.error(JSON.stringify(error))
       console.log(
         '%c [ error ]-61',
         'font-size:13px; background:#c95614; color:#ff9a58;',

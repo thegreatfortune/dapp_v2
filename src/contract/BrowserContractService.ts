@@ -1,7 +1,7 @@
 import type { ethers } from 'ethers'
-import { Contract, JsonRpcProvider } from 'ethers'
+import { Contract } from 'ethers'
 import { message, notification } from 'antd'
-import type { ERC20, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
@@ -10,6 +10,7 @@ import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
+import ERC3525_ABI from '@/abis/ERC3525.json'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -28,7 +29,7 @@ async function handleTransaction(
 ): Promise<ethers.ContractTransactionReceipt | undefined> {
   if (!transactionResponse) {
     console.error('Transaction response is undefined')
-    return
+    return undefined
   }
 
   try {
@@ -36,7 +37,7 @@ async function handleTransaction(
 
     if (!receipt) {
       console.error('Transaction receipt is undefined')
-      return
+      return undefined
     }
 
     if (receipt.status === 1) {
@@ -64,7 +65,7 @@ async function handleTransaction(
       description: 'An error occurred during the transaction. Please try again.',
     })
 
-    return undefined
+    throw error
   }
 }
 
@@ -157,6 +158,7 @@ export class BrowserContractService {
     }
 
     const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    console.log('%c [ cp ]-160', 'font-size:13px; background:#683c68; color:#ac80ac;', cp)
 
     if (cp === BLACK_HOLE_ADDRESS) {
       console.error('%cCapitalPoolAddress:', cp)
@@ -228,14 +230,21 @@ export class BrowserContractService {
   /**
    *还款池
    *
+   * @param {bigint} [tradeId]
    * @return {*}  {Promise<FollowRefundPool>}
    * @memberof BrowserContractService
    */
-  async getRefundPoolContract(): Promise<FollowRefundPool> {
-    if (this._refundPoolContract)
-      return this._refundPoolContract
+  async getRefundPoolContract(tradeId: bigint): Promise<FollowRefundPool> {
+    const refundFactoryContract = await this.getRefundFactoryContract()
 
-    const refundPoolAddress: string = ''
+    const cp = this.getCapitalPoolAddress(tradeId)
+
+    const refundPoolAddress = await refundFactoryContract.getRefundPool(cp)
+
+    if (!refundPoolAddress) {
+      message.error(`refund pool address is undefined: ${refundPoolAddress}`)
+      throw new Error(`refund pool address is undefined: ${refundPoolAddress}`)
+    }
 
     return this._refundPoolContract = createContract<FollowRefundPool>(
       refundPoolAddress,
@@ -255,7 +264,7 @@ export class BrowserContractService {
       return this._refundFactoryContract
 
     return this._refundFactoryContract = createContract<FollowRefundFactory>(
-      import.meta.env.VITE_FOLLOW_REFUND_FACTORY_ADDRESS,
+      import.meta.env.VITE_REFUND_FACTORY_ADDRESS,
       followRefundFactory_ABI,
       this.signer,
     )
@@ -300,6 +309,22 @@ export class BrowserContractService {
   }
 
   /**
+   * ERC3525
+   *
+   * @return {*}  {Promise<ERC3525>}
+   * @memberof BrowserContractService
+   */
+  async getERC3525Contract() {
+    return createContract<ERC3525>(
+      import.meta.env.VITE_ERC3525_ADDRESS,
+      ERC3525_ABI,
+      this.signer,
+    )
+  }
+
+  // view
+
+  /**
    *根据订单ID获取资金池合约
    *
    * @param {bigint} tradeId
@@ -320,6 +345,34 @@ export class BrowserContractService {
   }
 
   /**
+   * 根据用户地址得到用户拥有的所有ERC3525 tokenid
+   */
+  async ERC3525_getPersonalMes() {
+    const ERC3525Contract = await this.getERC3525Contract()
+    return ERC3525Contract.getPersonalMes(this.signer.address)
+  }
+
+  // write
+
+  /**
+   * 贷款人存入份数数量(贷款人借出)
+   * 使用订单ID对应的资金池地址来进行认购初始化合约
+   *
+   * @param {bigint} copies 输入的份数超过订单id的目标份数报错
+   * @param {string} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async capitalPool_lend(copies: bigint, tradeId: bigint) {
+    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
+
+    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+
+    const transaction = await capitalPoolContract?.lend(copies, tradeId)
+    return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
+  }
+
+  /**
    * 贷款人退款
    * 未达成目标,贷款人取回token
    *
@@ -327,7 +380,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_Refund(tradeId: bigint): Promise<ethers.ContractTransactionReceipt | undefined> {
+  async capitalPool_refund(tradeId: bigint): Promise<ethers.ContractTransactionReceipt | undefined> {
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
     if (!capitalPoolAddress) {
@@ -338,7 +391,7 @@ export class BrowserContractService {
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
     const transaction = await capitalPoolContract?.refund(tradeId)
 
-    return handleTransaction(transaction)
+    return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
   }
 
   /**
@@ -349,7 +402,7 @@ export class BrowserContractService {
    * @param {string} handleAddress handleAddress handle合约地址
    * @memberof BrowserContractService
    */
-  async capitalPool_ApproveHandle(tradeId: bigint, token: string) {
+  async capitalPool_approveHandle(tradeId: bigint, token: string) {
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
@@ -368,7 +421,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_MultiClearing(tradeId: bigint) {
+  async capitalPool_multiClearing(tradeId: bigint) {
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
@@ -387,7 +440,7 @@ export class BrowserContractService {
    * @param {bigint} amount 传入的token的数量
    * @memberof BrowserContractService
    */
-  async capitalPool_ClearingMoney(token: string, tradeId: bigint, fee: bigint = BigInt(3000), amount: bigint = BigInt(100)) {
+  async capitalPool_clearingMoney(token: string, tradeId: bigint, fee: bigint = BigInt(3000), amount: bigint = BigInt(100)) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     if (!cp) {
@@ -431,7 +484,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_Repay(tradeId: bigint) {
+  async capitalPool_repay(tradeId: bigint) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
@@ -444,7 +497,7 @@ export class BrowserContractService {
   }
 
   /**
-   *
+   * swap操作，仅由传入的已创建的资金池创建者可以调用
    *
    * @param {bigint} tradeId
    * @param {string} swapToken
@@ -454,12 +507,52 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async followHandle_SwapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+  async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const contract = await this.getFollowHandleContract()
 
     const transaction = await contract.swapERC20(cp!, tradeId, swapToken, buyOrSell, amount, fee)
+
+    return handleTransaction(transaction)
+  }
+
+  /**
+   * 贷款人提取最后清算的资金+还款资金+分红资金(订单结束时间10天后才可提取)
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followRefundPool_lenderWithdraw(tradeId: bigint) {
+    const refundPoolContract = await this.getRefundPoolContract(tradeId)
+
+    const tokenIds = await this.ERC3525_getPersonalMes()
+
+    const tokenId = tokenIds.at(-1)
+
+    if (!tokenId) {
+      message.error('refund pool tokenId is undefined')
+      throw new Error('refund pool tokenId is undefined')
+    }
+
+    const transaction = await refundPoolContract.lenderWithdraw(tokenId) // tokenId用户持有的ERC3525的tokenId
+
+    return handleTransaction(transaction)
+  }
+
+  /**
+   * 借款人提取
+   *
+   * @param {bigint} tradeId 借款人发起的订单id，即对应槽值
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followRefundPool_borrowerWithdraw(tradeId: bigint) {
+    const refundPoolContract = await this.getRefundPoolContract(tradeId)
+
+    const transaction = await refundPoolContract.borrowerWithdraw(tradeId)
+    console.log('%c [ transaction ]-529', 'font-size:13px; background:#f5a83f; color:#ffec83;', transaction)
 
     return handleTransaction(transaction)
   }

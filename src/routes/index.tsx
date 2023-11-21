@@ -8,6 +8,7 @@ import MyLoan from '@/pages/personal-center/my-loan'
 import OrderViewAll from '@/pages/index/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
+import Test from '@/pages/Test'
 
 const Index = lazy(() => import('../pages/index'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -108,6 +109,17 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       <BasicLayout>
         <React.Suspense fallback={<div>Loading...</div>}>
           <OrderViewAll />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+  },
+  {
+    path: 'test',
+    meta: { showInput: false },
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Test />
         </React.Suspense>
       </BasicLayout>
     ),

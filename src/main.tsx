@@ -60,21 +60,6 @@ const wagmiConfig = createConfig({
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
-// // 设置根元素字体大小的函数
-// function setRootFontSize() {
-//   const width = document.documentElement.clientWidth
-//   const rootFontSize = `${width / 480}px`
-//   document.documentElement.style.fontSize = rootFontSize
-// }
-
-// function initAndListen() {
-//   setRootFontSize()
-//   window.addEventListener('orientationchange', setRootFontSize)
-//   window.addEventListener('resize', setRootFontSize)
-// }
-
-// initAndListen()
-
 const browserLanguageLib = getLanguageLib()
 
 root.render(

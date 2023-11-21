@@ -13,9 +13,9 @@ const UserDropdown = () => {
     {
       key: '1',
       label: (
-        <a className='my-12 h18 text-12'>
+        <Link className='my-12 h18 text-12' to={'/my-loan'}>
           {t('nav.menu.loan')}
-        </a>
+        </Link>
 
       ),
     },

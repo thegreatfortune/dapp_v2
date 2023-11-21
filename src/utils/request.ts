@@ -33,7 +33,7 @@ async function request<T>(config: AxiosRequestConfig): Promise<T> {
 
 async function handleRetry<T>(config: AxiosRequestConfig): Promise<T> {
   return new Promise((resolve, reject) => {
-    notification.open({
+    notification.error({
       message: 'Please try again',
       description: 'Request error, please try again',
       onClick: async () => {

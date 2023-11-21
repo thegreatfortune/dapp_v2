@@ -5,6 +5,8 @@ import type { Models } from '@/.generated/api/models'
 
 interface CardProps {
   item: Models.LoanOrderVO
+  children?: React.ReactNode
+  btnText?: string
 }
 
 interface CustomAvatarProps {
@@ -30,7 +32,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
   )
 }
 
-const TransparentCard: React.FC<CardProps> = ({ item }) => {
+const TransparentCard: React.FC<CardProps> = ({ item, children, btnText }) => {
   const navigate = useNavigate()
 
   return (
@@ -53,7 +55,7 @@ const TransparentCard: React.FC<CardProps> = ({ item }) => {
                 {(item.loanMoney ?? 0) / 10 ** 18} USDT
               </li>
               <li>
-                <CustomAvatar src={'item.'} name={'xasxsa'} twitter={'xsaxas'} />
+                {children ?? <CustomAvatar src={'item.'} name={'xasxsa'} twitter={'xsaxas'} />}
               </li>
             </ul>
 
@@ -65,7 +67,7 @@ const TransparentCard: React.FC<CardProps> = ({ item }) => {
                 {item.tradingForm === 'SpotGoods' ? 'Low' : 'Hight' }
               </li>
               <li>
-                <Button className='mt-10 h30 w-110 text-12 primary-btn'>Follow</Button>
+                <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
               </li>
             </ul>
 

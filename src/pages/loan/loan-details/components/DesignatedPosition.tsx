@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import tradingPairTokenMap from './tradingPairTokenMap'
+import RepaymentPlan from './RepaymentPlan'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
@@ -21,7 +22,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
 
   useEffect(() => {
-    if (!browserContractService || transactionPair.length <= 0 || !tradeId)
+    if (!browserContractService || !tradeId)
       return
 
     setCoinInfos([])
@@ -32,6 +33,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
       const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
       pro && proList.push(pro as Promise<CoinInfo>)
     }
+    console.log('%c [ transactionPair ]-33', 'font-size:13px; background:#a1c97d; color:#e5ffc1;', transactionPair)
+
+    console.log('%c [ proList ]-35', 'font-size:13px; background:#232d94; color:#6771d8;', proList)
 
     for (let i = 0; i < transactionPair.length; i++) {
       const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
@@ -68,35 +72,39 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     }
   }
 
-  return (<div className="flex justify-between">
-    <div className="h560 w634">
-      {JSON.stringify(coinInfos)}
-    </div>
-    <div className="flex flex-wrap" >
-      {
-        coinInfos.map(item => (
-          <div key={item.name} className="h160 w321 s-container">
-            <div>
-              {item.name}({
-                // 如果余额大于零，则计算比例并显示结果
-                item.balance > 0
-                  ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
-                    .div(item.balance)
-                    .toFixed(2)
-                  : <span>
-                    0
-                  </span>
+  return (
+    <div>
+      <div className="flex justify-between">
+        <div className="h560 w634">
+        </div>
+        <div className="flex flex-wrap" >
+          {
+            coinInfos.map(item => (
+              <div key={item.name} className="h160 w321 s-container">
+                <div>
+                  {item.name}({
+                    // 如果余额大于零，则计算比例并显示结果
+                    item.balance > 0
+                      ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
+                        .div(item.balance)
+                        .toFixed(2)
+                      : <span>
+                        0
+                      </span>
 
-              })
-              %
-            </div>
-            <div >$ {item.balance}</div>
-          </div>
-        ))
-      }
-    </div>
+                  })
+                  %
+                </div>
+                <div >$ {item.balance}</div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
 
-  </div>)
+      <RepaymentPlan tradeId={tradeId} />
+    </div>
+  )
 }
 
 export default DesignatedPosition

@@ -46,7 +46,7 @@ export namespace Models {
     /** 筛选出贷款金额小于该值的 */
     maxLoanPrice?: string = undefined;
     /** 借款用户id筛选 */
-    borrowUserId?: number = 0;
+    borrowUserId?: string = undefined;
     /** 借款订单状态
 Following :跟随中, 正在筹款
 Trading :交易中, 已筹完
@@ -68,8 +68,21 @@ Twitter :推特 */
     tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
+  export class ApiRepayPlanPageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    tradeId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
   export class ApiTwitterCallBackTwitterGETParams {
     key?: string = undefined;
+  }
+
+  export class ApiUserInviteInvitedOrNotGETParams {
+    address?: string = undefined;
   }
 
   export class AuthResult {
@@ -81,7 +94,7 @@ Twitter :推特 */
     /** 分数 */
     score?: number = 0;
     /** 还款状态 */
-    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' = undefined;
+    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' = undefined;
   }
 
   export class ISysWallet {}
@@ -91,17 +104,17 @@ Twitter :推特 */
   export class LoanConfirmParam {
     wallet?: ISysWallet = undefined;
     /** 借款订单id */
-    tradeId?: number = 0;
+    tradeId?: string = undefined;
     /** 名称 */
-    loanName: string = '';
+    loanName?: string = undefined;
     /** 简介 */
     loanIntro?: string = undefined;
     /** 借款订单展示用的图片url地址 */
     loanPicUrl?: string = undefined;
     /** 交易形式 */
-    tradingFormType: 'Empty' | 'SpotGoods' | 'Contract' = 'Empty';
+    tradingFormType?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
     /** 交易平台 */
-    tradingPlatformType: 'Empty' | 'Uniswap' | 'GMX' = 'Empty';
+    tradingPlatformType?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 展示的平台账号 */
     showPlatforms?: 'Twitter'[] = undefined;
     /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
@@ -150,11 +163,11 @@ Twitter :推特 */
   }
 
   export class LoanOrderVO {
-    id?: number = 0;
+    id?: string = undefined;
     /** 借方id */
-    userId?: number = 0;
+    userId?: string = undefined;
     /** 在合约中的订单id */
-    tradeId?: number = 0;
+    tradeId?: string = undefined;
     /** 生效状态 */
     state?: 'Following' | 'Trading' | 'PaidOff' | 'Blacklist' = undefined;
     /** 获取接收贷款的地址 */
@@ -170,31 +183,32 @@ Twitter :推特 */
     /** 贷款金额 */
     loanMoney?: number = 0;
     /** 利息 */
-    interest?: number = 0;
+    interest?: string = undefined;
     /** 总还款次数 */
     repayCount?: number = 0;
     /** 还款天数, 比如180天内还完 */
     periods?: number = 0;
     /** 目标份数 */
-    goalCopies?: number = 0;
+    goalCopies?: string = undefined;
     /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
     minGoalQuantity?: number = 0;
     /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
-    collectEndTime?: number = 0;
+    collectEndTime?: string = undefined;
     /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
-    dividendRatio?: number = 0;
+    dividendRatio?: string = undefined;
     /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
     transactionPairs?: string[] = undefined;
     /** 是否展示绑定的平台用户, 如果不展示则是空数组, 里面是bind表的id */
-    showPlatformUser?: number[] = undefined;
+    showPlatformUser?: string[] = undefined;
     /** 用途介绍 */
     usageIntro?: string = undefined;
     createDate?: string = undefined;
     /** 订单结束时间(清算时间) */
-    endTime?: number = 0;
+    endTime?: string = undefined;
+    isConfirm?: number = 0;
     showPlatformUserList?: PlatformUserVo[] = undefined;
     /** 已筹集份数 */
-    collectCopies?: number = 0;
+    collectCopies?: string = undefined;
   }
 
   export class LoginDto {
@@ -204,9 +218,9 @@ Twitter :推特 */
 
   export class MetaMaskLoginParam {
     /** 钱包 */
-    address: string = '';
+    address?: string = undefined;
     /** 签名 */
-    sign: string = '';
+    sign?: string = undefined;
   }
 
   export class MetaMaskVerifyParam {
@@ -225,15 +239,6 @@ Twitter :推特 */
     column?: string = undefined;
     /** 是否是asc排序 是否正序排列，默认 true */
     asc?: boolean = false;
-  }
-
-  export class PageInfoGETParams {
-    /** 分页查询页码 */
-    page?: number = 0;
-    /** 分页查询每页数量 */
-    limit?: number = 0;
-    loanId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class PageResult<T> {
@@ -264,11 +269,11 @@ Twitter :推特 */
 
   export class RepayPlanVo {
     /** 订单id */
-    loanId?: number = 0;
+    loanId?: string = undefined;
     /** 还款时间 */
     repayTime?: string = undefined;
     /** 0 == 未偿还 */
-    state?: 'UNPAID' | 'REPAID' | 'OVERDUE' = undefined;
+    state?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' = undefined;
     /** 表示是第几期偿还 */
     nowCount?: number = 0;
     /** 偿还token */
@@ -291,5 +296,12 @@ Twitter :推特 */
   export class TwitterVo {
     /** 请求url */
     authLink_uri?: string = undefined;
+  }
+
+  export class UserInfoVo {
+    userId?: string = undefined;
+    nickName?: string = undefined;
+    walletId?: string = undefined;
+    address?: string = undefined;
   }
 }

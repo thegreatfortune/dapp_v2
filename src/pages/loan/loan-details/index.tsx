@@ -110,11 +110,14 @@ const LoanDetails = () => {
         }
       }
 
-      const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract(cp)
+      const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
+      console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
-      const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
+      // const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract(cp)
 
-      const result = await res?.wait()
+      // const res = await followCapitalPoolContract?.lend(BigInt(copies), BigInt(tradeId))
+
+      // const result = await res?.wait()
       if (result?.status === 1)
         setLendState('Success')
         // navigate('/my-lend')
@@ -122,6 +125,8 @@ const LoanDetails = () => {
         message.error('operation failure')
     }
     catch (error) {
+      message.error('operation failure')
+      setLendState(undefined)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }
     // finally {
@@ -193,7 +198,7 @@ const LoanDetails = () => {
           <div>
             <div className='flex'>
               <Button className='mr-33'>Following</Button>
-              <span> follow end time {<Countdown targetTimestamp={loanInfo.endTime ?? 0} />}</span>
+              <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime) } />}</span>
             </div>
             <div className='mb20 mt30'>  Sound Wave V!</div>
 
@@ -258,6 +263,7 @@ const LoanDetails = () => {
     </Radio.Group>
 
     <DesignatedPosition loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
+
   </div>)
 }
 
