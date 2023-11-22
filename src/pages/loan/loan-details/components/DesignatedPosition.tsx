@@ -11,6 +11,8 @@ interface IProps {
   transactionPair: string[]
   loanMoney: number
   repayCount: number
+  refundPoolAddress: string | undefined
+  lendState: 'Processing' | 'Success' | undefined
 }
 
 class CoinInfo {
@@ -19,7 +21,7 @@ class CoinInfo {
   decimals: number = 0
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount }) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState }) => {
   const { browserContractService } = useBrowserContract()
 
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
@@ -100,14 +102,18 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                   %
                 </div>
                 <div >$ {item.balance}</div>
-                <Button className='h30 w50 primary-btn' onClick={() => setIsModalOpen(true)}>swap</Button>
+                {
+                  item.name !== 'USDC'
+                    ? <Button className='h30 w50 primary-btn' onClick={() => setIsModalOpen(true)}>swap</Button>
+                    : null
+                }
               </div>
             ))
           }
         </div>
       </div>
 
-      <RepaymentPlan tradeId={tradeId} repayCount={repayCount} />
+      <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
     </div>
   )
 }

@@ -11,11 +11,11 @@ const SwapModal: React.FC<IProps> = (props) => {
                 <h2>swap</h2>
                 <div>
                     you pay
-                    <InputNumber />
+                    <InputNumber className='w-full' />
                 </div>
                 <div>
                     you receiver
-                    <InputNumber />
+                    <InputNumber className='w-full' />
                 </div>
             </div>
 

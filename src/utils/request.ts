@@ -5,6 +5,7 @@ import useUserStore from '../store/userStore'
 
 enum HttpCode {
   RETRY = 100404,
+  RESET_CONTENT = 100205,
 }
 
 interface IResponse<T> {
@@ -78,7 +79,7 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
     throw responseData.data
   }
 
-  if (responseData.code !== 200) {
+  if (responseData.code !== 200 && responseData.code !== HttpCode.RESET_CONTENT) {
     if (responseData.code === HttpCode.RETRY)
       return response
 

@@ -11,6 +11,9 @@ dependencies:
   '@uniswap/sdk-core':
     specifier: ^4.0.9
     version: 4.0.9
+  '@uniswap/v3-periphery':
+    specifier: ^1.4.4
+    version: 1.4.4
   '@uniswap/v3-sdk':
     specifier: ^3.10.0
     version: 3.10.0(hardhat@2.19.0)

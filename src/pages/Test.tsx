@@ -1,5 +1,6 @@
 import { Button, Input, InputNumber } from 'antd'
 import { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 const Test = () => {
@@ -50,30 +51,50 @@ const Test = () => {
   }
 
   async function followHandle_SwapERC20() {
-    const res = await browserContractService?.followHandle_swapERC20(tradeId, '0xCfA09f923d29E41C4dCcb817A06D0BC3D73F6e1B', BigInt(0), BigInt(500000000))
+    console.log('%c [ tradeId ]-54', 'font-size:13px; background:#558702; color:#99cb46;', tradeId)
+    const res = await browserContractService?.followHandle_swapERC20(tradeId, '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(0), ethers.parseEther(String(100)))
     console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
   }
 
   async function followRefundPool_lenderWithdraw() {
-    const res = await browserContractService?.followRefundPool_lenderWithdraw(tradeId)
+    const res = await browserContractService?.refundPool_lenderWithdraw(tradeId)
     console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
   }
 
   async function followRefundPool_borrowerWithdraw() {
-    const res = await browserContractService?.followRefundPool_borrowerWithdraw(tradeId)
+    const res = await browserContractService?.refundPool_borrowerWithdraw(tradeId)
     console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
+  }
+
+  async function USDC_mint() {
+    await browserContractService?.ERC20_mint(import.meta.env.VITE_USDC_TOKEN)
+  }
+
+  async function FToken_mint() {
+    await browserContractService?.ERC20_mint(import.meta.env.VITE_FOLLOW_TOKEN)
+  }
+
+  async function getTokenPrice() {
+    const res = await browserContractService?.getTestLiquidityContract()
+    const a = await res?.getTokenPrice('0x084815D1330eCC3eF94193a19Ec222C0C73dFf2d', '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(3000), BigInt(100000000))
+    console.log('%c [ getTokenPrice ]-80', 'font-size:13px; background:#950fd7; color:#d953ff;', a)
   }
 
   return (
 
     <div>
-      Test
+      <h2>Test</h2>
 
       订单id: {Number(tradeId)} <InputNumber onChange={inputChange} className='w-200' />
 
       <div className='h20'></div>
 
       <div className='flex flex-wrap gap-24'>
+      <Button loading={loading} onClick={getTokenPrice}>getTokenPrice</Button>
+
+      <Button loading={loading} onClick={USDC_mint}>faucet USDC Token +1千万</Button>
+
+      <Button loading={loading} onClick={FToken_mint}>faucet FollowToken +1千万</Button>
 
         <Button loading={loading} onClick={refund}> 贷款人退款  refund</Button>
 

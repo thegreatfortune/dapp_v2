@@ -30,8 +30,30 @@ import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
 
+const localhost = {
+  ...polygonMumbai,
+  id: 31337,
+  name: 'Localhost',
+  network: 'localhost',
+  rpcUrls: {
+    ...polygonMumbai.rpcUrls,
+    ...{
+      localhost: {
+        http: [import.meta.env.VITE_ALCHEMY_ID],
+        webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2'],
+      },
+      default: {
+        http: [import.meta.env.VITE_ALCHEMY_ID],
+      },
+      public: {
+        http: [import.meta.env.VITE_ALCHEMY_ID],
+      },
+    },
+  },
+}
+
 const { chains, publicClient } = configureChains(
-  [polygonMumbai, arbitrum],
+  [localhost, polygonMumbai, arbitrum],
   [
     alchemyProvider({
       apiKey: import.meta.env.VITE_ALCHEMY_ID,
@@ -72,6 +94,6 @@ root.render(
           </RainbowKitProvider>
         </WagmiConfig>
       </BrowserRouter>
-      </ConfigProvider>
+    </ConfigProvider>
   </React.StrictMode>,
 )

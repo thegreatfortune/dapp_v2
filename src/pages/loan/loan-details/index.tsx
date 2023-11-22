@@ -28,6 +28,21 @@ const LoanDetails = () => {
 
   const [checkMaxLoading, setCheckMaxLoading] = useState(false)
 
+  const [refundPoolAddress, setRefundPoolAddress] = useState<string>()
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!tradeId || !browserContractService)
+        return
+
+      const address = await browserContractService?.getRefundPoolAddress(BigInt(tradeId))
+
+      setRefundPoolAddress(address)
+    }
+
+    fetchData()
+  }, [browserContractService, tradeId])
+
   useEffect(() => {
     async function fetchData() {
       if (tradeId) {
@@ -182,15 +197,14 @@ const LoanDetails = () => {
               <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
               <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime) } />}</span>
             </div>
-            <div className='mb20 mt30'>  Sound Wave V!</div>
+            <div className='mb20 mt30'> {loanInfo.loanName}</div>
 
           </div>
           <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
         </div>
 
         <p>
-          Created with love，inspired by audio spectrum with abstract style so I re-created it in 3D
-          software so it will look awesome, Visual done by bu.darmani 1 in High Definition size 2500X2500px.
+        {loanInfo.usageIntro}
         </p>
 
         <div className='h191 w1047 flex gap-x-24 border-5 border-#0394e8 border-solid'>
@@ -244,7 +258,7 @@ const LoanDetails = () => {
       <Radio.Button value="small">Room trade</Radio.Button>
     </Radio.Group>
 
-    <DesignatedPosition repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
+    <DesignatedPosition lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
 
   </div>)
 }

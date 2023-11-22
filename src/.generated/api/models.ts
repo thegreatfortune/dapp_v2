@@ -48,9 +48,11 @@ export namespace Models {
     /** 借款用户id筛选 */
     borrowUserId?: string = undefined;
     /** 借款订单状态
+Invalid :订单无效
 Following :跟随中, 正在筹款
 Trading :交易中, 已筹完
 PaidOff :已还清, 借款订单结束
+PaidButArrears :支付部分, 但是还有欠款
 Blacklist :黑名单 */
     state?: string = undefined;
     /** 根据用户昵称筛选 */
@@ -169,7 +171,8 @@ Twitter :推特 */
     /** 在合约中的订单id */
     tradeId?: string = undefined;
     /** 生效状态 */
-    state?: 'Following' | 'Trading' | 'PaidOff' | 'Blacklist' = undefined;
+    state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
+      undefined;
     /** 获取接收贷款的地址 */
     receiveAddress?: string = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
@@ -273,7 +276,7 @@ Twitter :推特 */
     /** 还款时间 */
     repayTime?: string = undefined;
     /** 0 == 未偿还 */
-    state?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' = undefined;
+    state?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS' = undefined;
     /** 表示是第几期偿还 */
     nowCount?: number = 0;
     /** 偿还token */

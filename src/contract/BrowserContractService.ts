@@ -1,16 +1,26 @@
-import type { ethers } from 'ethers'
-import { Contract } from 'ethers'
+import { Contract, ethers } from 'ethers'
+
 import { message, notification } from 'antd'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
+
+// import Quoter_ABI from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
+// import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
+
+// import type { IQuoter } from './IQuoter'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
+import LocalCapitalPool_ABI from '@/abis/LocalCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
 import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
+import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
+import { Models } from '@/.generated/api/models'
+import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
+import { LoanService } from '@/.generated/api/Loan'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -187,6 +197,24 @@ export class BrowserContractService {
   }
 
   /**
+   * 获取报价
+   *
+   * @param {string} [token]
+   * @return {*}  {(Promise<UniswapV3 | undefined>)}
+   * @memberof BrowserContractService
+   */
+  async getTestLiquidityContract(token?: string): Promise<UniswapV3 | undefined> {
+    // if (this._ERC20Contract && !token)
+    //   return this._ERC20Contract
+
+    return createContract<UniswapV3>(
+      token ?? import.meta.env.VITE_TEST_LIQUIDITY_ADDRESS,
+      TEST_LIQUIDITY_ABI,
+      this.signer,
+    )
+  }
+
+  /**
    * FollowHandle
    *
    * @return {*}
@@ -203,9 +231,11 @@ export class BrowserContractService {
   async getCapitalPoolContract(cp?: string): Promise<FollowCapitalPool | undefined> {
     const capitalPoolAddress = cp ?? await this.getCapitalPoolAddress()
 
+    const abi = import.meta.env.DEV ? LocalCapitalPool_ABI : followCapitalPool_ABI
+
     return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
       capitalPoolAddress!,
-      followCapitalPool_ABI,
+      abi,
       this.signer,
     )
   }
@@ -322,7 +352,26 @@ export class BrowserContractService {
     )
   }
 
+  /**
+   *swap quote
+   *
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  // async getSwapQuoteContract() {
+  //   return createContract<IQuoter>(
+  //     import.meta.env.VITE_QUOTER_CONTRACT_ADDRESS,
+  //     Quoter_ABI.abi,
+  //     this.signer,
+  //   )
+  // }
+
   // view
+
+  // async quote() {
+  //   const swapQuoteContract = await this.getSwapQuoteContract()
+  //   // swapQuoteContract.quoteExactInputSingle()
+  // }
 
   /**
    *根据订单ID获取资金池合约
@@ -352,6 +401,21 @@ export class BrowserContractService {
     return ERC3525Contract.getPersonalMes(this.signer.address)
   }
 
+  /**
+   *获取还款池地址
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getRefundPoolAddress(tradeId: bigint) {
+    const cp = await this.getCapitalPoolAddress(tradeId)
+
+    const pcc = await this.getProcessCenterContract()
+
+    return pcc._getRefundPool(cp)
+  }
+
   // write
 
   /**
@@ -372,6 +436,7 @@ export class BrowserContractService {
       return false
 
     const allowance = await ERC20Contract?.allowance(cp, this?.getSigner.address)
+    console.log('%c [ allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
 
     if ((allowance ?? BigInt(0)) <= BigInt(0)) {
       const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
@@ -385,6 +450,94 @@ export class BrowserContractService {
     }
 
     return true
+  }
+
+  /**
+   * 铸币
+   *
+   * @param {string} token
+   * @param {number} [amount]
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async ERC20_mint(token: string, amount: bigint = ethers.parseEther(String(10 ** 8))) {
+    console.log('%c [ amount ]-442', 'font-size:13px; background:#fd89f9; color:#ffcdff;', amount)
+    console.log('%c [ token ]-444', 'font-size:13px; background:#b56a27; color:#f9ae6b;', token)
+    const contract = await this.getERC20Contract(token)
+    console.log('%c [ contract ]-445', 'font-size:13px; background:#3646cb; color:#7a8aff;', contract)
+    const res = await contract?._mint(this.getSigner.address, amount)
+    return handleTransaction(res)
+  }
+
+  /**
+   *创建订单
+   *
+   * @param {LoanRequisitionEditModel} model
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async capitalPool_createOrder(model: LoanRequisitionEditModel) {
+    const capitalPoolContract = await this.getCapitalPoolContract()
+
+    if (import.meta.env.DEV) {
+      const cp = await capitalPoolContract?.getAddress()
+
+      if (!cp)
+        return
+
+      const localCapitalPoolContract = createContract<LocalCapitalPool>(
+        cp,
+        LocalCapitalPool_ABI,
+        this.signer,
+      )
+
+      const t1 = await localCapitalPoolContract.set([import.meta.env.VITE_USDC_TOKEN, import.meta.env.VITE_ERC3525_ADDRESS, import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, this.getSigner.address])
+      handleTransaction(t1)
+    }
+
+    const transaction = await capitalPoolContract?.createOrder(
+      [
+        BigInt(model.cycle),
+        BigInt(model.period),
+      ],
+      [
+        BigInt((model.interest * 100)),
+        BigInt(model.dividend),
+        BigInt(model.numberOfCopies),
+        BigInt(model.minimumRequiredCopies),
+      ],
+      BigInt(model.raisingTime) * BigInt(60), // TODO 秒数
+      BigInt(model.applyLoan) * BigInt(10 ** 18),
+      'https://6a32f35977ea4e1844ce0dbab6b9c6d9.ipfs.4everland.link/ipfs/bafybeidnzira46v3ebmq3qw7vlovr4lgx4ytwgsyzi5ym4pf43ycki2g3u',
+      'image1',
+    )
+
+    const result = await handleTransaction(transaction)
+
+    if (result?.status === 1) {
+      const loanConfirm = {
+        ...new Models.LoanConfirmParam(),
+        loanName: model.itemTitle ?? '',
+        loanIntro: model.description ?? '',
+        transactionPairs: model.transactionPairs,
+        tradingFormType: model.tradingFormType,
+        tradingPlatformType: model.tradingPlatformType,
+      }
+
+      const cp = await capitalPoolContract?.getAddress()
+
+      const followManageContract
+        = await this.getFollowManageContract()
+
+      const tids = await followManageContract?.getborrowerAllOrdersId(
+        this.getSigner.address ?? '',
+        cp ?? '',
+      )
+
+      loanConfirm.tradeId = String(Number(tids?.at(-1)) ?? 0)
+
+      return LoanService.ApiLoanConfirm_POST(loanConfirm)
+    }
   }
 
   /**
@@ -440,7 +593,7 @@ export class BrowserContractService {
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_SPOT_GOODS_HANDLE_ADDRESS)
+    const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_FOLLOW_HANDLE_ADDRESS)
 
     return handleTransaction(transaction)
   }
@@ -548,6 +701,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+    await this.capitalPool_approveHandle(tradeId, swapToken)
+
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const contract = await this.getFollowHandleContract()
@@ -564,7 +719,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async followRefundPool_lenderWithdraw(tradeId: bigint) {
+  async refundPool_lenderWithdraw(tradeId: bigint) {
     const refundPoolContract = await this.getRefundPoolContract(tradeId)
 
     const tokenIds = await this.ERC3525_getPersonalMes()
@@ -588,7 +743,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async followRefundPool_borrowerWithdraw(tradeId: bigint) {
+  async refundPool_borrowerWithdraw(tradeId: bigint) {
     const refundPoolContract = await this.getRefundPoolContract(tradeId)
 
     const transaction = await refundPoolContract.borrowerWithdraw(tradeId)

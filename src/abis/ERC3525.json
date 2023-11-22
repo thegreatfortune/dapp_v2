@@ -57,6 +57,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "NotApproveAll",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NotCapitalPool",
 		"type": "error"
 	},

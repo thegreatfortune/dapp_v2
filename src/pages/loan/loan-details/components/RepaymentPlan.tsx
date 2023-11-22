@@ -10,9 +10,11 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 interface IProps {
   tradeId: bigint | null
   repayCount: number
+  refundPoolAddress: string | undefined
+  lendState: 'Processing' | 'Success' | undefined
 }
 
-const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount }) => {
+const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
   const { browserContractService } = useBrowserContract()
 
   const [pagination, setPagination] = useState({
@@ -32,6 +34,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount }) => {
   const [supplyAmount, setSupplyAmount] = useState(0)
 
   const [currentItem, setCurrentItem] = useState(new Models.RepayPlanVo())
+
+  const [currentDebt, setCurrentDebt] = useState<number | undefined>()
 
   async function fetchData() {
     if (loading)
@@ -69,14 +73,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount }) => {
   }
 
   useEffect(() => {
-    if (tradeId)
+    if (tradeId || lendState === 'Success')
       fetchData()
-
-    // return () => {
-    //   // Perform cleanup if needed
-    //   // This will be called when the component unmounts
-    // }
-  }, [tradeId])
+  }, [tradeId, refundPoolAddress, lendState])
 
   useEffect(() => {
     async function fetchData() {
@@ -99,153 +98,138 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount }) => {
 
     setModalLoading(true)
 
-    if (currentItem.state === 'OVERDUE') {
-      try {
-        console.log('%c [ tradeId ]-102', 'font-size:13px; background:#5fa642; color:#a3ea86;', tradeId)
-
-        const res = await browserContractService?.capitalPool_repay(tradeId)
-        message.error('succeed')
-
-        console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
+    try {
+      if (currentItem.state === 'OVERDUE') {
+        await browserContractService?.capitalPool_repay(tradeId)
       }
-      catch (error) {
-        message.error('operation failure')
-
-        console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
+      else if (currentItem.state === 'OVERDUE_ARREARS') {
+        // TODO: Token
+        if (repayCount > 1)
+          await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
+        else
+          await browserContractService?.capitalPool_singleClearing(tradeId)
       }
+
+      message.success('Succeed')
     }
-    else if (currentItem.state === 'REPAID') {
-      try {
-        const res = await browserContractService?.refundPool_supply(BigInt(supplyAmount), tradeId)
-        message.success('succeed')
-
-        console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
-      }
-      catch (error) {
-        message.error('operation failure')
-
-        console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
-      }
+    catch (error) {
+      message.error('operation failure')
+      console.log('%c [ error ]-105', 'font-size:13px; background:#46bcdf; color:#8affff;', error)
     }
-    else {
-      if (repayCount > 1) {
-        try {
-          console.log('%c [ tradeId ]-117', 'font-size:13px; background:#31b682; color:#75fac6;', tradeId)
-
-          const res = await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
-          message.success('succeed')
-
-          console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
-        }
-        catch (error) {
-          message.error('operation failure')
-
-          console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
-        }
-      }
-      else {
-        try {
-          console.log('%c [ tradeId ]-117', 'font-size:13px; background:#31b682; color:#75fac6;', tradeId)
-
-          const res = await browserContractService?.capitalPool_singleClearing(tradeId)
-          message.success('succeed')
-
-          console.log('%c [ res ]-81', 'font-size:13px; background:#bc5629; color:#ff9a6d;', res)
-        }
-        catch (error) {
-          message.error('operation failure')
-
-          console.log('%c [ error ]-82', 'font-size:13px; background:#50a27f; color:#94e6c3;', error)
-        }
-      }
+    finally {
+      setModalLoading(false)
     }
-
-    setModalLoading(false)
   }
 
-  function onOpenModal(item: Models.RepayPlanVo) {
-    setIsModalOpen(true)
+  async function onOpenModal(item: Models.RepayPlanVo) {
+    if (!tradeId)
+      return
 
-    setCurrentItem(item)
+    try {
+      if (item.state === 'OVERDUE_ARREARS') {
+        const processCenterContract = await browserContractService?.getProcessCenterContract()
+
+        const count = await processCenterContract?.getTradeIdToEveryMultiFee(tradeId)
+
+        setCurrentDebt(Number(count)) // TODO Loading
+      }
+
+      setIsModalOpen(true)
+
+      setCurrentItem(item)
+    }
+    catch (error) {
+      console.log('%c [ error ]-129', 'font-size:13px; background:#719d7d; color:#b5e1c1;', error)
+    }
   }
 
   return (
+    <div>
+      <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={
         <div>
-            <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={
-                <div>
-                    <Button onClick={() => setIsModalOpen(false)}>
-                        Cancel
-                    </Button>
-                    <Button type='primary' onClick={onConfirm} loading={modalLoading}>
-                        Confirm
-                    </Button>
-                </div>}>
-                <div>
-                    <h1> {currentItem.state === 'REPAID' ? 'Supply' : 'Repayment'} </h1>
-                    <div className='flex items-center justify-between text-center'>
+          <Button onClick={() => setIsModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button type='primary' onClick={onConfirm} loading={modalLoading}>
+            Confirm
+          </Button>
+        </div>}>
+        <div>
+          <h1> {currentItem.state === 'REPAID' ? 'Supply' : 'Repayment'} </h1>
+          <div className='flex items-center justify-between text-center'>
 
-                      {currentItem.state === 'REPAID'
-                        ? <div>
-                      <InputNumber
-                            value={supplyAmount}
-                            onChange={value => setSupplyAmount(value ?? 0)}
-                            className='w-full'
-                            min={1}
-                        />
-                      </div>
-                        : <h2>{BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber()} </h2>}
-
-                    </div>
-                </div>
-            </SModal>
-
-            <h2>Repayment Plan</h2>
-
-            {arrears !== 0 ? <span>Arrears ${BigNumber(arrears).div(BigNumber(10).pow(18)).toFixed(2)}</span> : null}
-
-            <ul className='flex list-none gap-x-168'>
-                <li>TEMI</li>
-                <li>Repayment Amount</li>
-                <li>State</li>
-                <li>Days Overdue</li>
-                {/* <li>Remaining Amount Due</li> */}
-            </ul>
-
-            <div
-                id="scrollableDivPlan"
-                style={{
-                  height: 400,
-                  overflow: 'auto',
-                  padding: '0 16px',
-                  border: '1px solid rgba(140, 140, 140, 0.35)',
-                }}
-            >
-                <InfiniteScroll
-                    dataLength={result.total ?? 0}
-                    next={fetchData}
-                    hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
-                    loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-                    endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-                    scrollableTarget="scrollableDivPlan"
-                >
-                    <List
-                        dataSource={result.records}
-                        renderItem={item => (
-                            <List.Item key={item.loanId}>
-                                <ul className='flex list-none gap-x-168'>
-                                    <li>{item.nowCount} {item.repayTime}</li>
-                                    <li>{BigNumber(item.repayFee ?? 0).div(BigNumber(10).pow(18)).toFixed(2)}</li>
-                                    <li>{item.state}</li>
-                                    <li>compute</li>
-                                    <li>{item.nowCount}</li>
-                                    <li><Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>{item.state === 'REPAID' ? 'Supply' : 'Repayment'}</Button></li>
-                                </ul>
-                            </List.Item>
-                        )}
-                    />
-                </InfiniteScroll>
-            </div>
+            {currentItem.state === 'REPAID'
+              ? <div>
+                <InputNumber
+                  value={supplyAmount}
+                  onChange={value => setSupplyAmount(value ?? 0)}
+                  className='w-full'
+                  min={1}
+                />
+              </div>
+              : <h2>
+                {currentDebt ?? (BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber())}
+                </h2>}
+          </div>
         </div>
+      </SModal>
+
+      <div className='flex items-center'>
+        <h2>Repayment Plan</h2>
+
+        <span className='mx-20'>{refundPoolAddress}</span>
+
+        {arrears !== 0 ? <span>Arrears ${BigNumber(arrears).div(BigNumber(10).pow(18)).toFixed(2)}</span> : null}
+      </div>
+
+      <ul className='flex list-none gap-x-168'>
+        <li>TEMI</li>
+        <li>Repayment Amount</li>
+        <li>State</li>
+        <li>Days Overdue</li>
+        {/* <li>Remaining Amount Due</li> */}
+      </ul>
+
+      <div
+        id="scrollableDivPlan"
+        style={{
+          height: 400,
+          overflow: 'auto',
+          padding: '0 16px',
+          border: '1px solid rgba(140, 140, 140, 0.35)',
+        }}
+      >
+        <InfiniteScroll
+          dataLength={result.total ?? 0}
+          next={fetchData}
+          hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
+          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          scrollableTarget="scrollableDivPlan"
+        >
+          <List
+            dataSource={result.records}
+            renderItem={item => (
+              <List.Item key={item.loanId}>
+                <ul className='flex list-none gap-x-168'>
+                  <li>{item.nowCount} {item.repayTime}</li>
+                  <li>{BigNumber(item.repayFee ?? 0).div(BigNumber(10).pow(18)).toFixed(2)}</li>
+                  <li>{item.state}</li>
+                  <li>compute</li>
+                  <li>
+                    {item.state === 'OVERDUE'
+                      ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Liquidation</Button>
+                      : item.state === 'OVERDUE_ARREARS'
+                        ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Repayment</Button>
+                        : null}
+                  </li>
+                </ul>
+              </List.Item>
+            )}
+          />
+        </InfiniteScroll>
+      </div>
+    </div>
   )
 }
 

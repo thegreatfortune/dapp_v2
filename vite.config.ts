@@ -15,6 +15,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     resolve: {
       alias: {
         '@/': `${path.resolve(__dirname, 'src')}/`,
+        'jsbi': path.resolve(__dirname, './node_modules/jsbi/dist/jsbi-cjs.js'),
+        '~@fontsource/ibm-plex-mono': '@fontsource/ibm-plex-mono',
+        '~@fontsource/inter': '@fontsource/inter',
       },
     },
 
