@@ -17,7 +17,7 @@ interface IProps {
 const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
   const { browserContractService } = useBrowserContract()
 
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<Models.ApiRepayPlanPageInfoGETParams>({
     ...new Models.ApiRepayPlanPageInfoGETParams(),
     limit: 3,
     page: 0,
@@ -46,7 +46,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     try {
       const res = await RepayPlanService.ApiRepayPlanPageInfo_GET({
         ...pagination,
-        page: pagination.page + 1,
+        page: (pagination.page ?? 0) + 1,
         tradeId: Number(tradeId),
       })
 
@@ -59,8 +59,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
         setPagination(prevPagination => ({
           ...prevPagination,
-          page: prevPagination.page + 1,
-          loanId: Number(tradeId),
+          page: (prevPagination.page ?? 0) + 1,
+          tradeId: Number(tradeId),
         }))
       }
     }
@@ -189,6 +189,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         <li>Days Overdue</li>
         {/* <li>Remaining Amount Due</li> */}
       </ul>
+    <span className='c-red'>
+    sas{(result?.records?.length ?? 0) < (result?.total ?? 0)}
+    </span>
 
       <div
         id="scrollableDivPlan"

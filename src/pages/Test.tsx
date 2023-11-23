@@ -76,7 +76,7 @@ const Test = () => {
 
   async function getTokenPrice() {
     const res = await browserContractService?.getTestLiquidityContract()
-    const a = await res?.getTokenPrice('0x084815D1330eCC3eF94193a19Ec222C0C73dFf2d', '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(3000), BigInt(100000000))
+    const a = await res?.getTokenPrice('0x084815D1330eCC3eF94193a19Ec222C0C73dFf2d', '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(3000), BigInt(100))
     console.log('%c [ getTokenPrice ]-80', 'font-size:13px; background:#950fd7; color:#d953ff;', a)
   }
 

@@ -15,10 +15,11 @@ interface IProps {
   lendState: 'Processing' | 'Success' | undefined
 }
 
-class CoinInfo {
+export class CoinInfo {
   name: string | undefined
   balance: number = 0
   decimals: number = 0
+  address: string | undefined
 }
 
 const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState }) => {
@@ -27,6 +28,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [currentTokenInfo, setCurrentTokenInfo] = useState<CoinInfo>(new CoinInfo())
 
   useEffect(() => {
     if (!browserContractService || !tradeId)
@@ -68,17 +71,26 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     const symbol = await ERC20Contract?.symbol()
     const decimals = await ERC20Contract?.decimals()
     console.log('%c [ decimals ]-62', 'font-size:13px; background:#4e2dff; color:#9271ff;', decimals)
+    console.log('%c [ symbol ]-72', 'font-size:13px; background:#5b20b6; color:#9f64fa;', symbol)
+
+    const tokenName = name ?? symbol
 
     return {
-      name: name ?? symbol,
+      name: tokenName,
       balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
       decimals: Number(decimals) ?? 0,
+      address: tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap],
     }
+  }
+
+  function onOpenModal(item: CoinInfo) {
+    setCurrentTokenInfo(item)
+    setIsModalOpen(true)
   }
 
   return (
     <div>
-      <SwapModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
+      <SwapModal currentTokenInfo={currentTokenInfo} open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
 
       <div className="flex justify-between">
         <div className="h560 w634">
@@ -104,7 +116,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                 <div >$ {item.balance}</div>
                 {
                   item.name !== 'USDC'
-                    ? <Button className='h30 w50 primary-btn' onClick={() => setIsModalOpen(true)}>swap</Button>
+                    ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }
               </div>
