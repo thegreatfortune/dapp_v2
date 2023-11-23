@@ -119,9 +119,10 @@ const ApplyLoan = () => {
       // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
 
       const followCapitalPoolContract
-        = await browserContractService?.getCapitalPoolContract()
+      = await browserContractService?.getCapitalPoolContract()
+      console.log('%c [ followCapitalPoolContract ]-122', 'font-size:13px; background:#6485d8; color:#a8c9ff;', followCapitalPoolContract)
 
-      await followCapitalPoolContract?.initCreateTrade()
+      await followCapitalPoolContract?.initCreateOrder()
     }
     catch (error) {
       console.log(

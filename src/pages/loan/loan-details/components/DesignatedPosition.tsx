@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button } from 'antd'
+import { Button, Input } from 'antd'
+import { ethers } from 'ethers'
 import tradingPairTokenMap from './tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import SModal from '@/pages/components/SModal'
 
 interface IProps {
   tradeId: bigint | null
@@ -28,6 +30,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
   const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [isDepositModalOpen, setDepositIsModalOpen] = useState(false)
+
+  const [depositValue, setDepositValue] = useState<string>()
 
   const [currentTokenInfo, setCurrentTokenInfo] = useState<CoinInfo>(new CoinInfo())
 
@@ -66,6 +72,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
       return
 
     const balance = await ERC20Contract?.balanceOf(cp)
+    console.log('%c [ balance ]-69', 'font-size:13px; background:#3a57d0; color:#7e9bff;', balance)
 
     // 查询代币的符号和小数位数
     const symbol = await ERC20Contract?.symbol()
@@ -88,12 +95,65 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     setIsModalOpen(true)
   }
 
+  function onDeposit() {
+    setDepositIsModalOpen(true)
+
+    // try {
+
+    //   browserContractService?.refundPool_supply()
+
+    // } catch (error) {
+    //   console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error);
+
+    // }
+  }
+
+  function onDepositValueChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const newCount = e.target.value.replace(/[^0-9.]/g, '')
+    setDepositValue(newCount ?? '0')
+  }
+
+  async function onDepositModalConfirm() {
+    if (!depositValue || !tradeId)
+      return 0
+
+    try {
+      console.log('%c [ tradeId ]-122', 'font-size:13px; background:#efa7f5; color:#ffebff;', tradeId)
+      console.log('%c [ depositValue ]-122', 'font-size:13px; background:#7062e8; color:#b4a6ff;', depositValue)
+      const res = await browserContractService?.refundPool_supply(ethers.parseEther(depositValue), tradeId)
+
+      console.log('%c [ res ]-124', 'font-size:13px; background:#4871f9; color:#8cb5ff;', res)
+    }
+    catch (error) {
+      console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error)
+    }
+    finally {
+      setDepositIsModalOpen(false)
+    }
+  }
+
   return (
     <div>
-      <SwapModal currentTokenInfo={currentTokenInfo} open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
+      <SwapModal tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
+
+      <SModal open={isDepositModalOpen} onCancel={() => setDepositIsModalOpen(false)} footer={
+        <div>
+          <Button onClick={() => setIsModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button type='primary' onClick={onDepositModalConfirm} >
+            Confirm
+          </Button>
+        </div>}>
+        <Input onChange={onDepositValueChange} />
+
+        {/* <div>
+        </div> */}
+      </SModal>
 
       <div className="flex justify-between">
         <div className="h560 w634">
+        <Button type='primary' onClick={onDeposit}>Deposit</Button>
         </div>
         <div className="flex flex-wrap" >
           {

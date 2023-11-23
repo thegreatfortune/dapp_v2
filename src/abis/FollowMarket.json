@@ -61,6 +61,12 @@
 		"inputs": [
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "marketId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint8",
 				"name": "state",
 				"type": "uint8"
@@ -98,6 +104,12 @@
 		"inputs": [
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "marketId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint8",
 				"name": "state",
 				"type": "uint8"
@@ -133,6 +145,12 @@
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "marketId",
+				"type": "uint256"
+			},
 			{
 				"indexed": false,
 				"internalType": "uint8",
@@ -197,56 +215,6 @@
 		"name": "cancelOrder",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getAllMarket",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint8",
-						"name": "state",
-						"type": "uint8"
-					},
-					{
-						"internalType": "uint16",
-						"name": "amount",
-						"type": "uint16"
-					},
-					{
-						"internalType": "uint32",
-						"name": "depositeTime",
-						"type": "uint32"
-					},
-					{
-						"internalType": "uint256",
-						"name": "price",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "solder",
-						"type": "address"
-					}
-				],
-				"internalType": "struct IFollowMarket.saleMes[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{

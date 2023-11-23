@@ -6,7 +6,8 @@ import { message, notification } from 'antd'
 // import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 
 // import type { IQuoter } from './IQuoter'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, ProcessCenter, UniswapV3 } from '@/abis/types'
+import BigNumber from 'bignumber.js'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import LocalCapitalPool_ABI from '@/abis/LocalCapitalPool.json'
@@ -15,6 +16,7 @@ import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
+import LocalERC20ERC20_ABI from '@/abis/ERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
@@ -185,13 +187,13 @@ export class BrowserContractService {
    * @return {*}  {Promise<FollowCapitalPool>}
    * @memberof BrowserContractService
    */
-  async getERC20Contract(token?: string): Promise<ERC20 | undefined> {
+  async getERC20Contract(token?: string): Promise<LocalERC20 | undefined> {
     // if (this._ERC20Contract && !token)
     //   return this._ERC20Contract
 
-    return this._ERC20Contract = createContract<ERC20>(
+    return createContract<LocalERC20>(
       token ?? import.meta.env.VITE_USDC_TOKEN,
-      ERC20_ABI,
+      LocalERC20ERC20_ABI,
       this.signer,
     )
   }
@@ -310,6 +312,7 @@ export class BrowserContractService {
     if (this._processCenterContract)
       return this._processCenterContract
 
+    console.log('%c [  import.meta.env.VITE_PROCESS_CENTER_ADDRESS ]-315', 'font-size:13px; background:#b2d26f; color:#f6ffb3;', import.meta.env.VITE_PROCESS_CENTER_ADDRESS)
     return this._processCenterContract = createContract<ProcessCenter>(
       import.meta.env.VITE_PROCESS_CENTER_ADDRESS,
       processCenter_ABI,
@@ -419,13 +422,13 @@ export class BrowserContractService {
   // write
 
   /**
-   *授权 true为已授权
+   * 资金池授权 true为已授权
    *
    * @param {bigint} tradeId
    * @return {*}  {Promise<boolean>}
    * @memberof BrowserContractService
    */
-  async ERC20_approve(tradeId: bigint): Promise<boolean> {
+  async ERC20_capitalPool_approve(tradeId: bigint): Promise<boolean> {
     const ERC20Contract = await this?.getERC20Contract()
 
     const followManageContract = await this?.getFollowManageContract()
@@ -444,6 +447,48 @@ export class BrowserContractService {
         return false
 
       const approveResult = await approveRes?.wait()
+
+      if (approveResult?.status !== 1)
+        return true
+    }
+
+    return true
+  }
+
+  /**
+   * 还款池授权
+   *
+   * @param {bigint} tradeId
+   * @return {*}  {Promise<boolean>}
+   * @memberof BrowserContractService
+   */
+  async ERC20_refundPool_approve(tradeId: bigint): Promise<boolean> {
+    const ERC20Contract = await this?.getERC20Contract()
+
+    // const followManageContract = await this?.getFollowManageContract()
+
+    // const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+
+    // if (!cp)
+    //   return false
+
+    const refundPoolAddress = await this.getRefundPoolAddress(tradeId)
+    console.log('%c [ refundPoolAddress ]-475', 'font-size:13px; background:#538b57; color:#97cf9b;', refundPoolAddress)
+
+    if (!refundPoolAddress)
+      return false
+
+    const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
+
+    if ((allowance ?? BigInt(0)) <= BigInt(0)) {
+      const approveRes = await ERC20Contract?.approve(refundPoolAddress, ethers.parseEther(BigNumber(200 * 10).multipliedBy(6 ** 10).toString()))
+      const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
+      console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
+      if (!approveRes)
+        return false
+
+      const approveResult = await approveRes?.wait()
+      console.log('%c [ approveResult ]-490', 'font-size:13px; background:#a8dd6c; color:#ecffb0;', approveResult)
 
       if (approveResult?.status !== 1)
         return true
@@ -498,10 +543,8 @@ export class BrowserContractService {
     }
 
     const transaction = await capitalPoolContract?.createOrder(
-      [
-        BigInt(model.cycle),
-        BigInt(model.period),
-      ],
+      BigInt(model.cycle),
+      BigInt(model.period),
       [
         BigInt((model.interest * 100)),
         BigInt(model.dividend),
@@ -673,7 +716,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_repay(tradeId: bigint) {
-    const approve = this.ERC20_approve(tradeId)
+    const approve = this.ERC20_capitalPool_approve(tradeId)
 
     if (!approve) {
       message.error('approve is error')
@@ -763,7 +806,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async refundPool_supply(amount: bigint, tradeId: bigint) {
-    const approve = this.ERC20_approve(tradeId)
+    const approve = await this.ERC20_refundPool_approve(tradeId)
 
     if (!approve) {
       message.error('approve is error')

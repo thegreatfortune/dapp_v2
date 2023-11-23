@@ -586,12 +586,38 @@
 	},
 	{
 		"inputs": [],
+		"name": "getAllAllowHandle",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getAllAllowTokens",
 		"outputs": [
 			{
 				"internalType": "address[]",
 				"name": "",
 				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getDividendFee",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -713,30 +739,6 @@
 				"type": "address"
 			}
 		],
-		"name": "getUserAllOrdersId",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "captitalPool",
-				"type": "address"
-			}
-		],
 		"name": "getborrowerAllOrdersId",
 		"outputs": [
 			{
@@ -800,6 +802,19 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint8",
+				"name": "_dividendFee",
+				"type": "uint8"
+			}
+		],
+		"name": "setDividendFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_followFactory",
 				"type": "address"
@@ -824,6 +839,19 @@
 			}
 		],
 		"name": "setFeeAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "_handleGroup",
+				"type": "address[]"
+			}
+		],
+		"name": "setHandleGroup",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -875,29 +903,6 @@
 			}
 		],
 		"name": "setTokenIdIfWithdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			}
-		],
-		"name": "setUserDoOrders",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

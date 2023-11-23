@@ -441,30 +441,6 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "capitalAddress",
-				"type": "address"
-			}
-		],
-		"name": "_getUserAllTradeId",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "token",
 				"type": "address"
 			}
@@ -700,9 +676,9 @@
 		"name": "getOrderState",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "enum ProcessCenter.OrderState",
 				"name": "state",
-				"type": "uint256"
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",

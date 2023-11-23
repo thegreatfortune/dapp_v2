@@ -82,6 +82,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "NotLend",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NotSingleRepayTimes",
 		"type": "error"
 	},
@@ -92,7 +97,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "RadioLessFive",
+		"name": "RatioError",
 		"type": "error"
 	},
 	{
@@ -434,9 +439,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint8[2]",
-				"name": "periodAndRepayTimeAndPair",
-				"type": "uint8[2]"
+				"internalType": "uint256",
+				"name": "timePeriod",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "repaymentPeriod",
+				"type": "uint256"
 			},
 			{
 				"internalType": "uint16[4]",
@@ -619,7 +629,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "initCreateTrade",
+		"name": "initCreateOrder",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

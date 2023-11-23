@@ -81,9 +81,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     async function fetchData() {
       if (!tradeId || !browserContractService)
         return
-      const getProcessCenterContract = await browserContractService.getProcessCenterContract()
+      const processCenterContract = await browserContractService.getProcessCenterContract()
 
-      const count = await getProcessCenterContract.getOrderReapyMoney(tradeId)
+      const count = await processCenterContract.getOrderReapyMoney(tradeId)
 
       if (count)
         setArrears(Number(count))

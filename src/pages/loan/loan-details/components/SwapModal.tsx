@@ -1,18 +1,20 @@
 import type { ModalProps } from 'antd'
-import { Button, InputNumber, Modal } from 'antd'
+import { Button, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 import type { CoinInfo } from './DesignatedPosition'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps extends ModalProps {
   currentTokenInfo: CoinInfo
+  tradeId: bigint | null
 }
 
 class SwapInfo {
   token: string | undefined
   address: string | undefined
-  amount: number = 0
+  amount: string = '0'
 }
 
 const SwapModal: React.FC<IProps> = (props) => {
@@ -21,16 +23,16 @@ const SwapModal: React.FC<IProps> = (props) => {
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
     address: import.meta.env.VITE_USDC_TOKEN,
-    amount: 0,
+    amount: '0',
   })
 
   const [youReceiver, setYouReceiver] = useState<SwapInfo>({
     token: props.currentTokenInfo.name,
     address: props.currentTokenInfo.address,
-    amount: 0,
+    amount: '0',
   })
-  const [ratio, setRatio,
-  ] = useState<string>('')
+
+  const [ratio, setRatio] = useState<string>('')
 
   useEffect(() => {
     async function fetchData() {
@@ -48,63 +50,120 @@ const SwapModal: React.FC<IProps> = (props) => {
       const newRatio = (Number(price) / 100).toFixed(5)
       setRatio(newRatio)
 
-      setYouReceiver(() => ({
+      setYouReceiver(prevReceiver => ({
         token: props.currentTokenInfo.name,
         address: props.currentTokenInfo.address,
-        amount: BigNumber(youPay.amount).multipliedBy(ratio).toNumber(),
+        amount: BigNumber(youPay.amount).multipliedBy(newRatio).toString(),
       }))
     }
+
     fetchData()
   }, [browserContractService, props.currentTokenInfo])
 
-  useEffect(() => {
-    setYouReceiver(prevReceiver => ({
-      ...prevReceiver,
-      amount: BigNumber(youPay.amount).multipliedBy(ratio).toNumber(),
-    }))
-  }, [youPay, ratio])
+  const onSetYouPay = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAmount = e.target.value.replace(/[^0-9.]/g, '')
 
-  //   useEffect(() => {
-  //     setYouPay(prevYouPay => ({
-  //       ...prevYouPay,
-  //       amount: BigNumber(youReceiver.amount).dividedBy(ratio).toNumber(),
-  //     }))
-  //   }, [youReceiver, ratio])
+    // Check if newAmount is a valid number
+    const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
-  function onSetYouPay(v: number | null) {
-    setYouPay(prevYouPay => ({
-      ...prevYouPay,
-      amount: v ?? 0,
-    }))
+    setYouPay({
+      ...youPay,
+      amount: isValidNumber ? newAmount : '0',
+    })
+
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toString()
+    setYouReceiver({
+      ...youReceiver,
+      amount: calculatedAmount,
+    })
   }
 
-  function onSetYouReceiver(v: number | null) {
-    setYouReceiver(prevYouReceiver => ({
-      ...prevYouReceiver,
-      amount: v ?? 0,
-    }))
+  const onSetYouReceiver = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAmount = e.target.value.replace(/[^0-9.]/g, '')
+
+    // Check if newAmount is a valid number
+    const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
+
+    setYouReceiver({
+      ...youReceiver,
+      amount: isValidNumber ? newAmount : '0',
+    })
+
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toString()
+    setYouPay({
+      ...youPay,
+      amount: calculatedAmount,
+    })
+  }
+
+  const onSwap = () => {
+    // Swap youPay and youReceiver information using BigNumber
+    const tempYouPay = { ...youPay }
+    const tempYouReceiver = { ...youReceiver }
+
+    setYouPay({
+      ...tempYouReceiver,
+      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toString(),
+    })
+
+    setYouReceiver({
+      ...tempYouPay,
+      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toString(),
+    })
+  }
+
+  async function enterAnAmount() {
+    if (!props.tradeId)
+      return
+
+    let tokenInformation = new SwapInfo()
+
+    let buyOrSell = 0
+
+    if (youPay.token === 'USDC') {
+      buyOrSell = 0
+      tokenInformation = youReceiver
+    }
+    else {
+      buyOrSell = 1
+      tokenInformation = youPay
+    }
+
+    if (!tokenInformation?.address) {
+      message.error('address is undefined')
+      return
+    }
+
+    console.log('%c [ tokenInformation.amount ]-138', 'font-size:13px; background:#e717b4; color:#ff5bf8;', tokenInformation.amount)
+    console.log('%c [  BigInt(buyOrSell) ]-138', 'font-size:13px; background:#beb981; color:#fffdc5;', BigInt(buyOrSell))
+    console.log('%c [ tokenInformation.address ]-138', 'font-size:13px; background:#6e29e4; color:#b26dff;', tokenInformation.address)
+    console.log('%c [ props.tradeId ]-138', 'font-size:13px; background:#ffe4c0; color:#ffffff;', props.tradeId)
+    const res = await browserContractService?.followHandle_swapERC20(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+    console.log('%c [ res ]-137', 'font-size:13px; background:#3d89bf; color:#81cdff;', res)
   }
 
   return (
-    <Modal {...props}>
+    <Modal {...props} footer={
+      <Button type='primary' onClick={enterAnAmount}>
+        Enter an amount
+      </Button>
+    }>
       <div>
         <h2>swap</h2>
         <div className='flex'>
           <span>you pay</span>
-          <InputNumber value={youPay.amount} className='w-full' onChange={v => onSetYouPay(v)} />
-          <span>USDC</span>
+          <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
+          <span>{youPay.token}</span>
         </div>
         <div className='h50'>
-          <Button type='primary'>downward</Button>
+          <Button type='primary' onClick={onSwap}>
+            箭头
+          </Button>
         </div>
         <div className='flex'>
           <span>you receiver</span>
-          <InputNumber
-            value={youReceiver.amount}
-            className='w-full'
-            onChange={v => onSetYouReceiver(v)}
-          />
-          <span>{props.currentTokenInfo.name}</span>
+          <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
+          <span>{youReceiver.token}</span>
         </div>
       </div>
     </Modal>
