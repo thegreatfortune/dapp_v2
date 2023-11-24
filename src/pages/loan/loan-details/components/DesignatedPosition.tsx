@@ -19,7 +19,7 @@ interface IProps {
 
 export class CoinInfo {
   name: string | undefined
-  balance: number = 0
+  balance: string = '0'
   decimals: number = 0
   address: string | undefined
 }
@@ -84,7 +84,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
     return {
       name: tokenName,
-      balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
+      // balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
+      balance: BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toFixed(4),
       decimals: Number(decimals) ?? 0,
       address: tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap],
     }
@@ -97,15 +98,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
   function onDeposit() {
     setDepositIsModalOpen(true)
-
-    // try {
-
-    //   browserContractService?.refundPool_supply()
-
-    // } catch (error) {
-    //   console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error);
-
-    // }
   }
 
   function onDepositValueChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -162,7 +154,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                 <div>
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
-                    item.balance > 0
+                    item.balance !== '0'
                       ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
                         .dividedBy(item.balance)
                         .toFixed(2)
@@ -172,8 +164,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
                   })
                   %
+                  <span className='c-green'>{item.balance} {item.name}</span>
                 </div>
-                <div >$ {item.balance}</div>
+                <div >$ $</div>
                 {
                   item.name !== 'USDC'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>

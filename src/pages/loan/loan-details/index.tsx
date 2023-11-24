@@ -14,6 +14,8 @@ const LoanDetails = () => {
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
 
+  const prePage = searchParams.get('prePage')
+
   const navigate = useNavigate()
 
   const { browserContractService } = useBrowserContract()
@@ -21,6 +23,9 @@ const LoanDetails = () => {
   const [loanInfo, setLoanInfo] = useState(new Models.LoanOrderVO())
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [extractIsModalOpen, setExtractIsModalOpen] = useState(false)
+  const [extraModalLoading, setExtraModalLoading] = useState(false)
 
   const [copies, setCopies] = useState<number | null>(1)
 
@@ -78,6 +83,23 @@ const LoanDetails = () => {
     }
     checkMax()
   }, [checkMaxLoading])
+
+  async function extractConfirm() {
+    if (!tradeId)
+      return
+
+    setExtraModalLoading(true)
+
+    try {
+      await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+    }
+    catch (error) {
+      console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
+    }
+    finally {
+      setExtraModalLoading(false)
+    }
+  }
 
   const handleOk = async () => {
     if (!tradeId || !copies)
@@ -144,6 +166,22 @@ const LoanDetails = () => {
 
   return (<div className='w-full'>
 
+    <SModal open={extractIsModalOpen}
+      maskClosable={false}
+      onCancel={() => setExtractIsModalOpen(false)}
+      footer={[<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
+        confirm
+      </Button>,
+      <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
+        Cancel
+      </Button>,
+      ]}
+    >
+      <div>
+        extract
+      </div>
+    </SModal>
+
     <SModal open={isModalOpen}
       maskClosable={false}
       onCancel={() => setIsModalOpen(false)}
@@ -195,16 +233,20 @@ const LoanDetails = () => {
           <div>
             <div className='flex'>
               <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
-              <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime) } />}</span>
+              <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime)} />}</span>
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>
 
           </div>
-          <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+          {
+            prePage === 'market'
+              ? <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+              : <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+          }
         </div>
 
         <p>
-        {loanInfo.usageIntro}
+          {loanInfo.usageIntro}
         </p>
 
         <div className='h191 w1047 flex gap-x-24 border-5 border-#0394e8 border-solid'>

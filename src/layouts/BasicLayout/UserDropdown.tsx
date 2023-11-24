@@ -22,9 +22,9 @@ const UserDropdown = () => {
     {
       key: '2',
       label: (
-        <a className='my-12 h18 text-12' target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        <Link className='my-12 h18 text-12' to='/my-lend'>
           {t('nav.menu.follow')}
-        </a>
+        </Link>
 
       ),
     },

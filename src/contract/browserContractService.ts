@@ -1,22 +1,17 @@
 import { Contract, ethers } from 'ethers'
-
 import { message, notification } from 'antd'
-
-// import Quoter_ABI from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
-// import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
-
-// import type { IQuoter } from './IQuoter'
 import BigNumber from 'bignumber.js'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, ProcessCenter, UniswapV3 } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, LocalRefundPool, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import LocalCapitalPool_ABI from '@/abis/LocalCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
 import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
+import LocalRefundPool_ABI from '@/abis/LocalRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
-import LocalERC20ERC20_ABI from '@/abis/ERC20.json'
+import LocalERC20_ABI from '@/abis/LocalERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
@@ -25,6 +20,12 @@ import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel
 import { LoanService } from '@/.generated/api/Loan'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+const LocalEnv = true
+
+type LocalContractType<T extends boolean, U> = T extends true
+  ? U
+  : U
 
 function createContract<T>(
   address: string,
@@ -39,18 +40,14 @@ async function handleTransaction(
   successMessage = 'Transaction Successful',
   failureMessage = 'Transaction Failed',
 ): Promise<ethers.ContractTransactionReceipt | undefined> {
-  if (!transactionResponse) {
-    console.error('Transaction response is undefined')
-    return undefined
-  }
+  if (!transactionResponse)
+    throw new Error('Transaction response is undefined')
 
   try {
     const receipt = await transactionResponse.wait()
 
-    if (!receipt) {
-      console.error('Transaction receipt is undefined')
-      return undefined
-    }
+    if (!receipt)
+      throw new Error('Transaction receipt is undefined')
 
     if (receipt.status === 1) {
       // Transaction succeeded
@@ -65,6 +62,7 @@ async function handleTransaction(
         message: failureMessage,
         description: 'Your transaction failed. Please try again.',
       })
+      throw new Error('Your transaction failed. Please try again.')
     }
 
     return receipt
@@ -181,19 +179,27 @@ export class BrowserContractService {
   }
 
   /**
-   *ERC20
+   * ERC20
    *
-   * .
-   * @return {*}  {Promise<FollowCapitalPool>}
+   * @param {string} [token]
+   * @return {*}
    * @memberof BrowserContractService
    */
-  async getERC20Contract(token?: string): Promise<LocalERC20 | undefined> {
+  async getERC20Contract(token?: string) {
     // if (this._ERC20Contract && !token)
     //   return this._ERC20Contract
 
-    return createContract<LocalERC20>(
+    if (LocalEnv) {
+      return createContract<LocalContractType<typeof LocalEnv, LocalERC20>>(
+        token ?? import.meta.env.VITE_USDC_TOKEN,
+        LocalERC20_ABI,
+        this.signer,
+      )
+    }
+
+    return createContract <LocalContractType<typeof LocalEnv, ERC20>> (
       token ?? import.meta.env.VITE_USDC_TOKEN,
-      LocalERC20ERC20_ABI,
+      ERC20_ABI,
       this.signer,
     )
   }
@@ -230,14 +236,20 @@ export class BrowserContractService {
     )
   }
 
-  async getCapitalPoolContract(cp?: string): Promise<FollowCapitalPool | undefined> {
+  async getCapitalPoolContract(cp?: string) {
     const capitalPoolAddress = cp ?? await this.getCapitalPoolAddress()
 
-    const abi = import.meta.env.DEV ? LocalCapitalPool_ABI : followCapitalPool_ABI
+    if (LocalEnv) {
+      return createContract<LocalContractType<typeof LocalEnv, LocalCapitalPool>>(
+        capitalPoolAddress!,
+        LocalCapitalPool_ABI,
+        this.signer,
+      )
+    }
 
-    return this._followCapitalPoolContract = createContract<FollowCapitalPool>(
+    return this._followCapitalPoolContract = createContract <LocalContractType<typeof LocalEnv, FollowCapitalPool>> (
       capitalPoolAddress!,
-      abi,
+      followCapitalPool_ABI,
       this.signer,
     )
   }
@@ -260,16 +272,16 @@ export class BrowserContractService {
   }
 
   /**
-   *还款池
+   * 还款池
    *
-   * @param {bigint} [tradeId]
-   * @return {*}  {Promise<FollowRefundPool>}
+   * @param {bigint} tradeId
+   * @return {*}
    * @memberof BrowserContractService
    */
-  async getRefundPoolContract(tradeId: bigint): Promise<FollowRefundPool> {
+  async getRefundPoolContract(tradeId: bigint) {
     const refundFactoryContract = await this.getRefundFactoryContract()
 
-    const cp = this.getCapitalPoolAddress(tradeId)
+    const cp = await this.getCapitalPoolAddress(tradeId)
 
     const refundPoolAddress = await refundFactoryContract.getRefundPool(cp)
 
@@ -278,7 +290,15 @@ export class BrowserContractService {
       throw new Error(`refund pool address is undefined: ${refundPoolAddress}`)
     }
 
-    return this._refundPoolContract = createContract<FollowRefundPool>(
+    if (LocalEnv) {
+      return this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, LocalRefundPool>>(
+        refundPoolAddress,
+        LocalRefundPool_ABI,
+        this.signer,
+      )
+    }
+
+    return this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowRefundPool>> (
       refundPoolAddress,
       followRefundPool_ABI,
       this.signer,
@@ -423,6 +443,7 @@ export class BrowserContractService {
 
   /**
    * 资金池授权 true为已授权
+   * owner（代币所有者的地址）和 spender（被授权地址的地址）
    *
    * @param {bigint} tradeId
    * @return {*}  {Promise<boolean>}
@@ -437,9 +458,9 @@ export class BrowserContractService {
 
     if (!cp)
       return false
-
-    const allowance = await ERC20Contract?.allowance(cp, this?.getSigner.address)
-    console.log('%c [ allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
+    // TODO
+    const allowance = await ERC20Contract?.allowance(this?.getSigner.address, cp)
+    console.log('%c [ capitalPool_approve ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
 
     if ((allowance ?? BigInt(0)) <= BigInt(0)) {
       const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
@@ -465,25 +486,19 @@ export class BrowserContractService {
   async ERC20_refundPool_approve(tradeId: bigint): Promise<boolean> {
     const ERC20Contract = await this?.getERC20Contract()
 
-    // const followManageContract = await this?.getFollowManageContract()
-
-    // const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
-
-    // if (!cp)
-    //   return false
-
     const refundPoolAddress = await this.getRefundPoolAddress(tradeId)
     console.log('%c [ refundPoolAddress ]-475', 'font-size:13px; background:#538b57; color:#97cf9b;', refundPoolAddress)
 
     if (!refundPoolAddress)
       return false
 
-    const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
+    const allowance = await ERC20Contract?.allowance(this?.getSigner.address, refundPoolAddress)
+    console.log('%c [ allowance ]-475', 'font-size:13px; background:#570fae; color:#9b53f2;', allowance)
 
     if ((allowance ?? BigInt(0)) <= BigInt(0)) {
-      const approveRes = await ERC20Contract?.approve(refundPoolAddress, ethers.parseEther(BigNumber(200 * 10).multipliedBy(6 ** 10).toString()))
-      const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
-      console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
+      const approveRes = await ERC20Contract?.approve(refundPoolAddress, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+      // const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
+      // console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
       if (!approveRes)
         return false
 
@@ -524,7 +539,7 @@ export class BrowserContractService {
   async capitalPool_createOrder(model: LoanRequisitionEditModel) {
     const capitalPoolContract = await this.getCapitalPoolContract()
 
-    if (import.meta.env.DEV) {
+    if (LocalEnv) {
       const cp = await capitalPoolContract?.getAddress()
 
       if (!cp)
@@ -538,8 +553,10 @@ export class BrowserContractService {
 
       const t1 = await localCapitalPoolContract.set([import.meta.env.VITE_USDC_TOKEN, import.meta.env.VITE_ERC3525_ADDRESS, import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, this.getSigner.address])
       const res = await handleTransaction(t1, 'Authorization succeeds', 'Authorization failed')
-      if (res?.status !== 1)
-        return
+      if (res?.status !== 1) {
+        console.log('%c [ Authorization failed: ]-544', 'font-size:13px; background:#70a4ad; color:#b4e8f1;', res)
+        throw new Error('Authorization failed')
+      }
     }
 
     const transaction = await capitalPoolContract?.createOrder(
@@ -716,7 +733,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_repay(tradeId: bigint) {
-    const approve = this.ERC20_capitalPool_approve(tradeId)
+    const approve = await this.ERC20_capitalPool_approve(tradeId)
 
     if (!approve) {
       message.error('approve is error')
@@ -746,7 +763,12 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
-    await this.capitalPool_approveHandle(tradeId, swapToken)
+    const res = await this.capitalPool_approveHandle(tradeId, import.meta.env.VITE_USDC_TOKEN)
+
+    if (res?.status !== 1) {
+      message.error('approveHandle is error')
+      throw new Error('approveHandle is error')
+    }
 
     const cp = await this.getCapitalPoolAddress(tradeId)
 
@@ -815,6 +837,16 @@ export class BrowserContractService {
 
     const refundPoolContract = await this.getRefundPoolContract(tradeId)
 
+    if (LocalEnv) {
+      const fmc = await this.getFollowManageContract()
+
+      const fmce = await refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await fmc.getAddress())
+      console.log('%c [ fmce ]-844', 'font-size:13px; background:#c4d0d6; color:#ffffff;', fmce)
+      handleTransaction(fmce)
+    }
+
+    console.log('%c [ tradeId ]-828', 'font-size:13px; background:#50e35d; color:#94ffa1;', tradeId)
+    console.log('%c [ amount ]-828', 'font-size:13px; background:#ba17aa; color:#fe5bee;', amount)
     const transaction = await refundPoolContract.supply(amount, tradeId)
 
     return handleTransaction(transaction)
