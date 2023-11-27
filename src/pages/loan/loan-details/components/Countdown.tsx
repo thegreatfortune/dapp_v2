@@ -6,14 +6,29 @@ interface Props {
 }
 
 function Countdown(props: Props) {
-  const [secondsRemaining, setSecondsRemaining] = useState(0)
+  const [timeRemaining, setTimeRemaining] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  })
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = dayjs().unix()
       const remainingSeconds = Math.max(props.targetTimestamp - now, 0)
 
-      setSecondsRemaining(remainingSeconds)
+      const days = Math.floor(remainingSeconds / 86400)
+      const hours = Math.floor((remainingSeconds % 86400) / 3600)
+      const minutes = Math.floor(((remainingSeconds % 86400) % 3600) / 60)
+      const seconds = Math.floor((((remainingSeconds % 86400) % 3600) % 60))
+
+      setTimeRemaining({
+        days,
+        hours,
+        minutes,
+        seconds,
+      })
 
       if (remainingSeconds === 0)
         clearInterval(intervalId)
@@ -26,10 +41,8 @@ function Countdown(props: Props) {
 
   return (
     <div>
-      距离结束还有 {Math.floor(secondsRemaining / 86400)} 天,
-      {Math.floor((secondsRemaining % 86400) / 3600)} 小时,
-      {Math.floor(((secondsRemaining % 86400) % 3600) / 60)} 分钟，
-      {Math.floor((((secondsRemaining % 86400) % 3600) % 60))} 秒。
+      距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
+      {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。
     </div>
   )
 }

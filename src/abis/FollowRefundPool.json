@@ -124,11 +124,6 @@
 				"type": "address"
 			},
 			{
-				"internalType": "address",
-				"name": "_capitalAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"

@@ -19,4 +19,20 @@ export class MarketService {
       ...(options || {}),
     });
   }
+
+  /** pageTradingLoan GET /api/market/pageTradingLoan */
+  static async ApiMarketPageTradingLoan_GET(
+    // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+    params: Models.ApiMarketPageTradingLoanGETParams,
+    options?: { [key: string]: any },
+  ) {
+    return request<Models.PageResult<Models.MarketLoanVo>>({
+      url: '/api/market/pageTradingLoan',
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    });
+  }
 }

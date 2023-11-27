@@ -1,14 +1,18 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Button, Divider, InputNumber, Radio, message } from 'antd'
+import type { TabsProps } from 'antd'
+import { Button, Divider, InputNumber, Tabs, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import DesignatedPosition from './components/DesignatedPosition'
+import RoomTrade from './components/RoomTrade'
+import OperationRecord from './components/OperationRecord'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import useUserStore from '@/store/userStore'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -17,6 +21,8 @@ const LoanDetails = () => {
   const prePage = searchParams.get('prePage')
 
   const navigate = useNavigate()
+
+  const { activeUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -39,22 +45,52 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
+  const [balance, setBalance] = useState('0') // 份数
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!tradeId || !browserContractService)
+        return
+
+      const res = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+      console.log('%c [ res ]-56', 'font-size:13px; background:#c718c3; color:#ff5cff;', res)
+      setBalance(String(res))
+      console.log('%c [ ERC3525_balanceOf ]-50', 'font-size:13px; background:#54c1c0; color:#98ffff;', res)
+    }
+
+    fetchData()
+  }, [tradeId, browserContractService])
+
   useEffect(() => {
     async function fetchData() {
       if (tradeId && extractIsModalOpen) {
         setExtraBtnLoading(true)
-        const pcc = await browserContractService?.getProcessCenterContract()
-        const res = await pcc?.getBorrowerToProfit(tradeId)
-        console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
 
-        setBorrowProfit(BigNumber(String(res)).div(BigNumber(10).pow(18)).toString())
+        if (prePage === 'loan') {
+          const pcc = await browserContractService?.getProcessCenterContract()
+
+          const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
+
+          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
+
+          setBorrowProfit(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+        }
+        else if (prePage === 'lend') {
+          const pcc = await browserContractService?.getProcessCenterContract()
+
+          const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
+
+          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
+
+          setBorrowProfit(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+        }
 
         setExtraBtnLoading(false)
       }
     }
 
     fetchData()
-  }, [tradeId, extractIsModalOpen])
+  }, [tradeId, extractIsModalOpen, prePage])
 
   useEffect(() => {
     async function fetchData() {
@@ -105,14 +141,55 @@ const LoanDetails = () => {
     checkMax()
   }, [checkMaxLoading])
 
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: 'Designated Position',
+      children: <DesignatedPosition lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+    },
+    {
+      key: '2',
+      label: 'Operation record',
+      children: <OperationRecord />,
+    },
+    {
+      key: '3',
+      label: 'Room trade',
+      children: <RoomTrade />,
+    },
+  ]
+
+  const onChange = (key: string) => {
+    console.log(key)
+  }
+
   async function extractConfirm() {
     if (!tradeId)
       return
 
+    console.log('%c [ import.meta.env ]-170', 'font-size:13px; background:#02f39a; color:#46ffde;', import.meta.env)
+
     setExtraModalLoading(true)
 
+    // 对比当前登录用户id  判断是否是订单发起人
     try {
-      await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+      console.log('%c [ activeUser.id === loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', activeUser.id, loanInfo.userId)
+
+      // await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+
+      console.log('%c [ balance ]-180', 'font-size:13px; background:#0b40f9; color:#4f84ff;', balance)
+
+      await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
+
+      // if (activeUser.id === loanInfo.userId) {
+      //   console.log('%c [ browserContractService ]-176', 'font-size:13px; background:#230318; color:#67475c;', 'browserContractService')
+
+      //   await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+      // }
+      // else {
+      //   console.log('%c [ refundPool_lenderWithdraw ]-178', 'font-size:13px; background:#f43973; color:#ff7db7;', 'refundPool_lenderWithdraw')
+      //   await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
+      // }
     }
     catch (error) {
       console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
@@ -200,7 +277,7 @@ const LoanDetails = () => {
     >
       <div>
         <h2>
-        extract: {borrowerProfit}
+          extract: {borrowerProfit}
         </h2>
       </div>
     </SModal>
@@ -264,7 +341,12 @@ const LoanDetails = () => {
           {
             prePage === 'market'
               ? <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
-              : <Button loading={extraBtnLoading} className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+              : prePage === 'lend'
+                ? <div>
+                  <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Shell</Button>
+                  <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+                </div>
+                : <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
           }
         </div>
 
@@ -317,13 +399,13 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <Radio.Group value='large' >
+    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+
+    {/* <Radio.Group value='large' >
       <Radio.Button value="large">Designated Position</Radio.Button>
       <Radio.Button value="default">Operation record</Radio.Button>
       <Radio.Button value="small">Room trade</Radio.Button>
-    </Radio.Group>
-
-    <DesignatedPosition lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />
+    </Radio.Group> */}
 
   </div>)
 }

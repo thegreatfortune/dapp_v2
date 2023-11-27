@@ -100,14 +100,15 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
     try {
       if (currentItem.state === 'OVERDUE') {
-        await browserContractService?.capitalPool_repay(tradeId)
-      }
-      else if (currentItem.state === 'OVERDUE_ARREARS') {
         // TODO: Token
         if (repayCount > 1)
           await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
         else
           await browserContractService?.capitalPool_singleClearing(tradeId)
+        console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
+      }
+      else if (currentItem.state === 'OVERDUE_ARREARS') {
+        await browserContractService?.capitalPool_repay(tradeId)
       }
 
       message.success('Succeed')
@@ -190,7 +191,6 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         {/* <li>Remaining Amount Due</li> */}
       </ul>
     <span className='c-red'>
-    sas{(result?.records?.length ?? 0) < (result?.total ?? 0)}
     </span>
 
       <div

@@ -175,6 +175,15 @@ export class BrowserContractService {
       throw new Error(`capital pool address is black hole: ${cp}`)
     }
 
+    if (import.meta.env.DEV) {
+      const c = await this.getCapitalPoolContract(cp)
+
+      if (tradeId) {
+        const list = await c.getList(tradeId)
+
+        console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
+      }
+    }
     return this._capitalPoolAddress = cp
   }
 
@@ -282,6 +291,7 @@ export class BrowserContractService {
     const refundFactoryContract = await this.getRefundFactoryContract()
 
     const cp = await this.getCapitalPoolAddress(tradeId)
+    console.log('%c [refundPool cp ]-294', 'font-size:13px; background:#16228a; color:#5a66ce;', cp)
 
     const refundPoolAddress = await refundFactoryContract.getRefundPool(cp)
 
@@ -298,11 +308,20 @@ export class BrowserContractService {
     //   )
     // }
 
-    return this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowRefundPool>> (
+    this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowRefundPool>> (
       refundPoolAddress,
       followRefundPool_ABI,
       this.signer,
     )
+
+    if (LocalEnv) {
+      const followManageContract = await this.getFollowManageContract()
+      const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
+      console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
+      await res?.wait()
+    }
+
+    return this._refundPoolContract
   }
 
   /**
@@ -376,6 +395,21 @@ export class BrowserContractService {
   }
 
   /**
+   * 获取到tokenId下的ERC3525数量(份额)
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async ERC3525_balanceOf(tradeId: bigint) {
+    const c = await this.getERC3525Contract()
+
+    const tokenId = await c.getPersonalSlotToTokenId(this.getSigner.address, tradeId)
+    console.log('%c [ tokenId ]-408', 'font-size:13px; background:#726415; color:#b6a859;', tokenId)
+    return c['balanceOf(uint256)'](tokenId)
+  }
+
+  /**
    *swap quote
    *
    * @return {*}
@@ -389,7 +423,26 @@ export class BrowserContractService {
   //   )
   // }
 
-  // view
+  //
+
+  /**
+   * getList
+   *
+   * @param {bigint} tradeId
+   * @memberof BrowserContractService
+   */
+  async capitalPool_getList(tradeId: bigint) {
+    if (import.meta.env.DEV) {
+      const cp = await this.getCapitalPoolAddress(tradeId)
+
+      const c = await this.getCapitalPoolContract(cp)
+
+      if (tradeId) {
+        const list = await c.getList(tradeId)
+        console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
+      }
+    }
+  }
 
   // async quote() {
   //   const swapQuoteContract = await this.getSwapQuoteContract()
@@ -623,7 +676,7 @@ export class BrowserContractService {
         cp ?? '',
       )
 
-      loanConfirm.tradeId = String(Number(tids?.at(-1)) ?? 0)
+      loanConfirm.tradeId = Number(tids?.at(-1)) ?? 0
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }
@@ -808,23 +861,41 @@ export class BrowserContractService {
   }
 
   /**
-   * 贷款人提取最后清算的资金+还款资金+分红资金(订单结束时间10天后才可提取)
+   * 贷款人提取最后清算的资金+还款资金+分红资金(订单结束时间10天后才可提取) 非订单发起人
    *
    * @param {bigint} tradeId
+   * @param {bigint} value 份数（全部）
    * @return {*}
    * @memberof BrowserContractService
    */
-  async refundPool_lenderWithdraw(tradeId: bigint) {
+  async refundPool_lenderWithdraw(tradeId: bigint, value: bigint) {
+    this.capitalPool_getList(tradeId)
+
     const refundPoolContract = await this.getRefundPoolContract(tradeId)
 
-    const tokenIds = await this.ERC3525_getPersonalMes()
+    const ERC3525Contract = await this.getERC3525Contract()
 
-    const tokenId = tokenIds.at(-1)
+    console.log('%c [ this.getSigner.address, tradeId ]-868', 'font-size:13px; background:#ef6ffe; color:#ffb3ff;', this.getSigner.address, tradeId)
+    const tokenId = await ERC3525Contract.getPersonalSlotToTokenId(this.getSigner.address, tradeId)
+    console.log('%c [ tokenId ]-847', 'font-size:13px; background:#ce01db; color:#ff45ff;', tokenId)
+
+    // const tokenIds = await this.ERC3525_getPersonalMes()
+    // console.log('%c [ tokenIds ]-845', 'font-size:13px; background:#976c4f; color:#dbb093;', tokenIds)
+
+    // const tokenId = tokenIds.at(-1)
 
     if (!tokenId) {
       message.error('refund pool tokenId is undefined')
       throw new Error('refund pool tokenId is undefined')
     }
+
+    const res = await ERC3525Contract['approve(uint256,address,uint256)'](tokenId, await refundPoolContract.getAddress(), value)
+    console.log('%c [  ERC3525Contractres approve ]-882', 'font-size:13px; background:#235bbc; color:#679fff;', res)
+
+    const result = await handleTransaction(res)
+
+    if (result?.status !== 1)
+      throw new Error('approve is error')
 
     const transaction = await refundPoolContract.lenderWithdraw(tokenId) // tokenId用户持有的ERC3525的tokenId
 
@@ -832,14 +903,17 @@ export class BrowserContractService {
   }
 
   /**
-   * 借款人提取
+   * 借款人提取 订单发起人
    *
    * @param {bigint} tradeId 借款人发起的订单id，即对应槽值
    * @return {*}
    * @memberof BrowserContractService
    */
   async refundPool_borrowerWithdraw(tradeId: bigint) {
+    this.capitalPool_getList(tradeId)
+
     const refundPoolContract = await this.getRefundPoolContract(tradeId)
+    console.log('%c [ refundPoolContract ]-906', 'font-size:13px; background:#30d60a; color:#74ff4e;', refundPoolContract)
 
     const transaction = await refundPoolContract.borrowerWithdraw(tradeId)
     console.log('%c [ transaction ]-529', 'font-size:13px; background:#f5a83f; color:#ffec83;', transaction)

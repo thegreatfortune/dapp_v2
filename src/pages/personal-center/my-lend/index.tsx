@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
+import BigNumber from 'bignumber.js'
 import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
@@ -34,10 +35,8 @@ const MyLend = () => {
     params.limit = 4
     params.page = page + 1
 
-    params.userId = Number(activeUser.id)
+    params.userId = BigNumber(activeUser.id).toNumber()
     params.loanId = undefined
-    params.lendTime = undefined
-    params.partAmount = undefined
     params.borrowUserId = undefined
 
     try {

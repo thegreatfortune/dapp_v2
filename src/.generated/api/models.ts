@@ -43,10 +43,6 @@ export namespace Models {
     borrowUserId?: number = 0;
     /** 借款订单id */
     loanId?: number = 0;
-    /** 时间戳 */
-    lendTime?: number = 0;
-    /** 认购份数 */
-    partAmount?: number = 0;
     orderItemList?: Array<OrderItem> = [];
   }
 
@@ -88,6 +84,16 @@ Twitter :推特 */
     tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
+  export class ApiLoanTokenSwapPageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 订单id */
+    tradeId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
   export class ApiMarketPageInfoGETParams {
     /** 分页查询页码 */
     page?: number = 0;
@@ -102,6 +108,24 @@ Canceled :订单取消 */
     state?: string = undefined;
     /** 出售者地址 */
     solder?: string = undefined;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
+  export class ApiMarketPageTradingLoanGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 借款用户id筛选 */
+    borrowUserId?: string = undefined;
+    /** 借款订单状态
+Invalid :订单无效
+Following :跟随中, 正在筹款
+Trading :交易中, 已筹完
+PaidOff :已还清, 借款订单结束
+PaidButArrears :支付部分, 但是还有欠款
+Blacklist :黑名单 */
+    state?: string = undefined;
     orderItemList?: Array<OrderItem> = [];
   }
 
@@ -141,22 +165,22 @@ Canceled :订单取消 */
 
   export class LendingLoanVo {
     /** 贷方id */
-    userId?: string = undefined;
+    userId?: number = 0;
     /** 借方id */
-    borrowUserId?: string = undefined;
+    borrowUserId?: number = 0;
     /** 借款订单id */
-    loanId?: string = undefined;
+    loanId?: number = 0;
     loan?: SimpleLoanVo = undefined;
     /** 时间戳 */
-    lendTime?: string = undefined;
+    lendTime?: number = 0;
     /** 认购份数 */
-    partAmount?: string = undefined;
+    partAmount?: number = 0;
   }
 
   export class LoanConfirmParam {
     wallet?: ISysWallet = undefined;
     /** 借款订单id */
-    tradeId?: string = undefined;
+    tradeId?: number = 0;
     /** 名称 */
     loanName?: string = undefined;
     /** 简介 */
@@ -215,11 +239,11 @@ Canceled :订单取消 */
   }
 
   export class LoanOrderVO {
-    id?: string = undefined;
+    id?: number = 0;
     /** 借方id */
-    userId?: string = undefined;
+    userId?: number = 0;
     /** 在合约中的订单id */
-    tradeId?: string = undefined;
+    tradeId?: number = 0;
     /** 生效状态 */
     state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
       undefined;
@@ -236,48 +260,39 @@ Canceled :订单取消 */
     /** 贷款金额 */
     loanMoney?: number = 0;
     /** 利息 */
-    interest?: string = undefined;
+    interest?: number = 0;
     /** 总还款次数 */
     repayCount?: number = 0;
     /** 还款天数, 比如180天内还完 */
     periods?: number = 0;
     /** 目标份数 */
-    goalCopies?: string = undefined;
+    goalCopies?: number = 0;
     /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
     minGoalQuantity?: number = 0;
     /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
-    collectEndTime?: string = undefined;
+    collectEndTime?: number = 0;
     /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
-    dividendRatio?: string = undefined;
+    dividendRatio?: number = 0;
     /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
     transactionPairs?: string[] = undefined;
     /** 是否展示绑定的平台用户, 如果不展示则是空数组, 里面是bind表的id */
-    showPlatformUser?: string[] = undefined;
+    showPlatformUser?: number[] = undefined;
     /** 用途介绍 */
     usageIntro?: string = undefined;
     createDate?: string = undefined;
     /** 订单结束时间(清算时间) */
-    endTime?: string = undefined;
+    endTime?: number = 0;
     isConfirm?: number = 0;
     showPlatformUserList?: PlatformUserVo[] = undefined;
     /** 已筹集份数 */
-    collectCopies?: string = undefined;
-  }
-
-  export class LoanTokenSwapPageInfoGETParams {
-    /** 分页查询页码 */
-    page?: number = 0;
-    /** 分页查询每页数量 */
-    limit?: number = 0;
-    /** 订单id */
-    tradeId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
+    collectCopies?: number = 0;
   }
 
   export class LoanTokenSwapVo {
-    /** token地址 */
+    /** 买入token地址 */
     tokenAddr?: string = undefined;
     amount?: number = 0;
+    /** USDC ACtion */
     action?: 'Reduce' | 'Add' = undefined;
     createDate?: string = undefined;
   }
@@ -285,6 +300,13 @@ Canceled :订单取消 */
   export class LoginDto {
     address?: string = undefined;
     inviteCode?: string = undefined;
+  }
+
+  export class MarketLoanVo {
+    tradeId?: number = 0;
+    user?: UserInfoVo1 = undefined;
+    /** 已交易总数 */
+    totalTradingCompleted?: number = 0;
   }
 
   export class MetaMaskLoginParam {
@@ -360,7 +382,7 @@ Canceled :订单取消 */
 
   export class SimpleLoanVo {
     /** 在合约中的订单id */
-    tradeId?: string = undefined;
+    tradeId?: number = 0;
     /** 生效状态 */
     state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
       undefined;
@@ -375,36 +397,36 @@ Canceled :订单取消 */
     /** 贷款金额 */
     loanMoney?: number = 0;
     /** 利息 */
-    interest?: string = undefined;
+    interest?: number = 0;
     /** 总还款次数 */
     repayCount?: number = 0;
     /** 还款天数, 比如180天内还完 */
     periods?: number = 0;
     /** 目标份数 */
-    goalCopies?: string = undefined;
+    goalCopies?: number = 0;
     /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
-    dividendRatio?: string = undefined;
+    dividendRatio?: number = 0;
     /** 订单结束时间(清算时间) */
-    endTime?: string = undefined;
+    endTime?: number = 0;
     /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
     minGoalQuantity?: number = 0;
     /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
-    collectEndTime?: string = undefined;
+    collectEndTime?: number = 0;
   }
 
   export class TokenMarketVo {
-    loanId?: string = undefined;
+    loanId?: number = 0;
     /** 挂单后在链上对应的id */
-    marketId?: string = undefined;
+    marketId?: number = 0;
     /** 每次转移这个tokenId会改变 */
-    tokenId?: string = undefined;
+    tokenId?: number = 0;
     state?: 'ToBeTraded' | 'Closed' | 'Canceled' = undefined;
     /** token数量 */
-    amount?: string = undefined;
+    amount?: number = 0;
     /** 剩余数量 */
-    remainingQuantity?: string = undefined;
+    remainingQuantity?: number = 0;
     /** 挂单时间 */
-    depositeTime?: string = undefined;
+    depositeTime?: number = 0;
     /** U的数量 */
     price?: number = 0;
     /** 出售者地址 */
@@ -427,5 +449,13 @@ Canceled :订单取消 */
     nickName?: string = undefined;
     walletId?: string = undefined;
     address?: string = undefined;
+  }
+
+  export class UserInfoVo1 {
+    nickName?: string = undefined;
+    address?: string = undefined;
+    platformName?: string = undefined;
+    pictureUrl?: string = undefined;
+    userId?: number = 0;
   }
 }

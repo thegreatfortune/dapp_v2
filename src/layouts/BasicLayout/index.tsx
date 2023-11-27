@@ -1,3 +1,8 @@
+/*
+ * @Description: ^_^
+ * @Author: sharebravery
+ * @Date: 2023-10-31 17:22:44
+ */
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import Navbar from './Navbar'
