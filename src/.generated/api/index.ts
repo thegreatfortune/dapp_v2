@@ -10,3 +10,6 @@ export * from './TwitterNotifyController';
 export * from './Metamask';
 export * from './UserInviteController';
 export * from './RepayPlan';
+export * from './Market';
+export * from './LoanTokenSwap';
+export * from './Lending';

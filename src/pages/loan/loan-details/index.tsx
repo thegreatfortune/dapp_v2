@@ -35,6 +35,27 @@ const LoanDetails = () => {
 
   const [refundPoolAddress, setRefundPoolAddress] = useState<string>()
 
+  const [borrowerProfit, setBorrowProfit] = useState<string>('0')
+
+  const [extraBtnLoading, setExtraBtnLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (tradeId && extractIsModalOpen) {
+        setExtraBtnLoading(true)
+        const pcc = await browserContractService?.getProcessCenterContract()
+        const res = await pcc?.getBorrowerToProfit(tradeId)
+        console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
+
+        setBorrowProfit(BigNumber(String(res)).div(BigNumber(10).pow(18)).toString())
+
+        setExtraBtnLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [tradeId, extractIsModalOpen])
+
   useEffect(() => {
     async function fetchData() {
       if (!tradeId || !browserContractService)
@@ -178,7 +199,9 @@ const LoanDetails = () => {
       ]}
     >
       <div>
-        extract
+        <h2>
+        extract: {borrowerProfit}
+        </h2>
       </div>
     </SModal>
 
@@ -241,7 +264,7 @@ const LoanDetails = () => {
           {
             prePage === 'market'
               ? <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
-              : <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+              : <Button loading={extraBtnLoading} className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
           }
         </div>
 

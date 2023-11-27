@@ -112,7 +112,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     try {
       console.log('%c [ tradeId ]-122', 'font-size:13px; background:#efa7f5; color:#ffebff;', tradeId)
       console.log('%c [ depositValue ]-122', 'font-size:13px; background:#7062e8; color:#b4a6ff;', depositValue)
-      const res = await browserContractService?.refundPool_supply(ethers.parseEther(depositValue), tradeId)
+      const res = await browserContractService?.supply(ethers.parseEther(depositValue), tradeId)
 
       console.log('%c [ res ]-124', 'font-size:13px; background:#4871f9; color:#8cb5ff;', res)
     }

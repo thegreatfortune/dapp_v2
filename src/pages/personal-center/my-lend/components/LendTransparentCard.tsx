@@ -8,7 +8,6 @@ interface CardProps {
   item: Models.LoanOrderVO
   children?: React.ReactNode
   btnText?: string
-  copies?: number
 }
 
 interface CustomAvatarProps {
@@ -34,7 +33,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
   )
 }
 
-const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
+const LendTransparentCard: React.FC<CardProps> = ({ item, children, btnText }) => {
   const navigate = useNavigate()
 
   return (
@@ -63,8 +62,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
 
             <ul className='m0 flex flex-col list-none gap-8 p0'>
               <li className='h18 flex flex-col text-14 c-#999999'>
-                { copies ? `Share ${copies}` : 'Risk level'}
-
+                Risk level
               </li>
               <li className='h29 text-16 c-#FFFFFF' style={ { color: item.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
                 {item.tradingForm === 'SpotGoods' ? 'Low' : 'Hight' }
@@ -80,4 +78,4 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
   )
 }
 
-export default TransparentCard
+export default LendTransparentCard

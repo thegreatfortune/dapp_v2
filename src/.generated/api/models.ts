@@ -32,6 +32,24 @@ export namespace Models {
     orderItemList?: Array<OrderItem> = [];
   }
 
+  export class ApiLendingPageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 贷方id */
+    userId?: number = 0;
+    /** 借方id */
+    borrowUserId?: number = 0;
+    /** 借款订单id */
+    loanId?: number = 0;
+    /** 时间戳 */
+    lendTime?: number = 0;
+    /** 认购份数 */
+    partAmount?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
   export class ApiLoanLoanInfoGETParams {
     tradeId?: number = 0;
   }
@@ -70,6 +88,23 @@ Twitter :推特 */
     tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
+  export class ApiMarketPageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    loanId?: number = 0;
+    /** 挂单后在链上对应的id */
+    marketId?: number = 0;
+    /** ToBeTraded :等待交易
+Closed :订单完成
+Canceled :订单取消 */
+    state?: string = undefined;
+    /** 出售者地址 */
+    solder?: string = undefined;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
   export class ApiRepayPlanPageInfoGETParams {
     /** 分页查询页码 */
     page?: number = 0;
@@ -96,12 +131,27 @@ Twitter :推特 */
     /** 分数 */
     score?: number = 0;
     /** 还款状态 */
-    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' = undefined;
+    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS' =
+      undefined;
   }
 
   export class ISysWallet {}
 
   export class IUserWallet {}
+
+  export class LendingLoanVo {
+    /** 贷方id */
+    userId?: string = undefined;
+    /** 借方id */
+    borrowUserId?: string = undefined;
+    /** 借款订单id */
+    loanId?: string = undefined;
+    loan?: SimpleLoanVo = undefined;
+    /** 时间戳 */
+    lendTime?: string = undefined;
+    /** 认购份数 */
+    partAmount?: string = undefined;
+  }
 
   export class LoanConfirmParam {
     wallet?: ISysWallet = undefined;
@@ -214,6 +264,24 @@ Twitter :推特 */
     collectCopies?: string = undefined;
   }
 
+  export class LoanTokenSwapPageInfoGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 订单id */
+    tradeId?: number = 0;
+    orderItemList?: Array<OrderItem> = [];
+  }
+
+  export class LoanTokenSwapVo {
+    /** token地址 */
+    tokenAddr?: string = undefined;
+    amount?: number = 0;
+    action?: 'Reduce' | 'Add' = undefined;
+    createDate?: string = undefined;
+  }
+
   export class LoginDto {
     address?: string = undefined;
     inviteCode?: string = undefined;
@@ -249,7 +317,7 @@ Twitter :推特 */
     records?: T[] = undefined;
     /** 总数 */
     total?: number = 0;
-    /** 没页数量 */
+    /** 每页数量 */
     size?: number = 0;
     /** 当前页 */
     current?: number = 0;
@@ -288,6 +356,59 @@ Twitter :推特 */
     message?: string = undefined;
     /** com.sszh.modules.credit.vo.CreditScoreVo */
     data?: T = undefined;
+  }
+
+  export class SimpleLoanVo {
+    /** 在合约中的订单id */
+    tradeId?: string = undefined;
+    /** 生效状态 */
+    state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
+      undefined;
+    /** 交易平台, 如果trading_form不指定则不需要指定这里 */
+    tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
+    /** 交易形式, 或者不指定 */
+    tradingForm?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
+    /** 借款订单名称 */
+    loanName?: string = undefined;
+    /** 展示图片地址 */
+    picUrl?: string = undefined;
+    /** 贷款金额 */
+    loanMoney?: number = 0;
+    /** 利息 */
+    interest?: string = undefined;
+    /** 总还款次数 */
+    repayCount?: number = 0;
+    /** 还款天数, 比如180天内还完 */
+    periods?: number = 0;
+    /** 目标份数 */
+    goalCopies?: string = undefined;
+    /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
+    dividendRatio?: string = undefined;
+    /** 订单结束时间(清算时间) */
+    endTime?: string = undefined;
+    /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
+    minGoalQuantity?: number = 0;
+    /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
+    collectEndTime?: string = undefined;
+  }
+
+  export class TokenMarketVo {
+    loanId?: string = undefined;
+    /** 挂单后在链上对应的id */
+    marketId?: string = undefined;
+    /** 每次转移这个tokenId会改变 */
+    tokenId?: string = undefined;
+    state?: 'ToBeTraded' | 'Closed' | 'Canceled' = undefined;
+    /** token数量 */
+    amount?: string = undefined;
+    /** 剩余数量 */
+    remainingQuantity?: string = undefined;
+    /** 挂单时间 */
+    depositeTime?: string = undefined;
+    /** U的数量 */
+    price?: number = 0;
+    /** 出售者地址 */
+    solder?: string = undefined;
   }
 
   export enum TradingFormType {

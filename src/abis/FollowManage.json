@@ -183,12 +183,6 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "state",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "address",
 				"name": "borrower",
 				"type": "address"
@@ -212,7 +206,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "repayOrSupplyEvent",
+		"name": "repayEvent",
 		"type": "event"
 	},
 	{
@@ -420,11 +414,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "thisState",
-				"type": "uint256"
-			},
-			{
 				"internalType": "address",
 				"name": "borrower",
 				"type": "address"
@@ -445,7 +434,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "_repayOrSupplyEvent",
+		"name": "_repayEvent",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

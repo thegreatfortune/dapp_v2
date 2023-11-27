@@ -10,6 +10,8 @@ const Test = () => {
 
   const [tradeId, setTradeId] = useState<bigint>(BigInt(0))
 
+  const [approveValue, setApproveValues] = useState('')
+
   useEffect(() => {
     if (!browserContractService)
       setLoading(true)
@@ -80,6 +82,12 @@ const Test = () => {
     console.log('%c [ getTokenPrice ]-80', 'font-size:13px; background:#950fd7; color:#d953ff;', a)
   }
 
+  async function ERC3525_approve() {
+    const res = await browserContractService?.getERC3525Contract()
+
+    res?.['approve(uint256,address,uint256)'](tradeId, browserContractService?.getSigner.address ?? '', ethers.parseEther(approveValue))
+  }
+
   return (
 
     <div>
@@ -87,9 +95,13 @@ const Test = () => {
 
       订单id: {Number(tradeId)} <InputNumber onChange={inputChange} className='w-200' />
 
+     ApproveValues(): {Number(approveValue)} <InputNumber onChange={v => setApproveValues(String(v))} className='w-200' />
+
       <div className='h20'></div>
 
       <div className='flex flex-wrap gap-24'>
+      <Button loading={loading} onClick={ERC3525_approve}>ERC3525_approve</Button>
+
       <Button loading={loading} onClick={getTokenPrice}>getTokenPrice</Button>
 
       <Button loading={loading} onClick={USDC_mint}>faucet USDC Token +1千万</Button>

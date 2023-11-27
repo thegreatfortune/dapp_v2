@@ -32,7 +32,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     amount: '0',
   })
 
-  const [ratio, setRatio] = useState<string>('')
+  const [ratio, setRatio] = useState<string>('0')
 
   useEffect(() => {
     async function fetchData() {
@@ -134,10 +134,6 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
-    console.log('%c [ tokenInformation.amount ]-138', 'font-size:13px; background:#e717b4; color:#ff5bf8;', tokenInformation.amount)
-    console.log('%c [  BigInt(buyOrSell) ]-138', 'font-size:13px; background:#beb981; color:#fffdc5;', BigInt(buyOrSell))
-    console.log('%c [ tokenInformation.address ]-138', 'font-size:13px; background:#6e29e4; color:#b26dff;', tokenInformation.address)
-    console.log('%c [ props.tradeId ]-138', 'font-size:13px; background:#ffe4c0; color:#ffffff;', props.tradeId)
     const res = await browserContractService?.followHandle_swapERC20(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
     console.log('%c [ res ]-137', 'font-size:13px; background:#3d89bf; color:#81cdff;', res)
   }
