@@ -26,7 +26,7 @@ const OperationRecord = () => {
   return (
         <div>
             <ul className='flex list-none gap-x-360'>
-                <li>TEMI</li>
+                <li>TIME</li>
                 <li>Trading Pair</li>
                 <li>Volume</li>
             </ul>

@@ -123,6 +123,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     if (youPay.token === 'USDC') {
       buyOrSell = 0
       tokenInformation = youReceiver
+      tokenInformation.amount = youPay.amount
     }
     else {
       buyOrSell = 1
@@ -134,6 +135,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
+    console.log('%c [ BigInt(buyOrSell) ]-138', 'font-size:13px; background:#53f451; color:#97ff95;', BigInt(buyOrSell))
     const res = await browserContractService?.followHandle_swapERC20(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
     console.log('%c [ res ]-137', 'font-size:13px; background:#3d89bf; color:#81cdff;', res)
   }

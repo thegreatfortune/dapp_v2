@@ -289,10 +289,9 @@ Blacklist :黑名单 */
   }
 
   export class LoanTokenSwapVo {
-    /** 买入token地址 */
+    /** token地址 */
     tokenAddr?: string = undefined;
     amount?: number = 0;
-    /** USDC ACtion */
     action?: 'Reduce' | 'Add' = undefined;
     createDate?: string = undefined;
   }
@@ -304,7 +303,7 @@ Blacklist :黑名单 */
 
   export class MarketLoanVo {
     tradeId?: number = 0;
-    user?: UserInfoVo1 = undefined;
+    user?: UserInfoVo = undefined;
     /** 已交易总数 */
     totalTradingCompleted?: number = 0;
   }
@@ -445,13 +444,6 @@ Blacklist :黑名单 */
   }
 
   export class UserInfoVo {
-    userId?: string = undefined;
-    nickName?: string = undefined;
-    walletId?: string = undefined;
-    address?: string = undefined;
-  }
-
-  export class UserInfoVo1 {
     nickName?: string = undefined;
     address?: string = undefined;
     platformName?: string = undefined;

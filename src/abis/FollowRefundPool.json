@@ -119,6 +119,25 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "getBorrowerWithdrawMoney",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
@@ -144,7 +163,55 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getLenderWithdrawMoney",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "_tradeId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getPersonlShareMoney",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
 				"type": "uint256"
 			}
 		],
@@ -165,24 +232,10 @@
 				"internalType": "uint256",
 				"name": "_tradeId",
 				"type": "uint256"
-			}
-		],
-		"name": "getShareMoney",
-		"outputs": [
+			},
 			{
 				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tradeId",
+				"name": "_tokenId",
 				"type": "uint256"
 			}
 		],

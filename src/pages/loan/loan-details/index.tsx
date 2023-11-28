@@ -13,6 +13,7 @@ import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
+import ProcessModal from '@/pages/components/ProcessModal'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -33,6 +34,8 @@ const LoanDetails = () => {
   const [extractIsModalOpen, setExtractIsModalOpen] = useState(false)
   const [extraModalLoading, setExtraModalLoading] = useState(false)
 
+  const [shellIsModalOpen, setShellIsModalOpen] = useState(false)
+
   const [copies, setCopies] = useState<number | null>(1)
 
   const [lendState, setLendState] = useState<'Processing' | 'Success'>()
@@ -41,7 +44,7 @@ const LoanDetails = () => {
 
   const [refundPoolAddress, setRefundPoolAddress] = useState<string>()
 
-  const [borrowerProfit, setBorrowProfit] = useState<string>('0')
+  const [extractMoney, setExtractMoney] = useState<string>('0')
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
@@ -63,26 +66,26 @@ const LoanDetails = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (tradeId && extractIsModalOpen) {
+      if (tradeId && extractIsModalOpen && prePage) {
         setExtraBtnLoading(true)
 
         if (prePage === 'loan') {
+          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
+
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
 
-          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
-
-          setBorrowProfit(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+          setExtractMoney(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
         }
         else if (prePage === 'lend') {
+          console.log('%c [ getUserTotalMoney ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
+
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
 
-          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;', res)
-
-          setBorrowProfit(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+          setExtractMoney(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
         }
 
         setExtraBtnLoading(false)
@@ -173,23 +176,25 @@ const LoanDetails = () => {
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      console.log('%c [ activeUser.id === loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', activeUser.id, loanInfo.userId)
+      console.log('%c [ activeUser.id / loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', activeUser.id, loanInfo.userId)
+      console.log('%c [ activeUser.id / loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', typeof activeUser.id, typeof loanInfo.userId)
 
-      // await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+      // // await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
 
-      console.log('%c [ balance ]-180', 'font-size:13px; background:#0b40f9; color:#4f84ff;', balance)
+      // console.log('%c [ balance ]-180', 'font-size:13px; background:#0b40f9; color:#4f84ff;', balance)
 
-      await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
+      // await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
 
-      // if (activeUser.id === loanInfo.userId) {
-      //   console.log('%c [ browserContractService ]-176', 'font-size:13px; background:#230318; color:#67475c;', 'browserContractService')
+      console.log('%c [ activeUser.id === loanInfo.userId ]-188', 'font-size:13px; background:#9f6ea9; color:#e3b2ed;', activeUser.id === loanInfo.userId)
+      if (activeUser.id === loanInfo.userId) {
+        console.log('%c [ browserContractService ]-176', 'font-size:13px; background:#230318; color:#67475c;', 'browserContractService')
 
-      //   await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
-      // }
-      // else {
-      //   console.log('%c [ refundPool_lenderWithdraw ]-178', 'font-size:13px; background:#f43973; color:#ff7db7;', 'refundPool_lenderWithdraw')
-      //   await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
-      // }
+        await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+      }
+      else {
+        console.log('%c [ refundPool_lenderWithdraw ]-178', 'font-size:13px; background:#f43973; color:#ff7db7;', 'refundPool_lenderWithdraw')
+        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
+      }
     }
     catch (error) {
       console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
@@ -262,7 +267,13 @@ const LoanDetails = () => {
     setLendState(undefined)
   }
 
+  function onShellConfirm(value: any) {
+    console.log('%c [ value ]-269', 'font-size:13px; background:#a18e74; color:#e5d2b8;', value)
+  }
+
   return (<div className='w-full'>
+
+    <ProcessModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} onConfirmAPI={onShellConfirm}></ProcessModal>
 
     <SModal open={extractIsModalOpen}
       maskClosable={false}
@@ -277,7 +288,7 @@ const LoanDetails = () => {
     >
       <div>
         <h2>
-          extract: {borrowerProfit}
+          extract: {extractMoney}
         </h2>
       </div>
     </SModal>
@@ -333,7 +344,7 @@ const LoanDetails = () => {
           <div>
             <div className='flex'>
               <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
-              <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime)} />}</span>
+              {loanInfo.state === 'Following' ? <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime)} />}</span> : <div>非</div>}
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>
 
@@ -343,7 +354,7 @@ const LoanDetails = () => {
               ? <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
               : prePage === 'lend'
                 ? <div>
-                  <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Shell</Button>
+                  <Button className='h60 w180 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
                   <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
                 </div>
                 : <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
@@ -357,8 +368,8 @@ const LoanDetails = () => {
         <div className='h191 w1047 flex gap-x-24 border-5 border-#0394e8 border-solid'>
 
           <ul className='m0 list-none p0'>
-            <li>Apply for loan</li>
-            <li> {BigNumber(loanInfo.loanMoney ?? 0).div(10 ** 18).toFixed(18)} </li>
+            <li>Apply for loan </li>
+            <li> {BigNumber(loanInfo.loanMoney ?? 0).div(BigNumber(10).pow(18)).toPrecision(7)} </li>
             <li>USDC</li>
           </ul>
 
@@ -371,12 +382,12 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Interest</li>
-            <li>{loanInfo.interest}</li>
+            <li>{BigNumber(loanInfo.interest ?? 0).div(100).toPrecision(2)} %</li>
           </ul>
 
           <ul className='m0 list-none p0'>
             <li>dividend</li>
-            <li>{loanInfo.dividendRatio}</li>
+            <li>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toPrecision(2)} %</li>
           </ul>
 
           <ul className='m0 list-none p0'>

@@ -410,6 +410,72 @@ export class BrowserContractService {
   }
 
   /**
+   * 根据订单查询tokenId
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async ERC3525_getTokenId(tradeId: bigint) {
+    const c = await this.getERC3525Contract()
+
+    return c.getPersonalSlotToTokenId(this.getSigner.address, tradeId)
+  }
+
+  /**
+   * 得到ERC3525的持有人分红收益
+   *
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getShareProfit(tradeId: bigint) {
+    const tokenId = await this.ERC3525_getTokenId(tradeId)
+
+    if (!tokenId)
+      throw new Error(`tokenId is undefined: ${tokenId}`)
+
+    const c = await this.getProcessCenterContract()
+
+    return c.getShareProfit(tokenId)
+  }
+
+  /**
+   * 检查最新订单的状态
+   *
+   * @memberof BrowserContractService
+   */
+  async checkLatestOrderInProgress(): Promise<boolean> {
+    const followFactoryContract = await this.getFollowFactoryContract()
+
+    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    if (cp === BLACK_HOLE_ADDRESS)
+      return true
+
+    const followManageContract = await this.getFollowManageContract()
+
+    const tids = await followManageContract.getborrowerAllOrdersId(this.getSigner.address, cp)
+    const currenTid = tids.at(-1)
+
+    if (currenTid && currenTid >= BigInt(0)) {
+      const processCenterContract = await this.getProcessCenterContract()
+
+      const status = await processCenterContract.getOrderState(currenTid)
+
+      if (status === BigInt(7) || status === BigInt(8)) {
+        return true
+      }
+      else {
+        message.error(`Existing order, status is : ${status}`)
+        return false
+      }
+    }
+    else {
+      return true
+    }
+  }
+
+  /**
    *swap quote
    *
    * @return {*}
@@ -643,8 +709,8 @@ export class BrowserContractService {
       BigInt(model.cycle),
       BigInt(model.period),
       [
-        BigInt((model.interest * 100)),
-        BigInt(model.dividend),
+        BigInt((model.interest * 1000)),
+        BigInt(model.dividend * 1000),
         BigInt(model.numberOfCopies),
         BigInt(model.minimumRequiredCopies),
       ],
@@ -843,7 +909,9 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
-    const res = await this.capitalPool_approveHandle(tradeId, import.meta.env.VITE_USDC_TOKEN)
+    // buyOrSell 1 => import.meta.env.VITE_USDC_TOKEN 非1为swapToken
+
+    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? import.meta.env.VITE_USDC_TOKEN : swapToken)
     console.log('%c [capitalPool_approveHandle res ]-794', 'font-size:13px; background:#1c8c3f; color:#60d083;', res)
 
     if (res?.status !== 1) {
@@ -885,8 +953,8 @@ export class BrowserContractService {
     // const tokenId = tokenIds.at(-1)
 
     if (!tokenId) {
-      message.error('refund pool tokenId is undefined')
-      throw new Error('refund pool tokenId is undefined')
+      message.error(`refund pool tokenId is ${tokenId}`)
+      throw new Error(`refund pool tokenId is ${tokenId}`)
     }
 
     const res = await ERC3525Contract['approve(uint256,address,uint256)'](tokenId, await refundPoolContract.getAddress(), value)

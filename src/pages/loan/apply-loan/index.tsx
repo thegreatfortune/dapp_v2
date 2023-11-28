@@ -18,7 +18,6 @@ import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { Models } from '@/.generated/api/models'
 import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import { LoanService } from '@/.generated/api/Loan'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
@@ -168,71 +167,6 @@ const ApplyLoan = () => {
       navigate('/my-loan')
 
       // TODO: decimals token标志位
-
-      // const followCapitalPoolContract
-      //   = await browserContractService?.getCapitalPoolContract()
-
-      // const res = await followCapitalPoolContract?.createOrder(
-      //   [
-      //     BigInt(loanRequisitionEditModel.cycle),
-      //     BigInt(loanRequisitionEditModel.period),
-      //   ],
-      //   [
-      //     BigInt((loanRequisitionEditModel.interest * 100)),
-      //     BigInt(loanRequisitionEditModel.dividend),
-      //     BigInt(loanRequisitionEditModel.numberOfCopies),
-      //     BigInt(loanRequisitionEditModel.minimumRequiredCopies),
-      //   ],
-      //   BigInt(loanRequisitionEditModel.raisingTime) * BigInt(60), // TODO 秒数
-      //   BigInt(loanRequisitionEditModel.applyLoan) * BigInt(10 ** 18),
-      //   'https://6a32f35977ea4e1844ce0dbab6b9c6d9.ipfs.4everland.link/ipfs/bafybeidnzira46v3ebmq3qw7vlovr4lgx4ytwgsyzi5ym4pf43ycki2g3u',
-      //   'image1',
-      // )
-
-      // const result = await res?.wait()
-
-      // console.log('%c [ result ]-218', 'font-size:13px; background:#b0456d; color:#f489b1;', result)
-
-      // try {
-      //   if (result?.status === 1) {
-      //     const loanConfirm = {
-      //       ...new Models.LoanConfirmParam(),
-      //       loanName: loanRequisitionEditModel.itemTitle ?? '',
-      //       loanIntro: loanRequisitionEditModel.description ?? '',
-      //       transactionPairs: loanRequisitionEditModel.transactionPairs,
-      //       tradingFormType: loanRequisitionEditModel.tradingFormType,
-      //       tradingPlatformType: loanRequisitionEditModel.tradingPlatformType,
-      //     }
-
-      //     const capitalPoolAddress = await browserContractService?.getCapitalPoolAddress()
-
-      //     const followManageContract
-      //       = await browserContractService?.getFollowManageContract()
-
-      //     const tids = await followManageContract?.getborrowerAllOrdersId(
-      //       browserContractService?.getSigner.address ?? '',
-      //       capitalPoolAddress ?? '',
-      //     )
-      //     console.log('%c [ tids ]-196', 'font-size:13px; background:#5115c6; color:#9559ff;', tids)
-
-      //     // loanConfirm.tradeId = (Number(tids?.at(-1)) ?? 0) + 1
-      //     loanConfirm.tradeId = String(Number(tids?.at(-1)) ?? 0)
-
-      //     const res = await LoanService.ApiLoanConfirm_POST(loanConfirm)
-      //     console.log('%c [ res ]-244', 'font-size:13px; background:#011256; color:#45569a;', res)
-
-      //     setCheckers((prevState) => {
-      //       const newArray = [...prevState]
-      //       newArray[2] = true
-      //       return newArray
-      //     })
-
-      //     navigate('/my-loan')
-      //   }
-      // }
-      // catch (error) {
-      //   console.log('%c [ error ]-183', 'font-size:13px; background:#07d28a; color:#4bffce;', error)
-      // }
     }
     catch (error) {
       message.error('操作失败')
@@ -327,8 +261,6 @@ const ApplyLoan = () => {
       await checkRepaymentPoolChecked()
       // if (repaymentPoolChecked && !documentChecked) {
       //   setDocumentLoading(true)
-
-      // TODO 检查订单状态 如果已有订单 并且未清算则不能继续创建订单 (还有黑名单检查)
 
       //   await handleOk()
 

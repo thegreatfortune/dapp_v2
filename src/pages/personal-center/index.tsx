@@ -1,35 +1,45 @@
 import Button from 'antd/es/button'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { message } from 'antd'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
-// TODO 检查 订单状态 黑名单检查
 const PersonalCenter = () => {
   const navigate = useNavigate()
 
   const { browserContractService } = useBrowserContract()
 
+  const [loading, setLoading] = useState(false)
+
   const checkLoanOrderAndUserState = async () => {
     try {
-      // console.log('%c [ browserContractService ]-14', 'font-size:13px; background:#839a06; color:#c7de4a;', browserContractService)
-      // const followManageContract = await browserContractService?.getFollowManageContract()
-      // console.log('%c [ followManageContract ]-15', 'font-size:13px; background:#6eb443; color:#b2f887;', followManageContract)
+      if (!browserContractService)
+        return
 
-      // followManageContract?.getborrowerAllOrdersId('', 'sa')
+      setLoading(true)
+      const res = await browserContractService?.checkLatestOrderInProgress()
 
-      // const followCapitalPoolContract = await browserContractService?.getCapitalPoolContract()
+      const processCenterContract = await browserContractService?.getProcessCenterContract()
 
-      // followCapitalPoolContract?.getList()
+      const isBlack = await processCenterContract?._getIfBlackList(browserContractService?.getSigner.address)
 
-      navigate('/apply-loan')
+      if (isBlack)
+        message.error('You must be not black list to continue processing your order')
+
+      !isBlack && res && navigate('/apply-loan')
     }
     catch (error) {
+      message.error('Error: Order in processing')
       console.log('%c [ error ]-15', 'font-size:13px; background:#eccc7f; color:#ffffc3;', error)
+    }
+    finally {
+      setLoading(false)
     }
   }
 
   return (
     <div>
-      <Button type="primary" onClick={checkLoanOrderAndUserState}>
+      <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState}>
         Apply for a loan
       </Button>
 

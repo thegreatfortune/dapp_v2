@@ -59,8 +59,8 @@ const Test = () => {
   }
 
   async function followRefundPool_lenderWithdraw() {
-    const res = await browserContractService?.refundPool_lenderWithdraw(tradeId)
-    console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
+    // const res = await browserContractService?.refundPool_lenderWithdraw(tradeId)
+    console.log('%c [ 未放开调用 ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;')
   }
 
   async function followRefundPool_borrowerWithdraw() {

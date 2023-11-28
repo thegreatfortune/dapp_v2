@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button, Divider, InputNumber, List, Skeleton, message } from 'antd'
 import BigNumber from 'bignumber.js'
+import dayjs from 'dayjs'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -184,7 +185,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       </div>
 
       <ul className='flex list-none gap-x-168'>
-        <li>TEMI</li>
+        <li>TIME</li>
         <li>Repayment Amount</li>
         <li>State</li>
         <li>Days Overdue</li>
@@ -216,6 +217,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
               <List.Item key={item.loanId}>
                 <ul className='flex list-none gap-x-168'>
                   <li>{item.nowCount} {item.repayTime}</li>
+                  {/* <li>{item.nowCount} {dayjs(item.repayTime).format('YYYY-MM-DD HH:mm:ss')}</li> */}
                   <li>{BigNumber(item.repayFee ?? 0).div(BigNumber(10).pow(18)).toFixed(2)}</li>
                   <li>{item.state}</li>
                   <li>compute</li>

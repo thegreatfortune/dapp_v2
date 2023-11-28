@@ -62,7 +62,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NonReapy",
+		"name": "NonRepay",
 		"type": "error"
 	},
 	{
@@ -161,7 +161,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "capitalPoolAddress",
+				"name": "refundPool",
 				"type": "address"
 			},
 			{
@@ -328,7 +328,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "capitalPoolAddress",
+				"name": "refundPool",
 				"type": "address"
 			},
 			{

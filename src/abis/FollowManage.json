@@ -38,6 +38,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "RefundPoolError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "refundNotCreate",
 		"type": "error"
 	},
@@ -91,7 +96,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "capitalPoolAddress",
+				"name": "refundPool",
 				"type": "address"
 			},
 			{
@@ -258,7 +263,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "capitalPoolAddress",
+				"name": "refundPool",
 				"type": "address"
 			},
 			{
@@ -313,34 +318,6 @@
 		],
 		"name": "wthdrawRefundEvent",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "_borrowerWithdrawProfit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -463,39 +440,6 @@
 			}
 		],
 		"name": "_singleClearEvent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "_userWithdrawEvent",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -755,6 +699,44 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_refundPool",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_borrowerOrLender",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "money",
+				"type": "uint256"
+			}
+		],
+		"name": "refundWithdrawEvent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address[]",
 				"name": "_allowTokens",
 				"type": "address[]"
@@ -887,7 +869,7 @@
 			},
 			{
 				"internalType": "address",
-				"name": "refundPool",
+				"name": "_refundPool",
 				"type": "address"
 			}
 		],
