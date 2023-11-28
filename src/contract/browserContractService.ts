@@ -1,7 +1,7 @@
 import { Contract, ethers } from 'ethers'
 import { message, notification } from 'antd'
 import BigNumber from 'bignumber.js'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, LocalRefundPool, ProcessCenter, UniswapV3 } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, LocalRefundPool, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import LocalCapitalPool_ABI from '@/abis/LocalCapitalPool.json'
@@ -11,6 +11,7 @@ import LocalRefundPool_ABI from '@/abis/LocalRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
+import FollowMarket_ABI from '@/abis/FollowMarket.json'
 import LocalERC20_ABI from '@/abis/LocalERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
@@ -206,7 +207,7 @@ export class BrowserContractService {
       )
     }
 
-    return createContract <LocalContractType<typeof LocalEnv, ERC20>> (
+    return createContract<LocalContractType<typeof LocalEnv, ERC20>>(
       token ?? import.meta.env.VITE_USDC_TOKEN,
       ERC20_ABI,
       this.signer,
@@ -227,6 +228,20 @@ export class BrowserContractService {
     return createContract<UniswapV3>(
       token ?? import.meta.env.VITE_TEST_LIQUIDITY_ADDRESS,
       TEST_LIQUIDITY_ABI,
+      this.signer,
+    )
+  }
+
+  /**
+   * FollowMarket
+   *
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getFollowMarketContract() {
+    return createContract<FollowMarket>(
+      import.meta.env.VITE_FOLLOW_MARKET_ADDRESS,
+      FollowMarket_ABI,
       this.signer,
     )
   }
@@ -256,7 +271,7 @@ export class BrowserContractService {
     //   )
     // }
 
-    return this._followCapitalPoolContract = createContract <LocalContractType<typeof LocalEnv, FollowCapitalPool>> (
+    return this._followCapitalPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowCapitalPool>>(
       capitalPoolAddress!,
       followCapitalPool_ABI,
       this.signer,
@@ -308,7 +323,7 @@ export class BrowserContractService {
     //   )
     // }
 
-    this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowRefundPool>> (
+    this._refundPoolContract = createContract<LocalContractType<typeof LocalEnv, FollowRefundPool>>(
       refundPoolAddress,
       followRefundPool_ABI,
       this.signer,
@@ -392,6 +407,21 @@ export class BrowserContractService {
       ERC3525_ABI,
       this.signer,
     )
+  }
+
+  /**
+   * 授权tokenId下的数量到_operator
+   *
+   * @param {bigint} tokenId ERC3525的tokenID
+   * @param {string} operator 被授予花费的地址
+   * @param {bigint} value tokenId下的份数
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async ERC3525_approve(tokenId: bigint, operator: string, value: bigint) {
+    const c = await this.getERC3525Contract()
+
+    return c['approve(uint256,address,uint256)'](tokenId, operator, value)
   }
 
   /**
@@ -561,6 +591,34 @@ export class BrowserContractService {
   // write
 
   /**
+   * 卖出质押ERC3525（需要授权TimeMarket合约）
+   *
+   * @param {bigint} tradeId ERC3525的tokenId
+   * @param {bigint} price 出售价格
+   * @param {bigint} amount 出售数量
+   * @param {bigint} copies
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followMarketContract_saleERC3525(tradeId: bigint, price: bigint, amount: bigint) {
+    const tid = await this.ERC3525_getTokenId(tradeId)
+
+    if (!tid)
+      throw new Error(`tokenId is undefined: ${tid}`)
+
+    const marketContract = await this.getFollowMarketContract()
+
+    const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
+    console.log('%c [ approveRes ]-612', 'font-size:13px; background:#6cd5ed; color:#b0ffff;', approveRes)
+
+    await handleTransaction(approveRes)
+
+    const res = await marketContract.saleERC3525(tid, price, amount)
+
+    return handleTransaction(res)
+  }
+
+  /**
    * 资金池授权 true为已授权
    * owner（代币所有者的地址）和 spender（被授权地址的地址）
    *
@@ -709,8 +767,8 @@ export class BrowserContractService {
       BigInt(model.cycle),
       BigInt(model.period),
       [
-        BigInt((model.interest * 1000)),
-        BigInt(model.dividend * 1000),
+        BigInt((model.interest * 100)),
+        BigInt(model.dividend * 100),
         BigInt(model.numberOfCopies),
         BigInt(model.minimumRequiredCopies),
       ],
@@ -844,7 +902,7 @@ export class BrowserContractService {
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
 
-    const transaction = await capitalPoolContract?.clearingMoney(token, tradeId, fee, amount)
+    const transaction = await capitalPoolContract?.clearingMoney(token, tradeId, fee)
 
     return handleTransaction(transaction)
   }

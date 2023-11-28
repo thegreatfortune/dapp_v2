@@ -11,6 +11,25 @@ const PersonalCenter = () => {
 
   const [loading, setLoading] = useState(false)
 
+  async function reSet() {
+    try {
+      // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
+
+      const followCapitalPoolContract
+      = await browserContractService?.getCapitalPoolContract()
+      console.log('%c [ followCapitalPoolContract ]-122', 'font-size:13px; background:#6485d8; color:#a8c9ff;', followCapitalPoolContract)
+
+      await followCapitalPoolContract?.initCreateOrder()
+    }
+    catch (error) {
+      console.log(
+        '%c [ error ]-75',
+        'font-size:13px; background:#69bdf3; color:#adffff;',
+        error,
+      )
+    }
+  }
+
   const checkLoanOrderAndUserState = async () => {
     try {
       if (!browserContractService)
@@ -29,7 +48,7 @@ const PersonalCenter = () => {
       !isBlack && res && navigate('/apply-loan')
     }
     catch (error) {
-      message.error('Error: Order in processing')
+      message.error('Error: order status error')
       console.log('%c [ error ]-15', 'font-size:13px; background:#eccc7f; color:#ffffc3;', error)
     }
     finally {
@@ -38,10 +57,13 @@ const PersonalCenter = () => {
   }
 
   return (
-    <div>
+    <div className='flex justify-around'>
+
       <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState}>
         Apply for a loan
       </Button>
+
+      <Button type="primary" onClick={reSet}>reSet</Button>
 
     </div>
   )

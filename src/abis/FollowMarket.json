@@ -282,11 +282,6 @@
 						"type": "uint16"
 					},
 					{
-						"internalType": "uint32",
-						"name": "depositeTime",
-						"type": "uint32"
-					},
-					{
 						"internalType": "uint256",
 						"name": "price",
 						"type": "uint256"
@@ -366,11 +361,6 @@
 				"internalType": "uint16",
 				"name": "_amount",
 				"type": "uint16"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_depositeTime",
-				"type": "uint256"
 			}
 		],
 		"name": "saleERC3525",

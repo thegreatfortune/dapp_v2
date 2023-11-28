@@ -13,7 +13,7 @@ import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
-import ProcessModal from '@/pages/components/ProcessModal'
+import ShellModal from '@/pages/loan/loan-details/components/ShellModal'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -49,6 +49,10 @@ const LoanDetails = () => {
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [balance, setBalance] = useState('0') // 份数
+
+  // const [portfolioValue, setPortfolioValue] = useState('0') //
+
+  // const [saleERC3525Params, setSaleERC3525Params] = useState<{ tradeId: bigint | null; price: bigint | null; amount: bigint | null }>({ tradeId: null, price: null, amount: null })
 
   useEffect(() => {
     async function fetchData() {
@@ -170,31 +174,14 @@ const LoanDetails = () => {
     if (!tradeId)
       return
 
-    console.log('%c [ import.meta.env ]-170', 'font-size:13px; background:#02f39a; color:#46ffde;', import.meta.env)
-
     setExtraModalLoading(true)
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      console.log('%c [ activeUser.id / loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', activeUser.id, loanInfo.userId)
-      console.log('%c [ activeUser.id / loanInfo.userId ]-174', 'font-size:13px; background:#d16f90; color:#ffb3d4;', typeof activeUser.id, typeof loanInfo.userId)
-
-      // // await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
-
-      // console.log('%c [ balance ]-180', 'font-size:13px; background:#0b40f9; color:#4f84ff;', balance)
-
-      // await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
-
-      console.log('%c [ activeUser.id === loanInfo.userId ]-188', 'font-size:13px; background:#9f6ea9; color:#e3b2ed;', activeUser.id === loanInfo.userId)
-      if (activeUser.id === loanInfo.userId) {
-        console.log('%c [ browserContractService ]-176', 'font-size:13px; background:#230318; color:#67475c;', 'browserContractService')
-
+      if (activeUser.id === loanInfo.userId)
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
-      }
-      else {
-        console.log('%c [ refundPool_lenderWithdraw ]-178', 'font-size:13px; background:#f43973; color:#ff7db7;', 'refundPool_lenderWithdraw')
+      else
         await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
-      }
     }
     catch (error) {
       console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
@@ -267,13 +254,9 @@ const LoanDetails = () => {
     setLendState(undefined)
   }
 
-  function onShellConfirm(value: any) {
-    console.log('%c [ value ]-269', 'font-size:13px; background:#a18e74; color:#e5d2b8;', value)
-  }
-
   return (<div className='w-full'>
 
-    <ProcessModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} onConfirmAPI={onShellConfirm}></ProcessModal>
+    <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
 
     <SModal open={extractIsModalOpen}
       maskClosable={false}
