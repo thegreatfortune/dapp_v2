@@ -3,8 +3,11 @@ import { debounce } from 'lodash-es'
 import { UserService } from '../../.generated/api/User'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
+import useBrowserContract from '@/hooks/useBrowserContract'
 
 const CustomConnectButton = () => {
+  const { resetProvider } = useBrowserContract()
+
   const { signIn } = useUserStore()
 
   if (!window.ethereum._accountsChangedHandler) {
@@ -23,6 +26,8 @@ const CustomConnectButton = () => {
           console.log('%c [ user ]-23', 'font-size:13px; background:#27737f; color:#6bb7c3;', user)
 
           signIn({ address, accessToken: res.accessToken, id: user.userId })
+
+          resetProvider()
         }
         catch (error) {
           console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)

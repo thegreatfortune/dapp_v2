@@ -48,7 +48,7 @@ async function handleTransaction(
     const receipt = await transactionResponse.wait()
 
     if (!receipt)
-      throw new Error('Transaction receipt is undefined')
+      throw new Error('HandleTransaction: Transaction receipt is undefined')
 
     if (receipt.status === 1) {
       // Transaction succeeded
@@ -63,7 +63,7 @@ async function handleTransaction(
         message: failureMessage,
         description: 'Your transaction failed. Please try again.',
       })
-      throw new Error('Your transaction failed. Please try again.')
+      throw new Error('HandleTransaction: Your transaction failed. Please try again.')
     }
 
     return receipt
@@ -238,12 +238,19 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async getFollowMarketContract() {
-    return createContract<FollowMarket>(
+  async getFollowMarketContract(marketId?: bigint) {
+    const contract = createContract<FollowMarket>(
       import.meta.env.VITE_FOLLOW_MARKET_ADDRESS,
       FollowMarket_ABI,
       this.signer,
     )
+
+    if (marketId) {
+      const info = await contract.getIdToSaleMes(marketId)
+      console.log('%c [ getIdToSaleMes info ]-250', 'font-size:13px; background:#0b82a6; color:#4fc6ea;', info)
+    }
+
+    return contract
   }
 
   /**
@@ -410,6 +417,18 @@ export class BrowserContractService {
   }
 
   /**
+   * 获取token标志位
+   *
+   * @param {string} token
+   * @return {*}  {Promise<bigint>}
+   * @memberof BrowserContractService
+   */
+  async ERC20_decimals(token: string): Promise<bigint> {
+    const contract = await this.getERC20Contract(token)
+    return contract.decimals()
+  }
+
+  /**
    * 授权tokenId下的数量到_operator
    *
    * @param {bigint} tokenId ERC3525的tokenID
@@ -421,7 +440,7 @@ export class BrowserContractService {
   async ERC3525_approve(tokenId: bigint, operator: string, value: bigint) {
     const c = await this.getERC3525Contract()
 
-    return c['approve(uint256,address,uint256)'](tokenId, operator, value)
+    return c.approveValue(tokenId, operator, value)
   }
 
   /**
@@ -609,12 +628,45 @@ export class BrowserContractService {
     const marketContract = await this.getFollowMarketContract()
 
     const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
-    console.log('%c [ approveRes ]-612', 'font-size:13px; background:#6cd5ed; color:#b0ffff;', approveRes)
 
-    await handleTransaction(approveRes)
+    await approveRes.wait()
 
-    const res = await marketContract.saleERC3525(tid, price, amount)
+    console.log('%c [ tid, price, amount ]-616', 'font-size:13px; background:#8d01d2; color:#d145ff;', tid, price, amount)
 
+    const decimals = await this.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
+    console.log('%c [ decimals ]-630', 'font-size:13px; background:#7c3b4e; color:#c07f92;', decimals)
+
+    const wei = BigInt(BigNumber(String(price)).times(BigNumber(10).pow(String(decimals))).toString())
+
+    console.log('%c [ wei ]-632', 'font-size:13px; background:#2c6ca4; color:#70b0e8;', wei)
+
+    // TODO price * 标志位
+    const res = await marketContract.saleERC3525(tid, wei, amount)
+
+    console.log('%c [ saleERC3525 ]-637', 'font-size:13px; background:#d26b9f; color:#ffafe3;', res)
+
+    return handleTransaction(res)
+  }
+
+  /**
+   * 购买ERC3525（需要授权TimeMarket合约）
+   *
+   * @param {bigint} marketId
+   * @param {bigint} tradeId
+   * @param {bigint} amount
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followMarketContract_buyERC3525(marketId: bigint) {
+    console.log('%c [ marketId ]-654', 'font-size:13px; background:#8e6612; color:#d2aa56;', marketId)
+    const marketContract = await this.getFollowMarketContract(marketId)
+
+    const state = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, await marketContract.getAddress())
+
+    if (!state)
+      throw new Error(' approval failed ')
+
+    const res = await marketContract.buyERC3525(marketId)
     return handleTransaction(res)
   }
 
@@ -689,18 +741,26 @@ export class BrowserContractService {
     return true
   }
 
-  async processCenter_approve(): Promise<boolean> {
-    const ERC20Contract = await this?.getERC20Contract()
+  /**
+   * ERC20授权
+   *
+   * @param {(string | undefined)} [token] 授权者
+   * @param {string} [grantee] 被授权者
+   * @return {*}  {Promise<boolean>}
+   * @memberof BrowserContractService
+   */
+  async ERC20_approve(token?: string | undefined, grantee?: string): Promise<boolean> {
+    const ERC20Contract = await this?.getERC20Contract(token)
 
     const processCenterContract = await this.getProcessCenterContract()
 
-    const a = await processCenterContract.getAddress()
+    const processCenterAddress = await processCenterContract.getAddress()
 
-    const allowance = await ERC20Contract?.allowance(this?.getSigner.address, a)
+    const allowance = await ERC20Contract?.allowance(grantee ?? this?.getSigner.address, processCenterAddress)
     console.log('%c [ allowance ]-475', 'font-size:13px; background:#570fae; color:#9b53f2;', allowance)
 
     if ((allowance ?? BigInt(0)) <= BigInt(0)) {
-      const approveRes = await ERC20Contract?.approve(a, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+      const approveRes = await ERC20Contract?.approve(grantee ?? processCenterAddress, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
       // const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
       // console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
       if (!approveRes)
@@ -956,6 +1016,29 @@ export class BrowserContractService {
   }
 
   /**
+   * 获取token0=>token1的兑换比
+   *
+   * @param {string} swapToken token1
+   * @param {*} [fee]
+   * @return {*}  {Promise<number>}
+   * @memberof BrowserContractService
+   */
+  async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<number> {
+    const contract = await this.getTestLiquidityContract()
+
+    const price = await contract?.getTokenPrice(
+      import.meta.env.VITE_USDC_TOKEN,
+      swapToken,
+      fee,
+      BigInt(100),
+    )
+
+    const ratio = Number(price) / 100
+
+    return ratio
+  }
+
+  /**
    * swap操作，仅由传入的已创建的资金池创建者可以调用
    *
    * @param {bigint} tradeId
@@ -1015,7 +1098,7 @@ export class BrowserContractService {
       throw new Error(`refund pool tokenId is ${tokenId}`)
     }
 
-    const res = await ERC3525Contract['approve(uint256,address,uint256)'](tokenId, await refundPoolContract.getAddress(), value)
+    const res = await ERC3525Contract.approveValue(tokenId, await refundPoolContract.getAddress(), value)
     console.log('%c [  ERC3525Contractres approve ]-882', 'font-size:13px; background:#235bbc; color:#679fff;', res)
 
     const result = await handleTransaction(res)
@@ -1080,8 +1163,16 @@ export class BrowserContractService {
   //   return handleTransaction(transaction)
   // }
 
-  async supply(amount: bigint, tradeId: bigint) {
-    const approve = await this.processCenter_approve()
+  /**
+   * 供应
+   *
+   * @param {bigint} amount
+   * @param {bigint} tradeId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async processCenter_supply(amount: bigint, tradeId: bigint) {
+    const approve = await this.ERC20_approve()
 
     if (!approve) {
       message.error('approve is error')

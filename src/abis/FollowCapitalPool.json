@@ -87,6 +87,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "NotOrder",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NotSingleRepayTimes",
 		"type": "error"
 	},

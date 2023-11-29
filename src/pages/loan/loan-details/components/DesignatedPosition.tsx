@@ -85,7 +85,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     return {
       name: tokenName,
       // balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
-      balance: BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toFixed(4),
+      balance: BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toPrecision(4),
       decimals: Number(decimals) ?? 0,
       address: tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap],
     }
@@ -112,7 +112,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     try {
       console.log('%c [ tradeId ]-122', 'font-size:13px; background:#efa7f5; color:#ffebff;', tradeId)
       console.log('%c [ depositValue ]-122', 'font-size:13px; background:#7062e8; color:#b4a6ff;', depositValue)
-      const res = await browserContractService?.supply(ethers.parseEther(depositValue), tradeId)
+      const res = await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
 
       console.log('%c [ res ]-124', 'font-size:13px; background:#4871f9; color:#8cb5ff;', res)
     }
@@ -147,11 +147,13 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
         <div className="h560 w634">
         <Button type='primary' onClick={onDeposit}>Deposit</Button>
         </div>
+        {JSON.stringify(coinInfos)}
         <div className="flex flex-wrap" >
           {
             coinInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
                 <div>
+
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
                     item.balance !== '0'

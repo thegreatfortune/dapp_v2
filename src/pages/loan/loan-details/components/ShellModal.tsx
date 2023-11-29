@@ -34,7 +34,8 @@ const ShellModal: React.FC<IProps> = (props) => {
     try {
       setLoadingState(LoadingState.Processing)
 
-      const res = await browserContractService?.followMarketContract_saleERC3525(props.tradeId, BigInt(amount), BigInt(price))
+      const res = await browserContractService?.followMarketContract_saleERC3525(props.tradeId, BigInt(price), BigInt(amount))
+      console.log('%c [ followMarketContract_saleERC3525 ]-38', 'font-size:13px; background:#5c25de; color:#a069ff;', res)
       if (res?.status !== 1) {
         message.error('Error during confirm')
         throw new Error('Error during confirm')
@@ -45,6 +46,7 @@ const ShellModal: React.FC<IProps> = (props) => {
     catch (error) {
       setLoadingState(LoadingState.Initial)
       message.error('Error during confirm')
+      console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
     }
   }
 

@@ -4,7 +4,7 @@ import request from '../../utils/request';
 import { Models } from './models';
 
 export class MarketService {
-  /** pageInfo GET /api/market/pageInfo */
+  /** 查询所有挂单 GET /api/market/pageInfo */
   static async ApiMarketPageInfo_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiMarketPageInfoGETParams,
@@ -20,7 +20,7 @@ export class MarketService {
     });
   }
 
-  /** pageTradingLoan GET /api/market/pageTradingLoan */
+  /** 获取订单的聚合挂单数据 GET /api/market/pageTradingLoan */
   static async ApiMarketPageTradingLoan_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiMarketPageTradingLoanGETParams,

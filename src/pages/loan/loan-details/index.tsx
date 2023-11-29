@@ -50,9 +50,16 @@ const LoanDetails = () => {
 
   const [balance, setBalance] = useState('0') // 份数
 
+  const [activeKey, setActiveKey] = useState('1') // 份数
+
   // const [portfolioValue, setPortfolioValue] = useState('0') //
 
   // const [saleERC3525Params, setSaleERC3525Params] = useState<{ tradeId: bigint | null; price: bigint | null; amount: bigint | null }>({ tradeId: null, price: null, amount: null })
+
+  useEffect(() => {
+    if (prePage === 'trade')
+      setActiveKey('3')
+  }, [prePage])
 
   useEffect(() => {
     async function fetchData() {
@@ -165,10 +172,6 @@ const LoanDetails = () => {
       children: <RoomTrade />,
     },
   ]
-
-  const onChange = (key: string) => {
-    console.log(key)
-  }
 
   async function extractConfirm() {
     if (!tradeId)
@@ -393,7 +396,7 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} />
 
     {/* <Radio.Group value='large' >
       <Radio.Button value="large">Designated Position</Radio.Button>

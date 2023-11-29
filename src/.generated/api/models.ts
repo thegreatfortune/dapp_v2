@@ -100,6 +100,10 @@ Twitter :推特 */
     /** 分页查询每页数量 */
     limit?: number = 0;
     loanId?: number = 0;
+    /** 链上订单id */
+    tradeId?: number = 0;
+    /** 出售者地址 */
+    solderAddress?: string = undefined;
     /** 挂单后在链上对应的id */
     marketId?: number = 0;
     /** ToBeTraded :等待交易
@@ -119,12 +123,9 @@ Canceled :订单取消 */
     /** 借款用户id筛选 */
     borrowUserId?: string = undefined;
     /** 借款订单状态
-Invalid :订单无效
-Following :跟随中, 正在筹款
-Trading :交易中, 已筹完
-PaidOff :已还清, 借款订单结束
-PaidButArrears :支付部分, 但是还有欠款
-Blacklist :黑名单 */
+ToBeTraded :等待交易
+Closed :订单完成
+Canceled :订单取消 */
     state?: string = undefined;
     orderItemList?: Array<OrderItem> = [];
   }
@@ -302,8 +303,10 @@ Blacklist :黑名单 */
   }
 
   export class MarketLoanVo {
+    loanId?: number = 0;
     tradeId?: number = 0;
     user?: UserInfoVo = undefined;
+    price?: string = undefined;
     /** 已交易总数 */
     totalTradingCompleted?: number = 0;
   }

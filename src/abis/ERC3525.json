@@ -367,7 +367,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "approve",
+		"name": "approveValue",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
@@ -646,6 +646,11 @@
 			{
 				"internalType": "address",
 				"name": "_followFactory",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_followManage",
 				"type": "address"
 			}
 		],

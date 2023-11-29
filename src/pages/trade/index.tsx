@@ -1,6 +1,27 @@
 import { Radio } from 'antd'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ethers } from 'ethers'
+import { MarketService } from '../../.generated/api/Market'
+import ScrollableRepaymentList from '../components/ScrollableRepaymentList '
+import { Models } from '@/.generated/api/models'
 
 const Trade = () => {
+  const navigate = useNavigate()
+
+  const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), ...{ limit: 8, page: 1 } })
+
+  const renderItem = (item: Models.MarketLoanVo) => {
+    return (
+      <div className='h125 w315 cursor-pointer s-container' onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
+     <div className='flex justify-between'>
+     <span> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
+        <span> Volume of business {item.totalTradingCompleted}</span>
+     </div>
+      </div>
+    )
+  }
+
   return (<div>
     <div className='h48 flex items-center justify-between'>
       <div>
@@ -19,12 +40,7 @@ const Trade = () => {
 
     <div className='h23 w-full'></div>
 
-    <div className='flex flex-wrap gap-x-46 gap-y-50'>
-      <div className='h125 w315 s-container'>
-        777
-      </div>
-    </div>
-
+     <ScrollableRepaymentList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
   </div>)
 }
 
