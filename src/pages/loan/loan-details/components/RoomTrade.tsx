@@ -51,6 +51,23 @@ const RoomTrade = () => {
     }
   }
 
+  async function onCancelOrder(item: Models.TokenMarketVo) {
+    try {
+      if (item.marketId === undefined || item.marketId === null)
+        throw new Error('marketId is undefined')
+
+      setBuyState('Processing')
+      setIsModalOpen(true)
+      await browserContractService?.followMarketContract_cancelOrder(BigInt(item.marketId))
+      setBuyState('Succeed')
+    }
+    catch (error) {
+      message.error('Cancel failed')
+      console.log('%c [ error ]-61', 'font-size:13px; background:#34c948; color:#78ff8c;', error)
+      setBuyState(undefined)
+    }
+  }
+
   function onConfirm() {
     setIsModalOpen(false)
     setBuyState(undefined)
@@ -60,19 +77,26 @@ const RoomTrade = () => {
     return (
       <ul className='flex list-none gap-x-168'>
         <li>User </li>
-        <li>{item.price} </li>
+        <li>{item.price && ethers.formatUnits(item.price)} </li>
         <li>{item.remainingQuantity}</li>
-        <li>{BigNumber(ethers.formatUnits(item.price ?? 0, 18)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li>
+        {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
+        <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
         <li>{item.depositeTime}</li>
         <li>
-         {item.state}
-          {/* // TODO 未登录都显示Buy 已登录是否自己的挂单 是则显示撤单 */}
+          {item.state}
           {isWalletConnected
             ? (
               // 用户已连接钱包
               <>
-               <Button className='w-50 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
-                {/* {item.state === 'Closed' && <Button className='primary-btn' onClick={() => onBuy(item)}>Cancel</Button>} */}
+                {
+                  activeUser.id === item.userId
+                    ? (
+                      <Button className='primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+                      )
+                    : (
+                      <Button className='primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                      )
+                }
               </>
               )
             : (

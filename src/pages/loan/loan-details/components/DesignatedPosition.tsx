@@ -15,19 +15,22 @@ interface IProps {
   repayCount: number
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
+  prePage: string
 }
 
-export class CoinInfo {
+export class TokenInfo {
   name: string | undefined
   balance: string = '0'
   decimals: number = 0
   address: string | undefined
+  ratio: number = 0
+  dollars: string | undefined
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState }) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
 
-  const [coinInfos, setCoinInfos] = useState<CoinInfo[]>([])
+  const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -35,35 +38,57 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
   const [depositValue, setDepositValue] = useState<string>()
 
-  const [currentTokenInfo, setCurrentTokenInfo] = useState<CoinInfo>(new CoinInfo())
+  const [currentTokenInfo, setCurrentTokenInfo] = useState<TokenInfo>(new TokenInfo())
+
+  const [capitalPoolAddress, setCapitalPoolAddress] = useState<string | undefined>(undefined)
+
+  const [tokenDollarsTotal, setTokenDollarsTotal] = useState<string>('0')
+
+  useEffect(() => {
+    if (browserContractService === undefined || tradeId === null)
+      return
+
+    const fetchData = async () => {
+      if (tradeId !== undefined) {
+        const address = await browserContractService?.getCapitalPoolAddress(tradeId)
+        setCapitalPoolAddress(address)
+      }
+    }
+
+    fetchData()
+  }, [tradeId, browserContractService])
 
   useEffect(() => {
     if (!browserContractService || !tradeId)
       return
+    try {
+      setTokenInfos([])
 
-    setCoinInfos([])
+      const proList: Promise<TokenInfo>[] = []
 
-    const proList: Promise<CoinInfo>[] = []
-
-    if (proList.length <= 0) {
-      const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-      pro && proList.push(pro as Promise<CoinInfo>)
-    }
-
-    for (let i = 0; i < transactionPair.length; i++) {
-      const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
-      if (coin in tradingPairTokenMap) {
-        const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
-        pro && proList.push(pro as Promise<CoinInfo>)
+      if (proList.length === 0) {
+        const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+        pro && proList.push(pro as Promise<TokenInfo>)
       }
-    }
 
-    Promise.all(proList).then((res) => {
-      setCoinInfos(preState => ([...preState, ...res]))
-    })
+      for (let i = 0; i < transactionPair.length; i++) {
+        const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
+        if (coin in tradingPairTokenMap) {
+          const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
+          pro && proList.push(pro as Promise<TokenInfo>)
+        }
+      }
+
+      Promise.all(proList).then((res) => {
+        setTokenInfos(preState => ([...preState, ...res]))
+      })
+    }
+    catch (error) {
+      console.log('%c [ error ]-65', 'font-size:13px; background:#abdc31; color:#efff75;', error)
+    }
   }, [browserContractService, transactionPair, tradeId])
 
-  async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<CoinInfo | undefined> {
+  async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
     const ERC20Contract = await browserContractService?.getERC20Contract(token)
 
     const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
@@ -72,7 +97,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
       return
 
     const balance = await ERC20Contract?.balanceOf(cp)
-    console.log('%c [ balance ]-69', 'font-size:13px; background:#3a57d0; color:#7e9bff;', balance)
 
     // 查询代币的符号和小数位数
     const symbol = await ERC20Contract?.symbol()
@@ -82,16 +106,32 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
     const tokenName = name ?? symbol
 
+    const address = tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap]
+
+    let ratio
+
+    if (tokenName !== 'USDC')
+      ratio = await browserContractService?.testLiquidity_calculateSwapRatio(address)
+
+    const trulyBalance = balance !== BigInt(0) ? BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toPrecision(4) : '0'
+
+    const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (ratio ?? 0))
+    console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
+
+    setTokenDollarsTotal(preState => BigNumber(preState).plus(Number(dollars)).toPrecision(4))
+
     return {
       name: tokenName,
       // balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
-      balance: BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toPrecision(4),
+      balance: trulyBalance,
       decimals: Number(decimals) ?? 0,
-      address: tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap],
+      address,
+      ratio: ratio ?? 0,
+      dollars,
     }
   }
 
-  function onOpenModal(item: CoinInfo) {
+  function onOpenModal(item: TokenInfo) {
     setCurrentTokenInfo(item)
     setIsModalOpen(true)
   }
@@ -139,27 +179,33 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
         </div>}>
         <Input onChange={onDepositValueChange} />
 
-        {/* <div>
-        </div> */}
       </SModal>
 
       <div className="flex justify-between">
         <div className="h560 w634">
-        <Button type='primary' onClick={onDeposit}>Deposit</Button>
+          <Button type='primary' onClick={onDeposit}>Deposit</Button>
+
+          <div>
+            total:{tokenDollarsTotal}
+          </div>
+          <div>
+            {capitalPoolAddress}
+
+          </div>
         </div>
-        {JSON.stringify(coinInfos)}
+
         <div className="flex flex-wrap" >
           {
-            coinInfos.map(item => (
+            tokenInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
                 <div>
-
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
                     item.balance !== '0'
-                      ? BigNumber(loanMoney).div(BigNumber(10).pow(item.decimals))
-                        .dividedBy(item.balance)
-                        .toFixed(2)
+                      ? BigNumber(item.dollars ?? 0)
+                        .div(tokenDollarsTotal)
+                        .times(100)
+                        .toPrecision(4)
                       : <span>
                         0
                       </span>
@@ -168,9 +214,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                   %
                   <span className='c-green'>{item.balance} {item.name}</span>
                 </div>
-                <div >$ $</div>
+                <div >$ {item.dollars} </div>
                 {
-                  item.name !== 'USDC'
+                  item.name !== 'USDC' && prePage !== 'market'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }

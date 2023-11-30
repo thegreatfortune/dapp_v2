@@ -3,11 +3,11 @@ import { Button, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import type { CoinInfo } from './DesignatedPosition'
+import type { TokenInfo } from './DesignatedPosition'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps extends ModalProps {
-  currentTokenInfo: CoinInfo
+  currentTokenInfo: TokenInfo
   tradeId: bigint | null
 }
 

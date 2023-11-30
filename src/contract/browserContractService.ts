@@ -450,11 +450,17 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async ERC3525_balanceOf(tradeId: bigint) {
+  async ERC3525_balanceOf(tradeId: bigint): Promise<bigint> {
     const c = await this.getERC3525Contract()
 
+    console.log('%c [ tradeId ]-457', 'font-size:13px; background:#de9093; color:#ffd4d7;', tradeId)
     const tokenId = await c.getPersonalSlotToTokenId(this.getSigner.address, tradeId)
-    console.log('%c [ tokenId ]-408', 'font-size:13px; background:#726415; color:#b6a859;', tokenId)
+
+    if (tokenId === BigInt(0)) {
+      message.error(`ERC3525 is not owned: ${tokenId}`)
+      throw new Error(`ERC3525 is not owned: ${tokenId}`)
+    }
+
     return c['balanceOf(uint256)'](tokenId)
   }
 
@@ -667,6 +673,19 @@ export class BrowserContractService {
       throw new Error(' approval failed ')
 
     const res = await marketContract.buyERC3525(marketId)
+    return handleTransaction(res)
+  }
+
+  /**
+   * 取消挂单
+   *
+   * @param {bigint} marketId
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followMarketContract_cancelOrder(marketId: bigint) {
+    const marketContract = await this.getFollowMarketContract(marketId)
+    const res = await marketContract.cancelOrder(marketId)
     return handleTransaction(res)
   }
 
@@ -1033,6 +1052,7 @@ export class BrowserContractService {
       BigInt(100),
     )
 
+    console.log('%c [111111111111 price ]-1056', 'font-size:13px; background:#9f1957; color:#e35d9b;', price)
     const ratio = Number(price) / 100
 
     return ratio
@@ -1050,10 +1070,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
-    // buyOrSell 1 => import.meta.env.VITE_USDC_TOKEN 非1为swapToken
-
-    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? import.meta.env.VITE_USDC_TOKEN : swapToken)
-    console.log('%c [capitalPool_approveHandle res ]-794', 'font-size:13px; background:#1c8c3f; color:#60d083;', res)
+    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN)
 
     if (res?.status !== 1) {
       message.error('approveHandle is error')

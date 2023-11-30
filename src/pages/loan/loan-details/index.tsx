@@ -48,9 +48,11 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
-  const [balance, setBalance] = useState('0') // 份数
+  // const [balance, setBalance] = useState('0') // 份数
 
   const [activeKey, setActiveKey] = useState('1') // 份数
+
+  // TODO 持有ERC3525 才有tokenId 此时才能提取
 
   // const [portfolioValue, setPortfolioValue] = useState('0') //
 
@@ -61,19 +63,22 @@ const LoanDetails = () => {
       setActiveKey('3')
   }, [prePage])
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!tradeId || !browserContractService)
-        return
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     if (!tradeId || !browserContractService || prePage === 'market')
+  //       return
 
-      const res = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
-      console.log('%c [ res ]-56', 'font-size:13px; background:#c718c3; color:#ff5cff;', res)
-      setBalance(String(res))
-      console.log('%c [ ERC3525_balanceOf ]-50', 'font-size:13px; background:#54c1c0; color:#98ffff;', res)
-    }
+  //     console.log('%c [ ERC3525_balanceOf ]-56', 'font-size:13px; background:#c718c3; color:#ff5cff;', tradeId)
 
-    fetchData()
-  }, [tradeId, browserContractService])
+  //     const res = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+  //     setBalance(String(res))
+
+  //     if (res === BigInt(0))
+  //       console.error('没有TokenId')
+  //   }
+
+  //   fetchData()
+  // }, [tradeId, browserContractService])
 
   useEffect(() => {
     async function fetchData() {
@@ -159,7 +164,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Designated Position',
-      children: <DesignatedPosition lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <DesignatedPosition prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -181,10 +186,17 @@ const LoanDetails = () => {
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
+      const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+
+      if (!balance || balance === BigInt(0)) {
+        message.warning('You have no balance, please buy ERC352')
+        throw new Error('You have no balance, please buy ERC352')
+      }
+
       if (activeUser.id === loanInfo.userId)
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
       else
-        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance))
+        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
     }
     catch (error) {
       console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
@@ -329,8 +341,15 @@ const LoanDetails = () => {
         <div className='flex justify-between'>
           <div>
             <div className='flex'>
-              <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
-              {loanInfo.state === 'Following' ? <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.endTime)} />}</span> : <div>非</div>}
+
+              {loanInfo.state === 'Following'
+                ? <div>
+                  <Button className='mr-33 bg-#2d9b31' type='primary'>{loanInfo.state}</Button>
+                  <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
+                </div>
+                : <div>
+                  <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
+                </div>}
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>
 

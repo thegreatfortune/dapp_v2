@@ -28,6 +28,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const [modalLoading, setModalLoading] = useState(false)
 
+  const [confirmLoading, setConfirmLoading] = useState(false)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [arrears, setArrears] = useState(0)
@@ -52,7 +54,6 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       })
 
       if (res) {
-        console.log('%c [ res ]-34', 'font-size:13px; background:#83d80f; color:#c7ff53;', res)
         setResult(prevResult => ({
           ...res,
           records: [...(prevResult.records || []), ...(res.records || [])],
@@ -97,19 +98,26 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     if (!tradeId)
       return
 
-    setModalLoading(true)
+    setConfirmLoading(true)
 
     try {
-      if (currentItem.state === 'OVERDUE') {
-        // TODO: Token
+      // if (currentItem.state === 'OVERDUE') {
+      //   // TODO: Token
+      //   if (repayCount > 1)
+      //     await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
+      //   else
+      //     await browserContractService?.capitalPool_singleClearing(tradeId)
+      //   console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
+      // }
+      // else
+      if (currentItem.state === 'OVERDUE_ARREARS') {
+        await browserContractService?.capitalPool_repay(tradeId)
+      }
+      else {
         if (repayCount > 1)
           await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
         else
           await browserContractService?.capitalPool_singleClearing(tradeId)
-        console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
-      }
-      else if (currentItem.state === 'OVERDUE_ARREARS') {
-        await browserContractService?.capitalPool_repay(tradeId)
       }
 
       message.success('Succeed')
@@ -119,16 +127,18 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       console.log('%c [ error ]-105', 'font-size:13px; background:#46bcdf; color:#8affff;', error)
     }
     finally {
-      setModalLoading(false)
+      setConfirmLoading(false)
     }
   }
 
-  async function onOpenModal(item: Models.RepayPlanVo) {
+  async function onOpenModal(item: Models.RepayPlanVo, type: string) {
     if (!tradeId)
       return
 
+    setModalLoading(true)
+
     try {
-      if (item.state === 'OVERDUE_ARREARS') {
+      if (type === 'Repayment' && item.state === 'OVERDUE_ARREARS') {
         const processCenterContract = await browserContractService?.getProcessCenterContract()
 
         const count = await processCenterContract?.getTradeIdToEveryMultiFee(tradeId)
@@ -143,6 +153,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     catch (error) {
       console.log('%c [ error ]-129', 'font-size:13px; background:#719d7d; color:#b5e1c1;', error)
     }
+    finally {
+      setModalLoading(false)
+    }
   }
 
   return (
@@ -152,7 +165,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
           <Button onClick={() => setIsModalOpen(false)}>
             Cancel
           </Button>
-          <Button type='primary' onClick={onConfirm} loading={modalLoading}>
+          <Button type='primary' onClick={onConfirm} loading={confirmLoading}>
             Confirm
           </Button>
         </div>}>
@@ -170,8 +183,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                 />
               </div>
               : <h2>
-                {currentDebt ?? (BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber())}
-                </h2>}
+                {/* {currentDebt ?? (BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber())} */}
+                {BigNumber(arrears).div(BigNumber(10).pow(18)).toFixed(2)}
+              </h2>}
           </div>
         </div>
       </SModal>
@@ -191,8 +205,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         <li>Days Overdue</li>
         {/* <li>Remaining Amount Due</li> */}
       </ul>
-    <span className='c-red'>
-    </span>
+      <span className='c-red'>
+      </span>
 
       <div
         id="scrollableDivPlan"
@@ -222,11 +236,15 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                   <li>{item.state}</li>
                   <li>compute</li>
                   <li>
-                    {item.state === 'OVERDUE'
+                    <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='h30 w134 primary-btn'>Liquidation</Button>
+
+                    {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading}onClick={() => onOpenModal(item, 'Repayment')} className='h30 w134 primary-btn'>Repayment</Button>}
+
+                    {/* {item.state === 'OVERDUE'
                       ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Liquidation</Button>
                       : item.state === 'OVERDUE_ARREARS'
                         ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Repayment</Button>
-                        : null}
+                        : null} */}
                   </li>
                 </ul>
               </List.Item>

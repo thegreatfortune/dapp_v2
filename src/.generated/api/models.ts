@@ -99,11 +99,12 @@ Twitter :推特 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     loanId?: number = 0;
     /** 链上订单id */
     tradeId?: number = 0;
-    /** 出售者地址 */
-    solderAddress?: string = undefined;
     /** 挂单后在链上对应的id */
     marketId?: number = 0;
     /** ToBeTraded :等待交易
@@ -112,7 +113,6 @@ Canceled :订单取消 */
     state?: string = undefined;
     /** 出售者地址 */
     solder?: string = undefined;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiMarketPageTradingLoanGETParams {
@@ -120,6 +120,9 @@ Canceled :订单取消 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     /** 借款用户id筛选 */
     borrowUserId?: string = undefined;
     /** 借款订单状态
@@ -127,7 +130,6 @@ ToBeTraded :等待交易
 Closed :订单完成
 Canceled :订单取消 */
     state?: string = undefined;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiRepayPlanPageInfoGETParams {
@@ -305,10 +307,12 @@ Canceled :订单取消 */
   export class MarketLoanVo {
     loanId?: number = 0;
     tradeId?: number = 0;
+    /** 借款单的用户信息 */
     user?: UserInfoVo = undefined;
+    /** 展示的最低价 */
     price?: string = undefined;
     /** 已交易总数 */
-    totalTradingCompleted?: number = 0;
+    totalTradingCompleted?: string = undefined;
   }
 
   export class MetaMaskLoginParam {
@@ -418,6 +422,7 @@ Canceled :订单取消 */
 
   export class TokenMarketVo {
     loanId?: number = 0;
+    userId?: number = 0;
     /** 挂单后在链上对应的id */
     marketId?: number = 0;
     /** 每次转移这个tokenId会改变 */
@@ -430,7 +435,7 @@ Canceled :订单取消 */
     /** 挂单时间 */
     depositeTime?: number = 0;
     /** U的数量 */
-    price?: number = 0;
+    price?: string = undefined;
     /** 出售者地址 */
     solder?: string = undefined;
   }
