@@ -15,7 +15,7 @@ interface IProps {
   repayCount: number
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
-  prePage: string
+  prePage: string | null
 }
 
 export class TokenInfo {
@@ -42,7 +42,12 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string | undefined>(undefined)
 
-  const [tokenDollarsTotal, setTokenDollarsTotal] = useState<string>('0')
+  const [tokenTotals, setTokenTotals] = useState<string>('0')
+
+  useEffect(() => {
+    const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
+    setTokenTotals(a ?? '0')
+  }, [tokenInfos])
 
   useEffect(() => {
     if (browserContractService === undefined || tradeId === null)
@@ -113,12 +118,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     if (tokenName !== 'USDC')
       ratio = await browserContractService?.testLiquidity_calculateSwapRatio(address)
 
-    const trulyBalance = balance !== BigInt(0) ? BigNumber(String(balance ?? 0)).div(BigNumber(10).pow(String(decimals))).toPrecision(4) : '0'
+    const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
     const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (ratio ?? 0))
     console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
-
-    setTokenDollarsTotal(preState => BigNumber(preState).plus(Number(dollars)).toPrecision(4))
 
     return {
       name: tokenName,
@@ -186,7 +189,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
           <Button type='primary' onClick={onDeposit}>Deposit</Button>
 
           <div>
-            total:{tokenDollarsTotal}
+            total ${tokenTotals}
           </div>
           <div>
             {capitalPoolAddress}
@@ -201,12 +204,12 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                 <div>
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
-                    item.balance !== '0'
-                      ? BigNumber(item.dollars ?? 0)
-                        .div(tokenDollarsTotal)
-                        .times(100)
-                        .toPrecision(4)
-                      : <span>
+                   Number(item.balance) !== 0
+                     ? BigNumber(item.dollars ?? 0)
+                       .div((tokenTotals))
+                       .times(100)
+                       .toPrecision(4)
+                     : <span>
                         0
                       </span>
 

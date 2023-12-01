@@ -48,15 +48,7 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
-  // const [balance, setBalance] = useState('0') // 份数
-
   const [activeKey, setActiveKey] = useState('1') // 份数
-
-  // TODO 持有ERC3525 才有tokenId 此时才能提取
-
-  // const [portfolioValue, setPortfolioValue] = useState('0') //
-
-  // const [saleERC3525Params, setSaleERC3525Params] = useState<{ tradeId: bigint | null; price: bigint | null; amount: bigint | null }>({ tradeId: null, price: null, amount: null })
 
   useEffect(() => {
     if (prePage === 'trade')
@@ -382,7 +374,7 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Cycle(day)/Periodn</li>
-            <li>{loanInfo.periods} / {loanInfo.collectEndTime}</li>
+            <li>{loanInfo.periods} / {loanInfo.repayCount}</li>
           </ul>
 
           <ul className='m0 list-none p0'>

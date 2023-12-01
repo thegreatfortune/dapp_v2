@@ -7,7 +7,7 @@ import { Models } from '@/.generated/api/models'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
 import { isContractAddress, isTwitterHandle } from '@/utils/regex'
 
-const Index = () => {
+const Market = () => {
   const [loanOrderVO, setLoanOrderVO] = useState<Models.LoanOrderVO[]>([])
 
   const { queryString } = useNavbarQueryStore()
@@ -63,4 +63,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default Market

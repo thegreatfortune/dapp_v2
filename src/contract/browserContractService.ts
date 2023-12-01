@@ -663,11 +663,11 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async followMarketContract_buyERC3525(marketId: bigint) {
+  async followMarketContract_buyERC3525(marketId: bigint, amount: bigint) {
     console.log('%c [ marketId ]-654', 'font-size:13px; background:#8e6612; color:#d2aa56;', marketId)
     const marketContract = await this.getFollowMarketContract(marketId)
 
-    const state = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, await marketContract.getAddress())
+    const state = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, await marketContract.getAddress(), amount)
 
     if (!state)
       throw new Error(' approval failed ')
@@ -765,21 +765,25 @@ export class BrowserContractService {
    *
    * @param {(string | undefined)} [token] 授权者
    * @param {string} [grantee] 被授权者
+   * @param {bigint} [amount] 授权数量
    * @return {*}  {Promise<boolean>}
    * @memberof BrowserContractService
    */
-  async ERC20_approve(token?: string | undefined, grantee?: string): Promise<boolean> {
+  async ERC20_approve(token: string, grantee: string, amount: bigint): Promise<boolean> {
     const ERC20Contract = await this?.getERC20Contract(token)
 
     const processCenterContract = await this.getProcessCenterContract()
 
     const processCenterAddress = await processCenterContract.getAddress()
 
-    const allowance = await ERC20Contract?.allowance(grantee ?? this?.getSigner.address, processCenterAddress)
-    console.log('%c [ allowance ]-475', 'font-size:13px; background:#570fae; color:#9b53f2;', allowance)
+    // processCenterContract.getAddressBalance(token,)
 
-    if ((allowance ?? BigInt(0)) <= BigInt(0)) {
-      const approveRes = await ERC20Contract?.approve(grantee ?? processCenterAddress, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+    const allowance = await ERC20Contract?.allowance(grantee ?? this?.getSigner.address, processCenterAddress)
+
+    console.log('%c [111 allowance amount]-782', 'font-size:13px; background:#8d2f8a; color:#d173ce;', allowance, amount)
+
+    if ((allowance ?? BigInt(0)) <= (amount ?? BigInt(0))) {
+      const approveRes = await ERC20Contract?.approve(grantee, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
       // const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
       // console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
       if (!approveRes)
@@ -911,19 +915,19 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_refund(tradeId: bigint): Promise<ethers.ContractTransactionReceipt | undefined> {
-    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
+  // async capitalPool_refund(tradeId: bigint): Promise<ethers.ContractTransactionReceipt | undefined> {
+  //   const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
-    if (!capitalPoolAddress) {
-      message.error('Capital pool address is undefined')
-      throw new Error('Capital pool address is undefined')
-    }
+  //   if (!capitalPoolAddress) {
+  //     message.error('Capital pool address is undefined')
+  //     throw new Error('Capital pool address is undefined')
+  //   }
 
-    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
-    const transaction = await capitalPoolContract?.refund(tradeId)
+  //   const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+  //   const transaction = await capitalPoolContract?.refund(tradeId)
 
-    return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
-  }
+  //   return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
+  // }
 
   /**
    * 资金池授权handle
@@ -957,7 +961,7 @@ export class BrowserContractService {
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const transaction = await capitalPoolContract?.multiClearing(tradeId)
+    const transaction = await capitalPoolContract?.multiClearing(tradeId, BigInt(3000))
 
     return handleTransaction(transaction)
   }
@@ -971,20 +975,20 @@ export class BrowserContractService {
    * @param {bigint} amount 传入的token的数量
    * @memberof BrowserContractService
    */
-  async capitalPool_clearingMoney(token: string, tradeId: bigint, fee: bigint = BigInt(3000), amount: bigint = BigInt(100)) {
-    const cp = await this.getCapitalPoolAddress(tradeId)
+  // async capitalPool_clearingMoney(token: string, tradeId: bigint, fee: bigint = BigInt(3000), amount: bigint = BigInt(100)) {
+  //   const cp = await this.getCapitalPoolAddress(tradeId)
 
-    if (!cp) {
-      message.error('capital pool address is undefined')
-      Promise.reject(new Error('capital pool address is undefined'))
-    }
+  //   if (!cp) {
+  //     message.error('capital pool address is undefined')
+  //     Promise.reject(new Error('capital pool address is undefined'))
+  //   }
 
-    const capitalPoolContract = await this.getCapitalPoolContract(cp)
+  //   const capitalPoolContract = await this.getCapitalPoolContract(cp)
 
-    const transaction = await capitalPoolContract?.clearingMoney(token, tradeId, fee)
+  //   const transaction = await capitalPoolContract?.clearingMoney(token, tradeId, fee)
 
-    return handleTransaction(transaction)
-  }
+  //   return handleTransaction(transaction)
+  // }
 
   /**
    * 一次性还款清算(如果借款人不主动触发清算，任何人都可以触发该函数进行清算)
@@ -1002,7 +1006,7 @@ export class BrowserContractService {
     const getList = await capitalPoolContract?.getList(tradeId)
     console.log('%c [ getList ]-381', 'font-size:13px; background:#5511ee; color:#9955ff;', getList)
 
-    const transaction = await capitalPoolContract?.singleClearing(tradeId)
+    const transaction = await capitalPoolContract?.singleClearing(tradeId, BigInt(3000))
 
     return handleTransaction(transaction)
   }
@@ -1189,14 +1193,16 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async processCenter_supply(amount: bigint, tradeId: bigint) {
-    const approve = await this.ERC20_approve()
+    const processCenterContract = await this.getProcessCenterContract()
+
+    const processCenterAddress = await processCenterContract.getAddress()
+
+    const approve = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, processCenterAddress, amount)
 
     if (!approve) {
       message.error('approve is error')
       throw new Error('approve is error')
     }
-
-    const processCenterContract = await this.getProcessCenterContract()
 
     const transaction = await processCenterContract.supply(import.meta.env.VITE_USDC_TOKEN, amount, tradeId)
     return handleTransaction(transaction)

@@ -41,7 +41,7 @@ const RoomTrade = () => {
       if (item.marketId === undefined || item.marketId === null)
         throw new Error('marketId is undefined')
 
-      await browserContractService?.followMarketContract_buyERC3525(BigInt(item.marketId))
+      await browserContractService?.followMarketContract_buyERC3525(BigInt(item.marketId), ethers.parseEther(BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()))
       setBuyState('Succeed')
     }
     catch (error) {

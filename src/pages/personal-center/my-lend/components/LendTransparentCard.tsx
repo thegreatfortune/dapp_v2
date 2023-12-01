@@ -7,7 +7,7 @@ import type { Models } from '@/.generated/api/models'
 interface CardProps {
   item: Models.LoanOrderVO
   children?: React.ReactNode
-  btnText?: string
+  copies?: number
 }
 
 interface CustomAvatarProps {
@@ -16,24 +16,7 @@ interface CustomAvatarProps {
   twitter: string
 }
 
-const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
-  return (
-      <div className="flex items-center">
-        <Avatar src={src} className='h40 w40' />
-        {
-          name && twitter
-            ? <div className="ml-4">
-          <h2 className="m0 p0 text-14 font-semibold">{name}</h2>
-          <span className="text-12 text-gray-500">@{twitter}</span>
-        </div>
-            : 'Not bound'
-        }
-
-      </div>
-  )
-}
-
-const LendTransparentCard: React.FC<CardProps> = ({ item, children, btnText }) => {
+const LendTransparentCard: React.FC<CardProps> = ({ item, children, copies }) => {
   const navigate = useNavigate()
 
   return (
@@ -56,19 +39,20 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, children, btnText }) =
                 {BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(4)} USDT
               </li>
               <li>
-                {children ?? <CustomAvatar src={'item.'} name={'xasxsa'} twitter={'xsaxas'} />}
+              <Button className='h30 w-110 primary-btn' >Shell</Button>
               </li>
             </ul>
 
             <ul className='m0 flex flex-col list-none gap-8 p0'>
               <li className='h18 flex flex-col text-14 c-#999999'>
-                Risk level
+                { copies ? `Share ${copies}` : 'Risk level'}
+
               </li>
               <li className='h29 text-16 c-#FFFFFF' style={ { color: item.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
                 {item.tradingForm === 'SpotGoods' ? 'Low' : 'Hight' }
               </li>
               <li>
-                <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
+              <Button className='h30 w-110 primary-btn' >Extract</Button>
               </li>
             </ul>
 

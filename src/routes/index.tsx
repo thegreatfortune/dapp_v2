@@ -5,12 +5,12 @@ import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
 import ApplyLoan from '@/pages/loan/apply-loan'
 import MyLoan from '@/pages/personal-center/my-loan'
-import OrderViewAll from '@/pages/index/order-view-all'
+import OrderViewAll from '@/pages/market/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
 import Test from '@/pages/Test'
 
-const Index = lazy(() => import('../pages/index'))
+const Market = lazy(() => import('../pages/market'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
 interface IRouterMeta {
@@ -31,7 +31,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div>Loading...</div>}>
-          <Index />
+          <Market />
         </React.Suspense>
       </BasicLayout>
     ),

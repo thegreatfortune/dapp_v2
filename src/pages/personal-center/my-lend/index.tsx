@@ -3,6 +3,8 @@ import { Button, Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
+import LendTransparentCard from './components/LendTransparentCard'
 import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
@@ -89,10 +91,11 @@ const MyLend = () => {
           grid={{ gutter: 16, column: 4 }}
             dataSource={lendOrderVOList}
             renderItem={item => (
-              <List.Item key={item.loanId} onClick={() => navigate(`/loan-details/?prePage=lend&tradeId=${item.loan?.tradeId}`)}>
-                <TransparentCard copies={Number(item.partAmount)} item={item.loan ?? new Models.LoanOrderVO()} btnText='Sell' >
-                <Button className='h30 w-110 primary-btn' >Extract</Button>
-              </TransparentCard>
+              <List.Item key={item.loanId} onClick={() =>
+                navigate(`/loan-details/?prePage=lend&tradeId=${item.loan?.tradeId}&subscription=${item.partAmount}&USDC=${ethers.formatUnits(BigNumber((item.loan?.loanMoney ?? 0)).div(item.loan?.goalCopies ?? 0).toString())}`)}>
+                <LendTransparentCard copies={Number(item.partAmount)} item={item.loan ?? new Models.LoanOrderVO()} >
+
+              </LendTransparentCard>
               </List.Item>
             )}
           />

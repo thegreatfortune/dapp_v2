@@ -3,6 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button, Divider, InputNumber, List, Skeleton, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
+import { ethers } from 'ethers'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -32,7 +33,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [arrears, setArrears] = useState(0)
+  const [arrears, setArrears] = useState<string>('0')
 
   const [supplyAmount, setSupplyAmount] = useState(0)
 
@@ -88,7 +89,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       const count = await processCenterContract.getOrderReapyMoney(tradeId)
 
       if (count)
-        setArrears(Number(count))
+        setArrears(ethers.formatUnits(count))
     }
 
     fetchData()
@@ -111,11 +112,13 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       // }
       // else
       if (currentItem.state === 'OVERDUE_ARREARS') {
+        console.log('%c [ capitalPool_repay ]-115', 'font-size:13px; background:#8da9a4; color:#d1ede8;')
         await browserContractService?.capitalPool_repay(tradeId)
       }
       else {
+        console.log('%c [ Clearing ]-120', 'font-size:13px; background:#4857e6; color:#8c9bff;')
         if (repayCount > 1)
-          await browserContractService?.capitalPool_clearingMoney(import.meta.env.VITE_FOLLOW_TOKEN, tradeId)
+          await browserContractService?.capitalPool_multiClearing(tradeId)
         else
           await browserContractService?.capitalPool_singleClearing(tradeId)
       }
@@ -170,7 +173,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
           </Button>
         </div>}>
         <div>
-          <h1> {currentItem.state === 'REPAID' ? 'Supply' : 'Repayment'} </h1>
+          <h1> {currentItem.state === 'OVERDUE_ARREARS' ? 'Repayment' : 'Liquidation'} </h1>
+
           <div className='flex items-center justify-between text-center'>
 
             {currentItem.state === 'REPAID'
@@ -184,7 +188,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
               </div>
               : <h2>
                 {/* {currentDebt ?? (BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber())} */}
-                {BigNumber(arrears).div(BigNumber(10).pow(18)).toFixed(2)}
+                  {arrears}
               </h2>}
           </div>
         </div>
@@ -195,7 +199,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
         <span className='mx-20'>{refundPoolAddress}</span>
 
-        {arrears !== 0 ? <span>Arrears ${BigNumber(arrears).div(BigNumber(10).pow(18)).toFixed(2)}</span> : null}
+        Arrears $ {arrears}
       </div>
 
       <ul className='flex list-none gap-x-168'>

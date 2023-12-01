@@ -8,8 +8,8 @@
     "build": "vite build",
     "build:tsc": "tsc && vite build",
     "gen:api": "ts-node --esm openapi.config.ts",
-    "lint:fix": "eslint . --fix",
     "gen:abi": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",
+    "lint:fix": "eslint . --fix",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
