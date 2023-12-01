@@ -15,6 +15,12 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import ShellModal from '@/pages/loan/loan-details/components/ShellModal'
 
+class MoneyInclude {
+  principal: number = 0// 本金
+  interest: number = 0 // 利息
+  dividend: number = 0 // 分红
+}
+
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
@@ -48,29 +54,47 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
-  const [activeKey, setActiveKey] = useState('1') // 份数
+  const [activeKey, setActiveKey] = useState('1')
+
+  const [moneyInclude, setMoneyInclude] = useState<MoneyInclude>(new MoneyInclude())
+
+  const [principalAndInterest, setPrincipalAndInterest] = useState<string>('0')
+
+  useEffect(() => {
+    async function fetchData() {
+      if (tradeId && Number(tradeId) >= 0) {
+        const processCenterContract = await browserContractService?.getProcessCenterContract()
+
+        const interest = searchParams.get('interest')
+        console.log('%c [ interest ]-69', 'font-size:13px; background:#519667; color:#95daab;', interest)
+        const collectCopies = searchParams.get('collectCopies')
+
+        if (collectCopies === null || interest === null)
+          return
+
+        console.log('%c [ BigInt(Number(interest) / 100) ]-76', 'font-size:13px; background:#7f1b7e; color:#c35fc2;', BigInt(Number(interest) / 100))
+        console.log('%c [ BigInt(collectCopies) ]-77', 'font-size:13px; background:#ef5e74; color:#ffa2b8;', BigInt(collectCopies))
+        const principalAndInterest = await processCenterContract?._getMoney(BigInt(Number(interest) / 100), BigInt(collectCopies))
+        console.log('%c [ principalAndInterest ]-76', 'font-size:13px; background:#0e2d38; color:#52717c;', principalAndInterest)
+
+        setPrincipalAndInterest(String(principalAndInterest ?? 0))
+        // const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
+
+        // if (!tokenId)
+        //   throw new Error('tokenId is undefined')
+
+        // const dividend = await processCenterContract?.getShareProfit(tokenId)
+      }
+    }
+
+    if (prePage === 'lend')
+      fetchData()
+  }, [prePage])
 
   useEffect(() => {
     if (prePage === 'trade')
       setActiveKey('3')
   }, [prePage])
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     if (!tradeId || !browserContractService || prePage === 'market')
-  //       return
-
-  //     console.log('%c [ ERC3525_balanceOf ]-56', 'font-size:13px; background:#c718c3; color:#ff5cff;', tradeId)
-
-  //     const res = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
-  //     setBalance(String(res))
-
-  //     if (res === BigInt(0))
-  //       console.error('没有TokenId')
-  //   }
-
-  //   fetchData()
-  // }, [tradeId, browserContractService])
 
   useEffect(() => {
     async function fetchData() {
@@ -341,6 +365,10 @@ const LoanDetails = () => {
                 </div>
                 : <div>
                   <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
+                  {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
+                  {/* TODO  */}
+                  +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
+                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span>
                 </div>}
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>

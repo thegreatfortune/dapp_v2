@@ -5,7 +5,6 @@
 export * from './User';
 export * from './CreditAddress';
 export * from './Loan';
-export * from './Twitter';
 export * from './TwitterNotifyController';
 export * from './Metamask';
 export * from './UserInviteController';
@@ -13,3 +12,4 @@ export * from './RepayPlan';
 export * from './Market';
 export * from './Lending';
 export * from './LoanTokenSwap';
+export * from './Twitter';

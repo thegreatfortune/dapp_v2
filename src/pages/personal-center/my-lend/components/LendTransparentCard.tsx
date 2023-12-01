@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import type { Models } from '@/.generated/api/models'
 
 interface CardProps {
-  item: Models.LoanOrderVO
+  item: Models.SimpleLoanVo
   children?: React.ReactNode
   copies?: number
 }

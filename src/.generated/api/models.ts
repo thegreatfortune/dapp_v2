@@ -37,13 +37,15 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     /** 贷方id */
     userId?: number = 0;
     /** 借方id */
     borrowUserId?: number = 0;
     /** 借款订单id */
     loanId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiLoanLoanInfoGETParams {
@@ -141,10 +143,6 @@ Canceled :订单取消 */
     orderItemList?: Array<OrderItem> = [];
   }
 
-  export class ApiTwitterCallBackTwitterGETParams {
-    key?: string = undefined;
-  }
-
   export class ApiUserInviteInvitedOrNotGETParams {
     address?: string = undefined;
   }
@@ -178,6 +176,8 @@ Canceled :订单取消 */
     lendTime?: number = 0;
     /** 认购份数 */
     partAmount?: number = 0;
+    /** 持有的key */
+    marketBalance?: MarketBalanceVo = undefined;
   }
 
   export class LoanConfirmParam {
@@ -304,6 +304,13 @@ Canceled :订单取消 */
     inviteCode?: string = undefined;
   }
 
+  export class MarketBalanceVo {
+    /** tokenId */
+    tokenId?: number = 0;
+    /** 持有数量 */
+    amount?: number = 0;
+  }
+
   export class MarketLoanVo {
     loanId?: number = 0;
     tradeId?: number = 0;
@@ -401,7 +408,7 @@ Canceled :订单取消 */
     /** 展示图片地址 */
     picUrl?: string = undefined;
     /** 贷款金额 */
-    loanMoney?: number = 0;
+    loanMoney?: string = undefined;
     /** 利息 */
     interest?: number = 0;
     /** 总还款次数 */
@@ -412,6 +419,8 @@ Canceled :订单取消 */
     goalCopies?: number = 0;
     /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
     dividendRatio?: number = 0;
+    /** 已筹集份数 */
+    collectCopies?: number = 0;
     /** 订单结束时间(清算时间) */
     endTime?: number = 0;
     /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
