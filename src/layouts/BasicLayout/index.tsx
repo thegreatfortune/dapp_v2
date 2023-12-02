@@ -10,6 +10,7 @@ import Footer from './Footer'
 
 interface IProps {
   children: React.ReactNode
+  showInput?: boolean
 }
 
 const BasicLayout: React.FC<IProps> = (props) => {
@@ -18,7 +19,7 @@ const BasicLayout: React.FC<IProps> = (props) => {
   return (
     <div className='flex flex-col items-center'>
       <header className='w-1400'>
-        <Navbar title={t('nav.title')} />
+        <Navbar title={t('nav.title')} showInput={props.showInput} />
       </header>
       <main className='w-1400 items-center'>
         {props.children}

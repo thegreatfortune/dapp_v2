@@ -30,7 +30,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     path: '/market',
     index: true,
     element: (
-      <BasicLayout>
+      <BasicLayout showInput={true}>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <Market />
         </React.Suspense>
@@ -107,7 +107,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     path: '/view-all',
     meta: { showInput: false },
     element: (
-      <BasicLayout>
+      <BasicLayout >
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <OrderViewAll />
         </React.Suspense>

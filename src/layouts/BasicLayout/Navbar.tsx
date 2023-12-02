@@ -15,9 +15,10 @@ import useNavbarQueryStore from '@/store/useNavbarQueryStore'
 
 interface NavbarProps {
   title: string
+  showInput?: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ title }) => {
+const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   const { t } = useTranslation()
 
   const { updateQuery } = useNavbarQueryStore()
@@ -62,14 +63,17 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
             </ul>
 
             <div className='h-full w-337' />
-
-            <AutoComplete
+            {
+                showInput
+                && <AutoComplete
                 options={options}
                 onSelect={onSelect}
                 onSearch={text => setOptions(getPanelValue(text))}
                 placeholder="Search Twitter account, document name, contract address"
                 className="h-60 w-full rounded-30 px-37 c-white placeholder-font-size-14 placeholder-c-[#D2D2D2]"
             />
+            }
+
 {/*
             <Input
                 placeholder="Search Twitter account, document name, contract address"
