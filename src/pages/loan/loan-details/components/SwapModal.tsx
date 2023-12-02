@@ -63,7 +63,6 @@ const SwapModal: React.FC<IProps> = (props) => {
   const onSetYouPay = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
 
-    // Check if newAmount is a valid number
     const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
     setYouPay({
@@ -81,7 +80,6 @@ const SwapModal: React.FC<IProps> = (props) => {
   const onSetYouReceiver = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
 
-    // Check if newAmount is a valid number
     const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
     setYouReceiver({
@@ -97,7 +95,6 @@ const SwapModal: React.FC<IProps> = (props) => {
   }
 
   const onSwap = () => {
-    // Swap youPay and youReceiver information using BigNumber
     const tempYouPay = { ...youPay }
     const tempYouReceiver = { ...youReceiver }
 

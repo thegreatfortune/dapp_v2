@@ -279,7 +279,13 @@
 			}
 		],
 		"name": "_burn",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "burnState",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Tabs, message } from 'antd'
 import BigNumber from 'bignumber.js'
+
+// import { ethers } from 'ethers'
+import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import DesignatedPosition from './components/DesignatedPosition'
@@ -108,7 +111,7 @@ const LoanDetails = () => {
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
 
-          setExtractMoney(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+          setExtractMoney(ethers.formatUnits(res ?? 0))
         }
         else if (prePage === 'lend') {
           console.log('%c [ getUserTotalMoney ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
@@ -116,8 +119,7 @@ const LoanDetails = () => {
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
-
-          setExtractMoney(BigNumber(String(res)).div(BigNumber(10 ** 18)).toString())
+          setExtractMoney(ethers.formatUnits(res ?? 0))
         }
 
         setExtraBtnLoading(false)
@@ -197,22 +199,25 @@ const LoanDetails = () => {
   async function extractConfirm() {
     if (!tradeId)
       return
-
+    console.log('%c [  888888888]-203', 'font-size:13px; background:#6e3438; color:#b2787c;')
     setExtraModalLoading(true)
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+      console.log('%c [ activeUser.id === loanInfo.userId ]-215', 'font-size:13px; background:#177acd; color:#5bbeff;', activeUser.id, loanInfo.userId)
 
-      if (!balance || balance === BigInt(0)) {
-        message.warning('You have no balance, please buy ERC352')
-        throw new Error('You have no balance, please buy ERC352')
-      }
-
-      if (activeUser.id === loanInfo.userId)
+      if (activeUser.id === loanInfo.userId) {
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
-      else
+      }
+      else {
+        const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+
+        if (balance === undefined || balance === BigInt(0)) {
+          message.warning('You have no balance, please buy ERC352')
+          throw new Error('You have no balance, please buy ERC352')
+        }
         await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
+      }
     }
     catch (error) {
       console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
@@ -366,7 +371,6 @@ const LoanDetails = () => {
                 : <div>
                   <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
                   {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
-                  {/* TODO  */}
                   +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
                   +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span>
                 </div>}
@@ -394,7 +398,8 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Apply for loan </li>
-            <li> {BigNumber(loanInfo.loanMoney ?? 0).div(BigNumber(10).pow(18)).toPrecision(7)} </li>
+            <li>{ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))}</li>
+            <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toString()}</li>
             <li>USDC</li>
           </ul>
 

@@ -43,7 +43,7 @@ const Test = () => {
   // }
 
   async function capitalPool_singleClearing() {
-    const res = await browserContractService?.capitalPool_singleClearing(tradeId)
+    const res = await browserContractService?.capitalPool_singleLiquidate(tradeId)
     console.log('%c [ res ]-34', 'font-size:13px; background:#2720d2; color:#6b64ff;', res)
   }
 

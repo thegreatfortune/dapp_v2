@@ -461,10 +461,9 @@ Canceled :订单取消 */
   }
 
   export class UserInfoVo {
-    nickName?: string = undefined;
-    address?: string = undefined;
-    platformName?: string = undefined;
-    pictureUrl?: string = undefined;
     userId?: number = 0;
+    nickName?: string = undefined;
+    walletId?: number = 0;
+    address?: string = undefined;
   }
 }

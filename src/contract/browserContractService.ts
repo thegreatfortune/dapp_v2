@@ -496,6 +496,23 @@ export class BrowserContractService {
   }
 
   /**
+   * 得到当前资金池的订单创建状态(用于判断用户当前是否可以再创建订单)
+   *
+   * @return {*}  {Promise<boolean>} false可重新创建订单
+   * @memberof BrowserContractService
+   */
+  async getOrderCreateState(): Promise<boolean> {
+    const followFactoryContract = await this.getFollowFactoryContract()
+
+    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    if (cp === BLACK_HOLE_ADDRESS)
+      return false
+
+    const contract = await this.getProcessCenterContract()
+    return contract.getOrderCreateState(cp)
+  }
+
+  /**
    * 检查最新订单的状态
    *
    * @memberof BrowserContractService
@@ -642,7 +659,8 @@ export class BrowserContractService {
     const decimals = await this.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
     console.log('%c [ decimals ]-630', 'font-size:13px; background:#7c3b4e; color:#c07f92;', decimals)
 
-    const wei = BigInt(BigNumber(String(price)).times(BigNumber(10).pow(String(decimals))).toString())
+    const wei = ethers.parseUnits(String(price), decimals)
+    // const wei = BigInt(BigNumber(String(price)).times(BigNumber(10).pow(String(decimals))).toString())
 
     console.log('%c [ wei ]-632', 'font-size:13px; background:#2c6ca4; color:#70b0e8;', wei)
 
@@ -772,17 +790,17 @@ export class BrowserContractService {
   async ERC20_approve(token: string, grantee: string, amount: bigint): Promise<boolean> {
     const ERC20Contract = await this?.getERC20Contract(token)
 
-    const processCenterContract = await this.getProcessCenterContract()
+    // const processCenterContract = await this.getProcessCenterContract()
 
-    const processCenterAddress = await processCenterContract.getAddress()
+    // const processCenterAddress = await processCenterContract.getAddress()
 
     // processCenterContract.getAddressBalance(token,)
 
-    const allowance = await ERC20Contract?.allowance(grantee ?? this?.getSigner.address, processCenterAddress)
+    const allowance = await ERC20Contract?.allowance(this.getSigner.address, grantee)
 
     console.log('%c [111 allowance amount]-782', 'font-size:13px; background:#8d2f8a; color:#d173ce;', allowance, amount)
 
-    if ((allowance ?? BigInt(0)) <= (amount ?? BigInt(0))) {
+    if ((allowance ?? BigInt(0)) < (amount ?? BigInt(0))) {
       const approveRes = await ERC20Contract?.approve(grantee, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
       // const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
       // console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
@@ -846,12 +864,14 @@ export class BrowserContractService {
       }
     }
 
+    console.log('%c [ model ]-869', 'font-size:13px; background:#06a95c; color:#4aeda0;', model)
+
     const transaction = await capitalPoolContract?.createOrder(
       BigInt(model.cycle),
       BigInt(model.period),
       [
-        BigInt((model.interest * 100)),
-        BigInt(model.dividend * 100),
+        BigInt(BigNumber(model.interest).times(100).toString()),
+        BigInt(BigNumber(model.dividend).times(100).toString()),
         BigInt(model.numberOfCopies),
         BigInt(model.minimumRequiredCopies),
       ],
@@ -956,12 +976,12 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_multiClearing(tradeId: bigint) {
+  async capitalPool_multiLiquidate(tradeId: bigint) {
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const transaction = await capitalPoolContract?.multiClearing(tradeId, BigInt(3000))
+    const transaction = await capitalPoolContract?.multiLiquidate(tradeId, BigInt(3000))
 
     return handleTransaction(transaction)
   }
@@ -998,7 +1018,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_singleClearing(tradeId: bigint) {
+  async capitalPool_singleLiquidate(tradeId: bigint) {
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
@@ -1006,7 +1026,7 @@ export class BrowserContractService {
     const getList = await capitalPoolContract?.getList(tradeId)
     console.log('%c [ getList ]-381', 'font-size:13px; background:#5511ee; color:#9955ff;', getList)
 
-    const transaction = await capitalPoolContract?.singleClearing(tradeId, BigInt(3000))
+    const transaction = await capitalPoolContract?.singleLiquidate(tradeId, BigInt(3000))
 
     return handleTransaction(transaction)
   }
@@ -1119,13 +1139,14 @@ export class BrowserContractService {
       throw new Error(`refund pool tokenId is ${tokenId}`)
     }
 
-    const res = await ERC3525Contract.approveValue(tokenId, await refundPoolContract.getAddress(), value)
-    console.log('%c [  ERC3525Contractres approve ]-882', 'font-size:13px; background:#235bbc; color:#679fff;', res)
+    // TODO 提取授权
+    // const res = await ERC3525Contract.approveValue(tokenId, await refundPoolContract.getAddress(), value)
+    // console.log('%c [  ERC3525Contractres approve ]-882', 'font-size:13px; background:#235bbc; color:#679fff;', res)
 
-    const result = await handleTransaction(res)
+    // const result = await handleTransaction(res)
 
-    if (result?.status !== 1)
-      throw new Error('approve is error')
+    // if (result?.status !== 1)
+    //   throw new Error('approve is error')
 
     const transaction = await refundPoolContract.lenderWithdraw(tokenId) // tokenId用户持有的ERC3525的tokenId
 

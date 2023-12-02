@@ -2,7 +2,7 @@ import { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useSearchParams } from 'react-router-dom'
 import { LoanTokenSwapService } from '../../../../.generated/api/LoanTokenSwap'
-import ScrollableRepaymentList from '@/pages/components/ScrollableRepaymentList '
+import ScrollableList  from '@/pages/components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
 
 const OperationRecord = () => {
@@ -31,7 +31,7 @@ const OperationRecord = () => {
                 <li>Volume</li>
             </ul>
 
-            <ScrollableRepaymentList api={LoanTokenSwapService.ApiLoanTokenSwapPageInfo_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
+            <ScrollableList  api={LoanTokenSwapService.ApiLoanTokenSwapPageInfo_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
         </div>
   )
 }

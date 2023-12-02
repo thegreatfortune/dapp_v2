@@ -674,6 +674,7 @@ const ApplyLoan = () => {
               min={5}
               max={80}
               precision={2}
+              step={0.01}
               className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
               suffix={<div className="px-20 text-24">%</div>}
             />
@@ -691,6 +692,8 @@ const ApplyLoan = () => {
             <InputNumber
               min={0}
               max={100}
+              precision={2}
+              step={0.01}
               className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
               suffix={<div className="px-20 text-24">%</div>}
             />

@@ -2,6 +2,7 @@ import Avatar from 'antd/es/avatar'
 import Button from 'antd/es/button'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 import type { Models } from '@/.generated/api/models'
 
 interface CardProps {
@@ -36,7 +37,7 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, children, copies }) =>
                 Apply for loan
               </li>
               <li className='h29 text-16 c-#FFFFFF'>
-                {BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(4)} USDT
+                {ethers.formatUnits(item.loanMoney ?? 0)} USDT
               </li>
               <li>
               <Button className='h30 w-110 primary-btn' >Shell</Button>

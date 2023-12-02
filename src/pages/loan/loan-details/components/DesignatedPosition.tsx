@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Input } from 'antd'
+import { Button, Input, Spin, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap from './tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
@@ -43,6 +43,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
   const [capitalPoolAddress, setCapitalPoolAddress] = useState<string | undefined>(undefined)
 
   const [tokenTotals, setTokenTotals] = useState<string>('0')
+
+  const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
 
   useEffect(() => {
     const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
@@ -152,18 +154,22 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     if (!depositValue || !tradeId)
       return 0
 
+    setSupplyState('Processing')
     try {
       console.log('%c [ tradeId ]-122', 'font-size:13px; background:#efa7f5; color:#ffebff;', tradeId)
       console.log('%c [ depositValue ]-122', 'font-size:13px; background:#7062e8; color:#b4a6ff;', depositValue)
       const res = await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
+      setSupplyState('Succeed')
 
       console.log('%c [ res ]-124', 'font-size:13px; background:#4871f9; color:#8cb5ff;', res)
     }
     catch (error) {
+      message.error('Fail supply')
       console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error)
     }
     finally {
       setDepositIsModalOpen(false)
+      setSupplyState(undefined)
     }
   }
 
@@ -180,7 +186,27 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
             Confirm
           </Button>
         </div>}>
-        <Input onChange={onDepositValueChange} />
+
+        {
+          supplyState === undefined && <div>
+            <Input onChange={onDepositValueChange} />
+          </div>
+        }
+        {
+          supplyState === 'Processing' && (
+            <div >
+              <h2>
+                Processing
+              </h2>
+              <Spin />
+            </div>
+          )
+        }
+        {
+          supplyState === 'Succeed' && <div>
+            Succeed
+          </div>
+        }
 
       </SModal>
 
@@ -204,12 +230,12 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                 <div>
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
-                   Number(item.balance) !== 0
-                     ? BigNumber(item.dollars ?? 0)
-                       .div((tokenTotals))
-                       .times(100)
-                       .toPrecision(4)
-                     : <span>
+                    Number(item.balance) !== 0
+                      ? BigNumber(item.dollars ?? 0)
+                        .div((tokenTotals))
+                        .times(100)
+                        .toPrecision(4)
+                      : <span>
                         0
                       </span>
 

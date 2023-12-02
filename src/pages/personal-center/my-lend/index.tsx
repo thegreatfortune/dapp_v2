@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Divider, List, Skeleton } from 'antd'
+import { Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
@@ -8,7 +8,6 @@ import LendTransparentCard from './components/LendTransparentCard'
 import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
-import TransparentCard from '@/pages/components/TransparentCard'
 
 const MyLend = () => {
   const { activeUser } = useUserStore()

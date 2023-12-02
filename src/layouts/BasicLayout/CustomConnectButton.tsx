@@ -13,7 +13,7 @@ const CustomConnectButton = () => {
   if (!window.ethereum._accountsChangedHandler) {
     window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
       const [address] = addressList
-      console.log('%c [ address ]-13', 'font-size:13px; background:#1dcc2b; color:#61ff6f;', address)
+      console.log('%c [ address ]-16', 'font-size:13px; background:#e13859; color:#ff7c9d;', address)
 
       if (address) {
         try {
@@ -23,9 +23,9 @@ const CustomConnectButton = () => {
             signIn({ address, accessToken: res.accessToken })
 
           const user = await UserService.ApiUserUserInfo_GET()
-          console.log('%c [ user ]-23', 'font-size:13px; background:#27737f; color:#6bb7c3;', user)
+          console.log('%c [ user ]-26', 'font-size:13px; background:#2a08d1; color:#6e4cff;', user)
 
-          signIn({ address, accessToken: res.accessToken, id: user.userId })
+          signIn({ accessToken: res.accessToken, id: user.userId, ...user })
 
           resetProvider()
         }

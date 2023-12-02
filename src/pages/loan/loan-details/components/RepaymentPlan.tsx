@@ -118,9 +118,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       else {
         console.log('%c [ Clearing ]-120', 'font-size:13px; background:#4857e6; color:#8c9bff;')
         if (repayCount > 1)
-          await browserContractService?.capitalPool_multiClearing(tradeId)
+          await browserContractService?.capitalPool_multiLiquidate(tradeId)
         else
-          await browserContractService?.capitalPool_singleClearing(tradeId)
+          await browserContractService?.capitalPool_singleLiquidate(tradeId)
       }
 
       message.success('Succeed')
@@ -236,7 +236,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                 <ul className='flex list-none gap-x-168'>
                   <li>{item.nowCount} {item.repayTime}</li>
                   {/* <li>{item.nowCount} {dayjs(item.repayTime).format('YYYY-MM-DD HH:mm:ss')}</li> */}
-                  <li>{BigNumber(item.repayFee ?? 0).div(BigNumber(10).pow(18)).toFixed(2)}</li>
+                  <li>{item.repayFee && ethers.formatUnits(BigInt(item.repayFee))}</li>
                   <li>{item.state}</li>
                   <li>compute</li>
                   <li>

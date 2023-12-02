@@ -37,17 +37,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "ClearError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "CollectEndTimeError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "GoalInConformity",
 		"type": "error"
 	},
 	{
@@ -57,12 +47,27 @@
 	},
 	{
 		"inputs": [],
+		"name": "GoalUserError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "LessMinShareCount",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "LiquidateError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "Locked",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "MinStockError",
+		"name": "MinShareCountError",
 		"type": "error"
 	},
 	{
@@ -102,27 +107,17 @@
 	},
 	{
 		"inputs": [],
-		"name": "OverPart",
+		"name": "OverShareCount",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "RatioError",
+		"name": "RateError",
 		"type": "error"
 	},
 	{
 		"inputs": [],
 		"name": "ReachEndTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "RealLessMinStock",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ShareProfitRateError",
 		"type": "error"
 	},
 	{
@@ -469,6 +464,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getIfCreatedOrder",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -487,7 +495,7 @@
 					},
 					{
 						"internalType": "uint8",
-						"name": "ifClearing",
+						"name": "ifLiquidate",
 						"type": "uint8"
 					},
 					{
@@ -507,7 +515,7 @@
 					},
 					{
 						"internalType": "uint16",
-						"name": "profitRate",
+						"name": "interestRate",
 						"type": "uint16"
 					},
 					{
@@ -517,17 +525,17 @@
 					},
 					{
 						"internalType": "uint16",
-						"name": "goalCopies",
+						"name": "goalShareCount",
 						"type": "uint16"
 					},
 					{
 						"internalType": "uint16",
-						"name": "minStock",
+						"name": "minShareCount",
 						"type": "uint16"
 					},
 					{
 						"internalType": "uint16",
-						"name": "actualCopies",
+						"name": "actualShareCount",
 						"type": "uint16"
 					},
 					{
@@ -571,7 +579,7 @@
 						"type": "uint256"
 					}
 				],
-				"internalType": "struct IFollowCapitalPool.list",
+				"internalType": "struct IFollowCapitalPool.orderDetail",
 				"name": "",
 				"type": "tuple"
 			}
@@ -614,7 +622,7 @@
 		"inputs": [
 			{
 				"internalType": "uint16",
-				"name": "partAmount",
+				"name": "shareCount",
 				"type": "uint16"
 			},
 			{
@@ -641,7 +649,7 @@
 				"type": "uint24"
 			}
 		],
-		"name": "multiClearing",
+		"name": "multiLiquidate",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -685,7 +693,7 @@
 				"type": "uint24"
 			}
 		],
-		"name": "singleClearing",
+		"name": "singleLiquidate",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

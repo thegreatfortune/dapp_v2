@@ -1,5 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router-dom'
 import React, { lazy } from 'react'
+import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
 import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
@@ -30,7 +31,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     index: true,
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <Market />
         </React.Suspense>
       </BasicLayout>
@@ -41,7 +42,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     index: true,
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <Trade />
         </React.Suspense>
       </BasicLayout>
@@ -52,7 +53,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
       </BasicLayout>
@@ -63,7 +64,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLoan />
         </React.Suspense>
       </BasicLayout>
@@ -74,7 +75,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLend />
         </React.Suspense>
       </BasicLayout>
@@ -85,7 +86,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <ApplyLoan />
         </React.Suspense>
       </BasicLayout>
@@ -96,7 +97,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <LoanDetails />
         </React.Suspense>
       </BasicLayout>
@@ -107,19 +108,8 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     meta: { showInput: false },
     element: (
       <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <OrderViewAll />
-        </React.Suspense>
-      </BasicLayout>
-    ),
-  },
-  {
-    path: 'test',
-    meta: { showInput: false },
-    element: (
-      <BasicLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Test />
         </React.Suspense>
       </BasicLayout>
     ),
@@ -127,11 +117,27 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '*',
     element: (
-      <React.Suspense fallback={<div>Loading...</div>}>
+      <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
         <NotFound />
       </React.Suspense>
     ),
   },
 ]
+
+if (import.meta.env.DEV) {
+  routes.push(
+    {
+      path: 'test',
+      meta: { showInput: false },
+      element: (
+        <BasicLayout>
+          <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+            <Test />
+          </React.Suspense>
+        </BasicLayout>
+      ),
+
+    })
+}
 
 export default routes

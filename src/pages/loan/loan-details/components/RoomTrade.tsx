@@ -3,9 +3,8 @@ import { useState } from 'react'
 import { Button, message } from 'antd'
 import { useSearchParams } from 'react-router-dom'
 import { ethers } from 'ethers'
-import ScrollableRepaymentList from '@/pages/components/ScrollableRepaymentList '
-import { MarketService } from '@/.generated/api/Market'
-import { Models } from '@/.generated/api/models'
+import SorterScrollableList from './SorterScrollableList'
+import type { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import SModal from '@/pages/components/SModal'
@@ -17,18 +16,48 @@ const RoomTrade = () => {
 
   const { activeUser } = useUserStore()
 
+  const { browserContractService } = useBrowserContract()
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   const [buyState, setBuyState] = useState<'Processing' | 'Succeed'>()
 
-  const { browserContractService } = useBrowserContract()
-
-  const orderItem = new Models.OrderItem()
-  orderItem.column = 'price'
-
-  const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, state: 'ToBeTraded', orderItemList: encodeURIComponent(JSON.stringify([orderItem])), tradeId, loanId: undefined, marketId: undefined })
-
   const { isWalletConnected } = useBrowserContract()
+
+  const renderItem = (item: Models.TokenMarketVo) => {
+    return (
+      <ul className='flex list-none gap-x-168' key={item.loanId}>
+        <li>User </li>
+        <li>{item.price && ethers.formatUnits(item.price)} </li>
+        <li>{item.remainingQuantity}</li>
+        {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
+        <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
+        <li>{item.depositeTime}</li>
+        <li>
+          {item.state}
+          {isWalletConnected
+            ? (
+              // 用户已连接钱包
+              <>
+                {
+                  activeUser.id === item.userId
+                    ? (
+                      <Button className='primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+                      )
+                    : (
+                      <Button className='primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                      )
+                }
+              </>
+              )
+            : (
+              // 用户未连接钱包
+              <Button className='primary-btn'>Buy</Button>
+              )}
+        </li>
+      </ul>
+    )
+  }
 
   async function onBuy(item: Models.TokenMarketVo) {
     if (!tradeId)
@@ -73,41 +102,6 @@ const RoomTrade = () => {
     setBuyState(undefined)
   }
 
-  const renderItem = (item: Models.TokenMarketVo) => {
-    return (
-      <ul className='flex list-none gap-x-168'>
-        <li>User </li>
-        <li>{item.price && ethers.formatUnits(item.price)} </li>
-        <li>{item.remainingQuantity}</li>
-        {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
-        <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
-        <li>{item.depositeTime}</li>
-        <li>
-          {item.state}
-          {isWalletConnected
-            ? (
-              // 用户已连接钱包
-              <>
-                {
-                  activeUser.id === item.userId
-                    ? (
-                      <Button className='primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
-                      )
-                    : (
-                      <Button className='primary-btn' onClick={() => onBuy(item)}>Buy</Button>
-                      )
-                }
-              </>
-              )
-            : (
-              // 用户未连接钱包
-              <Button className='primary-btn'>Buy</Button>
-              )}
-        </li>
-      </ul>
-    )
-  }
-
   return (
     <div>
 
@@ -124,16 +118,8 @@ const RoomTrade = () => {
         }
       </SModal>
 
-      <ul className='flex list-none gap-x-168'>
-        <li>TRADER </li>
-        <li>Unit Price</li>
-        <li>Quantity</li>
-        <li>Total Price</li>
-        <li>TIME</li>
-        <li>My pending order</li>
-      </ul>
+      <SorterScrollableList activeUser={activeUser} renderItem={renderItem} tradeId={Number(tradeId)} />
 
-      <ScrollableRepaymentList api={MarketService.ApiMarketPageInfo_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
     </div>
   )
 }
