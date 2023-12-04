@@ -11,6 +11,11 @@ const Footer = () => {
         <div className='mt41 text-center'>
             One stop P2P market, secure loans, and secure financial management.
         </div>
+        <div>
+            <img src="" alt="" />
+            <img src="" alt="" />
+            <img src="" alt="" />
+        </div>
     </div>)
 }
 

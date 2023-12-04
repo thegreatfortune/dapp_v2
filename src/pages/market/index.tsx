@@ -36,7 +36,7 @@ const Market = () => {
 
   return (
     <div className="mt50 w-full">
-      <Carousel autoplay>
+      <Carousel autoplay className='rounded-20'>
         <div>
           <img
             src={bannerImg}
@@ -48,7 +48,7 @@ const Market = () => {
           <img
             src="https://s.cn.bing.net/th?id=OHR.HautBarr_ZH-CN8274813404_1920x1080.webp&qlt=5"
             alt="Image 1"
-            className="h280 w-full object-cover"
+            className="h280 w-full rounded-20 object-cover"
           />
         </div>
       </Carousel>
@@ -56,8 +56,11 @@ const Market = () => {
       <div className='h63 w-full'></div>
 
       <CardsContainer key='HighCredit' title='🔥 High Credit' records={loanOrderVO} to='/view-all?title=🔥 High Credit' />
+      <div className='h-80 w-full'></div>
       <CardsContainer key='PopularToFollow' title='💥 Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
+      <div className='h-80 w-full'></div>
       <CardsContainer key='Blacklist' title='Blacklist' records={loanOrderVO} to='/view-all?title=Blacklist' />
+      <div className='h-80 w-full'></div>
 
     </div>
   )
