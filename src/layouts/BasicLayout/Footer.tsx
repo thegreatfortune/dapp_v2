@@ -4,11 +4,11 @@ import logo from '@/assets/logo.png'
 const Footer = () => {
   return (<div>
         <div className="float-left flex items-center text-center">
-            <Avatar src={logo} className="mx5 h47 w47"></Avatar>
-            <div className="ml-33 text-30 font-900">P2P</div>
+            <Avatar src="src/assets/images/2111.png" className="mx5 h47 w47"></Avatar>
+            <div className="ml-23 h-40 w-90 text-left text-37 lh-49 c-#fff">P2P</div>
         </div>
 
-        <div className='m-auto mr-150 mt41 text-center lh-34'>
+        <div className='m-auto mr-160 mt41 text-center lh-34'>
             One stop P2P market, secure loans, and secure financial management.
         </div>
         <div className='h-30 w-full'></div>

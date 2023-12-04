@@ -1,5 +1,5 @@
-import type { ModalProps } from 'antd'
-import { Button, Modal } from 'antd'
+import { Modal, type ModalProps } from 'antd'
+
 import React from 'react'
 
 interface ISModalProps extends ModalProps {
