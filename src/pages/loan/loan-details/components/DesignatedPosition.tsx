@@ -7,7 +7,6 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
-import useUserStore from '@/store/userStore'
 
 interface IProps {
   tradeId: bigint | null
@@ -17,7 +16,6 @@ interface IProps {
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
   prePage: string | null
-  userId: string | null
 }
 
 export class TokenInfo {
@@ -29,10 +27,8 @@ export class TokenInfo {
   dollars: string | undefined
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ userId, transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
-
-  const { activeUser } = useUserStore()
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
@@ -49,10 +45,6 @@ const DesignatedPosition: React.FC<IProps> = ({ userId, transactionPair, tradeId
   const [tokenTotals, setTokenTotals] = useState<string>('0')
 
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
-
-  useEffect(() => {
-    console.log('%c [aaa userId ]-55', 'font-size:13px; background:#b1c930; color:#f5ff74;', userId)
-  }, [userId])
 
   useEffect(() => {
     const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
@@ -250,8 +242,9 @@ const DesignatedPosition: React.FC<IProps> = ({ userId, transactionPair, tradeId
                   <span className='c-green'>{item.balance} {item.name}</span>
                 </div>
                 <div >$ {item.dollars} </div>
+
                 {
-                  item.name !== 'USDC' && prePage !== 'market' && activeUser.id === Number(userId)
+                  item.name !== 'USDC' && prePage === 'loan'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }

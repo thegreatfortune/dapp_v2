@@ -11,6 +11,7 @@ import Countdown from './components/Countdown'
 import DesignatedPosition from './components/DesignatedPosition'
 import RoomTrade from './components/RoomTrade'
 import OperationRecord from './components/OperationRecord'
+import IncomeCalculation from './components/IncomeCalculation'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -29,8 +30,6 @@ const LoanDetails = () => {
   const tradeId = searchParams.get('tradeId')
 
   const prePage = searchParams.get('prePage')
-
-  const userId = searchParams.get('userId')
 
   const navigate = useNavigate()
 
@@ -184,7 +183,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Designated Position',
-      children: <DesignatedPosition userId={userId} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <DesignatedPosition prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -372,9 +371,12 @@ const LoanDetails = () => {
                 </div>
                 : <div>
                   <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
-                  {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
+                 {(prePage === 'loan' || prePage === 'lend')
+                   && <IncomeCalculation tradeId={ tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                 }
+                  {/* {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
                   +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
-                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span>
+                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span> */}
                 </div>}
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>
