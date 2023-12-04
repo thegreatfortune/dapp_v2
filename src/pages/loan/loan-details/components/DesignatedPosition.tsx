@@ -7,6 +7,7 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
+import useUserStore from '@/store/userStore'
 
 interface IProps {
   tradeId: bigint | null
@@ -16,6 +17,7 @@ interface IProps {
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
   prePage: string | null
+  userId: string | null
 }
 
 export class TokenInfo {
@@ -27,8 +29,10 @@ export class TokenInfo {
   dollars: string | undefined
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
+const DesignatedPosition: React.FC<IProps> = ({ userId, transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
+
+  const { activeUser } = useUserStore()
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
@@ -45,6 +49,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
   const [tokenTotals, setTokenTotals] = useState<string>('0')
 
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
+
+  useEffect(() => {
+    console.log('%c [aaa userId ]-55', 'font-size:13px; background:#b1c930; color:#f5ff74;', userId)
+  }, [userId])
 
   useEffect(() => {
     const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
@@ -108,8 +116,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     // 查询代币的符号和小数位数
     const symbol = await ERC20Contract?.symbol()
     const decimals = await ERC20Contract?.decimals()
-    console.log('%c [ decimals ]-62', 'font-size:13px; background:#4e2dff; color:#9271ff;', decimals)
-    console.log('%c [ symbol ]-72', 'font-size:13px; background:#5b20b6; color:#9f64fa;', symbol)
+    // console.log('%c [ decimals ]-62', 'font-size:13px; background:#4e2dff; color:#9271ff;', decimals)
+    // console.log('%c [ symbol ]-72', 'font-size:13px; background:#5b20b6; color:#9f64fa;', symbol)
 
     const tokenName = name ?? symbol
 
@@ -123,7 +131,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
     const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
     const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (ratio ?? 0))
-    console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
+    // console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
 
     return {
       name: tokenName,
@@ -156,8 +164,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
 
     setSupplyState('Processing')
     try {
-      console.log('%c [ tradeId ]-122', 'font-size:13px; background:#efa7f5; color:#ffebff;', tradeId)
-      console.log('%c [ depositValue ]-122', 'font-size:13px; background:#7062e8; color:#b4a6ff;', depositValue)
       const res = await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
       setSupplyState('Succeed')
 
@@ -245,7 +251,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                 </div>
                 <div >$ {item.dollars} </div>
                 {
-                  item.name !== 'USDC' && prePage !== 'market'
+                  item.name !== 'USDC' && prePage !== 'market' && activeUser.id === Number(userId)
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }

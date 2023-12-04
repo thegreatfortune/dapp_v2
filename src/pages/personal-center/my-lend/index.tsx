@@ -91,7 +91,7 @@ const MyLend = () => {
             dataSource={lendOrderVOList}
             renderItem={item => (
               <List.Item key={item.loanId} onClick={() =>
-                navigate(`/loan-details/?prePage=lend&tradeId=${item.loan?.tradeId}&collectCopies=${item.loan?.collectCopies}&interest=${item.loan?.interest}&subscriptionCopies=${item.partAmount}&subscriptionUnitPrice=${ethers.formatUnits(BigNumber((item.loan?.loanMoney ?? 0)).div(item.loan?.goalCopies ?? 0).toString())}`)}>
+                navigate(`/loan-details/?prePage=lend&userId=${item.userId}&tradeId=${item.loan?.tradeId}&collectCopies=${item.loan?.collectCopies}&interest=${item.loan?.interest}&subscriptionCopies=${item.partAmount}&subscriptionUnitPrice=${ethers.formatUnits(BigNumber((item.loan?.loanMoney ?? 0)).div(item.loan?.goalCopies ?? 0).toString())}`)}>
                 <LendTransparentCard copies={Number(item.partAmount)} item={item.loan ?? new Models.SimpleLoanVo()} >
               </LendTransparentCard>
               </List.Item>

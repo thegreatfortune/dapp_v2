@@ -393,6 +393,10 @@ Canceled :订单取消 */
     data?: T = undefined;
   }
 
+  export class SimpleFileVo {
+    url?: string = undefined;
+  }
+
   export class SimpleLoanVo {
     /** 在合约中的订单id */
     tradeId?: number = 0;

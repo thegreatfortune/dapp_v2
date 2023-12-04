@@ -34,7 +34,7 @@ const MyLoan = () => {
     params.limit = 4
     params.page = page + 1 // Increment the page
 
-    params.borrowUserId = activeUser.id
+    params.borrowUserId = String(activeUser.id)
 
     try {
       const res = await LoanService.ApiLoanPageLoanContract_GET(params)
@@ -86,7 +86,7 @@ const MyLoan = () => {
           grid={{ gutter: 16, column: 4 }}
             dataSource={loanOrderVOList}
             renderItem={item => (
-              <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
+              <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&userId=${item.userId}&tradeId=${item.tradeId}`)}>
                 <TransparentCard item={item} btnText='Repayment' >
                 <Button className='h30 w-110 primary-btn' >Extract</Button>
               </TransparentCard>

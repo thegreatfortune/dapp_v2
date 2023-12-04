@@ -13,3 +13,4 @@ export * from './Market';
 export * from './Lending';
 export * from './LoanTokenSwap';
 export * from './Twitter';
+export * from './File';

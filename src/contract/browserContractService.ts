@@ -505,6 +505,7 @@ export class BrowserContractService {
     const followFactoryContract = await this.getFollowFactoryContract()
 
     const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+
     if (cp === BLACK_HOLE_ADDRESS)
       return false
 

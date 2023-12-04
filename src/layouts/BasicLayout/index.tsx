@@ -17,7 +17,7 @@ const BasicLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
 
   return (
-    <div className='flex flex-col items-center'>
+    <div className='flex flex-col items-center' style={{ backgroundImage: 'url(src/assets/images/bg.png)' }}>
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={props.showInput} />
       </header>
