@@ -91,9 +91,12 @@ Twitter :推特 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     /** 订单id */
     tradeId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
+    loanId?: number = 0;
   }
 
   export class ApiMarketPageInfoGETParams {
@@ -159,6 +162,8 @@ Canceled :订单取消 */
     repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS' =
       undefined;
   }
+
+  export class IChainToken {}
 
   export class ISysWallet {}
 
@@ -294,9 +299,11 @@ Canceled :订单取消 */
   export class LoanTokenSwapVo {
     /** token地址 */
     tokenAddr?: string = undefined;
-    amount?: number = 0;
+    amount?: string = undefined;
+    swapTokenAmount?: string = undefined;
     action?: 'Reduce' | 'Add' = undefined;
-    createDate?: string = undefined;
+    timestamp?: number = 0;
+    tokenInfo?: SimpleTokenInfoVo = undefined;
   }
 
   export class LoginDto {
@@ -431,6 +438,18 @@ Canceled :订单取消 */
     minGoalQuantity?: number = 0;
     /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
     collectEndTime?: number = 0;
+  }
+
+  export class SimpleTokenInfoVo {
+    /** 代币标识 */
+    symbol?: string = undefined;
+    /** 小数, 10**decimals */
+    decimals?: number = 0;
+    /** 是什么链 */
+    chainType?: number = 0;
+    /** 是合约基准代币, 即所有代币都会转换成这种, 清算时跳过该代币 */
+    isBasic?: number = 0;
+    address?: string = undefined;
   }
 
   export class TokenMarketVo {

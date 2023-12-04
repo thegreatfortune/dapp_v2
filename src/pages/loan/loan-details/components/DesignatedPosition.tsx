@@ -7,6 +7,7 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
+import type { Models } from '@/.generated/api/models'
 
 interface IProps {
   tradeId: bigint | null
@@ -16,6 +17,7 @@ interface IProps {
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
   prePage: string | null
+  loanInfo: Models.LoanOrderVO
 }
 
 export class TokenInfo {
@@ -27,7 +29,7 @@ export class TokenInfo {
   dollars: string | undefined
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMoney, repayCount, refundPoolAddress, lendState, prePage }) => {
+const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
@@ -213,7 +215,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
           <Button type='primary' onClick={onDeposit}>Deposit</Button>
 
           <div>
-            total ${tokenTotals}
+            total ${BigNumber(tokenTotals).toFixed(2)}
           </div>
           <div>
             {capitalPoolAddress}
@@ -232,19 +234,18 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanMo
                       ? BigNumber(item.dollars ?? 0)
                         .div((tokenTotals))
                         .times(100)
-                        .toPrecision(4)
+                        .toFixed(2)
                       : <span>
                         0
                       </span>
-
                   })
                   %
-                  <span className='c-green'>{item.balance} {item.name}</span>
+                  <span className='c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
                 </div>
-                <div >$ {item.dollars} </div>
+                <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
 
                 {
-                  item.name !== 'USDC' && prePage === 'loan'
+                  item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }

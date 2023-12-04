@@ -649,6 +649,7 @@ export class BrowserContractService {
     if (!tid)
       throw new Error(`tokenId is undefined: ${tid}`)
 
+    // TODO: allowance 检查授权
     const marketContract = await this.getFollowMarketContract()
 
     const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
@@ -737,7 +738,7 @@ export class BrowserContractService {
       const approveResult = await approveRes?.wait()
 
       if (approveResult?.status !== 1)
-        return true
+        return false
     }
 
     return true
@@ -773,38 +774,33 @@ export class BrowserContractService {
       console.log('%c [ approveResult ]-490', 'font-size:13px; background:#a8dd6c; color:#ecffb0;', approveResult)
 
       if (approveResult?.status !== 1)
-        return true
+        return false
     }
 
     return true
   }
 
   /**
-   * ERC20授权
+   * 授权
    *
-   * @param {(string | undefined)} [token] 授权者
-   * @param {string} [grantee] 被授权者
-   * @param {bigint} [amount] 授权数量
+   * @param {bigint} tradeId
+   * @param {bigint} copies
+   * @param {string} token
+   * @param {string} spender
    * @return {*}  {Promise<boolean>}
    * @memberof BrowserContractService
    */
-  async ERC20_approve(token: string, grantee: string, amount: bigint): Promise<boolean> {
-    const ERC20Contract = await this?.getERC20Contract(token)
+  async processCenter_checkERC20Allowance(tradeId: bigint, copies: bigint, token: string, spender: string): Promise<boolean> {
+    const processContract = await this.getProcessCenterContract()
 
-    // const processCenterContract = await this.getProcessCenterContract()
+    const checkAmount = await processContract.getLendStakeMoney(tradeId, copies)
 
-    // const processCenterAddress = await processCenterContract.getAddress()
+    const approveState = await processContract.checkERC20Allowance(token, this.getSigner.address, spender, checkAmount)
 
-    // processCenterContract.getAddressBalance(token,)
+    if (!approveState) {
+      const ERC20Contract = await this?.getERC20Contract(token)
 
-    const allowance = await ERC20Contract?.allowance(this.getSigner.address, grantee)
-
-    console.log('%c [111 allowance amount]-782', 'font-size:13px; background:#8d2f8a; color:#d173ce;', allowance, amount)
-
-    if ((allowance ?? BigInt(0)) < (amount ?? BigInt(0))) {
-      const approveRes = await ERC20Contract?.approve(grantee, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
-      // const allowance = await ERC20Contract?.allowance(refundPoolAddress, this?.getSigner.address)
-      // console.log('%c [asa allowance ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
+      const approveRes = await ERC20Contract?.approve(spender, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
       if (!approveRes)
         return false
 
@@ -812,7 +808,38 @@ export class BrowserContractService {
       console.log('%c [ approveResult ]-490', 'font-size:13px; background:#a8dd6c; color:#ecffb0;', approveResult)
 
       if (approveResult?.status !== 1)
-        return true
+        return false
+    }
+
+    return true
+  }
+
+  /**
+   * ERC20授权 为真已授权
+   *
+   * @param {(string | undefined)} [spender] 授权者
+   * @param {string} [grantee] 被授权者
+   * @param {bigint} [amount] 授权数量
+   * @return {*}  {Promise<boolean>}
+   * @memberof BrowserContractService
+   */
+  async ERC20_approve(spender: string, grantee: string, amount: bigint): Promise<boolean> {
+    const ERC20Contract = await this?.getERC20Contract(spender)
+
+    const allowance = await ERC20Contract?.allowance(this.getSigner.address, grantee)
+
+    console.log('%c [111 allowance amount]-782', 'font-size:13px; background:#8d2f8a; color:#d173ce;', allowance, amount)
+
+    if ((allowance ?? BigInt(0)) < (amount ?? BigInt(0))) {
+      const approveRes = await ERC20Contract?.approve(grantee, ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+      if (!approveRes)
+        return false
+
+      const approveResult = await approveRes?.wait()
+      console.log('%c [ approveResult ]-490', 'font-size:13px; background:#a8dd6c; color:#ecffb0;', approveResult)
+
+      if (approveResult?.status !== 1)
+        return false
     }
 
     return true
@@ -920,9 +947,12 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_lend(copies: bigint, tradeId: bigint) {
+    console.log('%c [ copies ]-916', 'font-size:13px; background:#79db0c; color:#bdff50;', copies)
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
+    console.log('%c [ capitalPoolAddress ]-917', 'font-size:13px; background:#f78da8; color:#ffd1ec;', capitalPoolAddress)
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+    console.log('%c [ capitalPoolContract ]-920', 'font-size:13px; background:#bee4ed; color:#ffffff;', capitalPoolContract)
 
     const transaction = await capitalPoolContract?.lend(copies, tradeId)
     return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
@@ -958,14 +988,20 @@ export class BrowserContractService {
    * @param {string} handleAddress handleAddress handle合约地址
    * @memberof BrowserContractService
    */
-  async capitalPool_approveHandle(tradeId: bigint, token: string) {
+  async capitalPool_approveHandle(tradeId: bigint, token: string, spender: string, amount: bigint) {
     const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
     const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_FOLLOW_HANDLE_ADDRESS)
+    const processCenterContract = await this.getProcessCenterContract()
 
-    return handleTransaction(transaction)
+    const approveState = await processCenterContract.checkERC20Allowance(token, capitalPoolAddress, spender, amount)
+    if (!approveState) {
+      const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_FOLLOW_HANDLE_ADDRESS)
+      const res = await handleTransaction(transaction)
+      return res?.status === 1
+    }
+    return true
   }
 
   /**
@@ -1095,16 +1131,16 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
-    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN)
+    const contract = await this.getFollowHandleContract()
 
-    if (res?.status !== 1) {
+    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
+
+    if (!res) {
       message.error('approveHandle is error')
       throw new Error('approveHandle is error')
     }
 
     const cp = await this.getCapitalPoolAddress(tradeId)
-
-    const contract = await this.getFollowHandleContract()
 
     const transaction = await contract.swapERC20(cp!, tradeId, swapToken, buyOrSell, amount, fee)
 

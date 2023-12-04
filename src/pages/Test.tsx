@@ -31,11 +31,11 @@ const Test = () => {
   //   console.log('%c [ res ]-10', 'font-size:13px; background:#c0330e; color:#ff7752;', 'res')
   // }
 
-  async function approveHandle() {
-    // Token USDC
-    const res = await browserContractService?.capitalPool_approveHandle(tradeId, '0x0491eB796E0b7fEaA57f5ccEc5C202b8aAB84e7D')
-    console.log('%c [ res ]-14', 'font-size:13px; background:#7b3b95; color:#bf7fd9;', res)
-  }
+  // async function approveHandle() {
+  //   // Token USDC
+  //   // const res = await browserContractService?.capitalPool_approveHandle(tradeId, '0x0491eB796E0b7fEaA57f5ccEc5C202b8aAB84e7D')
+  //   console.log('%c [ res ]-14', 'font-size:13px; background:#7b3b95; color:#bf7fd9;', res)
+  // }
 
   // async function capitalPool_ClearingMoney() {
   //   const res = await browserContractService?.capitalPool_clearingMoney('0xCfA09f923d29E41C4dCcb817A06D0BC3D73F6e1B', tradeId)
@@ -110,7 +110,7 @@ const Test = () => {
 
         {/* <Button loading={loading} onClick={refund}> 贷款人退款  refund</Button> */}
 
-        <Button loading={loading} onClick={approveHandle}> 资金池授权handle approveHandle</Button>
+        {/* <Button loading={loading} onClick={approveHandle}> 资金池授权handle approveHandle</Button> */}
 
         {/* <Button loading={loading} onClick={capitalPool_ClearingMoney}>清算其余资产  capitalPool_ClearingMoney</Button> */}
 

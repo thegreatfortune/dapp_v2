@@ -10,7 +10,7 @@ import InputNumber from 'antd/es/input-number'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
 import Checkbox from 'antd/es/checkbox'
-import { message } from 'antd'
+import { Switch, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import airplane from '@/assets/images/airplane.png'
 import jmtzDown from '@/assets/images/jmtz_down.png'
@@ -43,6 +43,8 @@ const ApplyLoan = () => {
     = useState<boolean>(false)
 
   const [createLoading, setCreateLoading] = useState<boolean>(false)
+
+  const [useDiagram, setUseDiagram] = useState(false)
 
   const [tradingPair] = useState([
     [
@@ -118,7 +120,7 @@ const ApplyLoan = () => {
       // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
 
       const followCapitalPoolContract
-      = await browserContractService?.getCapitalPoolContract()
+        = await browserContractService?.getCapitalPoolContract()
       console.log('%c [ followCapitalPoolContract ]-122', 'font-size:13px; background:#6485d8; color:#a8c9ff;', followCapitalPoolContract)
 
       await followCapitalPoolContract?.initCreateOrder()
@@ -133,6 +135,9 @@ const ApplyLoan = () => {
   }
 
   const handleOk = async (value: LoanRequisitionEditModel) => {
+    if (!useDiagram)
+      message.warning('Project image not upload, or use default diagram?')
+
     await checkDoublePoolIsCreated()
     // await createLoan()
     setLoanRequisitionEditModel(preState =>
@@ -314,6 +319,7 @@ const ApplyLoan = () => {
   }
 
   const beforeUpload = () => {
+    // console.log('%c [ file ]-322', 'font-size:13px; background:#f20cd9; color:#ff50ff;', file)
     // if (file.size / 1024 / 1024 > 2) {
     //   message.error('File must be smaller than 2MB!')
     //   return false
@@ -457,23 +463,27 @@ const ApplyLoan = () => {
           //   },
           // ]}
           >
-            <div className="m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822">
+            <div className="relative m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822">
+            <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={e => setUseDiagram(e)} /></span>
               <Dragger
                 name="file"
-                multiple={true}
                 action="/upload.do"
                 style={{ height: 561 }}
                 beforeUpload={beforeUpload}
               >
-                <Image src={airplane} preview={false} />
+                {
+                  !useDiagram && <div>
+                  <Image src={airplane} preview={false} />
+                  <p className="ant-upload-drag-icon"></p>
+                  <p className="ant-upload-text !text-36 !font-bold">
+                    {t('applyLoan.formItem.upload.title')}
+                  </p>
+                  <p className="ant-upload-hint !text-24">
+                    800 x 800px {t('applyLoan.formItem.upload.description')}
+                  </p>
+                </div>
+                }
 
-                <p className="ant-upload-drag-icon"></p>
-                <p className="ant-upload-text !text-36 !font-bold">
-                  {t('applyLoan.formItem.upload.title')}
-                </p>
-                <p className="ant-upload-hint !text-24">
-                  800 x 800px {t('applyLoan.formItem.upload.description')}
-                </p>
               </Dragger>
             </div>
           </Form.Item>

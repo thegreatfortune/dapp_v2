@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
@@ -21,13 +22,9 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
     async function fetchData() {
       if (!browserContractService || tradeId === null)
         return
+      console.log('%c [ tradeId ]-24', 'font-size:13px; background:#978e00; color:#dbd244;', tradeId)
 
       try {
-        const tokenId = await browserContractService?.ERC3525_getTokenId(tradeId)
-
-        if (!tokenId)
-          throw new Error('Could not get tokenId ')
-
         const processCenterContract = await browserContractService?.getProcessCenterContract()
 
         if (isOrderOriginator) {
@@ -35,7 +32,12 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
           setIncomeInfo(preState => ({ ...preState, extractable: String(extractable) }))
         }
         else {
-          const extractable = await processCenterContract?.getLenderToRepayMoney(tokenId)
+          const tokenId = await browserContractService?.ERC3525_getTokenId(tradeId)
+
+          if (!tokenId)
+            throw new Error('Could not get tokenId ')
+
+          const extractable = await processCenterContract?.getUserTotalMoney(tokenId)
           const liquidation = await processCenterContract?.getLenderToSurplusMoney(tokenId)
           const repayment = await processCenterContract?.getLenderToRepayMoney(tokenId)
           const dividend = await processCenterContract?.getShareProfit(tokenId)
@@ -49,17 +51,31 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
     }
 
     fetchData()
-  }, [tradeId, isOrderOriginator])
+  }, [tradeId, isOrderOriginator, browserContractService])
 
   return (<div className='flex gap-x-24'>
-    <span>
-    extractable({incomeInfo.extractable}U)=
-    </span>
-    <span>liquidation({incomeInfo.liquidation})U +</span>
+    {
+      // TODO 取消注释
+      Number(incomeInfo.extractable ?? 0) > 0
+      && <div>
+        <span>
+          extractable({ethers.formatUnits(incomeInfo.extractable ?? 0)}U)
+        </span>
+        {
+          !isOrderOriginator
+          && <span>
+            =
+            <span>liquidation({ethers.formatUnits(incomeInfo.liquidation ?? 0)}U) +</span>
 
-    <span>repayment({incomeInfo.repayment})U +</span>
+            <span>repayment({ethers.formatUnits(incomeInfo.repayment ?? 0)}U) +</span>
 
-    <span>dividend({incomeInfo.dividend})U</span>
+            <span>dividend({ethers.formatUnits(incomeInfo.dividend ?? 0)}U)</span>
+          </span>
+        }
+
+      </div>
+    }
+
   </div>)
 }
 

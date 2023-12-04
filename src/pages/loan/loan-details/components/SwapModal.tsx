@@ -70,7 +70,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       amount: isValidNumber ? newAmount : '0',
     })
 
-    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toString()
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4) // Keep four decimal places
     setYouReceiver({
       ...youReceiver,
       amount: calculatedAmount,
@@ -87,7 +87,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       amount: isValidNumber ? newAmount : '0',
     })
 
-    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toString()
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4) // Keep four decimal places
     setYouPay({
       ...youPay,
       amount: calculatedAmount,
@@ -100,12 +100,12 @@ const SwapModal: React.FC<IProps> = (props) => {
 
     setYouPay({
       ...tempYouReceiver,
-      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toString(),
+      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4), // Keep four decimal places
     })
 
     setYouReceiver({
       ...tempYouPay,
-      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toString(),
+      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toFixed(4), // Keep four decimal places
     })
   }
 
@@ -132,9 +132,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
-    console.log('%c [ BigInt(buyOrSell) ]-138', 'font-size:13px; background:#53f451; color:#97ff95;', BigInt(buyOrSell))
     const res = await browserContractService?.followHandle_swapERC20(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
-    console.log('%c [ res ]-137', 'font-size:13px; background:#3d89bf; color:#81cdff;', res)
   }
 
   return (

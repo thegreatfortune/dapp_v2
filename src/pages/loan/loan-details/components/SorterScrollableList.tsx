@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Checkbox } from 'antd'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import { orderBy } from 'lodash-es'
+import dayjs from 'dayjs'
 import { Models } from '@/.generated/api/models'
 import type { IColumn } from '@/pages/components/ScrollabletList'
 import ScrollableList from '@/pages/components/ScrollabletList'
@@ -88,6 +89,9 @@ const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeI
   {
     title: 'TIME',
     key: '4',
+    // render(item) {
+    //   return <span>{dayjs(item.depositeTime).format('YYYY-MM-DD mm:ss')}</span>
+    // },
   },
   {
     title: 'My pending order',
