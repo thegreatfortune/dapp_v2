@@ -138,11 +138,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "capitalPool",
-				"type": "address"
-			},
-			{
 				"internalType": "uint32",
 				"name": "_tradeId",
 				"type": "uint32"
@@ -172,7 +167,7 @@
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "amountOut",
+				"name": "v3AmountOut",
 				"type": "uint256"
 			}
 		],
@@ -181,11 +176,6 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "capitalPool",
-				"type": "address"
-			},
 			{
 				"internalType": "uint32",
 				"name": "_tradeId",
@@ -216,7 +206,7 @@
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "outAmount",
+				"name": "v2AmountOut",
 				"type": "uint256"
 			}
 		],
