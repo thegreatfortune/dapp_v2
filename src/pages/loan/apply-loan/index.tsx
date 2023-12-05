@@ -378,7 +378,7 @@ const ApplyLoan = () => {
 
   return (
     <div>
-      <Button onClick={reSet}>重置（test）</Button>
+      {/* <Button onClick={reSet}>重置（test）</Button> */}
       <Modal
         footer={(_, { CancelBtn }) => (
           <>
@@ -444,7 +444,6 @@ const ApplyLoan = () => {
           </div>
         </div>
       </Modal>
-      <div className="h112"></div>
       <Form
         form={form}
         initialValues={loanRequisitionEditModel}
@@ -458,7 +457,7 @@ const ApplyLoan = () => {
         <div className="w-full flex justify-between">
           <Form.Item
             name="file"
-            className="m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822"
+            className="m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"
             valuePropName="file"
             getValueFromEvent={e => e.fileList}
           // rules={[
@@ -468,12 +467,12 @@ const ApplyLoan = () => {
           //   },
           // ]}
           >
-            <div className="relative m0 box-border h561 w-639 border-1 border-#303241 rounded-20 border-solid bg-#171822">
+            <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
               <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={e => setUseDiagram(e)} /></span>
               <Dragger
                 name="file"
                 action={uploadFile}
-                style={{ height: 561 }}
+                style={{ height: 453 }}
                 disabled={useDiagram}
                 showUploadList={false}
               >
@@ -485,7 +484,7 @@ const ApplyLoan = () => {
                       <p className="ant-upload-text !text-36 !font-bold">
                         {t('applyLoan.formItem.upload.title')}
                       </p>
-                      <p className="ant-upload-hint !text-24">
+                      <p className="ant-upload-hint !text-18">
                         800 x 800px {t('applyLoan.formItem.upload.description')}
                       </p>
                     </div>
@@ -496,12 +495,12 @@ const ApplyLoan = () => {
             </div>
           </Form.Item>
 
-          <div className="w-735">
+          <div className="w-917">
             <Form.Item
               name="itemTitle"
               className="w-full"
               label={
-                <span className="text-24">
+                <span className="text-16">
                   {t('applyLoan.formItem.item.label')}
                 </span>
               }
@@ -517,7 +516,7 @@ const ApplyLoan = () => {
               ]}
             >
               <TextArea
-                className="s-container text-16"
+                className="s-container text-14"
                 placeholder={t('applyLoan.formItem.item.placeholder')}
                 style={{ height: 102, resize: 'none' }}
               />
@@ -527,7 +526,7 @@ const ApplyLoan = () => {
               name="description"
               className="m0 w-full"
               label={
-                <span className="text-24">
+                <span className="text-16">
                   {t('applyLoan.formItem.item.description.label')}
                 </span>
               }
@@ -543,11 +542,11 @@ const ApplyLoan = () => {
               ]}
             >
               <TextArea
-                className="s-container text-16"
+                className="s-container text-14"
                 placeholder={t(
                   'applyLoan.formItem.item.description.placeholder',
                 )}
-                style={{ height: 343, resize: 'none' }}
+                style={{ height: 269, resize: 'none' }}
               />
             </Form.Item>
           </div>
@@ -555,7 +554,8 @@ const ApplyLoan = () => {
 
         <div className="h-51" />
 
-        <div className="box-border h-502 w-full flex flex-wrap gap-x-52 from-#0E0F14 to-#16273B bg-gradient-to-br px30 py-44 text-24">
+          {/* Apply for a loan */}
+        <div className="box-border h-434 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 py-44 text-16">
           <Form.Item
             name="applyLoan"
             rules={[
@@ -565,7 +565,7 @@ const ApplyLoan = () => {
               },
             ]}
             label={
-              <span className="w-full text-24">
+              <span className="w-full text-16">
                 {t('applyLoan.formItem.applyForLoan.label')}
               </span>
             }
@@ -573,8 +573,8 @@ const ApplyLoan = () => {
             <InputNumber
               min={100}
               max={1000000}
-              className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
-              suffix={<div className="px-20 text-24">USDC</div>}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">USDC</div>}
             />
           </Form.Item>
 
@@ -587,14 +587,14 @@ const ApplyLoan = () => {
               },
             ]}
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.cycle.label')}
               </span>
             }
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h68 s-container text-24 !w412"
+              className="box-border h50 s-container text-24 !w412"
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -618,14 +618,14 @@ const ApplyLoan = () => {
               },
             ]}
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.period.label')}
               </span>
             }
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h68 s-container text-24 !w412"
+              className="box-border h50 s-container text-14 !w412"
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -641,7 +641,7 @@ const ApplyLoan = () => {
           <Form.Item
             name="numberOfCopies"
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.numberOfCopies.label')}
               </span>
             }
@@ -649,8 +649,8 @@ const ApplyLoan = () => {
             <InputNumber
               min={1}
               max={10000}
-              className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
-              suffix={<div className="px-20 text-24">share</div>}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">share</div>}
             />
           </Form.Item>
 
@@ -658,7 +658,7 @@ const ApplyLoan = () => {
             name="minimumRequiredCopies"
 
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.minimumRequiredCopies.label')}
               </span>
             }
@@ -666,8 +666,8 @@ const ApplyLoan = () => {
             <InputNumber
               // min={2}
               max={10000}
-              className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
-              suffix={<div className="px-20 text-24">share</div>}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">share</div>}
             />
           </Form.Item>
 
@@ -680,7 +680,7 @@ const ApplyLoan = () => {
               },
             ]}
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.interest.label')}
               </span>
             }
@@ -690,8 +690,8 @@ const ApplyLoan = () => {
               max={80}
               precision={2}
               step={0.01}
-              className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
-              suffix={<div className="px-20 text-24">%</div>}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">%</div>}
             />
           </Form.Item>
 
@@ -699,7 +699,7 @@ const ApplyLoan = () => {
             name="dividend"
 
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.dividend.label')}
               </span>
             }
@@ -709,7 +709,7 @@ const ApplyLoan = () => {
               max={100}
               precision={2}
               step={0.01}
-              className="box-border h68 w412 items-center s-container px-30 pr-106 text-24"
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
               suffix={<div className="px-20 text-24">%</div>}
             />
           </Form.Item>
@@ -723,14 +723,14 @@ const ApplyLoan = () => {
               },
             ]}
             label={
-              <span className="text-24">
+              <span className="text-16">
                 {t('applyLoan.formItem.raisingTime.label')}
               </span>
             }
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h68 s-container text-24 !w412"
+              className="box-border h50 s-container text-14 !w412"
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -747,7 +747,7 @@ const ApplyLoan = () => {
 
         <div className="h50" />
 
-        <div className='flex gap-x-52'>
+        <div className='flex gap-x-42'>
           <div>
             <div className="flex gap-x-53">
               <Form.Item
@@ -760,14 +760,14 @@ const ApplyLoan = () => {
                 ]}
                 className="m0"
                 label={
-                  <span className="text-24">
+                  <span className="text-16">
                     {t('applyLoan.formItem.designatedTransaction.label')}
                   </span>
                 }
               >
                 <Select
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="box-border h68 s-container text-24 !w306"
+                  className="box-border h50 s-container text-14 !w306"
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
@@ -793,7 +793,7 @@ const ApplyLoan = () => {
                 <Select
                   mode="multiple"
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="box-border h68 s-container text-24 !w306"
+                  className="box-border h50 s-container text-14 !w306"
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
@@ -825,7 +825,7 @@ const ApplyLoan = () => {
                   >
                     <Select
                       popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="box-border h68 s-container text-24 !w306"
+                      className="box-border h50 s-container text-14 !w306"
                       suffixIcon={
                         <img src={jmtzDown} alt="jmtzDown" className="px30" />
                       }
@@ -858,11 +858,11 @@ const ApplyLoan = () => {
                     className="m0 w306"
                   >
                     {/* START 冗余 为了页面更新 */}
-                    {/* <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span> */}
+                    <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span>
                     {/* END */}
                     <Select
                       popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="box-border h68 s-container text-24 !w306"
+                      className="box-border h50 s-container !w306 !text-14"
                       suffixIcon={
                         <img src={jmtzDown} alt="jmtzDown" className="px30" />
                       }
@@ -894,11 +894,11 @@ const ApplyLoan = () => {
                 : 'none',
             }}
           >
-            <div className="mt-47 flex flex-wrap gap-x-60 gap-y-30">
+            <div className="mt-47 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
-                  className="h68 w180 s-container text-center text-24 line-height-70"
+                  className="h50 w180 s-container text-center text-14 line-height-70"
                 >
                   <Image
                     preview={false}
