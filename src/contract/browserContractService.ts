@@ -896,17 +896,17 @@ export class BrowserContractService {
 
     const transaction = await capitalPoolContract?.createOrder(
       BigInt(model.cycle),
-      BigInt(model.period),
+      BigInt(model.period!),
       [
-        BigInt(BigNumber(model.interest).times(100).toString()),
-        BigInt(BigNumber(model.dividend).times(100).toString()),
-        BigInt(model.numberOfCopies),
-        BigInt(model.minimumRequiredCopies),
+        BigInt(BigNumber(model.interest!).times(100).toString()),
+        BigInt(BigNumber(model.dividend!).times(100).toString()),
+        BigInt(model.numberOfCopies!),
+        BigInt(model.minimumRequiredCopies!),
       ],
-      BigInt(model.raisingTime) * BigInt(60), // TODO 秒数
-      BigInt(model.applyLoan) * BigInt(10 ** 18),
-      'https://6a32f35977ea4e1844ce0dbab6b9c6d9.ipfs.4everland.link/ipfs/bafybeidnzira46v3ebmq3qw7vlovr4lgx4ytwgsyzi5ym4pf43ycki2g3u',
-      'image1',
+      BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
+      BigInt(model.applyLoan!) * BigInt(10 ** 18),
+      model.imageUrl!,
+      model.itemTitle!,
     )
 
     const result = await handleTransaction(transaction)
@@ -1119,6 +1119,29 @@ export class BrowserContractService {
     return ratio
   }
 
+  async capitalPool_newApproveHandle(tradeId: bigint, token: string, spender: string, amount: bigint, tokenIndex: bigint) {
+    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
+
+    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+
+    const processCenterContract = await this.getProcessCenterContract()
+
+    const approveState = await processCenterContract.checkERC20Allowance(token, capitalPoolAddress, spender, amount)
+    if (!approveState) {
+      const followManageContract = await this.getFollowManageContract()
+
+      const handles = await followManageContract.getAllAllowHandle()
+
+      const hIndex = await handles.findIndex(handle => handle === spender)
+      console.log('%c [ hIndex ]-1136', 'font-size:13px; background:#b42fbb; color:#f873ff;', hIndex)
+
+      const transaction = await capitalPoolContract?.approveHandle(tokenIndex, BigInt(hIndex))
+      const res = await handleTransaction(transaction)
+      return res?.status === 1
+    }
+    return true
+  }
+
   /**
    * swap操作，仅由传入的已创建的资金池创建者可以调用
    *
@@ -1133,16 +1156,17 @@ export class BrowserContractService {
   async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
     const contract = await this.getFollowHandleContract()
 
-    const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
+    // const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
+    const res = await this.capitalPool_newApproveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount, buyOrSell)
 
     if (!res) {
       message.error('approveHandle is error')
       throw new Error('approveHandle is error')
     }
 
-    const cp = await this.getCapitalPoolAddress(tradeId)
+    // const cp = await this.getCapitalPoolAddress(tradeId)
 
-    const transaction = await contract.swapERC20(cp!, tradeId, swapToken, buyOrSell, amount, fee)
+    const transaction = await contract.swapERC20(tradeId, swapToken, buyOrSell, amount, fee)
 
     return handleTransaction(transaction)
   }

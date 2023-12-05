@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import type { TokenInfo } from './DesignatedPosition'
+import { tokenList } from './tradingPairTokenMap'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps extends ModalProps {
@@ -70,7 +71,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       amount: isValidNumber ? newAmount : '0',
     })
 
-    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4) // Keep four decimal places
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4)
     setYouReceiver({
       ...youReceiver,
       amount: calculatedAmount,
@@ -87,7 +88,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       amount: isValidNumber ? newAmount : '0',
     })
 
-    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4) // Keep four decimal places
+    const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4)
     setYouPay({
       ...youPay,
       amount: calculatedAmount,
@@ -100,12 +101,12 @@ const SwapModal: React.FC<IProps> = (props) => {
 
     setYouPay({
       ...tempYouReceiver,
-      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4), // Keep four decimal places
+      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
     })
 
     setYouReceiver({
       ...tempYouPay,
-      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toFixed(4), // Keep four decimal places
+      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toFixed(4),
     })
   }
 
@@ -123,7 +124,9 @@ const SwapModal: React.FC<IProps> = (props) => {
       tokenInformation.amount = youPay.amount
     }
     else {
-      buyOrSell = 1
+      const index = tokenList.findIndex(e => e.address === youPay.address)
+
+      buyOrSell = index
       tokenInformation = youPay
     }
 

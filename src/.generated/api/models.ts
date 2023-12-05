@@ -4,10 +4,12 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     id?: number = 0;
     /** 地址id */
     addressId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiCreditAddressQueryAddressExceptionGETParams {
@@ -15,10 +17,12 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     id?: number = 0;
     /** 地址id */
     addressId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiCreditAddressQueryAddressPageGETParams {
@@ -26,10 +30,12 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     id?: number = 0;
     /** 地址id */
     addressId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiLendingPageInfoGETParams {
@@ -57,6 +63,9 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     /** 筛选出贷款金额大于该值的 */
     minLoanPrice?: string = undefined;
     /** 筛选出贷款金额小于该值的 */
@@ -82,7 +91,6 @@ Twitter :推特 */
     platformType?: string = undefined;
     /** 根据借款订单名称筛选 */
     loanName?: string = undefined;
-    orderItemList?: Array<OrderItem> = [];
     tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
@@ -142,13 +150,17 @@ Canceled :订单取消 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
+    /** 排序字段
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
     tradeId?: number = 0;
-    orderItemList?: Array<OrderItem> = [];
   }
 
   export class ApiUserInviteInvitedOrNotGETParams {
     address?: string = undefined;
   }
+
+  export class ApplicationContext {}
 
   export class AuthResult {
     success?: boolean = false;
@@ -163,11 +175,15 @@ Canceled :订单取消 */
       undefined;
   }
 
+  export class HttpStatusCode {}
+
   export class IChainToken {}
 
   export class ISysWallet {}
 
   export class IUserWallet {}
+
+  export class key {}
 
   export class LendingLoanVo {
     /** 贷方id */
@@ -306,9 +322,17 @@ Canceled :订单取消 */
     tokenInfo?: SimpleTokenInfoVo = undefined;
   }
 
+  export class Locale {}
+
+  export class Log {}
+
   export class LoginDto {
     address?: string = undefined;
     inviteCode?: string = undefined;
+  }
+
+  export class Map<T> {
+    key?: key = undefined;
   }
 
   export class MarketBalanceVo {
@@ -322,11 +346,18 @@ Canceled :订单取消 */
     loanId?: number = 0;
     tradeId?: number = 0;
     /** 借款单的用户信息 */
-    user?: UserInfoVo = undefined;
+    user?: UserInfoVo1 = undefined;
     /** 展示的最低价 */
     price?: string = undefined;
     /** 已交易总数 */
     totalTradingCompleted?: string = undefined;
+  }
+
+  export class MessageSource {}
+
+  export class MessageSourceAccessor {
+    messageSource?: MessageSource = undefined;
+    defaultLocale?: Locale = undefined;
   }
 
   export class MetaMaskLoginParam {
@@ -374,6 +405,32 @@ Canceled :订单取消 */
     platformType?: 'Twitter' = undefined;
   }
 
+  export class RedirectView {
+    /** Logger that is available to subclasses. */
+    logger?: Log = undefined;
+    /** ApplicationContext this object runs in. */
+    applicationContext?: ApplicationContext = undefined;
+    /** MessageSourceAccessor for easy message access. */
+    messageSourceAccessor?: MessageSourceAccessor = undefined;
+    servletContext?: ServletContext = undefined;
+    contentType?: string = undefined;
+    requestContextAttribute?: string = undefined;
+    staticAttributes?: Map<Models.Object> = undefined;
+    exposePathVariables?: boolean = false;
+    exposeContextBeansAsAttributes?: boolean = false;
+    exposedContextBeanNames?: string[] = undefined;
+    beanName?: string = undefined;
+    url?: string = undefined;
+    contextRelative?: boolean = false;
+    http10Compatible?: boolean = false;
+    exposeModelAttributes?: boolean = false;
+    encodingScheme?: string = undefined;
+    statusCode?: HttpStatusCode = undefined;
+    expandUriTemplateVariables?: boolean = false;
+    propagateQueryParams?: boolean = false;
+    hosts?: string[] = undefined;
+  }
+
   export enum RepaymentState {
     'UNPAID' = 'UNPAID',
     'REPAID' = 'REPAID',
@@ -399,6 +456,8 @@ Canceled :订单取消 */
     /** com.sszh.modules.credit.vo.CreditScoreVo */
     data?: T = undefined;
   }
+
+  export class ServletContext {}
 
   export class SimpleFileVo {
     url?: string = undefined;
@@ -447,8 +506,6 @@ Canceled :订单取消 */
     decimals?: number = 0;
     /** 是什么链 */
     chainType?: number = 0;
-    /** 是合约基准代币, 即所有代币都会转换成这种, 清算时跳过该代币 */
-    isBasic?: number = 0;
     address?: string = undefined;
   }
 
@@ -488,5 +545,13 @@ Canceled :订单取消 */
     nickName?: string = undefined;
     walletId?: number = 0;
     address?: string = undefined;
+  }
+
+  export class UserInfoVo1 {
+    nickName?: string = undefined;
+    address?: string = undefined;
+    platformName?: string = undefined;
+    pictureUrl?: string = undefined;
+    userId?: number = 0;
   }
 }
