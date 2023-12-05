@@ -914,6 +914,7 @@ export class BrowserContractService {
     if (result?.status === 1) {
       const loanConfirm = {
         ...new Models.LoanConfirmParam(),
+        loanPicUrl: model.imageUrl,
         loanName: model.itemTitle ?? '',
         loanIntro: model.description ?? '',
         transactionPairs: model.transactionPairs,

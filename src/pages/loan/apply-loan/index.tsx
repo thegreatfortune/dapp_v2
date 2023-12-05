@@ -21,6 +21,7 @@ import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
+import { handleImageCanvas } from '@/utils/handleImageCanvas'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
@@ -118,44 +119,62 @@ const ApplyLoan = () => {
     publishBtnLoading && createLoan()
   }, [publishBtnLoading, loanRequisitionEditModel])
 
-  async function reSet() {
-    try {
-      // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
+  useEffect(() => {
+    createLoan()
+  }, [capitalPoolChecked, repaymentPoolChecked])
 
-      const followCapitalPoolContract
-        = await browserContractService?.getCapitalPoolContract()
-      console.log('%c [ followCapitalPoolContract ]-122', 'font-size:13px; background:#6485d8; color:#a8c9ff;', followCapitalPoolContract)
+  // async function reSet() {
+  //   try {
+  //     // const cp = await browserContractService?.getCapitalPoolAddress(testTradeId)
 
-      await followCapitalPoolContract?.initCreateOrder()
-    }
-    catch (error) {
-      console.log(
-        '%c [ error ]-75',
-        'font-size:13px; background:#69bdf3; color:#adffff;',
-        error,
-      )
-    }
-  }
+  //     const followCapitalPoolContract
+  //       = await browserContractService?.getCapitalPoolContract()
+  //     console.log('%c [ followCapitalPoolContract ]-122', 'font-size:13px; background:#6485d8; color:#a8c9ff;', followCapitalPoolContract)
+
+  //     await followCapitalPoolContract?.initCreateOrder()
+  //   }
+  //   catch (error) {
+  //     console.log(
+  //       '%c [ error ]-75',
+  //       'font-size:13px; background:#69bdf3; color:#adffff;',
+  //       error,
+  //     )
+  //   }
+  // }
 
   const handleOk = async (value: LoanRequisitionEditModel) => {
+    console.log('%c [ value ]-146', 'font-size:13px; background:#5df584; color:#a1ffc8;', value)
     setPublishBtnLoading(true)
 
-    if (!useDiagram)
-      message.warning('Project image not upload, or use default diagram?')
+    // if (!useDiagram)
+    //   message.warning('Project image not upload, or use default diagram?')
 
     await checkDoublePoolIsCreated()
     // await createLoan()
-    setLoanRequisitionEditModel(preState =>
-      ({ ...preState, ...value }),
-    )
   }
 
   async function createLoan() {
     console.log('%c [ loanRequisitionEditModel ]-214', 'font-size:13px; background:#0c926b; color:#50d6af;', loanRequisitionEditModel)
-    console.log('%c [ d stata ]-179', 'font-size:13px; background:#75dde6; color:#b9ffff;', capitalPoolChecked, repaymentPoolChecked)
 
-    if (!capitalPoolChecked || !repaymentPoolChecked)
+    console.log('%c [ new state:  ]-179', 'font-size:13px; background:#75dde6; color:#b9ffff;', capitalPoolChecked, repaymentPoolChecked)
+
+    if (!capitalPoolChecked || !repaymentPoolChecked) {
+      console.log('%c [error: capitalPoolChecked  repaymentPoolChecked]-170', 'font-size:13px; background:#56fd4f; color:#9aff93;', capitalPoolChecked, repaymentPoolChecked)
       return
+    }
+
+    if (loanRequisitionEditModel.projectImagePreViewUrl || loanRequisitionEditModel.imageUrl) {
+      try {
+        const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
+
+        setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+      }
+      catch (error) {
+        console.log('%c [ error ]-162', 'font-size:13px; background:#98a708; color:#dceb4c;', error)
+        message.error('upload file failed')
+        throw new Error('upload file failed')
+      }
+    }
 
     console.log('%c [ 执行 ]-181', 'font-size:13px; background:#896f7b; color:#cdb3bf;')
 
@@ -294,8 +313,23 @@ const ApplyLoan = () => {
     }
   }
 
+  function checkFileUploaded(): boolean {
+    if (!loanRequisitionEditModel.imageUrl) {
+      if (!useDiagram && !loanRequisitionEditModel.projectImagePreViewUrl) {
+        message.warning('Project image not upload, or use default diagram?')
+        return false
+      }
+    }
+
+    return true
+  }
+
   const onFinish = async (value: LoanRequisitionEditModel) => {
     console.log('%c [ value ]-319', 'font-size:13px; background:#115dc6; color:#55a1ff;', value)
+    const state = checkFileUploaded()
+    if (state === false)
+      return
+
     setPublishBtnLoading(true)
 
     try {
@@ -368,13 +402,28 @@ const ApplyLoan = () => {
     })
   }
 
-  async function uploadFile(file: RcFile): Promise<string> {
-    const url = await FileService.ApiFileUpload_POST({ file })
+  async function beforeUpload(file: RcFile) {
+    if (useDiagram === false) {
+      const previewImageUrl = URL.createObjectURL(file)
 
-    url && setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+      setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: file }))
+    }
+    else {
+      const newFile = await handleImageCanvas(file)
+      if (!newFile)
+        throw new Error('Image upload failed')
 
-    return url
+      setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
+    }
   }
+
+  // async function uploadFile(file: RcFile): Promise<string> {
+  //   const url = await FileService.ApiFileUpload_POST({ file })
+
+  //   url && setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+
+  //   return url
+  // }
 
   return (
     <div>
@@ -471,24 +520,36 @@ const ApplyLoan = () => {
               <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={e => setUseDiagram(e)} /></span>
               <Dragger
                 name="file"
-                action={uploadFile}
+                // action={uploadFile}
+                beforeUpload={beforeUpload}
                 style={{ height: 453 }}
                 disabled={useDiagram}
                 showUploadList={false}
               >
+
                 {
                   !useDiagram
-                    ? <div>
-                      <Image src={airplane} preview={false} />
-                      <p className="ant-upload-drag-icon"></p>
-                      <p className="ant-upload-text !text-36 !font-bold">
-                        {t('applyLoan.formItem.upload.title')}
-                      </p>
-                      <p className="ant-upload-hint !text-18">
-                        800 x 800px {t('applyLoan.formItem.upload.description')}
-                      </p>
-                    </div>
-                    : <Image preview={false} src={defaultImage} />
+                  && <div>
+                    {
+                      loanRequisitionEditModel.projectImagePreViewUrl
+                        ? <Image src={loanRequisitionEditModel.projectImagePreViewUrl} preview={false} />
+                        : <div>
+                          <Image src={airplane} preview={false} />
+                          <p className="ant-upload-drag-icon"></p>
+                          <p className="ant-upload-text !text-28 !font-bold">
+                            {t('applyLoan.formItem.upload.title')}
+                          </p>
+                          <p className="ant-upload-hint !text-18">
+                            800 x 800px {t('applyLoan.formItem.upload.description')}
+                          </p>
+                        </div>
+                    }
+                  </div>
+                }
+
+                {
+                  useDiagram
+                  && <Image preview={false} src={defaultImage} />
                 }
 
               </Dragger>
@@ -498,9 +559,9 @@ const ApplyLoan = () => {
           <div className="w-917">
             <Form.Item
               name="itemTitle"
-              className="w-full"
+              className="m0 w-full"
               label={
-                <span className="text-16">
+                <span className="p0 text-16">
                   {t('applyLoan.formItem.item.label')}
                 </span>
               }
@@ -522,11 +583,13 @@ const ApplyLoan = () => {
               />
             </Form.Item>
 
+            <div className="h16"></div>
+
             <Form.Item
               name="description"
               className="m0 w-full"
               label={
-                <span className="text-16">
+                <span className="p0 text-16">
                   {t('applyLoan.formItem.item.description.label')}
                 </span>
               }
@@ -554,7 +617,7 @@ const ApplyLoan = () => {
 
         <div className="h-51" />
 
-          {/* Apply for a loan */}
+        {/* Apply for a loan */}
         <div className="box-border h-434 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 py-44 text-16">
           <Form.Item
             name="applyLoan"

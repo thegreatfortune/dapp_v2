@@ -312,7 +312,7 @@ const LoanDetails = () => {
     </SModal>
 
     <div className='flex'>
-      <InfoCard />
+      <InfoCard item={loanInfo} />
 
       <div className='ml-32 h419 w1048'>
 

@@ -5,7 +5,11 @@ export class LoanRequisitionEditModel {
   /** 简介 */
   description: string = ''
 
-  imageUrl: string = ''
+  imageUrl: string = '' // 最终上传的地址
+
+  projectImagePreViewUrl: string | undefined
+
+  projectImageFile: File | undefined
 
   /** 借款金额 Apply for Loan */
   applyLoan: number | undefined

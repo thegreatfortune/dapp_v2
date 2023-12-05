@@ -1,5 +1,4 @@
-import Avatar from 'antd/es/avatar'
-import Button from 'antd/es/button'
+import { Image } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { Models } from '@/.generated/api/models'
 
@@ -13,16 +12,20 @@ interface CustomAvatarProps {
   twitter: string
 }
 
-const InfoCard = () => {
+const InfoCard: React.FC<CardProps> = ({ item }) => {
   const navigate = useNavigate()
 
   return (
         <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
-            <img
+            {/* <img
                 src=''
                 alt=''
                 className="h-232 w-266 rounded-16 object-cover"
-            />
+            /> */}
+            {
+              item.picUrl && <Image className='h100 w100' src={item.picUrl} />
+            }
+
             <div className='text-left'>
                 <div className='h11 w-full'></div>
 
