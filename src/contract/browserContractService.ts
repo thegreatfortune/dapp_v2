@@ -899,7 +899,7 @@ export class BrowserContractService {
       BigInt(model.period!),
       [
         BigInt(BigNumber(model.interest!).times(100).toString()),
-        BigInt(BigNumber(model.dividend!).times(100).toString()),
+        BigInt(BigNumber(model.dividend ?? 0).times(100).toString()),
         BigInt(model.numberOfCopies!),
         BigInt(model.minimumRequiredCopies!),
       ],

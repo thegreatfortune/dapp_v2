@@ -10,7 +10,7 @@ import InputNumber from 'antd/es/input-number'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
 import Checkbox from 'antd/es/checkbox'
-import { Divider, Switch, message } from 'antd'
+import { Divider, Switch, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
 import airplane from '@/assets/images/airplane.png'
@@ -116,11 +116,48 @@ const ApplyLoan = () => {
   const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
 
   useEffect(() => {
+    async function featData() {
+      if (useDiagram) {
+        const newFile = await handleImageCanvas('src/assets/images/default.png')
+        console.log('%c [ newFile ]-122', 'font-size:13px; background:#a12835; color:#e56c79;', newFile)
+        if (!newFile)
+          throw new Error('Image upload failed')
+
+        const previewImageUrl = URL.createObjectURL(newFile)
+
+        // TODO 删除第一行 要第二行 测试
+        setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: newFile }))
+
+        // setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
+      }
+    }
+    featData()
+  }, [useDiagram])
+
+  useEffect(() => {
     publishBtnLoading && createLoan()
   }, [publishBtnLoading, loanRequisitionEditModel])
 
   useEffect(() => {
-    createLoan()
+    async function fetchData() {
+      if (loanRequisitionEditModel.projectImagePreViewUrl || loanRequisitionEditModel.imageUrl) {
+        try {
+          const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
+
+          setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+        }
+        catch (error) {
+          console.log('%c [ error ]-162', 'font-size:13px; background:#98a708; color:#dceb4c;', error)
+          message.error('upload file failed')
+          throw new Error('upload file failed')
+        }
+      }
+      else {
+        createLoan()
+      }
+    }
+
+    capitalPoolChecked && repaymentPoolChecked && fetchData()
   }, [capitalPoolChecked, repaymentPoolChecked])
 
   // async function reSet() {
@@ -163,19 +200,6 @@ const ApplyLoan = () => {
       return
     }
 
-    if (loanRequisitionEditModel.projectImagePreViewUrl || loanRequisitionEditModel.imageUrl) {
-      try {
-        const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
-
-        setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
-      }
-      catch (error) {
-        console.log('%c [ error ]-162', 'font-size:13px; background:#98a708; color:#dceb4c;', error)
-        message.error('upload file failed')
-        throw new Error('upload file failed')
-      }
-    }
-
     console.log('%c [ 执行 ]-181', 'font-size:13px; background:#896f7b; color:#cdb3bf;')
 
     setCreateLoading(true)
@@ -183,6 +207,7 @@ const ApplyLoan = () => {
     try {
       setIsModalOpen(true)
 
+      // TODO: decimals token标志位
       const res = await browserContractService?.capitalPool_createOrder(loanRequisitionEditModel)
 
       console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', res)
@@ -194,8 +219,6 @@ const ApplyLoan = () => {
       })
 
       navigate('/my-loan')
-
-      // TODO: decimals token标志位
     }
     catch (error) {
       message.error('操作失败')
@@ -358,13 +381,6 @@ const ApplyLoan = () => {
     setIsModalOpen(false)
   }
 
-  // function onTradingPairChange(v: string[]) {
-  //   setLoanRequisitionEditModel(prevState => ({
-  //     ...prevState,
-  //     transactionPairs: v,
-  //   }))
-  // }
-
   function onValuesChange(val: Record<string, any>) {
     console.log('%c [ val ]-335', 'font-size:13px; background:#2aad7e; color:#6ef1c2;', val)
 
@@ -403,27 +419,29 @@ const ApplyLoan = () => {
   }
 
   async function beforeUpload(file: RcFile) {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!allowedTypes.includes(file.type)) {
+      message.error('只能上传图片文件（PNG、JPEG、JPG）')
+      return Upload.LIST_IGNORE
+    }
+
+    // 限制文件大小（示例限制为 2MB）
+    const maxSize = 2 * 1024 * 1024 // 2MB
+    if (file.size > maxSize) {
+      message.error('文件大小不能超过2MB')
+      return Upload.LIST_IGNORE
+    }
+
     if (useDiagram === false) {
       const previewImageUrl = URL.createObjectURL(file)
 
       setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: file }))
     }
-    else {
-      const newFile = await handleImageCanvas(file)
-      if (!newFile)
-        throw new Error('Image upload failed')
-
-      setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
-    }
   }
 
-  // async function uploadFile(file: RcFile): Promise<string> {
-  //   const url = await FileService.ApiFileUpload_POST({ file })
-
-  //   url && setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
-
-  //   return url
-  // }
+  async function onSwitchChange(e: boolean) {
+    setUseDiagram(e)
+  }
 
   return (
     <div>
@@ -517,7 +535,7 @@ const ApplyLoan = () => {
           // ]}
           >
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
-              <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={e => setUseDiagram(e)} /></span>
+              <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={onSwitchChange} /></span>
               <Dragger
                 name="file"
                 // action={uploadFile}
@@ -525,6 +543,7 @@ const ApplyLoan = () => {
                 style={{ height: 453 }}
                 disabled={useDiagram}
                 showUploadList={false}
+                accept='.png,.jpg,.jpeg'
               >
 
                 {
@@ -547,10 +566,15 @@ const ApplyLoan = () => {
                   </div>
                 }
 
+                {/* // TODO 测试 用第二个 这个删除 */}
                 {
                   useDiagram
-                  && <Image preview={false} src={defaultImage} />
+                  && <Image preview={false} src={loanRequisitionEditModel.projectImagePreViewUrl} />
                 }
+                {/* {
+                  useDiagram
+                  && <Image preview={false} src={defaultImage} />
+                } */}
 
               </Dragger>
             </div>

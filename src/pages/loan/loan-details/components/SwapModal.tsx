@@ -33,12 +33,18 @@ const SwapModal: React.FC<IProps> = (props) => {
     amount: '0',
   })
 
+  // useEffect(() => {
+  //   setYouReceiver(preState => ({ ...preState, token: props.currentTokenInfo.name, address: props.currentTokenInfo.address }))
+  // }, [props.currentTokenInfo])
+
   const [ratio, setRatio] = useState<string>('0')
 
   useEffect(() => {
     async function fetchData() {
       if (!browserContractService || !props.currentTokenInfo.address)
         return
+
+      console.log('%c [ props.currentTokenInfo.address ]-47', 'font-size:13px; background:#2a1b83; color:#6e5fc7;', props.currentTokenInfo)
 
       const res = await browserContractService?.getTestLiquidityContract()
       const price = await res?.getTokenPrice(
@@ -48,14 +54,18 @@ const SwapModal: React.FC<IProps> = (props) => {
         BigInt(100),
       )
 
-      const newRatio = (Number(price) / 100).toFixed(5)
-      setRatio(newRatio)
+      // if (price && Number(price) !== 0) {
+      const newRatio = BigNumber(String(price)).div(100).toFixed(5)
+      newRatio && setRatio(newRatio)
+
+      console.log('%c [ newRatio ]-60', 'font-size:13px; background:#effe4d; color:#ffff91;', newRatio)
 
       setYouReceiver(prevReceiver => ({
         token: props.currentTokenInfo.name,
         address: props.currentTokenInfo.address,
         amount: BigNumber(youPay.amount).multipliedBy(newRatio).toString(),
       }))
+      // }
     }
 
     fetchData()

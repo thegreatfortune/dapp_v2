@@ -2,8 +2,8 @@ const tradingPairTokenMap = {
   USDC: import.meta.env.VITE_USDC_TOKEN as string,
   FollowToken: import.meta.env.VITE_FOLLOW_TOKEN as string,
   FTT: import.meta.env.VITE_FOLLOW_TOKEN as string,
-  BTCToken: import.meta.env.VITE_BTC_TOKEN,
-  ETHToken: import.meta.env.VITE_ETH_TOKEN,
+  BTC: import.meta.env.VITE_BTC_TOKEN,
+  ETH: import.meta.env.VITE_ETH_TOKEN,
 }
 
 export const tokenList = [
