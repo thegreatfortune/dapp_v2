@@ -55,7 +55,7 @@ const Market = () => {
 
       <div className='h63 w-full'></div>
 
-      <CardsContainer key='HighCredit' title='🔥 High Credit' records={loanOrderVO} to='/view-all?title=🔥 High Credit' />
+      <CardsContainer key='HighCredit' title='🔥 Hot starter' records={loanOrderVO} to='/view-all?title=🔥 Hot starter' />
       <div className='h-80 w-full'></div>
       <CardsContainer key='PopularToFollow' title='💥 Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
       <div className='h-80 w-full'></div>
