@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
+import { Image } from 'antd'
 import TransparentCard from './TransparentCard'
 import type { Models } from '@/.generated/api/models'
 
@@ -9,21 +10,25 @@ interface ICardsContainerProps {
   title: string
   isViewAll?: boolean
   to?: string
+  image: string
 
 //   children: React.ReactNode
 }
 
-const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to }) => {
+const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image }) => {
   const navigate = useNavigate()
 
   const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
   return (<div>
       <div className='h48 flex items-center justify-between'>
-        <div>
+        <div className='flex items-center justify-between'>
+        {image && <Image src={image} preview={false} className='h-30 w-30'/>}
           <h2 className='font-size-34'>
             {title}
+
           </h2>
+
         </div>
 
         {/* {children} */}

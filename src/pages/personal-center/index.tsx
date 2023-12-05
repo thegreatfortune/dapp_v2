@@ -65,7 +65,7 @@ const PersonalCenter = () => {
     <div className='flex justify-around'>
 
       <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState}>
-        Apply for a loan
+        Apply for a loan666
       </Button>
 
       <Button type="primary" onClick={reSet}>reSet</Button>
