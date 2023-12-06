@@ -1095,27 +1095,17 @@ export class BrowserContractService {
     return handleTransaction(transaction)
   }
 
-  /**
-   * 获取token0=>token1的兑换比
-   *
-   * @param {string} swapToken token1
-   * @param {*} [fee]
-   * @return {*}  {Promise<number>}
-   * @memberof BrowserContractService
-   */
-  async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<number> {
-    console.log('%c [ swapToken ]-1107', 'font-size:13px; background:#2f0612; color:#734a56;', swapToken)
+  async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<string> {
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(
       import.meta.env.VITE_USDC_TOKEN,
       swapToken,
       fee,
-      BigInt(100),
+      ethers.parseEther(String(1)),
     )
 
-    console.log('%c [111111111111 price ]-1056', 'font-size:13px; background:#9f1957; color:#e35d9b;', price)
-    const ratio = Number(price) / 100
+    const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
 
     return ratio
   }

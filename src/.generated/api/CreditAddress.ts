@@ -4,7 +4,7 @@ import request from '../../utils/request';
 import { Models } from './models';
 
 export class CreditAddressService {
-  /** 获取地址的信用分 GET /api/creditAddress/query/address/creditScore */
+  /** 未完成 获取地址的信用分 GET /api/creditAddress/query/address/creditScore */
   static async ApiCreditAddressQueryAddressCreditScore_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiCreditAddressQueryAddressCreditScoreGETParams,
@@ -36,7 +36,7 @@ export class CreditAddressService {
     });
   }
 
-  /** queryPage GET /api/creditAddress/query/address/page */
+  /** 未完成, 分页查询信用分 GET /api/creditAddress/query/address/page */
   static async ApiCreditAddressQueryAddressPage_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiCreditAddressQueryAddressPageGETParams,

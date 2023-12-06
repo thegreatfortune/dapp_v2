@@ -21,8 +21,8 @@ const MyLoan = () => {
   const [page, setPage] = useState(0)
 
   const loadMoreData = async () => {
-    if (loading)
-      return
+    // if (loading)
+    //   return
 
     setLoading(true)
 

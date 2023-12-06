@@ -33,10 +33,6 @@ const SwapModal: React.FC<IProps> = (props) => {
     amount: '0',
   })
 
-  // useEffect(() => {
-  //   setYouReceiver(preState => ({ ...preState, token: props.currentTokenInfo.name, address: props.currentTokenInfo.address }))
-  // }, [props.currentTokenInfo])
-
   const [ratio, setRatio] = useState<string>('0')
 
   useEffect(() => {
@@ -44,23 +40,17 @@ const SwapModal: React.FC<IProps> = (props) => {
       if (!browserContractService || !props.currentTokenInfo.address)
         return
 
-      console.log('%c [ props.currentTokenInfo.address ]-47', 'font-size:13px; background:#2a1b83; color:#6e5fc7;', props.currentTokenInfo)
+      setYouPay(() => ({
+        token: 'USDC',
+        address: import.meta.env.VITE_USDC_TOKEN,
+        amount: '0',
+      }))
 
-      const res = await browserContractService?.getTestLiquidityContract()
-      const price = await res?.getTokenPrice(
-        import.meta.env.VITE_USDC_TOKEN,
-        props.currentTokenInfo.address,
-        BigInt(3000),
-        BigInt(100),
-      )
+      const newRatio = await browserContractService.testLiquidity_calculateSwapRatio(props.currentTokenInfo.address)
+      setRatio(newRatio)
+      console.log('%c [ newRatio ]-64', 'font-size:13px; background:#2f2c72; color:#7370b6;', newRatio)
 
-      // if (price && Number(price) !== 0) {
-      const newRatio = BigNumber(String(price)).div(100).toFixed(5)
-      Number.isNaN(Number(newRatio)) && setRatio(newRatio)
-
-      console.log('%c [ newRatio ]-60', 'font-size:13px; background:#effe4d; color:#ffff91;', newRatio)
-
-      setYouReceiver(prevReceiver => ({
+      setYouReceiver(() => ({
         token: props.currentTokenInfo.name,
         address: props.currentTokenInfo.address,
         amount: BigNumber(youPay.amount).multipliedBy(newRatio).toString(),
@@ -111,12 +101,12 @@ const SwapModal: React.FC<IProps> = (props) => {
 
     setYouPay({
       ...tempYouReceiver,
-      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
+      amount: tempYouReceiver.amount,
     })
 
     setYouReceiver({
       ...tempYouPay,
-      amount: BigNumber(tempYouPay.amount).multipliedBy(ratio).toFixed(4),
+      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
     })
   }
 

@@ -25,7 +25,7 @@ export class TokenInfo {
   balance: string = '0'
   decimals: number = 0
   address: string | undefined
-  ratio: number = 0
+  ratio: string = '0'
   dollars: string | undefined
 }
 
@@ -124,7 +124,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
     const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
-    const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (ratio ?? 0))
+    const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (Number(ratio)))
     // console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
 
     return {
@@ -133,7 +133,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       balance: trulyBalance,
       decimals: Number(decimals) ?? 0,
       address,
-      ratio: ratio ?? 0,
+      ratio: ratio ? String(ratio) : '0',
       dollars,
     }
   }
@@ -245,10 +245,15 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                 <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
 
                 {
-                  item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                  item.name !== 'USDC'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }
+                {/* {
+                  item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                    ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                    : null
+                } */}
               </div>
             ))
           }

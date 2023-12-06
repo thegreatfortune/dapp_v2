@@ -4,7 +4,7 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     id?: number = 0;
@@ -30,7 +30,7 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     id?: number = 0;
@@ -43,7 +43,7 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     /** 贷方id */
@@ -63,7 +63,7 @@ export namespace Models {
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     /** 筛选出贷款金额大于该值的 */
@@ -99,7 +99,7 @@ Twitter :推特 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     /** 订单id */
@@ -112,7 +112,7 @@ Twitter :推特 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     loanId?: number = 0;
@@ -133,7 +133,7 @@ Canceled :订单取消 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     /** 借款用户id筛选 */
@@ -150,7 +150,7 @@ Canceled :订单取消 */
     page?: number = 0;
     /** 分页查询每页数量 */
     limit?: number = 0;
-    /** 排序字段
+    /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
     tradeId?: number = 0;
