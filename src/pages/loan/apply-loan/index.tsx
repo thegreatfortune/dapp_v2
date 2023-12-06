@@ -13,11 +13,11 @@ import Checkbox from 'antd/es/checkbox'
 import { Divider, Switch, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
-import airplane from '@/assets/images/airplane.png'
-import jmtzDown from '@/assets/images/jmtz_down.png'
+import airplane from '@/assets/images/apply-loan/airplane.png'
+import jmtzDown from '@/assets/images/apply-loan/jmtz_down.png'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { Models } from '@/.generated/api/models'
-import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
+import BTC_logo from '@/assets/images/apply-loan/token-logos/spot-goods/bitcoin.webp'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
@@ -577,7 +577,7 @@ const ApplyLoan = () => {
             rules={projectImageFileRule}
           >
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
-              <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={onSwitchChange} /></span>
+              <span className="absolute right-40 top-16 z-10 text-14">Use default diagram <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} /></span>
               <Dragger
                 name="projectImageFile"
                 // action={uploadFile}
@@ -767,36 +767,23 @@ const ApplyLoan = () => {
             />
           </Form.Item>
 
+          {/* Second */}
+
           <Form.Item
-            name="numberOfCopies"
+            name="dividend"
             label={
               <span className="text-16">
-                {t('applyLoan.formItem.numberOfCopies.label')}
+                {t('applyLoan.formItem.dividend.label')}
               </span>
             }
           >
             <InputNumber
-              min={1}
-              max={10000}
+              min={0}
+              max={100}
+              precision={2}
+              step={0.01}
               className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">share</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="minimumRequiredCopies"
-
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.minimumRequiredCopies.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              // min={2}
-              max={10000}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">share</div>}
+              suffix={<div className="px-20 text-24">%</div>}
             />
           </Form.Item>
 
@@ -821,25 +808,6 @@ const ApplyLoan = () => {
               step={0.01}
               className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">%</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="dividend"
-
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.dividend.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              min={0}
-              max={100}
-              precision={2}
-              step={0.01}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-24">%</div>}
             />
           </Form.Item>
 
@@ -872,6 +840,44 @@ const ApplyLoan = () => {
               ]}
             />
           </Form.Item>
+
+          {/* Three */}
+
+          <Form.Item
+            name="numberOfCopies"
+            label={
+              <span className="text-16">
+                {t('applyLoan.formItem.numberOfCopies.label')}
+              </span>
+            }
+          >
+            <InputNumber
+              min={1}
+              max={10000}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">share</div>}
+            />
+          </Form.Item>
+
+        {
+          loanRequisitionEditModel.numberOfCopies > 1
+          && <Form.Item
+          name="minimumRequiredCopies"
+          label={
+            <span className="text-16">
+              {t('applyLoan.formItem.minimumRequiredCopies.label')}
+            </span>
+          }
+        >
+          <InputNumber
+            // min={2}
+            max={10000}
+            className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+            suffix={<div className="px-20 text-14">share</div>}
+          />
+        </Form.Item>
+        }
+
         </div>
 
         <div className="h50" />

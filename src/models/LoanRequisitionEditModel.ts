@@ -21,7 +21,7 @@ export class LoanRequisitionEditModel {
   period: number | undefined
 
   /** 借款份数 (可选) */
-  numberOfCopies: number | undefined
+  numberOfCopies: number = 1
 
   /** 最小达成份数 (可选) */
   minimumRequiredCopies: number | undefined
