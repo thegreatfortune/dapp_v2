@@ -52,11 +52,11 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     path: '/personal-center',
     meta: { showInput: false },
     element: (
-      <BasicLayout>
+    // <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
-      </BasicLayout>
+    // </BasicLayout>
     ),
   },
   {
