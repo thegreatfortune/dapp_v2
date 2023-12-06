@@ -527,7 +527,7 @@ export class BrowserContractService {
 
     const followManageContract = await this.getFollowManageContract()
 
-    const tids = await followManageContract.getborrowerAllOrdersId(this.getSigner.address, cp)
+    const tids = await followManageContract.getCapitalPoolAllOradeId(cp)
     const currenTid = tids.at(-1)
 
     if (currenTid && currenTid >= BigInt(0)) {
@@ -927,8 +927,7 @@ export class BrowserContractService {
       const followManageContract
         = await this.getFollowManageContract()
 
-      const tids = await followManageContract?.getborrowerAllOrdersId(
-        this.getSigner.address ?? '',
+      const tids = await followManageContract?.getCapitalPoolAllOradeId(
         cp ?? '',
       )
 
@@ -1105,6 +1104,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<number> {
+    console.log('%c [ swapToken ]-1107', 'font-size:13px; background:#2f0612; color:#734a56;', swapToken)
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(

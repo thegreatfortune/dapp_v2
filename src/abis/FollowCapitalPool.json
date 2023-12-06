@@ -92,6 +92,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "NotInitialize",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NotLend",
 		"type": "error"
 	},

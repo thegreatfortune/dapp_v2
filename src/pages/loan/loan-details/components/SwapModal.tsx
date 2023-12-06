@@ -56,7 +56,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
       // if (price && Number(price) !== 0) {
       const newRatio = BigNumber(String(price)).div(100).toFixed(5)
-      newRatio && setRatio(newRatio)
+      Number.isNaN(Number(newRatio)) && setRatio(newRatio)
 
       console.log('%c [ newRatio ]-60', 'font-size:13px; background:#effe4d; color:#ffff91;', newRatio)
 

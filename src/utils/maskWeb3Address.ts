@@ -20,7 +20,7 @@ export function maskWeb3Address(address: string): string {
 
   // Mask the address
   const maskedAddress
-      = trimmedAddress.substring(0, 5) + '*'.repeat(length - 8) + trimmedAddress.substring(length - 3)
+      = trimmedAddress.substring(0, 5) + '.'.repeat(length - 38) + trimmedAddress.substring(length - 3)
 
   return maskedAddress
 }

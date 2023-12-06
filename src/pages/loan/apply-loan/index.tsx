@@ -116,19 +116,39 @@ const ApplyLoan = () => {
     = tradingPair
   const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
 
+  const [projectImageFileRule, setProjectImageFileRule] = useState([
+    {
+      required: true,
+      message: 'Please upload your loan image!',
+    },
+  ])
+
+  useEffect(() => {
+    async function fetchData() {
+      await form.validateFields(['projectImageFile'])
+    }
+
+    loanRequisitionEditModel.itemTitle && form && fetchData()
+  }, [projectImageFileRule, form])
+
   useEffect(() => {
     async function fetchData() {
       if (useDiagram) {
-        form.setFields([
+        setProjectImageFileRule([
           {
-            name: 'projectImageFile',
-            errors: [], // 清空错误信息
+            required: false,
+            message: 'Please upload your loan image!',
           },
         ])
       }
       else {
         try {
-          await form.validateFields(['projectImageFile'])
+          setProjectImageFileRule([
+            {
+              required: true,
+              message: 'Please upload your loan image!',
+            },
+          ])
         }
         catch (error) {
           console.error('Validation error for projectImageFile:', error)
@@ -554,12 +574,7 @@ const ApplyLoan = () => {
             className="m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"
             valuePropName="file"
             getValueFromEvent={e => e.fileList}
-            rules={[
-              {
-                required: true,
-                message: 'Please upload your loan image!',
-              },
-            ]}
+            rules={projectImageFileRule}
           >
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
               <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={onSwitchChange} /></span>
