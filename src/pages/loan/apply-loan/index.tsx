@@ -22,6 +22,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
+import { maskWeb3Address } from '@/utils/maskWeb3Address'
 
 const ApplyLoan = () => {
   const [form] = Form.useForm()
@@ -116,44 +117,70 @@ const ApplyLoan = () => {
   const [capitalPoolChecked, repaymentPoolChecked, documentChecked] = checkers
 
   useEffect(() => {
-    async function featData() {
+    async function fetchData() {
       if (useDiagram) {
-        const newFile = await handleImageCanvas('src/assets/images/default.png')
-        console.log('%c [ newFile ]-122', 'font-size:13px; background:#a12835; color:#e56c79;', newFile)
-        if (!newFile)
-          throw new Error('Image upload failed')
-
-        const previewImageUrl = URL.createObjectURL(newFile)
-
-        // TODO 删除第一行 要第二行 测试
-        setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: newFile }))
-
-        // setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
+        form.setFields([
+          {
+            name: 'projectImageFile',
+            errors: [], // 清空错误信息
+          },
+        ])
+      }
+      else {
+        try {
+          await form.validateFields(['projectImageFile'])
+        }
+        catch (error) {
+          console.error('Validation error for projectImageFile:', error)
+        }
       }
     }
-    featData()
-  }, [useDiagram])
+    form && fetchData()
+  }, [useDiagram, form])
 
   useEffect(() => {
     publishBtnLoading && createLoan()
   }, [publishBtnLoading, loanRequisitionEditModel])
 
   useEffect(() => {
+    createLoan()
+  }, [loanRequisitionEditModel.imageUrl])
+
+  useEffect(() => {
     async function fetchData() {
-      if (loanRequisitionEditModel.projectImagePreViewUrl || loanRequisitionEditModel.imageUrl) {
-        try {
-          const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
+      try {
+        if (useDiagram) {
+          const { itemTitle, applyLoan, tradingFormType, interest, dividend } = loanRequisitionEditModel
+          const newFile = await handleImageCanvas('src/assets/images/default.png', [itemTitle,
+            browserContractService?.getSigner.address ? maskWeb3Address(browserContractService?.getSigner.address) : '',
+            String(applyLoan ?? 0),
+            tradingFormType === 'SpotGoods' ? 'Low' : 'Hight',
+            `${interest ?? 0}%`, `${dividend ?? 0}%`])
+
+          if (!newFile)
+            throw new Error('Image upload failed')
+
+          // const previewImageUrl = URL.createObjectURL(newFile)
+
+          // setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: newFile }))
+
+          setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
+
+          const url = await FileService.ApiFileUpload_POST({ file: newFile })
 
           setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
         }
-        catch (error) {
-          console.log('%c [ error ]-162', 'font-size:13px; background:#98a708; color:#dceb4c;', error)
-          message.error('upload file failed')
-          throw new Error('upload file failed')
+        else {
+          if (loanRequisitionEditModel.projectImagePreViewUrl) {
+            const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
+
+            setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+          }
         }
       }
-      else {
-        createLoan()
+      catch (error) {
+        console.log('%c [ error ]-127', 'font-size:13px; background:#38eeb8; color:#7cfffc;', error)
+        throw new Error('Image upload failed')
       }
     }
 
@@ -421,14 +448,14 @@ const ApplyLoan = () => {
   async function beforeUpload(file: RcFile) {
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
     if (!allowedTypes.includes(file.type)) {
-      message.error('只能上传图片文件（PNG、JPEG、JPG）')
+      message.error('Only image files can be uploaded (PNG, JPEG, JPG)')
       return Upload.LIST_IGNORE
     }
 
-    // 限制文件大小（示例限制为 2MB）
+    // 限制文件大小
     const maxSize = 2 * 1024 * 1024 // 2MB
     if (file.size > maxSize) {
-      message.error('文件大小不能超过2MB')
+      message.error('The file size cannot exceed 2MB')
       return Upload.LIST_IGNORE
     }
 
@@ -523,21 +550,21 @@ const ApplyLoan = () => {
       >
         <div className="w-full flex justify-between">
           <Form.Item
-            name="file"
+            name="projectImageFile"
             className="m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"
             valuePropName="file"
             getValueFromEvent={e => e.fileList}
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: 'Please upload your file!',
-          //   },
-          // ]}
+            rules={[
+              {
+                required: true,
+                message: 'Please upload your loan image!',
+              },
+            ]}
           >
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
               <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={onSwitchChange} /></span>
               <Dragger
-                name="file"
+                name="projectImageFile"
                 // action={uploadFile}
                 beforeUpload={beforeUpload}
                 style={{ height: 453 }}
@@ -569,7 +596,7 @@ const ApplyLoan = () => {
                 {/* // TODO 测试 用第二个 这个删除 */}
                 {
                   useDiagram
-                  && <Image preview={false} src={loanRequisitionEditModel.projectImagePreViewUrl} />
+                  && <Image preview={false} src={defaultImage} />
                 }
                 {/* {
                   useDiagram
@@ -595,8 +622,8 @@ const ApplyLoan = () => {
                   message: 'Please input your title!',
                 },
                 {
-                  max: 10,
-                  message: 'Title must be at most 10 characters.',
+                  max: 36,
+                  message: 'Title must be at most 36 characters.',
                 },
               ]}
             >
@@ -623,8 +650,8 @@ const ApplyLoan = () => {
                   message: 'Please input your description!',
                 },
                 {
-                  max: 100,
-                  message: 'Title must be at most 10 characters.',
+                  max: 500,
+                  message: 'Description must be at most 500 characters.',
                 },
               ]}
             >
