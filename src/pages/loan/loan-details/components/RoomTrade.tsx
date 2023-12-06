@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Button, message } from 'antd'
 import { useSearchParams } from 'react-router-dom'
 import { ethers } from 'ethers'
+import dayjs from 'dayjs'
 import SorterScrollableList from './SorterScrollableList'
 import type { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -32,7 +33,7 @@ const RoomTrade = () => {
         <li>{item.remainingQuantity}</li>
         {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
         <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
-        <li>{item.depositeTime}</li>
+        <li>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
         <li>
           {item.state}
           {isWalletConnected
@@ -117,6 +118,8 @@ const RoomTrade = () => {
           </div>
         }
       </SModal>
+
+      {/* // TODO 默认Unit Price 升序排序 */}
 
       <SorterScrollableList activeUser={activeUser} renderItem={renderItem} tradeId={Number(tradeId)} />
 
