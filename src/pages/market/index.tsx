@@ -1,5 +1,6 @@
 import Carousel from 'antd/es/carousel'
 import { useEffect, useState } from 'react'
+import blacklist1Img from 'src/assets/images/blacklist1.png'
 import bannerImg from '../../assets/images/banner.png'
 import { LoanService } from '../../.generated/api/Loan'
 import CardsContainer from '../components/CardsContainer'
@@ -53,13 +54,12 @@ const Market = () => {
         </div>
       </Carousel>
 
-      <div className='h63 w-full'></div>
-
-      <CardsContainer key='HighCredit' title='🔥 Hot starter' records={loanOrderVO} to='/view-all?title=🔥 Hot starter' />
       <div className='h-80 w-full'></div>
-      <CardsContainer key='PopularToFollow' title='💥 Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
+      <CardsContainer key='HighCredit' title=' 🔥Hot starter' records={loanOrderVO} to='/view-all?title=🔥 Hot starter' />
       <div className='h-80 w-full'></div>
-      <CardsContainer key='Blacklist' title='Blacklist' records={loanOrderVO} to='/view-all?title=Blacklist' />
+      <CardsContainer key='PopularToFollow' title='💥Popular to follow' records={loanOrderVO} to='/view-all?title=💥 Popular to follow' />
+      <div className='h-80 w-full'></div>
+      <CardsContainer image='src/assets/images/blacklist1.png' key='Blacklist' title='Blacklist' records={loanOrderVO} to='/view-all?title=Blacklist'/>
       <div className='h-80 w-full'></div>
 
     </div>
