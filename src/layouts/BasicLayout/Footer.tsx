@@ -4,7 +4,7 @@ import logo from '@/assets/logo.png'
 const Footer = () => {
   return (<div>
         <div className="float-left flex items-center text-center">
-            <Avatar src="src/assets/images/2111.png" className="mx5 h47 w47"></Avatar>
+            <Avatar src="src/assets/images/market/2111.png" className="mx5 h47 w47"></Avatar>
             <div className="m-auto ml-23 h-40 w-90 text-left text-37 lh-49 c-#fff">P2P</div>
         </div>
 
