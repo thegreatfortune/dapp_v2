@@ -50,7 +50,7 @@ const PersonalCenter = () => {
       if (!isBlack && !isOrderCreated)
         navigate('/apply-loan')
       else
-        message.warning('order cant not repetition create')
+        message.warning('order can not repetition create')
     }
     catch (error) {
       message.error('Error: order status error')

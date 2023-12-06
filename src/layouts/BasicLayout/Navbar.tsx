@@ -9,6 +9,8 @@ import Button from 'antd/es/button'
 import { AutoComplete } from 'antd'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/react.svg'
+
+// import NavBg from '@/assets/images/NavBg.png
 import searchImg from '@/assets/images/search.svg'
 import './navBar.css'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
@@ -36,10 +38,11 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
-        <nav className="h120 w-full flex items-center theme-color text-white" id='navBar'>
+        <nav className="h120 w-full flex items-center justify-around theme-color text-white" id='navBar'>
+
             <div className="flex items-center text-center">
                 <Avatar src={logo} className="mx5 h47 w47"></Avatar>
-                <div className="text-30 font-900">{title}</div>
+                <div className="text-30 font-900">LOGO</div>
             </div>
 
             <div className='h-full w-60' />
@@ -62,7 +65,6 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
                 </li>
             </ul>
 
-            <div className='h-full w-337' />
             {
                 showInput
                 && <AutoComplete
@@ -86,6 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
             <div className='h-full w-44' />
 
             <CustomConnectButton />
+
         </nav>
   )
 }
