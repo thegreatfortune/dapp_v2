@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
-        <nav className="h140 w-full flex items-center theme-color text-white" id='navBar'>
+        <nav className="h140 w-full flex items-center text-white" id='navBar'>
             <div className="flex items-center text-center">
                 <Avatar src={logo} className="mx5 h47 w47"></Avatar>
                 <div className="text-30 font-900">{title}</div>
