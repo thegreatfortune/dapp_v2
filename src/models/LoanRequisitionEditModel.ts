@@ -12,28 +12,28 @@ export class LoanRequisitionEditModel {
   projectImageFile: File | undefined
 
   /** 借款金额 Apply for Loan */
-  applyLoan: number | undefined
+  applyLoan: number = 100
 
   /** 借款周期 Cycle */
   cycle: number = 0
 
   /** 期数 Period */
-  period: number | undefined
+  period: number = 1
 
   /** 借款份数 (可选) */
-  numberOfCopies: number | undefined
+  numberOfCopies: number = 1
 
   /** 最小达成份数 (可选) */
   minimumRequiredCopies: number | undefined
 
   /** 借款利息 Interest */
-  interest: number | undefined
+  interest: number = 5
 
   /** 分红比例 (可选) dividend */
   dividend: number | undefined
 
   /** 筹集时间 day */
-  raisingTime: number | undefined
+  raisingTime: number = 1
 
   /** 冗余 YES NO */
   designatedTransaction = true

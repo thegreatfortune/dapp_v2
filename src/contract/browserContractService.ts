@@ -900,8 +900,8 @@ export class BrowserContractService {
       [
         BigInt(BigNumber(model.interest!).times(100).toString()),
         BigInt(BigNumber(model.dividend ?? 0).times(100).toString()),
-        BigInt(model.numberOfCopies!),
-        BigInt(model.minimumRequiredCopies!),
+        BigInt(model.numberOfCopies),
+        BigInt(model.minimumRequiredCopies ?? 0),
       ],
       BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
       BigInt(model.applyLoan!) * BigInt(10 ** 18),

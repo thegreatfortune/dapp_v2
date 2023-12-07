@@ -10,14 +10,28 @@ import InputNumber from 'antd/es/input-number'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
 import Checkbox from 'antd/es/checkbox'
-import { Divider, Switch, Upload, message } from 'antd'
+import { Divider, Switch, Tooltip, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
-import airplane from '@/assets/images/airplane.png'
-import jmtzDown from '@/assets/images/jmtz_down.png'
+import airplane from '@/assets/images/apply-loan/airplane.png'
+import jmtzDown from '@/assets/images/apply-loan/jmtz_down.png'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { Models } from '@/.generated/api/models'
-import BTC_logo from '@/assets/images/token-logos/spot-goods/bitcoin.webp'
+import bitcoinIcon from '@/assets/images/apply-loan/token-logos/spot-goods/bitcoin.png'
+import followIcon from '@/assets/images/apply-loan/token-logos/spot-goods/follow.png'
+import ethereumIcon from '@/assets/images/apply-loan/token-logos/spot-goods/ethereum.png'
+import arbitrumIcon from '@/assets/images/apply-loan/token-logos/spot-goods/arbitrum.webp'
+import chainlinkIcon from '@/assets/images/apply-loan/token-logos/spot-goods/chainlink.webp'
+import uniswapIcon from '@/assets/images/apply-loan/token-logos/spot-goods/uniswap.webp'
+import lidofiIcon from '@/assets/images/apply-loan/token-logos/spot-goods/lidofi.webp'
+import makerIcon from '@/assets/images/apply-loan/token-logos/spot-goods/maker.webp'
+import aaveIcon from '@/assets/images/apply-loan/token-logos/spot-goods/aave-new.webp'
+import solanaIcon from '@/assets/images/apply-loan/token-logos/contract/solana.png'
+import dogecoinIcon from '@/assets/images/apply-loan/token-logos/contract/dogecoin.png'
+import rippleIcon from '@/assets/images/apply-loan/token-logos/contract/ripple.png'
+import litecoinIcon from '@/assets/images/apply-loan/token-logos/contract/litecoin.png'
+import xIcon from '@/assets/images/apply-loan/x.png'
+import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
@@ -25,6 +39,7 @@ import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 
 const ApplyLoan = () => {
+  /* #region  */
   const [form] = Form.useForm()
 
   const { t } = useTranslation()
@@ -50,63 +65,64 @@ const ApplyLoan = () => {
   const [createLoading, setCreateLoading] = useState<boolean>(false)
 
   const [useDiagram, setUseDiagram] = useState(false)
+  /* #endregion */
 
   const [tradingPair] = useState([
     [
       {
-        logo: BTC_logo,
+        logo: bitcoinIcon,
         name: 'BTC',
       },
       {
-        logo: '',
+        logo: followIcon,
         name: 'FollowToken',
       },
       {
-        logo: '',
+        logo: ethereumIcon,
         name: 'ETH',
       },
       {
-        logo: '',
+        logo: arbitrumIcon,
         name: 'ARB',
       },
       {
-        logo: '',
+        logo: chainlinkIcon,
         name: 'LINK',
       },
       {
-        logo: '',
+        logo: uniswapIcon,
         name: 'UNI',
       },
     ],
     [
       {
-        logo: '',
+        logo: lidofiIcon,
         name: 'LDO',
       },
       {
-        logo: '',
+        logo: makerIcon,
         name: 'MKR',
       },
       {
-        logo: '',
+        logo: aaveIcon,
         name: 'AAVE',
       },
     ],
     [
       {
-        logo: '',
+        logo: solanaIcon,
         name: 'SOL',
       },
       {
-        logo: '',
+        logo: dogecoinIcon,
         name: 'DOGE',
       },
       {
-        logo: '',
+        logo: rippleIcon,
         name: 'XRB',
       },
       {
-        logo: '',
+        logo: litecoinIcon,
         name: 'LTC',
       },
     ],
@@ -435,11 +451,18 @@ const ApplyLoan = () => {
       designatedTransactionChange(val.designatedTransaction)
 
     if ('tradingFormType' in val) {
+      form.setFieldsValue({
+        ...val,
+        tradingPlatformType: val.tradingFormType === 'SpotGoods' ? 'Uniswap' : 'GMX',
+        transactionPairs: ['BTC'],
+      })
+
       setLoanRequisitionEditModel((prevState) => {
         return ({
           ...prevState,
           ...val,
           tradingPlatformType: val.tradingFormType === 'SpotGoods' ? 'Uniswap' : 'GMX',
+          transactionPairs: ['BTC'],
         })
       })
     }
@@ -455,12 +478,20 @@ const ApplyLoan = () => {
 
   //  重置数据
   function designatedTransactionChange(v: boolean) {
+    form.setFieldsValue({
+      designatedTransaction: v,
+      tradingFormType: 'SpotGoods',
+      tradingPlatformType: 'Uniswap',
+      transactionPairs: ['BTC'],
+    })
+
     setLoanRequisitionEditModel((prevState) => {
       return ({
         ...prevState,
         designatedTransaction: v,
         tradingFormType: 'SpotGoods',
         tradingPlatformType: 'Uniswap',
+        transactionPairs: ['BTC'],
       })
     })
   }
@@ -484,10 +515,23 @@ const ApplyLoan = () => {
 
       setLoanRequisitionEditModel(preState => ({ ...preState, projectImagePreViewUrl: previewImageUrl, projectImageFile: file }))
     }
+
+    setProjectImageFileRule([
+      {
+        required: false,
+        message: 'Please upload your loan image!',
+      },
+    ])
   }
 
   async function onSwitchChange(e: boolean) {
     setUseDiagram(e)
+  }
+
+  function onCoinClick(index: number) {
+    const arr = loanRequisitionEditModel.transactionPairs?.splice(index, 1)
+
+    setLoanRequisitionEditModel(preState => ({ ...preState, tradingPair: arr }))
   }
 
   return (
@@ -577,7 +621,7 @@ const ApplyLoan = () => {
             rules={projectImageFileRule}
           >
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
-              <span className="absolute right-40 top-32 z-10">Use default diagram <Switch onChange={onSwitchChange} /></span>
+              <span className="absolute right-40 top-16 z-10 text-14">Use default diagram <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} /></span>
               <Dragger
                 name="projectImageFile"
                 // action={uploadFile}
@@ -593,7 +637,7 @@ const ApplyLoan = () => {
                   && <div>
                     {
                       loanRequisitionEditModel.projectImagePreViewUrl
-                        ? <Image src={loanRequisitionEditModel.projectImagePreViewUrl} preview={false} />
+                        ? <Image height={348} width={400} src={loanRequisitionEditModel.projectImagePreViewUrl} preview={false} />
                         : <div>
                           <Image src={airplane} preview={false} />
                           <p className="ant-upload-drag-icon"></p>
@@ -608,15 +652,10 @@ const ApplyLoan = () => {
                   </div>
                 }
 
-                {/* // TODO 测试 用第二个 这个删除 */}
                 {
                   useDiagram
                   && <Image preview={false} src={defaultImage} />
                 }
-                {/* {
-                  useDiagram
-                  && <Image preview={false} src={defaultImage} />
-                } */}
 
               </Dragger>
             </div>
@@ -684,7 +723,7 @@ const ApplyLoan = () => {
         <div className="h-51" />
 
         {/* Apply for a loan */}
-        <div className="box-border h-434 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 py-44 text-16">
+        <div className="box-border h-434 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-6 pt-44 text-16">
           <Form.Item
             name="applyLoan"
             rules={[
@@ -767,36 +806,27 @@ const ApplyLoan = () => {
             />
           </Form.Item>
 
+          {/* Second */}
+
           <Form.Item
-            name="numberOfCopies"
+            name="dividend"
             label={
               <span className="text-16">
-                {t('applyLoan.formItem.numberOfCopies.label')}
+                {t('applyLoan.formItem.dividend.label')}
+                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="he dividend ratio is profit dividends. The remaining funds after deducting principal + interest + handling fees from the repayment pool funds are profits. Part of the profits will be deducted according to the allocation ratio and given to the lender.">
+                  <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+                </Tooltip>
               </span>
+
             }
           >
             <InputNumber
-              min={1}
-              max={10000}
+              min={0}
+              max={100}
+              precision={2}
+              step={0.01}
               className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">share</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="minimumRequiredCopies"
-
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.minimumRequiredCopies.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              // min={2}
-              max={10000}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">share</div>}
+              suffix={<div className="px-20 text-14">%</div>}
             />
           </Form.Item>
 
@@ -811,6 +841,10 @@ const ApplyLoan = () => {
             label={
               <span className="text-16">
                 {t('applyLoan.formItem.interest.label')}
+
+                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="hInterest is deducted first, and the lender only needs to provide funds after interest is deducted.">
+                  <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+                </Tooltip>
               </span>
             }
           >
@@ -821,25 +855,6 @@ const ApplyLoan = () => {
               step={0.01}
               className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">%</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="dividend"
-
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.dividend.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              min={0}
-              max={100}
-              precision={2}
-              step={0.01}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-24">%</div>}
             />
           </Form.Item>
 
@@ -872,9 +887,47 @@ const ApplyLoan = () => {
               ]}
             />
           </Form.Item>
+
+          {/* Three */}
+
+          <Form.Item
+            name="numberOfCopies"
+            label={
+              <span className="text-16">
+                {t('applyLoan.formItem.numberOfCopies.label')}
+              </span>
+            }
+          >
+            <InputNumber
+              min={1}
+              max={10000}
+              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              suffix={<div className="px-20 text-14">share</div>}
+            />
+          </Form.Item>
+
+          {
+            loanRequisitionEditModel.numberOfCopies > 1
+            && <Form.Item
+              name="minimumRequiredCopies"
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.minimumRequiredCopies.label')}
+                </span>
+              }
+            >
+              <InputNumber
+                // min={2}
+                max={10000}
+                className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+                suffix={<div className="px-20 text-14">share</div>}
+              />
+            </Form.Item>
+          }
+
         </div>
 
-        <div className="h50" />
+        <div className="h80" />
 
         <div className='flex gap-x-42'>
           <div>
@@ -912,7 +965,7 @@ const ApplyLoan = () => {
 
               <Form.Item
                 name="transactionPairs"
-                className="m0 mt47"
+                className="m0 mt34"
                 style={{
                   display: loanRequisitionEditModel.designatedTransaction
                     ? 'block'
@@ -926,6 +979,7 @@ const ApplyLoan = () => {
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
+                  value={loanRequisitionEditModel.transactionPairs}
                   maxTagCount={1}
                   options={(loanRequisitionEditModel.tradingFormType
                     === Models.TradingFormType.SpotGoods
@@ -987,7 +1041,7 @@ const ApplyLoan = () => {
                     className="m0 w306"
                   >
                     {/* START 冗余 为了页面更新 */}
-                    <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span>
+                    {/* <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span> */}
                     {/* END */}
                     <Select
                       popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
@@ -1023,33 +1077,47 @@ const ApplyLoan = () => {
                 : 'none',
             }}
           >
-            <div className="mt-47 flex flex-wrap gap-x-52 gap-y-20">
+            <div className="mt-34 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
-                  className="h50 w180 s-container text-center text-14 line-height-70"
+                  className="box-border h50 w180 flex justify-around gap-x-27 s-container p15 text-14"
                 >
+                  <div className='flex'>
+                    <Image
+                      preview={false}
+                      width={18}
+                      height={18}
+                      src={tradingPair.flat().find(p => p.name === e)?.logo}
+                    ></Image>
+                    <span className='ml-4 p-2'>{e} </span>
+                  </div>
+
                   <Image
+                    onClick={() => onCoinClick(i)}
+                    className='cursor-pointer'
                     preview={false}
-                    width={24}
-                    height={24}
-                    src={tradingPair.flat().find(p => p.name === e)?.logo}
+                    width={18}
+                    height={18}
+                    src={xIcon}
                   ></Image>
-                  {e}
+
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="h156" />
+        <Divider className='m0 bg-#6A6A6A' />
+
+        <div className="h82" />
 
         <Form.Item className="text-center">
           <Button
             type="primary"
             htmlType="submit"
             loading={publishBtnLoading}
-            className="h78 w300 text-24 primary-btn"
+            className="h78 w300 text-16 primary-btn"
           >
             {t('applyLoan.btn.submit')}
           </Button>
