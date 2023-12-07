@@ -7,33 +7,35 @@ import Image from 'antd/es/image'
 import './style.css'
 import { useTranslation } from 'react-i18next'
 import InputNumber from 'antd/es/input-number'
+import { LoadingOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
 import Checkbox from 'antd/es/checkbox'
-import { Divider, Switch, Tooltip, Upload, message } from 'antd'
+import { Divider, Spin, Switch, Tooltip, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
 import airplane from '@/assets/images/apply-loan/airplane.png'
 import jmtzDown from '@/assets/images/apply-loan/jmtz_down.png'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { Models } from '@/.generated/api/models'
-import bitcoinIcon from '@/assets/images/apply-loan/token-logos/spot-goods/bitcoin.png'
-import followIcon from '@/assets/images/apply-loan/token-logos/spot-goods/follow.png'
-import ethereumIcon from '@/assets/images/apply-loan/token-logos/spot-goods/ethereum.png'
-import arbitrumIcon from '@/assets/images/apply-loan/token-logos/spot-goods/arbitrum.webp'
-import chainlinkIcon from '@/assets/images/apply-loan/token-logos/spot-goods/chainlink.webp'
-import uniswapIcon from '@/assets/images/apply-loan/token-logos/spot-goods/uniswap.webp'
-import lidofiIcon from '@/assets/images/apply-loan/token-logos/spot-goods/lidofi.webp'
-import makerIcon from '@/assets/images/apply-loan/token-logos/spot-goods/maker.webp'
-import aaveIcon from '@/assets/images/apply-loan/token-logos/spot-goods/aave-new.webp'
-import solanaIcon from '@/assets/images/apply-loan/token-logos/contract/solana.png'
-import dogecoinIcon from '@/assets/images/apply-loan/token-logos/contract/dogecoin.png'
-import rippleIcon from '@/assets/images/apply-loan/token-logos/contract/ripple.png'
-import litecoinIcon from '@/assets/images/apply-loan/token-logos/contract/litecoin.png'
-import xIcon from '@/assets/images/apply-loan/x.png'
+import bitcoinIcon from '@/assets/images/apply-loan/token-icons/BTC.png'
+import followIcon from '@/assets/images/apply-loan/token-icons/usdc.png'
+import ethereumIcon from '@/assets/images/apply-loan/token-icons/ETH.png'
+import arbitrumIcon from '@/assets/images/apply-loan/token-icons/ARB.png'
+import chainlinkIcon from '@/assets/images/apply-loan/token-icons/LINK.png'
+import uniswapIcon from '@/assets/images/apply-loan/token-icons/UNI.png'
+import lidofiIcon from '@/assets/images/apply-loan/token-icons/LDO.png'
+import makerIcon from '@/assets/images/apply-loan/token-icons/MKR.png'
+import aaveIcon from '@/assets/images/apply-loan/token-icons/AAVE.png'
+import solanaIcon from '@/assets/images/apply-loan/token-icons/SOL.png'
+import dogecoinIcon from '@/assets/images/apply-loan/token-icons/DOGE.png'
+import rippleIcon from '@/assets/images/apply-loan/token-icons/XRP.png'
+import litecoinIcon from '@/assets/images/apply-loan/token-icons/LTC.png'
+import xGenalIcon from '@/assets/images/apply-loan/xGenal.png'
+import xFloatIcon from '@/assets/images/apply-loan/xFloat.png'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import defaultImage from '@/assets/images/default.png'
+import defaultImage from '@/assets/images/market/default.png'
 import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
@@ -50,6 +52,8 @@ const ApplyLoan = () => {
 
   const [loanRequisitionEditModel, setLoanRequisitionEditModel]
     = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
+
+  const [isHovered, setIsHovered] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -75,7 +79,7 @@ const ApplyLoan = () => {
       },
       {
         logo: followIcon,
-        name: 'FollowToken',
+        name: 'FTT',
       },
       {
         logo: ethereumIcon,
@@ -284,7 +288,7 @@ const ApplyLoan = () => {
       navigate('/my-loan')
     }
     catch (error) {
-      message.error('操作失败')
+      message.error('operation failure!')
       console.log(
         '%c [ error ]-99',
         'font-size:13px; background:#daf6df; color:#ffffff;',
@@ -386,6 +390,7 @@ const ApplyLoan = () => {
       setPublishBtnLoading(false)
     }
     catch (error) {
+      message.error('operation failure')
       console.log(
         '%c [ error ]-61',
         'font-size:13px; background:#c95614; color:#ff9a58;',
@@ -536,72 +541,71 @@ const ApplyLoan = () => {
 
   return (
     <div>
-      {/* <Button onClick={reSet}>重置（test）</Button> */}
       <Modal
-        footer={(_, { CancelBtn }) => (
-          <>
-            {/* <Button>Custom Button</Button> */}
-            <CancelBtn />
-            <Button
-              onClick={() => handleOk(loanRequisitionEditModel)}
-              loading={createLoading}
-              disabled={repaymentPoolLoading || capitalPoolLoading}
-            >
-              Confirm
-            </Button>
-          </>
-        )}
+        centered
+        styles={{ mask: { backgroundColor: 'rgba(0, 0, 0, 0.8)' } }}
+        footer={
+          false
+        }
         confirmLoading={createLoading}
+        closable={false}
         okText="Create"
-        width={1164}
+        width={620}
         maskClosable={false}
         open={isModalOpen}
-        onCancel={handleCancel}
       >
-        <div className="mt165 box-border h-300 w-full text-center text-16">
-          <p>Please confirm that it cannot be modified after submission.</p>
-          <p>Creating the document requires gas fees to create:</p>
+        <div className="box-border flex flex-col items-center text-center text-16">
 
-          <div>
-            {capitalPoolLoading
-              ? (
-                <Button type="primary" loading={capitalPoolLoading} />
-                )
-              : null}
-            <Checkbox disabled checked={capitalPoolChecked} >
-              Capital pool contract
-            </Checkbox>
+          <p className='text-14'>Please note that when applying for a loan for the first time, you need to create your own capital pool and repayment pool contract. This requires paying some gas fees to execute the smart contract. You do not need to create it again after the creation is successful.</p>
+
+          <div className="flex flex-col items-start">
+            <div>
+              {capitalPoolLoading
+                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
+                : <Checkbox disabled checked={capitalPoolChecked}>
+                </Checkbox>}
+              <span className='p-x-8 c-#3CA9F8'>Capital pool contract</span>
+            </div>
+
+            <div>
+              {(capitalPoolChecked && repaymentPoolLoading)
+                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
+                : <Checkbox disabled checked={repaymentPoolChecked}>
+                </Checkbox>
+              }
+              <span className='p-x-8 c-#3CA9F8'> Create a repayment pool</span>
+            </div>
+
+            <div>
+              {createLoading
+                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
+                : <Checkbox disabled checked={documentChecked}>
+                </Checkbox>}
+              <span className='p-x-8 c-#3CA9F8'> Create document</span>
+
+            </div>
           </div>
 
-          <div>
-            {capitalPoolChecked && repaymentPoolLoading
-              ? (
-                <Button
-                  type="primary"
-                  loading={capitalPoolChecked && repaymentPoolLoading}
-                />
-                )
-              : null}
-            <Checkbox
-              disabled
-              checked={repaymentPoolChecked}
-            >
-              Create a repayment pool
-            </Checkbox>
-          </div>
-
-          <div>
-            {createLoading
-              ? (
-                <Button type="primary" loading={createLoading} />
-                )
-              : null}
-            <Checkbox disabled checked={documentChecked} >
-              Create document
-            </Checkbox>
-          </div>
         </div>
+
+        <div className="h16" />
+
+        <div className="flex justify-center gap-x-8">
+          <Button
+            className='h32 w84 rounded-2 primary-btn'
+            onClick={() => handleOk(loanRequisitionEditModel)}
+            loading={createLoading}
+            disabled={repaymentPoolLoading || capitalPoolLoading}
+          >
+            Confirm
+          </Button>
+          <Button className='h32 w77 rounded-2 bg-#F2F3F5 text-14 c-#1F1F1F' onClick={handleCancel}>
+            Cancel
+          </Button>
+        </div>
+
       </Modal>
+
       <Form
         form={form}
         initialValues={loanRequisitionEditModel}
@@ -704,8 +708,8 @@ const ApplyLoan = () => {
                   message: 'Please input your description!',
                 },
                 {
-                  max: 500,
-                  message: 'Description must be at most 500 characters.',
+                  max: 1000,
+                  message: 'Description must be at most 1000 characters.',
                 },
               ]}
             >
@@ -1081,26 +1085,28 @@ const ApplyLoan = () => {
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
-                  className="box-border h50 w180 flex justify-around gap-x-27 s-container p15 text-14"
+                  className="box-border h50 w180 flex items-center justify-center gap-x-27 s-container text-14"
                 >
-                  <div className='flex'>
+                  <div>
                     <Image
                       preview={false}
-                      width={18}
-                      height={18}
+                      width={24}
+                      height={24}
                       src={tradingPair.flat().find(p => p.name === e)?.logo}
                     ></Image>
-                    <span className='ml-4 p-2'>{e} </span>
+                    <span className='ml-4 p-2 text-16'>{e} </span>
                   </div>
 
                   <Image
+                    preview={false}
                     onClick={() => onCoinClick(i)}
                     className='cursor-pointer'
-                    preview={false}
                     width={18}
                     height={18}
-                    src={xIcon}
-                  ></Image>
+                    src={isHovered ? xFloatIcon : xGenalIcon}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  />
 
                 </div>
               ))}
