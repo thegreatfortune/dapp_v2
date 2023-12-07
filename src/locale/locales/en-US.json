@@ -30,5 +30,12 @@
 
   "applyLoan.formItem.designatedTransaction.label": "Designated Transaction",
 
-  "applyLoan.btn.submit": "Publish Now"
+  "applyLoan.btn.submit": "Publish Now",
+
+
+  "market.CardsContainer1.title": "Hot starter",
+  "market.CardsContainer2.title": "Popular to follow",
+  "market.CardsContainer3.title": "Blacklist",
+  "Footer.div.title.footerProfile": "One stop P2P market, secure loans, and secure financial management.",
+  "Footer.div.title.footerLogo": "P2P"
 }

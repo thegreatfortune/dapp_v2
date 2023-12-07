@@ -1,17 +1,20 @@
 import Avatar from 'antd/es/avatar'
+import { useTranslation } from 'react-i18next'
 
 // import logo from '@/assets/logo.png'
 
 const Footer = () => {
+  const { t } = useTranslation ()
+
   return (
         <div className='bottom-0 mt-59 flex justify-between'>
             <div className='flex justify-around'>
-                <Avatar src="src/assets/images/market/2111.png" className="h-60 w-60"></Avatar>
-                <div className="ml-33 mt-12 h-40 w-90 text-center text-40 font-400 lh-40 c-#fff">P2P</div>
+                <Avatar src="src/assets/images/market/logo.png" className="h-60 w-60"></Avatar>
+                <div className="ml-33 mt-12 h-40 w-90 text-center text-40 font-400 lh-40 c-#fff">{`${t('Footer.div.title.footerLogo')}`}</div>
             </div>
             <div className=''>
                 <div className='m-auto mt-12 text-center lh-34 c-#fff'>
-                    One stop P2P market, secure loans, and secure financial management.
+                {`${t('Footer.div.title.footerProfile')}`}
                 </div>
                 <div className='mt-34 flex justify-center'>
                     <div className='w-89 flex justify-center'>
