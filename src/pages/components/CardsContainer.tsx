@@ -23,7 +23,7 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
   return (<div>
       <div className='h48 flex items-center justify-between'>
         <div className='flex items-center justify-between'>
-        {image && <Image src={image} preview={false} className='h-30 w-30'/>}
+        {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10'/>}
           <h2 className='font-size-34'>
             {title}
 
