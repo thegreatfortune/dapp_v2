@@ -36,10 +36,13 @@ const PersonalCenter = () => {
         return
 
       setLoading(true)
-      const isOrderCreated = await browserContractService?.getOrderCreateState()
-      console.log('%c [ isOrderCreated ]-40', 'font-size:13px; background:#a23f4c; color:#e68390;', isOrderCreated)
+      // const isOrderCreated = await browserContractService?.getOrderCreateState()
+      // console.log('%c [ isOrderCreated ]-40', 'font-size:13px; background:#a23f4c; color:#e68390;', isOrderCreated)
 
       const processCenterContract = await browserContractService?.getProcessCenterContract()
+
+      const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
+      // console.log('%c [ orderCanCreatedAgain ]-45', 'font-size:13px; background:#bcdd20; color:#ffff64;', orderCanCreatedAgain)
 
       const isBlack = await processCenterContract?._getIfBlackList(browserContractService?.getSigner.address)
       console.log('%c [ isBlack ]-45', 'font-size:13px; background:#fde876; color:#ffffba;', isBlack)
@@ -47,10 +50,10 @@ const PersonalCenter = () => {
       if (isBlack)
         message.error('You must be not black list to continue processing your order')
 
-      if (!isBlack && !isOrderCreated)
+      if (!isBlack && orderCanCreatedAgain)
         navigate('/apply-loan')
       else
-        message.warning('order cant not repetition create')
+        message.warning(`order cant not repetition create :${orderCanCreatedAgain}`)
     }
     catch (error) {
       message.error('Error: order status error')

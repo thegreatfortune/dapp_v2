@@ -244,6 +244,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                 </div>
                 <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
 
+                {/* // TODO 用户创建的才能看 */}
                 {
                   item.name !== 'USDC'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>

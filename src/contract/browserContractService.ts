@@ -1,7 +1,7 @@
 import { Contract, ethers } from 'ethers'
 import { message, notification } from 'antd'
 import BigNumber from 'bignumber.js'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, LocalCapitalPool, LocalERC20, LocalRefundPool, ProcessCenter, UniswapV3 } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, FollowRouter, LocalCapitalPool, LocalERC20, LocalRefundPool, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import LocalCapitalPool_ABI from '@/abis/LocalCapitalPool.json'
@@ -12,6 +12,7 @@ import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import FollowMarket_ABI from '@/abis/FollowMarket.json'
+import FollowRouter_ABI from '@/abis/FollowRouter.json'
 import LocalERC20_ABI from '@/abis/LocalERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
@@ -19,6 +20,7 @@ import ERC3525_ABI from '@/abis/ERC3525.json'
 import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
+import { tokenList } from '@/pages/loan/loan-details/components/tradingPairTokenMap'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -267,6 +269,20 @@ export class BrowserContractService {
     )
   }
 
+  /**
+   * FollowRouter
+   *
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getFollowRouterContract() {
+    return createContract<FollowRouter>(
+      import.meta.env.VITE_FOLLOW_ROUTER_ADDRESS,
+      FollowRouter_ABI,
+      this.signer,
+    )
+  }
+
   async getCapitalPoolContract(cp?: string) {
     const capitalPoolAddress = cp ?? await this.getCapitalPoolAddress()
 
@@ -496,6 +512,25 @@ export class BrowserContractService {
   }
 
   /**
+   * 检查订单是否可再次创建
+   *
+   * @return {*}  {Promise<boolean>}
+   * @memberof BrowserContractService
+   */
+  async checkOrderCanCreateAgain(): Promise<boolean> {
+    const followFactoryContract = await this.getFollowFactoryContract()
+
+    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+
+    if (cp === BLACK_HOLE_ADDRESS)
+      return true
+
+    const processCenterContract = await this.getProcessCenterContract()
+
+    return processCenterContract?.getIfAgainCreateOrder(this.getSigner.address)
+  }
+
+  /**
    * 得到当前资金池的订单创建状态(用于判断用户当前是否可以再创建订单)
    *
    * @return {*}  {Promise<boolean>} false可重新创建订单
@@ -512,6 +547,32 @@ export class BrowserContractService {
     const contract = await this.getProcessCenterContract()
     return contract.getOrderCreateState(cp)
   }
+
+  /**
+   * 检查资金池和还款池的创建
+   *
+   * @param {FollowRouter} [contract]
+   * @return {*}  {Promise<[boolean, boolean]>}
+   * @memberof BrowserContractService
+   */
+  async checkPoolCreateState(contract?: FollowRouter): Promise<[capitalPoolState: boolean, refundPoolState: boolean]> {
+    const followRouterContract = contract ?? (await this.getFollowRouterContract())
+
+    const capitalPoolState = await followRouterContract.getCreateCapitalState(this.getSigner.address)
+
+    if (!capitalPoolState)
+      return [capitalPoolState, false]
+
+    // const cp = await this.getCapitalPoolAddress()
+
+    const refundPoolState = await followRouterContract.getCreateRefundState(this.getSigner.address)
+
+    return [capitalPoolState, refundPoolState]
+  }
+
+  // async checkOrderStateIsCreateAgain() {
+
+  // }
 
   /**
    * 检查最新订单的状态
@@ -581,6 +642,23 @@ export class BrowserContractService {
         console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
       }
     }
+  }
+
+  /**
+   * 获取HIndex
+   *
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async getHIndex() {
+    const followManageContract = await this.getFollowManageContract()
+
+    const handles = await followManageContract.getAllAllowHandle()
+
+    const c = await this.getFollowHandleContract()
+    const a = await c.getAddress()
+
+    return handles.findIndex(handle => handle === a)
   }
 
   // async quote() {
@@ -863,6 +941,18 @@ export class BrowserContractService {
   }
 
   /**
+   * 创建资金池和还款池
+   *
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async followRouter_createPool() {
+    const followRouterContract = await this.getFollowRouterContract()
+    const res = await followRouterContract.createPool(this.getSigner.address)
+    return handleTransaction(res)
+  }
+
+  /**
    *创建订单
    *
    * @param {LoanRequisitionEditModel} model
@@ -870,31 +960,21 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_createOrder(model: LoanRequisitionEditModel) {
-    const capitalPoolContract = await this.getCapitalPoolContract()
+    const followRouterContract = await this.getFollowRouterContract()
+
+    const cp = await this.getCapitalPoolAddress()
 
     if (LocalEnv) {
-      const cp = await capitalPoolContract?.getAddress()
+      const res = await followRouterContract.setCapitalPool(cp, [import.meta.env.VITE_USDC_TOKEN, import.meta.env.VITE_ERC3525_ADDRESS, import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS])
+      const result = await handleTransaction(res)
 
-      if (!cp)
-        return
-
-      const localCapitalPoolContract = createContract<LocalCapitalPool>(
-        cp,
-        LocalCapitalPool_ABI,
-        this.signer,
-      )
-
-      const t1 = await localCapitalPoolContract.set([import.meta.env.VITE_USDC_TOKEN, import.meta.env.VITE_ERC3525_ADDRESS, import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, this.getSigner.address])
-      const res = await handleTransaction(t1, 'Authorization succeeds', 'Authorization failed')
-      if (res?.status !== 1) {
-        console.log('%c [ Authorization failed: ]-544', 'font-size:13px; background:#70a4ad; color:#b4e8f1;', res)
+      if (result?.status !== 1) {
+        console.log('%c [ Authorization failed: ]-544', 'font-size:13px; background:#70a4ad; color:#b4e8f1;', result)
         throw new Error('Authorization failed')
       }
     }
 
-    console.log('%c [ model ]-869', 'font-size:13px; background:#06a95c; color:#4aeda0;', model)
-
-    const transaction = await capitalPoolContract?.createOrder(
+    const transaction = await followRouterContract?.borrowerCreateOrder(
       BigInt(model.cycle),
       BigInt(model.period!),
       [
@@ -904,7 +984,7 @@ export class BrowserContractService {
         BigInt(model.minimumRequiredCopies ?? 0),
       ],
       BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
-      BigInt(model.applyLoan!) * BigInt(10 ** 18),
+      BigInt(model.applyLoan!) * BigInt(10 ** 18), // TODO: decimals token标志位
       model.imageUrl!,
       model.itemTitle!,
     )
@@ -922,7 +1002,7 @@ export class BrowserContractService {
         tradingPlatformType: model.tradingPlatformType,
       }
 
-      const cp = await capitalPoolContract?.getAddress()
+      // const cp = await capitalPoolContract?.getAddress()
 
       const followManageContract
         = await this.getFollowManageContract()
@@ -947,14 +1027,15 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_lend(copies: bigint, tradeId: bigint) {
-    console.log('%c [ copies ]-916', 'font-size:13px; background:#79db0c; color:#bdff50;', copies)
-    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
-    console.log('%c [ capitalPoolAddress ]-917', 'font-size:13px; background:#f78da8; color:#ffd1ec;', capitalPoolAddress)
+    const followRouterContract = await this.getFollowRouterContract()
 
-    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
-    console.log('%c [ capitalPoolContract ]-920', 'font-size:13px; background:#bee4ed; color:#ffffff;', capitalPoolContract)
+    const approveState = await this.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_USDC_TOKEN, await followRouterContract.getAddress())
 
-    const transaction = await capitalPoolContract?.lend(copies, tradeId)
+    if (!approveState)
+      throw new Error('Authorization failed')
+
+    const transaction = await followRouterContract.lendMoney(tradeId, copies)
+
     return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
   }
 
@@ -981,6 +1062,7 @@ export class BrowserContractService {
   // }
 
   /**
+   * @deprecated
    * 资金池授权handle
    *
    * @param {bigint} tradeId
@@ -997,7 +1079,10 @@ export class BrowserContractService {
 
     const approveState = await processCenterContract.checkERC20Allowance(token, capitalPoolAddress, spender, amount)
     if (!approveState) {
-      const transaction = await capitalPoolContract?.approveHandle(token, import.meta.env.VITE_FOLLOW_HANDLE_ADDRESS)
+      const index = tokenList.findIndex(t => t.address === token)
+      const hIndex = await this.getHIndex()
+
+      const transaction = await capitalPoolContract?.approveHandle(BigInt(index), BigInt(hIndex), amount)
       const res = await handleTransaction(transaction)
       return res?.status === 1
     }
@@ -1076,7 +1161,7 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async capitalPool_repay(tradeId: bigint) {
+  async followRouter_doRepay(tradeId: bigint) {
     const approve = await this.ERC20_capitalPool_approve(tradeId)
 
     if (!approve) {
@@ -1084,15 +1169,21 @@ export class BrowserContractService {
       throw new Error('approve is error')
     }
 
-    const cp = await this.getCapitalPoolAddress(tradeId)
+    const followRouterContract = await this.getFollowRouterContract()
 
-    const capitalPoolContract = await this.getCapitalPoolContract(cp)
-
-    // const getList = await capitalPoolContract?.getList(tradeId)
-
-    const transaction = await capitalPoolContract?.repay(tradeId)
+    const transaction = await followRouterContract.doRepay(tradeId)
 
     return handleTransaction(transaction)
+
+    // const cp = await this.getCapitalPoolAddress(tradeId)
+
+    // const capitalPoolContract = await this.getCapitalPoolContract(cp)
+
+    // // const getList = await capitalPoolContract?.getList(tradeId)
+
+    // const transaction = await capitalPoolContract?.repay(tradeId)
+
+    // return handleTransaction(transaction)
   }
 
   async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<string> {
@@ -1110,27 +1201,49 @@ export class BrowserContractService {
     return ratio
   }
 
-  async capitalPool_newApproveHandle(tradeId: bigint, token: string, spender: string, amount: bigint, tokenIndex: bigint) {
-    const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
+  /**
+   * @deprecated
+   *
+   * @param {bigint} tradeId
+   * @param {string} token
+   * @param {string} spender
+   * @param {bigint} amount
+   * @param {bigint} tokenIndex
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  // async capitalPool_newApproveHandle(tradeId: bigint, token: string, spender: string, amount: bigint, tokenIndex: bigint) {
+  //   const capitalPoolAddress = await this.getCapitalPoolAddress(tradeId)
 
-    const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
+  //   const capitalPoolContract = await this.getCapitalPoolContract(capitalPoolAddress)
 
-    const processCenterContract = await this.getProcessCenterContract()
+  //   const processCenterContract = await this.getProcessCenterContract()
 
-    const approveState = await processCenterContract.checkERC20Allowance(token, capitalPoolAddress, spender, amount)
-    if (!approveState) {
-      const followManageContract = await this.getFollowManageContract()
+  //   const approveState = await processCenterContract.checkERC20Allowance(token, capitalPoolAddress, spender, amount)
+  //   if (!approveState) {
+  //     const followManageContract = await this.getFollowManageContract()
 
-      const handles = await followManageContract.getAllAllowHandle()
+  //     const handles = await followManageContract.getAllAllowHandle()
 
-      const hIndex = await handles.findIndex(handle => handle === spender)
-      console.log('%c [ hIndex ]-1136', 'font-size:13px; background:#b42fbb; color:#f873ff;', hIndex)
+  //     const hIndex = await handles.findIndex(handle => handle === spender)
+  //     console.log('%c [ hIndex ]-1136', 'font-size:13px; background:#b42fbb; color:#f873ff;', hIndex)
 
-      const transaction = await capitalPoolContract?.approveHandle(tokenIndex, BigInt(hIndex))
-      const res = await handleTransaction(transaction)
-      return res?.status === 1
-    }
-    return true
+  //     const transaction = await capitalPoolContract?.approveHandle(tokenIndex, BigInt(hIndex))
+  //     const res = await handleTransaction(transaction)
+  //     return res?.status === 1
+  //   }
+  //   return true
+  // }
+
+  async followRouter_doV3Swap(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+    const followRouterContract = await this.getFollowRouterContract()
+
+    const tIndex = tokenList.findIndex(e => e.address === swapToken)
+
+    const hIndex = await this.getHIndex()
+
+    const res = await followRouterContract.doV3Swap(tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
+    return handleTransaction(res)
   }
 
   /**
@@ -1144,23 +1257,23 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
-  async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
-    const contract = await this.getFollowHandleContract()
+  // async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+  //   const contract = await this.getFollowHandleContract()
 
-    // const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
-    const res = await this.capitalPool_newApproveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount, buyOrSell)
+  //   // const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
+  //   const res = await this.capitalPool_newApproveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount, buyOrSell)
 
-    if (!res) {
-      message.error('approveHandle is error')
-      throw new Error('approveHandle is error')
-    }
+  //   if (!res) {
+  //     message.error('approveHandle is error')
+  //     throw new Error('approveHandle is error')
+  //   }
 
-    // const cp = await this.getCapitalPoolAddress(tradeId)
+  //   // const cp = await this.getCapitalPoolAddress(tradeId)
 
-    const transaction = await contract.swapERC20(tradeId, swapToken, buyOrSell, amount, fee)
+  //   const transaction = await contract.swapERC20(tradeId, swapToken, buyOrSell, amount, fee)
 
-    return handleTransaction(transaction)
-  }
+  //   return handleTransaction(transaction)
+  // }
 
   /**
    * 贷款人提取最后清算的资金+还款资金+分红资金(订单结束时间10天后才可提取) 非订单发起人
@@ -1256,6 +1369,15 @@ export class BrowserContractService {
 
   //   return handleTransaction(transaction)
   // }
+
+  /**
+   *  退款
+   */
+  async followRouter_refundMoney(tradeId: bigint) {
+    const contract = await this.getFollowRouterContract()
+    const res = await contract.refundMoney(tradeId)
+    return handleTransaction(res)
+  }
 
   /**
    * 供应

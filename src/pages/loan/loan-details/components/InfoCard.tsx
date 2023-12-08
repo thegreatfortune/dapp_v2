@@ -16,35 +16,31 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
   const navigate = useNavigate()
 
   return (
-        <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
-            {/* <img
-                src=''
-                alt=''
-                className="h-232 w-266 rounded-16 object-cover"
-            /> */}
-            {
-              item.picUrl && <Image className='h100 w100' src={item.picUrl} />
-            }
+    <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-10">
+      <Image width={300} height={271} src={item.picUrl} />
 
-            <div className='text-left'>
-                <div className='h11 w-full'></div>
+      <div className='text-left'>
+        <div className='h11 w-full'></div>
 
-                <div className='flex justify-between'>
-                    <ul className='m0 flex flex-col list-none gap-8 p0'>
-                        <li className='h18 flex flex-col text-14 c-#999999'>
-                            bu.d1
-                        </li>
-                        <li className='h29 text-16 c-#FFFFFF'>
-                            @aaa
-                        </li>
-                        <li>
-                          100
-                        </li>
-                    </ul>
-
-                </div>
+        <div className='flex justify-between'>
+          <ul className='m0 flex flex-col list-none gap-x-6 p0'>
+            <li className='text-21'>
+              bu.darmani1
+            </li>
+            <li className='h29 text-16 c-#43465C'>
+              @bu.darmani1
+            </li>
+            <li className='mt16'>
+            <div>
+            <span className='text-20 c-#999999'>Credit score</span>
+            <span className='ml-10 text-24'>10000</span>
             </div>
+            </li>
+          </ul>
+
         </div>
+      </div>
+    </div>
   )
 }
 

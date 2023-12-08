@@ -164,6 +164,10 @@ const LoanDetails = () => {
     try {
       console.log('%c [ activeUser.id === loanInfo.userId ]-215', 'font-size:13px; background:#177acd; color:#5bbeff;', activeUser.id, loanInfo.userId)
 
+      // TODO
+      if (prePage === 'my-lend' && loanInfo.state === 'PaidOff')
+        return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
+
       if (activeUser.id === loanInfo.userId) {
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
       }
@@ -199,18 +203,17 @@ const LoanDetails = () => {
 
       const followManageContract = await browserContractService?.getFollowManageContract()
 
-      const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+      // const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
 
-      console.log('%c [ cp ]-60', 'font-size:13px; background:#8ef2e0; color:#d2ffff;', cp)
+      // console.log('%c [ cp ]-60', 'font-size:13px; background:#8ef2e0; color:#d2ffff;', cp)
 
-      if (!cp)
-        return
+      // if (!cp)
+      //   return
 
       // const amount = ethers.parseEther(BigNumber(loanInfo.loanMoney ?? 0).minus(loanInfo.goalCopies ?? 0).times(copies).toString())
       // console.log('%c [asasa amount ]-210', 'font-size:13px; background:#5d338d; color:#a177d1;', amount)
 
-      const approveState = await browserContractService.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_USDC_TOKEN, cp)
-      console.log('%c [55 approveState ]-216', 'font-size:13px; background:#2d89c2; color:#71cdff;', approveState)
+      // console.log('%c [55 approveState ]-216', 'font-size:13px; background:#2d89c2; color:#71cdff;', approveState)
 
       // const amount = await processContract.getLendStakeMoney(tradeId, BigInt(copies))
 
@@ -219,8 +222,8 @@ const LoanDetails = () => {
       // const approveState = await browserContractService.ERC20_approve(browserContractService?.getSigner.address, cp, amount, import.meta.env.VITE_USDC_TOKEN)
       // console.log('%c [sas approveState ]-213', 'font-size:13px; background:#a01e3a; color:#e4627e;', approveState)
 
-      if (!approveState)
-        return
+      // if (!approveState)
+      //   return
 
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
@@ -314,7 +317,9 @@ const LoanDetails = () => {
     <div className='flex'>
       <InfoCard item={loanInfo} />
 
-      <div className='ml-32 h419 w1048'>
+      <div className="w-32"></div>
+
+      <div className='h419 w1048'>
 
         <div className='flex justify-between'>
           <div>
@@ -322,25 +327,25 @@ const LoanDetails = () => {
 
               {loanInfo.state === 'Following'
                 ? <div>
-                  <Button className='mr-33 bg-#2d9b31' type='primary'>{loanInfo.state}</Button>
-                  <span> follow end time {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
+                  <div className='mr-33 h33 min-w110 rounded-4 bg-#2d9b31 p-x-20 py-12' >{loanInfo.state}</div>
+                  <span> {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
                 </div>
                 : <div>
-                  <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
+                  <div className='mr-33 h33 min-w110 rounded-4 bg-#035ff6 p-x-20 py-12' >{loanInfo.state}</div>
 
                   {/* {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
                   +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
                   +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span> */}
                 </div>}
 
-                {
-                  loanInfo.state !== 'Invalid'
-                   && <span>
-                    {(prePage === 'loan' || prePage === 'lend')
-                   && <IncomeCalculation tradeId={ tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
-                 }
-                   </span>
-                }
+              {
+                loanInfo.state !== 'Invalid'
+                && <span>
+                  {(prePage === 'loan' || prePage === 'lend')
+                    && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                  }
+                </span>
+              }
 
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>

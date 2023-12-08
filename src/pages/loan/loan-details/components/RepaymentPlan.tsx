@@ -113,7 +113,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       // else
       if (currentItem.state === 'OVERDUE_ARREARS') {
         console.log('%c [ capitalPool_repay ]-115', 'font-size:13px; background:#8da9a4; color:#d1ede8;')
-        await browserContractService?.capitalPool_repay(tradeId)
+        await browserContractService?.followRouter_doRepay(tradeId)
       }
       else {
         console.log('%c [ Clearing ]-120', 'font-size:13px; background:#4857e6; color:#8c9bff;')
