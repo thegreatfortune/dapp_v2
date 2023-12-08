@@ -18,7 +18,7 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
   const responseData: IResponse<any> = response.data
 
   if (response.status !== 200) {
-    message.error(`${response.status}: ${response.statusText}` || '请求失败，请重试')
+    message.error(`${response.status}: ${response.statusText}` || 'The request failed. Please try again')
     throw responseData.data
   }
 
@@ -26,7 +26,7 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
     if (responseData.code === HttpCode.RETRY)
       return response
 
-    message.error(`${responseData.code}: ${responseData.message}` || '请求失败，请重试')
+    message.error(`${responseData.code}: ${responseData.message}` || 'The request failed. Please try again')
     throw new Error(`${responseData.code}: ${responseData.message}`)
   }
 

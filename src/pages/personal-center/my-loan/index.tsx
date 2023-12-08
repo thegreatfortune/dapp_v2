@@ -21,8 +21,8 @@ const MyLoan = () => {
   const [page, setPage] = useState(0)
 
   const loadMoreData = async () => {
-    if (loading)
-      return
+    // if (loading)
+    //   return
 
     setLoading(true)
 
@@ -86,7 +86,7 @@ const MyLoan = () => {
           grid={{ gutter: 16, column: 4 }}
             dataSource={loanOrderVOList}
             renderItem={item => (
-              <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&userId=${item.userId}&tradeId=${item.tradeId}`)}>
+              <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
                 <TransparentCard item={item} btnText='Repayment' >
                 <Button className='h30 w-110 primary-btn' >Extract</Button>
               </TransparentCard>

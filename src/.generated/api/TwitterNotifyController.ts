@@ -10,7 +10,7 @@ export class TwitterNotifyControllerService {
     params: Models.OauthCallbackTwitterGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Record<string, any>>({
+    return request<Models.RedirectView>({
       url: '/oauth/callback/twitter',
       method: 'GET',
       params: {

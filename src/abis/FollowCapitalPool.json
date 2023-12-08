@@ -92,6 +92,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "NotInitialize",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "NotLend",
 		"type": "error"
 	},
@@ -127,12 +132,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "TokenBalanceZero",
+		"name": "TokenError",
 		"type": "error"
 	},
 	{
 		"inputs": [],
-		"name": "TokenError",
+		"name": "ZeroAddress",
 		"type": "error"
 	},
 	{
@@ -392,14 +397,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "indexToken",
+				"type": "uint256"
 			},
 			{
-				"internalType": "address",
-				"name": "handleAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "indexHandle",
+				"type": "uint256"
 			}
 		],
 		"name": "approveHandle",

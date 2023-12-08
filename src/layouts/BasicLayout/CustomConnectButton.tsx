@@ -11,6 +11,32 @@ const CustomConnectButton = () => {
   const { signIn } = useUserStore()
 
   if (!window.ethereum._accountsChangedHandler) {
+    // window.ethereum._accountsChangedHandler = async (addressList: string[]) => {
+    //   const [address] = addressList
+    //   console.log('%c [ address ]-16', 'font-size:13px; background:#e13859; color:#ff7c9d;', address)
+
+    //   if (address) {
+    //     try {
+    //       const res = await UserService.ApiUserLogin_POST({ address })
+
+    //       if (res.success)
+    //         signIn({ address, accessToken: res.accessToken })
+
+    //       const user = await UserService.ApiUserUserInfo_GET()
+    //       console.log('%c [ user ]-26', 'font-size:13px; background:#2a08d1; color:#6e4cff;', user)
+
+    //       signIn({ accessToken: res.accessToken, id: user.userId, ...user })
+
+    //       resetProvider()
+
+    //       window.location.reload()
+    //     }
+    //     catch (error) {
+    //       console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
+    //     }
+    //   }
+    // }
+
     window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
       const [address] = addressList
       console.log('%c [ address ]-16', 'font-size:13px; background:#e13859; color:#ff7c9d;', address)
@@ -28,13 +54,12 @@ const CustomConnectButton = () => {
           signIn({ accessToken: res.accessToken, id: user.userId, ...user })
 
           resetProvider()
+          window.location.reload()
         }
         catch (error) {
           console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
         }
       }
-
-      window.location.reload()
     }, 1000)
   }
 
@@ -74,7 +99,12 @@ const CustomConnectButton = () => {
           {(() => {
             if (!connected) {
               return (
+<<<<<<< HEAD
                 <button onClick={openConnectModal} type="button" className='h60 w180 b-rd-8 primary-btn' >
+=======
+
+                <button onClick={openConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
+>>>>>>> master
                   Connect Wallet
                 </button>
               )

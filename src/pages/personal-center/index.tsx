@@ -72,7 +72,13 @@ const PersonalCenter = () => {
             <div className='absolute float-right m-a ml-394 mt-96 h-23 w-104 b-rd-15px bg-#333A81 text-center text-10 font-400 lh-23 c-#4959EE opacity-100'> 0xf34cc...6fefa</div>
           </div>
 
+<<<<<<< HEAD
         </div>
+=======
+      <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState}>
+        Apply for a loan666
+      </Button>
+>>>>>>> master
 
         <div className='w-496 flex justify-between'>
           <Button loading={loading}

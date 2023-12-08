@@ -18,11 +18,10 @@ const ShellModal: React.FC<IProps> = (props) => {
 
   const [price, setPrice] = useState<string | undefined>()
   const [amount, setAmount] = useState<string | undefined>()
-  const [total, setTotal] = useState<bigint | undefined>() // New state for total
+  const [total, setTotal] = useState<bigint | undefined>()
   const [loadingState, setLoadingState] = useState<LoadingState>(LoadingState.Initial)
 
   const handleNumericInputChange = (value: string | undefined, setter: React.Dispatch<React.SetStateAction<string | undefined>>) => {
-    // Remove non-numeric characters using a regular expression
     const numericValue = value?.replace(/[^0-9]/g, '')
     setter(numericValue)
   }
@@ -35,7 +34,6 @@ const ShellModal: React.FC<IProps> = (props) => {
       setLoadingState(LoadingState.Processing)
 
       const res = await browserContractService?.followMarketContract_saleERC3525(props.tradeId, BigInt(price), BigInt(amount))
-      console.log('%c [ followMarketContract_saleERC3525 ]-38', 'font-size:13px; background:#5c25de; color:#a069ff;', res)
       if (res?.status !== 1) {
         message.error('Error during confirm')
         throw new Error('Error during confirm')
@@ -45,13 +43,13 @@ const ShellModal: React.FC<IProps> = (props) => {
     }
     catch (error) {
       setLoadingState(LoadingState.Initial)
+
       message.error('Error during confirm')
       console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
     }
   }
 
   useEffect(() => {
-    // Calculate total whenever amount or price changes
     if (amount !== undefined && price !== undefined)
       setTotal(BigInt(amount ?? 0) * BigInt(price ?? 0))
   }, [amount, price])
@@ -61,6 +59,7 @@ const ShellModal: React.FC<IProps> = (props) => {
       case LoadingState.Initial:
         return (
           <div>
+          loadingState:  {loadingState}
             <div>
               Sell Quantity
               <Input

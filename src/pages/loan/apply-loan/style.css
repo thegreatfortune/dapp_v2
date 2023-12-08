@@ -1,14 +1,18 @@
 .ant-select-selection-item {
-    font-size: 6rem; 
+    font-size: 14px; 
   }
 
   .ant-select-item-option-content {
-    font-size: 24px;
+    font-size: 14px;
   }
 
+  /* .ant-select-selection-overflow-item{
+    width: 120px;
+  } */
+
   .ant-select-selection-item {
-    padding-left: 30px !important;
-    padding-right: 30px !important;
+    padding-left: 16px !important;
+    padding-right: 20px !important;
   }
 
 .ant-select-selector {
@@ -17,7 +21,7 @@
 
 .ant-input-number {
     background-color: #171822;
-    font-size: 6rem;
+    font-size: 14px;
 }
 
    .ant-select-selection-search {

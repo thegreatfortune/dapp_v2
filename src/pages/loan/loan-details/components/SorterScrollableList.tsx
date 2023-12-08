@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Checkbox } from 'antd'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
+import { orderBy } from 'lodash-es'
+import dayjs from 'dayjs'
 import { Models } from '@/.generated/api/models'
 import type { IColumn } from '@/pages/components/ScrollabletList'
 import ScrollableList from '@/pages/components/ScrollabletList'
@@ -19,48 +21,37 @@ const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeI
 
   const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, state: 'ToBeTraded', orderItemList: encodeURIComponent(JSON.stringify([orderItem])), tradeId, loanId: undefined, marketId: undefined })
 
-  enum SortDirection {
-    DESCENDING = 'desc',
-    ASCENDING = 'asc',
-    ORIGINAL = 'original',
-  }
-
   const quantitySorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
-    let sortedData: Models.TokenMarketVo[]
+    let sortDirection
 
-    switch (imageIndex as unknown as SortDirection) {
-      case SortDirection.DESCENDING:
-        sortedData = data.sort((a, b) => b.remainingQuantity! - a.remainingQuantity!)
-        break
-      case SortDirection.ASCENDING:
-        sortedData = data.sort((a, b) => a.remainingQuantity! - b.remainingQuantity!)
-        break
-      case SortDirection.ORIGINAL:
-      default:
-        sortedData = [...data]
-        break
-    }
+    imageIndex === 0 && (sortDirection = 'asc')
+    imageIndex === 1 && (sortDirection = 'desc')
 
-    return sortedData
+    if (!sortDirection)
+      return data
+
+    return orderBy(
+      data,
+      ['remainingQuantity'],
+      [sortDirection as any],
+    )
   }
 
   const totalPriceSorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
-    let sortedData: Models.TokenMarketVo[]
+    console.log('%c [ imageIndex ]-46', 'font-size:13px; background:#6280e8; color:#a6c4ff;', imageIndex)
+    let sortDirection
 
-    switch (imageIndex as unknown as SortDirection) {
-      case SortDirection.DESCENDING:
-        sortedData = data.sort((a, b) => Number.parseFloat(b.price !) - Number.parseFloat(a.price!))
-        break
-      case SortDirection.ASCENDING:
-        sortedData = data.sort((a, b) => Number.parseFloat(a.price!) - Number.parseFloat(b.price!))
-        break
-      case SortDirection.ORIGINAL:
-      default:
-        sortedData = [...data]
-        break
-    }
+    imageIndex === 0 && (sortDirection = 'asc')
+    imageIndex === 1 && (sortDirection = 'desc')
 
-    return sortedData
+    if (!sortDirection)
+      return data
+
+    return orderBy(
+      data,
+      ['price'],
+      [sortDirection as any],
+    )
   }
 
   function onColumnCheckboxChange(state: CheckboxChangeEvent, originalData: Models.TokenMarketVo[], columnRenderCallback: (data: Models.TokenMarketVo[], resetData?: boolean) => void) {
@@ -98,6 +89,9 @@ const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeI
   {
     title: 'TIME',
     key: '4',
+    // render(item) {
+    //   return <span>{dayjs(item.depositeTime).format('YYYY-MM-DD mm:ss')}</span>
+    // },
   },
   {
     title: 'My pending order',

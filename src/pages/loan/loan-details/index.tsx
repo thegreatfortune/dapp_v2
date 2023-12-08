@@ -3,14 +3,13 @@ import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Tabs, message } from 'antd'
 import BigNumber from 'bignumber.js'
-
-// import { ethers } from 'ethers'
 import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import DesignatedPosition from './components/DesignatedPosition'
 import RoomTrade from './components/RoomTrade'
 import OperationRecord from './components/OperationRecord'
+import IncomeCalculation from './components/IncomeCalculation'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -18,19 +17,11 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import ShellModal from '@/pages/loan/loan-details/components/ShellModal'
 
-class MoneyInclude {
-  principal: number = 0// 本金
-  interest: number = 0 // 利息
-  dividend: number = 0 // 分红
-}
-
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
 
   const prePage = searchParams.get('prePage')
-
-  const userId = searchParams.get('userId')
 
   const navigate = useNavigate()
 
@@ -60,41 +51,6 @@ const LoanDetails = () => {
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [activeKey, setActiveKey] = useState('1')
-
-  const [moneyInclude, setMoneyInclude] = useState<MoneyInclude>(new MoneyInclude())
-
-  const [principalAndInterest, setPrincipalAndInterest] = useState<string>('0')
-
-  useEffect(() => {
-    async function fetchData() {
-      if (tradeId && Number(tradeId) >= 0) {
-        const processCenterContract = await browserContractService?.getProcessCenterContract()
-
-        const interest = searchParams.get('interest')
-        console.log('%c [ interest ]-69', 'font-size:13px; background:#519667; color:#95daab;', interest)
-        const collectCopies = searchParams.get('collectCopies')
-
-        if (collectCopies === null || interest === null)
-          return
-
-        console.log('%c [ BigInt(Number(interest) / 100) ]-76', 'font-size:13px; background:#7f1b7e; color:#c35fc2;', BigInt(Number(interest) / 100))
-        console.log('%c [ BigInt(collectCopies) ]-77', 'font-size:13px; background:#ef5e74; color:#ffa2b8;', BigInt(collectCopies))
-        const principalAndInterest = await processCenterContract?._getMoney(BigInt(Number(interest) / 100), BigInt(collectCopies))
-        console.log('%c [ principalAndInterest ]-76', 'font-size:13px; background:#0e2d38; color:#52717c;', principalAndInterest)
-
-        setPrincipalAndInterest(String(principalAndInterest ?? 0))
-        // const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
-
-        // if (!tokenId)
-        //   throw new Error('tokenId is undefined')
-
-        // const dividend = await processCenterContract?.getShareProfit(tokenId)
-      }
-    }
-
-    if (prePage === 'lend')
-      fetchData()
-  }, [prePage])
 
   useEffect(() => {
     if (prePage === 'trade')
@@ -184,7 +140,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Designated Position',
-      children: <DesignatedPosition userId={userId} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <DesignatedPosition loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} loanMoney={loanInfo.loanMoney ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -239,7 +195,7 @@ const LoanDetails = () => {
       if (!browserContractService?.getSigner.address)
         return
 
-      const ERC20Contract = await browserContractService?.getERC20Contract()
+      // const ERC20Contract = await browserContractService?.getERC20Contract()
 
       const followManageContract = await browserContractService?.getFollowManageContract()
 
@@ -250,22 +206,21 @@ const LoanDetails = () => {
       if (!cp)
         return
 
-      const allowance = await ERC20Contract?.allowance(cp, browserContractService?.getSigner.address)
-      console.log('%c [ allowance ]-67', 'font-size:13px; background:#ffc377; color:#ffffbb;', allowance)
+      // const amount = ethers.parseEther(BigNumber(loanInfo.loanMoney ?? 0).minus(loanInfo.goalCopies ?? 0).times(copies).toString())
+      // console.log('%c [asasa amount ]-210', 'font-size:13px; background:#5d338d; color:#a177d1;', amount)
 
-      if ((allowance ?? BigInt(0)) <= BigInt(0)) {
-        const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
-        if (!approveRes)
-          return
+      const approveState = await browserContractService.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_USDC_TOKEN, cp)
+      console.log('%c [55 approveState ]-216', 'font-size:13px; background:#2d89c2; color:#71cdff;', approveState)
 
-        const approveResult = await approveRes?.wait()
+      // const amount = await processContract.getLendStakeMoney(tradeId, BigInt(copies))
 
-        if (approveResult?.status !== 1) {
-          message.error('operation failure')
-          setLendState(undefined)
-          return
-        }
-      }
+      // // const approveState = await processContract.checkERC20Allowance(import.meta.env.VITE_USDC_TOKEN, browserContractService?.getSigner.address, cp, amount)
+
+      // const approveState = await browserContractService.ERC20_approve(browserContractService?.getSigner.address, cp, amount, import.meta.env.VITE_USDC_TOKEN)
+      // console.log('%c [sas approveState ]-213', 'font-size:13px; background:#a01e3a; color:#e4627e;', approveState)
+
+      if (!approveState)
+        return
 
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
@@ -357,7 +312,7 @@ const LoanDetails = () => {
     </SModal>
 
     <div className='flex'>
-      <InfoCard />
+      <InfoCard item={loanInfo} />
 
       <div className='ml-32 h419 w1048'>
 
@@ -372,10 +327,21 @@ const LoanDetails = () => {
                 </div>
                 : <div>
                   <Button className='mr-33' type='primary'>{loanInfo.state}</Button>
-                  {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
+
+                  {/* {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
                   +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
-                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span>
+                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span> */}
                 </div>}
+
+                {
+                  loanInfo.state !== 'Invalid'
+                   && <span>
+                    {(prePage === 'loan' || prePage === 'lend')
+                   && <IncomeCalculation tradeId={ tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                 }
+                   </span>
+                }
+
             </div>
             <div className='mb20 mt30'> {loanInfo.loanName}</div>
 
@@ -400,8 +366,8 @@ const LoanDetails = () => {
 
           <ul className='m0 list-none p0'>
             <li>Apply for loan </li>
-            <li>{ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))}</li>
-            <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toString()}</li>
+            <li>{BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
+            <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li>
             <li>USDC</li>
           </ul>
 

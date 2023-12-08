@@ -28,7 +28,7 @@ export class FileService {
       }
     });
 
-    return request<Models.SimpleFileVo>({
+    return request<string>({
       url: '/api/file/upload',
       method: 'POST',
       data: formData,

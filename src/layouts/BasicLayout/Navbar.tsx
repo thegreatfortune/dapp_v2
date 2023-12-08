@@ -38,8 +38,12 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
+<<<<<<< HEAD
         <nav className="h120 w-full flex items-center justify-around theme-color text-white" id='navBar'>
 
+=======
+        <nav className="h140 w-full flex items-center text-white" id='navBar'>
+>>>>>>> master
             <div className="flex items-center text-center">
                 <Avatar src={logo} className="mx5 h47 w47"></Avatar>
                 <div className="text-30 font-900">LOGO</div>
