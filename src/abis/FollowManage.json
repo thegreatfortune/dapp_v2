@@ -43,6 +43,16 @@
 	},
 	{
 		"inputs": [],
+		"name": "RouterAddressError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "ZeroAddress",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "refundNotCreate",
 		"type": "error"
 	},
@@ -63,25 +73,6 @@
 			}
 		],
 		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			}
-		],
-		"name": "_createOrder",
 		"type": "event"
 	},
 	{
@@ -121,43 +112,6 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "partAmount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "lendTime",
-				"type": "uint256"
-			}
-		],
-		"name": "lendEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
 				"name": "touchUser",
 				"type": "address"
 			},
@@ -181,37 +135,6 @@
 			}
 		],
 		"name": "multiClearEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "repayEvent",
 		"type": "event"
 	},
 	{
@@ -289,83 +212,6 @@
 		"type": "event"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "repayWithdrawTime",
-				"type": "uint256"
-			}
-		],
-		"name": "wthdrawRefundEvent",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			}
-		],
-		"name": "_createOrderEvent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "partAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "_lendEvent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -384,34 +230,6 @@
 			}
 		],
 		"name": "_multiClearEvent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "money",
-				"type": "uint256"
-			}
-		],
-		"name": "_repayEvent",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -440,34 +258,6 @@
 			}
 		],
 		"name": "_singleClearEvent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "refundMoney",
-				"type": "uint256"
-			}
-		],
-		"name": "_withdrawRefundEvent",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -578,6 +368,19 @@
 	{
 		"inputs": [],
 		"name": "getFeeAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getFollowRouter",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -782,6 +585,19 @@
 			}
 		],
 		"name": "setFeeAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_followRouter",
+				"type": "address"
+			}
+		],
+		"name": "setFollowRouter",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

@@ -48,7 +48,7 @@ const Test = () => {
   }
 
   async function capitalPool_Repay() {
-    const res = await browserContractService?.capitalPool_repay(tradeId)
+    const res = await browserContractService?.followRouter_doRepay(tradeId)
     console.log('%c [ res ]-34', 'font-size:13px; background:#2720d2; color:#6b64ff;', res)
   }
 

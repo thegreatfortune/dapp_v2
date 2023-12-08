@@ -40,10 +40,19 @@ function Countdown(props: Props) {
   }, [props.targetTimestamp])
 
   return (
-    <div>
-      距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
-      {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。
-    </div>
+    <span >
+      {/* 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
+      {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。 */}
+
+      <span >
+        follow end time day
+      </span>
+
+      <span className='text-16 c-#FDB600'>
+        {timeRemaining.days}{timeRemaining.hours} : {timeRemaining.minutes} : {timeRemaining.seconds}
+      </span>
+
+    </span>
   )
 }
 

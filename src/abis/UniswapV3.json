@@ -247,6 +247,21 @@
     "internalType": "uint256",
     "name": "amount1Desired",
     "type": "uint256"
+    },
+    {
+    "internalType": "uint16",
+    "name": "_fee",
+    "type": "uint16"
+    },
+    {
+    "internalType": "int24",
+    "name": "_tickLower",
+    "type": "int24"
+    },
+    {
+    "internalType": "int24",
+    "name": "_tickUpper",
+    "type": "int24"
     }
     ],
     "name": "mint",
