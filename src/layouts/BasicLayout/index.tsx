@@ -6,7 +6,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import Navbar from './Navbar'
-import Footer from './Footer'
 
 interface IProps {
   children: React.ReactNode
@@ -17,24 +16,26 @@ const BasicLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
 
   return (
-    <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
+    <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={props.showInput} />
       </header>
 
-      <div className="h80 w-full"/>
+      <div className="h30 w-full" />
 
-      <main className='w-1400 items-center'>
+      <main className='h-full w-1400 items-center'>
         {props.children}
       </main>
 
-      <div className='h70' />
+      {/* <div className='h70' /> */}
 
-      <hr className='h3 w-full border-none bg-#303241' />
+      {/* <hr className='h3 w-full border-none bg-#303241' /> */}
 
-      <footer className='h198 w-1400'>
+      {/* <footer className='h198 w-1400'>
         <Footer />
-      </footer>
+      </footer> */}
+
+      <div className='h-60 w-full' />
     </div>
   )
 }

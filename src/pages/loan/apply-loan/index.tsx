@@ -35,7 +35,7 @@ import xGenalIcon from '@/assets/images/apply-loan/xGenal.png'
 import xFloatIcon from '@/assets/images/apply-loan/xFloat.png'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import defaultImage from '@/assets/images/market/default.png'
+import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
@@ -646,10 +646,10 @@ const ApplyLoan = () => {
           </div>
         </div>
 
-        <div className="h-51" />
+        <div className="h-50" />
 
         {/* Apply for a loan */}
-        <div className="box-border h-434 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-6 pt-44 text-16">
+        <div className="box-border h-394 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16">
           <Form.Item
             name="applyLoan"
             rules={[
@@ -843,7 +843,7 @@ const ApplyLoan = () => {
               }
             >
               <InputNumber
-                // min={2}
+                min={1}
                 max={loanRequisitionEditModel.numberOfCopies}
                 className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
                 suffix={<div className="px-20 text-14">share</div>}
@@ -853,7 +853,7 @@ const ApplyLoan = () => {
 
         </div>
 
-        <div className="h80" />
+        <div className="h50" />
 
         <div className='flex gap-x-42'>
           <div>
@@ -917,7 +917,7 @@ const ApplyLoan = () => {
               </Form.Item>
             </div>
 
-            <div className="h50"></div>
+            <div className="h30"></div>
 
             <div
               style={{
@@ -927,7 +927,7 @@ const ApplyLoan = () => {
               }}
             >
               <div className="flex">
-                <div className="h236 flex flex-col flex-wrap gap-y-50">
+                <div className="h186 flex flex-col flex-wrap gap-y-30">
                   <Form.Item
                     name="tradingFormType"
                     className="m0 w306"
@@ -994,7 +994,7 @@ const ApplyLoan = () => {
             </div>
           </div>
 
-          <Divider type='vertical' className='mx-0 mt-47 h-276 w1 border-none bg-#696969' />
+          <Divider type='vertical' className='mx-0 mt-36 h-210 w1 border-none bg-#696969' />
 
           <div
             style={{
@@ -1003,7 +1003,7 @@ const ApplyLoan = () => {
                 : 'none',
             }}
           >
-            <div className="mt-34 flex flex-wrap gap-x-52 gap-y-20">
+            <div className="mt-30 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
@@ -1038,7 +1038,7 @@ const ApplyLoan = () => {
 
         <Divider className='m0 bg-#6A6A6A' />
 
-        <div className="h82" />
+        <div className="h44" />
 
         <Form.Item className="text-center">
           <Button
