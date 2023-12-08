@@ -63,12 +63,13 @@ const PersonalCenter = () => {
 
   return (
     <div className='flex justify-around'>
-      <img src="src/assets/images/personal-center/navImage.png" alt="" />
-      {/* <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState}>
+      <img src="src/assets/images/personal-center/navImage.png" alt="" className='h-368 w-1920'/>
+      <div className='absolute flex justify-between'>
+      <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState} className=''>
         Apply for a loan666
-      </Button> */}
-
-      {/* <Button type="primary" onClick={reSet}>reSet</Button> */}
+      </Button>
+       <Button type="primary" onClick={reSet} className=''>reSet</Button>
+      </div>
 
     </div>
   )

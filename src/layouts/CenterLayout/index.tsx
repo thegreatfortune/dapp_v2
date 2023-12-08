@@ -23,7 +23,7 @@ const CenterLayout: React.FC<IProps> = (props) => {
         {props.children}
       </main>
 
-      <div className='h700' />
+      <div className='h350' />
 
       <hr className='h3 w-full border-none bg-#303241' />
 

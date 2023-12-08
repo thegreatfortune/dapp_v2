@@ -8,8 +8,13 @@ import LendTransparentCard from './components/LendTransparentCard'
 import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
+import useNavbarQueryStore from '@/store/useNavbarQueryStore'
+import { isContractAddress, isTwitterHandle } from '@/utils/regex'
+import { MarketService } from '@/.generated/api/Market'
 
 const MyLend = () => {
+  const { queryString } = useNavbarQueryStore()
+
   const { activeUser } = useUserStore()
 
   const navigate = useNavigate()
@@ -68,6 +73,25 @@ const MyLend = () => {
   useEffect(() => {
     loadMoreData()
   }, [activeUser.id])
+
+  useEffect(() => {
+    async function fetchData() {
+      const params = { ...new Models.ApiLoanPageLoanContractGETParams(), borrowUserId: undefined }
+      params.limit = 8
+
+      if (isContractAddress(queryString ?? ''))
+        params.capitalPoolContract = queryString
+      else if (isTwitterHandle(queryString ?? ''))
+        params.bindPlatform = queryString && (params.platformType = 'Twitter')
+      else
+        params.loanName = queryString
+
+      const res = await MarketService.ApiMarketHomeInfo_GET()
+      console.log('%c [ ApiMarketHomeInfo_GET ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', res)
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <div>

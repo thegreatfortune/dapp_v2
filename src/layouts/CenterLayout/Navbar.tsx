@@ -81,9 +81,9 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
         }
     /> */}
 
-    <div className='flex justify-between'>
+    <div className='mt-14 flex justify-between'>
     <div className='h-60 w-180'><CustomConnectButton /></div>
-    <Avatar src='src/assets/images/personal-center/panda.png' className="ml-30 mt-10 h-44 w-44"></Avatar>
+    <Avatar src='src/assets/images/personal-center/panda.png' className="ml-30 h-44 w-44"></Avatar>
     </div>
 </nav>
   )
