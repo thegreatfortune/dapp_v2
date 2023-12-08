@@ -1,0 +1,15 @@
+#navBar a.active {
+    font-weight: bold;
+    color: white;
+    font-size: 6rem;
+  }
+
+  #navBar a {
+    transition: transform 0.2s, font-weight 0.2s, color 0.2s;
+  }
+  
+  #navBar a:hover {
+    transform: scale(1.1);
+    font-weight: bold;
+    color: white;
+  }
