@@ -52,22 +52,14 @@ const Market = () => {
         params.loanName = queryString
 
       const res = await MarketService.ApiMarketHomeInfo_GET()
-      console.log('%c [ ApiMarketHomeInfo_GET ]-42', 'font-size:13px; background:pink; color:#bf2c9f;', res)
+      console.log('%c [ ApiMarketHomeInfo_GET ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', res)
     }
 
     fetchData()
   }, [])
 
-  // useEffect(() => {
-  //   async function jntmData() {
-  //     const res = await MarketService.ApiMarketHomeInfo_GET()
-  //     console.log('%c [ ApiMarketHomeInfo_GET ]-60', 'font-size:13px; background:pink; color:#bf2c9f;', res)
-  //   }
-  //   jntmData()
-  // }, [])
-
   return (
-    <div className="w-full">
+    <div className="relative m-auto h-full min-h-full">
       {/* <Carousel autoplay className=''></Carousel> banner翻页组件 */}
       <div>
         <img
@@ -76,7 +68,6 @@ const Market = () => {
           className='h-280 w-full b-rd-20 object-cover'
         />
       </div>
-
       <div className='h-80 w-full'></div>
       <CardsContainer image='' key='HighCredit' title={`🔥${t('market.CardsContainer1.title')}`} records={loanOrderVO} to='/view-all?title=🔥Hot starter' />
       <div className='h-80 w-full'></div>
@@ -84,7 +75,6 @@ const Market = () => {
       <div className='h-80 w-full'></div>
       <CardsContainer image='src/assets/images/market/blacklist1.png' key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={loanOrderVO} to='/view-all?title=Blacklist' />
       <div className='h-80 w-full'></div>
-
     </div>
   )
 }

@@ -17,7 +17,7 @@ const BasicLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
 
   return (
-    <div className='flex flex-col items-center bg-auto bg-contain bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
+    <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={props.showInput} />
       </header>
