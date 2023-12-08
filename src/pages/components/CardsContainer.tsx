@@ -12,7 +12,7 @@ interface ICardsContainerProps {
   to?: string
   image: string
 
-//   children: React.ReactNode
+  //   children: React.ReactNode
 }
 
 const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image }) => {
@@ -20,27 +20,27 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
 
   const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
-  return (<div>
-      <div className='h48 flex items-center justify-between'>
+  return (
+    <div>
+      <div className='h48 min-h-full flex items-center justify-between'>
         <div className='flex items-center justify-between'>
-        {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10'/>}
-          <h2 className='font-size-34'>
+          {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
+
+          <h2 className='ml-4 font-size-34'>
             {title}
-
           </h2>
-
         </div>
 
         {/* {children} */}
 
         {isViewAll
-          ? <Radio.Group value={risk} onChange={e => setRisk(e.target.value)} >
+          ? <Radio.Group value={risk} onChange={e => setRisk(e.target.value)}>
             <Radio.Button value="All">All</Radio.Button>
             <Radio.Button value="LowRisk">LowRisk</Radio.Button>
             <Radio.Button value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
-           <Link to={to ?? ''}> view all {'>>'}</Link>
+            <Link to={to ?? ''}> view all {'>>'}</Link>
           </div>
         }
       </div>
