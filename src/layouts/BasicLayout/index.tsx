@@ -13,13 +13,13 @@ interface IProps {
   backgroundImage?: string
 }
 
-const BasicLayout: React.FC<IProps> = ({ showInput, backgroundImage = 'url(src/assets/images/bg.png)' }) => {
+const BasicLayout: React.FC<IProps> = ({ showInput }) => {
   const { t } = useTranslation()
 
   return (
 
-    // <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-    <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
+   <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
+     {/* <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}> */}
 
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={showInput} />

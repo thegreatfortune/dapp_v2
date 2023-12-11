@@ -66,35 +66,31 @@ const PersonalCenter = () => {
 
   return (
     <div>
-
-        <div className='w-496 flex justify-between'>
-          <Button loading={loading}
-            type="primary" onClick={checkLoanOrderAndUserState}
-            className='mr-76 mt-107 inline-block h-60 w-254 transform cursor-pointer b-rd-54px border-none bg-gradient-to-r p-0 font-400 lh-27 text-#000 transition-transform active:scale-95 hover:scale-105 !bg-#D9D9D9 !font-400 !hover:c-pink'>
-            Apply for a loan
-          </Button>
-
-          <Button type="primary" onClick={reSet}
-            className='mt-107 inline-block h-60 w-117 transform cursor-pointer b-rd-54 border-none from-[#0154fa] to-[#11b5dd] bg-gradient-to-r p-0 text-18 font-400 lh-27 text-white transition-transform active:scale-95 hover:scale-105 !hover:c-pink'>
-            Follow</Button>
-          <div className='w-76'></div>
-        </div>
-       <div className='h-full w-full bg-#171822'>
-       <div className='absolute mt-222 w-220 flex justify-between bg-#171822'>
+      <div className='w-496 flex justify-between'>
+        <Button loading={loading}
+          type="primary" onClick={checkLoanOrderAndUserState}
+          className='mr-76 mt-107 inline-block h-60 w-254 transform cursor-pointer b-rd-54px border-none bg-gradient-to-r p-0 font-400 lh-27 text-#000 transition-transform active:scale-95 hover:scale-105 !bg-#D9D9D9 !font-400 !hover:c-pink'>
+          Apply for a loan
+        </Button>
+        <Button type="primary" onClick={reSet}
+          className='mt-107 inline-block h-60 w-117 transform cursor-pointer b-rd-54 border-none from-[#0154fa] to-[#11b5dd] bg-gradient-to-r p-0 text-18 font-400 lh-27 text-white transition-transform active:scale-95 hover:scale-105 !hover:c-pink'>
+          Follow</Button>
+        <div className='w-76'></div>
+      </div>
+      <div className='h-full w-full bg-#171822'>
+        <div className='absolute mt-222 w-220 flex justify-between bg-#171822'>
           <div className='h-24 w-110 text-16 font-400 lh-24 c-#fff'>Invitation link</div>
           <div className='h-23 w-104 b-rd-15px bg-#333A81 text-center text-10 font-400 lh-23 c-#4959EE opacity-100'> 0xf34cc...6fefa</div>
         </div>
-       </div>
-
-      <div className='h-55'></div>
-    <div className='flex justify-around'>
-      <img src="src/assets/images/personal-center/navImage.png" alt="" className='h-368 w-1920'/>
-      <div className='absolute flex justify-between'>
-
-       <Button type="primary" onClick={reSet} className=''>reSet</Button>
       </div>
+      <div className='h-55'></div>
+      <div className='flex justify-around'>
+        <img src="src/assets/images/personal-center/navImage.png" alt="" className='h-368 w-1920' />
+        <div className='absolute flex justify-between'>
 
-    </div>
+          <Button type="primary" onClick={reSet} className=''>reSet66666666666666666666</Button>
+        </div>
+      </div>
     </div>
   )
 }
