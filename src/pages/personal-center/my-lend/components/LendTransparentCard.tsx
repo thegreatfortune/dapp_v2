@@ -34,7 +34,7 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, children, copies }) =>
           <div className='flex justify-between'>
             <ul className='m0 flex flex-col list-none gap-8 p0'>
               <li className='h18 flex flex-col text-14 c-#999999'>
-                Apply for loan
+                Apply for a loan
               </li>
               <li className='h29 text-16 c-#FFFFFF'>
                 {ethers.formatUnits(item.loanMoney ?? 0)} USDT
