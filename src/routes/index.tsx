@@ -18,8 +18,6 @@ const NotFound = lazy(() => import('../pages/NotFound'))
 interface IRouterMeta {
   title?: string
   icon?: string
-  showInMenu?: boolean
-  showInput?: boolean
 }
 
 const routes: (RouteObject & { meta?: IRouterMeta })[] = [
@@ -51,7 +49,6 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   },
   {
     path: '/personal-center',
-    meta: { showInput: false },
     element: (
       <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
@@ -62,29 +59,26 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   },
   {
     path: '/my-loan',
-    meta: { showInput: false },
     element: (
-      <CenterLayout>
+      <BasicLayout showInput={true}>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLoan />
         </React.Suspense>
-      </CenterLayout>
+      </BasicLayout>
     ),
   },
   {
     path: '/my-lend',
-    meta: { showInput: false },
     element: (
-      <CenterLayout>
+      <BasicLayout showInput={true}>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLend />
         </React.Suspense>
-      </CenterLayout>
+      </BasicLayout>
     ),
   },
   {
     path: '/apply-loan',
-    meta: { showInput: false },
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
@@ -95,7 +89,6 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   },
   {
     path: '/loan-details',
-    meta: { showInput: false },
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
@@ -106,9 +99,8 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   },
   {
     path: '/view-all',
-    meta: { showInput: false },
     element: (
-      <BasicLayout >
+      <BasicLayout showInput={true} >
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <OrderViewAll />
         </React.Suspense>
@@ -129,7 +121,6 @@ if (import.meta.env.DEV) {
   routes.push(
     {
       path: 'test',
-      meta: { showInput: false },
       element: (
         <BasicLayout>
           <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>

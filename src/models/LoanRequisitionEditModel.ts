@@ -24,7 +24,7 @@ export class LoanRequisitionEditModel {
   numberOfCopies: number = 1
 
   /** 最小达成份数 (可选) */
-  minimumRequiredCopies: number | undefined
+  minimumRequiredCopies: number = 1
 
   /** 借款利息 Interest */
   interest: number = 5

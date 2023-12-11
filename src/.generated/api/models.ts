@@ -70,6 +70,8 @@ export namespace Models {
     minLoanPrice?: string = undefined;
     /** 筛选出贷款金额小于该值的 */
     maxLoanPrice?: string = undefined;
+    /** 交易形式, 风险评估筛选, 逗号拼接; example: SpotGoods,Contract */
+    tradingFormTypeList?: string = undefined;
     /** 借款用户id筛选 */
     borrowUserId?: string = undefined;
     /** 借款订单状态
@@ -91,7 +93,6 @@ Twitter :推特 */
     platformType?: string = undefined;
     /** 根据借款订单名称筛选 */
     loanName?: string = undefined;
-    tradingFormTypeList?: Array<TradingFormType> = [];
   }
 
   export class ApiLoanTokenSwapPageInfoGETParams {

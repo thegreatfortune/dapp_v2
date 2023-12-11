@@ -11,14 +11,15 @@ interface ICardsContainerProps {
   isViewAll?: boolean
   to?: string
   image: string
+  fetchData?(type?: string): Promise<void>
 
   //   children: React.ReactNode
 }
 
-const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image }) => {
+const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image, fetchData }) => {
   const navigate = useNavigate()
 
-  const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
+  // const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
   return (
     <div>
@@ -26,26 +27,29 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
         <div className='flex items-center justify-between'>
           {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
 
-          <h2 className='ml-4 font-size-34'>
+          <span className='ml-4 font-size-34'>
             {title}
-          </h2>
+          </span>
         </div>
 
         {/* {children} */}
 
         {isViewAll
-          ? <Radio.Group value={risk} onChange={e => setRisk(e.target.value)}>
+          ? <Radio.Group defaultValue='All' onChange={e => fetchData && fetchData(e.target.value)}>
             <Radio.Button value="All">All</Radio.Button>
             <Radio.Button value="LowRisk">LowRisk</Radio.Button>
             <Radio.Button value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
-            <Link to={to ?? ''}> view all {'>>'}</Link>
+            {
+              records.length > 0 && <Link to={to ?? ''}> view all {'>>'}</Link>
+            }
+
           </div>
         }
       </div>
 
-      <div className='h23 w-full'></div>
+      <div className='h30 w-full'></div>
 
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
         {
