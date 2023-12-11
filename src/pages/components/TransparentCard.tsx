@@ -47,7 +47,6 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
         <div className='h11 w-full'></div>
         <h2 className="m0 h35 p0 text-24 font-semibold c-#37A4F8">{item.loanName}</h2>
 
-<<<<<<< HEAD
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>
@@ -60,20 +59,6 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
               {children ?? <CustomAvatar src={'item.'} name={'Maske'} twitter={'@Maske'} />}
             </li>
           </ul>
-=======
-          <div className='flex justify-between'>
-            <ul className='m0 flex flex-col list-none gap-8 p0'>
-              <li className='h18 flex flex-col text-14 c-#999999'>
-                Apply for a loan
-              </li>
-              <li className='h29 text-16 c-#FFFFFF'>
-                {BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(4)} USDT
-              </li>
-              <li>
-                {children ?? <CustomAvatar src={'item.'} name={'xasxsa'} twitter={'xsaxas'} />}
-              </li>
-            </ul>
->>>>>>> dev-Personal
 
           <ul className='m0 flex flex-col list-none gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>

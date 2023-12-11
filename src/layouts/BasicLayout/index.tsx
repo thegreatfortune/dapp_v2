@@ -17,15 +17,10 @@ const BasicLayout: React.FC<IProps> = ({ showInput, backgroundImage = 'url(src/a
   const { t } = useTranslation()
 
   return (
-<<<<<<< HEAD
-    <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-=======
-<<<<<<< HEAD
-    <div className='flex flex-col items-center' style={{ backgroundImage }}>
-=======
+
+    // <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
     <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
->>>>>>> master
->>>>>>> dev-Personal
+
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={showInput} />
       </header>
@@ -33,7 +28,7 @@ const BasicLayout: React.FC<IProps> = ({ showInput, backgroundImage = 'url(src/a
       <div className="h30 w-full" />
 
       <main className='h-full w-1400 items-center'>
-        {props.children}
+        {/* {props.children} */}
       </main>
 
       {/* <div className='h70' /> */}

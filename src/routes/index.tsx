@@ -50,19 +50,11 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/personal-center',
     element: (
-<<<<<<< HEAD
-    // <BasicLayout>
-        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <PersonalCenter />
-        </React.Suspense>
-    // </BasicLayout>
-=======
       <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
       </CenterLayout>
->>>>>>> master
     ),
   },
   {
