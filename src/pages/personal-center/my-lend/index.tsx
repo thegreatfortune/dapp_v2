@@ -4,6 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { useTranslation } from 'react-i18next'
 import LendTransparentCard from './components/LendTransparentCard'
 import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
@@ -16,6 +17,8 @@ const MyLend = () => {
   const { queryString } = useNavbarQueryStore()
 
   const { activeUser } = useUserStore()
+
+  const { t } = useTranslation()
 
   const navigate = useNavigate()
 
@@ -107,7 +110,7 @@ const MyLend = () => {
           next={loadMoreData}
           hasMore={(total !== undefined) && (lendOrderVOList.length < total) }
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          endMessage={<Divider plain>{`${t('personal.myLend.endMessage')}`}</Divider>}
           scrollableTarget="scrollableDiv"
         >
           <List

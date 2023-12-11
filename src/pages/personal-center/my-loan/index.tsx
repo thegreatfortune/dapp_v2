@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
@@ -11,6 +12,8 @@ const MyLoan = () => {
   const { activeUser } = useUserStore()
 
   const navigate = useNavigate()
+
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -79,7 +82,7 @@ const MyLoan = () => {
           next={loadMoreData}
           hasMore={(total !== undefined) && (loanOrderVOList.length < total) }
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          endMessage={<Divider plain>{`${t('personal.myLoan.endMessage')}`}</Divider>}
           scrollableTarget="scrollableDiv"
         >
           <List
@@ -88,7 +91,7 @@ const MyLoan = () => {
             renderItem={item => (
               <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
                 <TransparentCard item={item} btnText='Repayment' >
-                <Button className='h30 w-110 primary-btn' >Extract</Button>
+                <Button className='h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>
               </TransparentCard>
               </List.Item>
             )}
