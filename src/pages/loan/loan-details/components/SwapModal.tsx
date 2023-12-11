@@ -3,8 +3,8 @@ import { Button, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { tokenList } from '../../../../contract/tradingPairTokenMap'
 import type { TokenInfo } from './DesignatedPosition'
-import { tokenList } from './tradingPairTokenMap'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps extends ModalProps {

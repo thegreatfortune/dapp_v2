@@ -197,72 +197,67 @@ const ApplyLoan = () => {
   }, [useDiagram, form])
 
   useEffect(() => {
-    publishBtnLoading && loanRequisitionEditModel.imageUrl && createLoan()
-  }, [loanRequisitionEditModel, publishBtnLoading])
+    publishBtnLoading && createLoan()
+  }, [loanRequisitionEditModel])
 
-  useEffect(() => {
-    async function fetchData() {
-      setPublishBtnLoading(true)
-      try {
-        if (useDiagram) {
-          const { itemTitle, applyLoan, tradingFormType, interest, dividend } = loanRequisitionEditModel
-          const newFile = await handleImageCanvas('src/assets/images/default.png', [itemTitle,
-            browserContractService?.getSigner.address ? maskWeb3Address(browserContractService?.getSigner.address) : '',
-            String(applyLoan ?? 0),
-            tradingFormType === 'SpotGoods' ? 'Low' : 'Hight',
+  async function uploadFile(file?: RcFile): Promise<string> {
+    try {
+      if (useDiagram && !file) {
+        const { itemTitle, applyLoan, tradingFormType, interest, dividend } = loanRequisitionEditModel
+        const newFile = await handleImageCanvas('src/assets/images/default.png', [itemTitle,
+          browserContractService?.getSigner.address ? maskWeb3Address(browserContractService?.getSigner.address) : '',
+          String(applyLoan ?? 0),
+          tradingFormType === 'SpotGoods' ? 'Low' : 'Hight',
             `${interest ?? 0}%`, `${dividend ?? 0}%`])
 
-          if (!newFile)
-            throw new Error('Image upload failed')
+        if (!newFile)
+          throw new Error('Image upload failed')
 
-          setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: newFile }))
+        const url = await FileService.ApiFileUpload_POST({ file: newFile })
 
-          const url = await FileService.ApiFileUpload_POST({ file: newFile })
-
-          setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
-        }
-        else {
-          if (loanRequisitionEditModel.projectImagePreViewUrl) {
-            const url = await FileService.ApiFileUpload_POST({ file: loanRequisitionEditModel.projectImageFile })
-
-            setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
-          }
-        }
+        setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
+        return url
       }
-      catch (error) {
-        console.log('%c [ error ]-127', 'font-size:13px; background:#38eeb8; color:#7cfffc;', error)
-        throw new Error('Image upload failed')
+      else {
+        const url = await FileService.ApiFileUpload_POST({ file })
+
+        setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: file, imageUrl: url }))
+        return url
       }
     }
+    catch (error) {
+      console.log('%c [ error ]-127', 'font-size:13px; background:#38eeb8; color:#7cfffc;', error)
+      throw new Error('Image upload failed')
+    }
+  }
 
-    createdPoolChecked && fetchData()
-  }, [createdPoolChecked])
-
-  const handleConfirm = async (value: LoanRequisitionEditModel) => {
-    console.log('%c [ value ]-146', 'font-size:13px; background:#5df584; color:#a1ffc8;', value)
+  const handleConfirm = async () => {
     setPublishBtnLoading(true)
 
-    await checkDoublePoolIsCreated()
+    await createLoan()
 
     setPublishBtnLoading(false)
   }
 
   async function createLoan() {
-    console.log('%c [ loanRequisitionEditModel ]-214', 'font-size:13px; background:#0c926b; color:#50d6af;', loanRequisitionEditModel)
+    console.log('%c [ 执行 ]-244', 'font-size:13px; background:#b15b1c; color:#f59f60;')
+    const poolIsCreated = await checkDoublePoolIsCreated()
 
-    console.log('%c [ createdPoolChecked ]-277', 'font-size:13px; background:#419909; color:#85dd4d;', createdPoolChecked)
+    if (poolIsCreated === false)
+      return
+
+    let url
+    if (!loanRequisitionEditModel.imageUrl)
+      url = await uploadFile()
 
     await form.validateFields()
-
-    if (createdPoolChecked === false)
-      return
 
     setConfirmLoading(true)
 
     try {
       setIsModalOpen(true)
 
-      const res = await browserContractService?.capitalPool_createOrder(loanRequisitionEditModel)
+      const res = await browserContractService?.capitalPool_createOrder({ ...loanRequisitionEditModel, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
 
       console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', res)
 
@@ -277,6 +272,7 @@ const ApplyLoan = () => {
         'font-size:13px; background:#daf6df; color:#ffffff;',
         error,
       )
+      throw new Error('upload image failed')
     }
     finally {
       setConfirmLoading(false)
@@ -284,9 +280,12 @@ const ApplyLoan = () => {
     }
   }
 
-  async function checkDoublePoolIsCreated() {
-    if (!browserContractService && !createdPoolChecked)
-      return
+  async function checkDoublePoolIsCreated(): Promise<boolean> {
+    if (createdPoolChecked === true)
+      return true
+
+    if (!browserContractService)
+      return false
 
     try {
       const res = await browserContractService?.checkPoolCreateState()
@@ -294,17 +293,18 @@ const ApplyLoan = () => {
       const [capitalPoolState, refundPoolState] = res ?? [false, false]
 
       setCreatedPoolChecked(capitalPoolState && refundPoolState)
-      console.log('%c [ capitalPoolState && refundPoolState ]-280', 'font-size:13px; background:#971b38; color:#db5f7c;', capitalPoolState && refundPoolState)
-
       if (!(capitalPoolState && refundPoolState)) {
+        setIsModalOpen(true)
         setCreatedPoolLoading(true)
 
-        setIsModalOpen(true)
         const res = await browserContractService?.followRouter_createPool()
-        console.log('%c [ res ]-286', 'font-size:13px; background:#63293c; color:#a76d80;', res)
 
         res?.status === 1 && setCreatedPoolChecked(true)
+
+        return res?.status === 1
       }
+
+      return true
     }
     catch (error) {
       // setCreatedPoolChecked(false)
@@ -314,47 +314,25 @@ const ApplyLoan = () => {
         'font-size:13px; background:#c95614; color:#ff9a58;',
         error,
       )
+      return false
     }
     finally {
       setCreatedPoolLoading(false)
     }
   }
 
-  function checkFileUploaded(): boolean {
-    if (!loanRequisitionEditModel.imageUrl) {
-      if (!useDiagram && !loanRequisitionEditModel.projectImagePreViewUrl) {
-        message.warning('Project image not upload, or use default diagram?')
-        return false
-      }
-    }
-
-    return true
-  }
-
   const onFinish = async (value: LoanRequisitionEditModel) => {
-    console.log('%c [ value ]-319', 'font-size:13px; background:#115dc6; color:#55a1ff;', value)
-    const state = checkFileUploaded()
-    if (state === false)
-      return
-
-    setPublishBtnLoading(true)
+    console.log('%c [ value ]-331', 'font-size:13px; background:#574880; color:#9b8cc4;', value)
 
     try {
       setLoanRequisitionEditModel(preState =>
         ({ ...preState, ...value }),
       )
 
-      await handleConfirm(value)
-
-      setPublishBtnLoading(false)
-      setIsModalOpen(true)
+      await handleConfirm()
     }
     catch (error) {
-      console.log(
-        '%c [ error ]-61',
-        'font-size:13px; background:#c95614; color:#ff9a58;',
-        error,
-      )
+      console.error('%c [ error ]-341', 'font-size:13px; background:#96e638; color:#daff7c;', error)
     }
   }
 
@@ -469,8 +447,6 @@ const ApplyLoan = () => {
       >
         <div className="box-border flex flex-col items-center text-center text-16">
 
-          <p className='text-14'>Please note that when applying for a loan for the first time, you need to create your own capital pool and repayment pool contract. This requires paying some gas fees to execute the smart contract. You do not need to create it again after the creation is successful.</p>
-
           <div className="flex flex-col items-start">
             <div>
               {createdPoolLoading
@@ -479,24 +455,6 @@ const ApplyLoan = () => {
                 </Checkbox>}
               <span className='p-x-8 c-#3CA9F8'>Pool contract</span>
             </div>
-
-            {/* <div className="flex flex-col items-start">
-            <div>
-              {capitalPoolLoading
-                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
-                : <Checkbox disabled checked={capitalPoolChecked}>
-                </Checkbox>}
-              <span className='p-x-8 c-#3CA9F8'>Capital pool contract</span>
-            </div> */}
-
-            {/* <div>
-              {(capitalPoolChecked && repaymentPoolLoading)
-                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
-                : <Checkbox disabled checked={repaymentPoolChecked}>
-                </Checkbox>
-              }
-              <span className='p-x-8 c-#3CA9F8'> Create a repayment pool</span>
-            </div> */}
 
             <div>
               {confirmLoading
@@ -515,7 +473,7 @@ const ApplyLoan = () => {
         <div className="flex justify-center gap-x-8">
           <Button
             className='h32 w84 rounded-2 primary-btn'
-            onClick={() => handleConfirm(loanRequisitionEditModel)}
+            onClick={() => handleConfirm()}
             loading={confirmLoading}
             disabled={createdPoolLoading}
           >
@@ -540,7 +498,7 @@ const ApplyLoan = () => {
       >
         <div className="w-full flex justify-between">
           <Form.Item
-            name="projectImageFile"
+            name="imageUrl"
             className="m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"
             valuePropName="file"
             getValueFromEvent={e => e.fileList}
@@ -549,8 +507,8 @@ const ApplyLoan = () => {
             <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
               <span className="absolute right-40 top-16 z-10 text-14">Use default diagram <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} /></span>
               <Dragger
-                name="projectImageFile"
-                // action={uploadFile}
+                name="imageUrl"
+                action={uploadFile}
                 beforeUpload={beforeUpload}
                 style={{ height: 453 }}
                 disabled={useDiagram}
@@ -630,8 +588,8 @@ const ApplyLoan = () => {
                   message: 'Please input your description!',
                 },
                 {
-                  max: 1000,
-                  message: 'Description must be at most 1000 characters.',
+                  max: 500,
+                  message: 'Description must be at most 500 characters.',
                 },
               ]}
             >
