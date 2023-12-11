@@ -62,6 +62,7 @@ const PersonalCenter = () => {
   }
 
   return (
+<<<<<<< HEAD
     <div>
       <div className='z-1 flex justify-between bg-#171822'>
         <div className='relative'>
@@ -100,6 +101,16 @@ const PersonalCenter = () => {
        </div>
       </div>
       <div className='h-55'></div>
+=======
+    <div className='flex justify-around'>
+      <img src="src/assets/images/personal-center/navImage.png" alt="" className='h-368 w-1920'/>
+      <div className='absolute flex justify-between'>
+      <Button loading={loading} type="primary" onClick={checkLoanOrderAndUserState} className=''>
+        Apply for a loan666
+      </Button>
+       <Button type="primary" onClick={reSet} className=''>reSet</Button>
+      </div>
+>>>>>>> master
 
     </div>
   )

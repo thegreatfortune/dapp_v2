@@ -2,6 +2,7 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 import React, { lazy } from 'react'
 import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
+import CenterLayout from '@/layouts/CenterLayout'
 import PersonalCenter from '@/pages/personal-center'
 import Trade from '@/pages/trade'
 import ApplyLoan from '@/pages/loan/apply-loan'
@@ -52,33 +53,41 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     path: '/personal-center',
     meta: { showInput: false },
     element: (
+<<<<<<< HEAD
     // <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
     // </BasicLayout>
+=======
+      <CenterLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <PersonalCenter />
+        </React.Suspense>
+      </CenterLayout>
+>>>>>>> master
     ),
   },
   {
     path: '/my-loan',
     meta: { showInput: false },
     element: (
-      <BasicLayout>
+      <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLoan />
         </React.Suspense>
-      </BasicLayout>
+      </CenterLayout>
     ),
   },
   {
     path: '/my-lend',
     meta: { showInput: false },
     element: (
-      <BasicLayout>
+      <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <MyLend />
         </React.Suspense>
-      </BasicLayout>
+      </CenterLayout>
     ),
   },
   {

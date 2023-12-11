@@ -37,9 +37,7 @@ const BasicLayout: React.FC<IProps> = ({ showInput, backgroundImage = 'url(src/a
 
       <hr className='h3 w-full border-none bg-#303241' />
 
-      <footer className='h198 w-1400'>
-        <Footer />
-      </footer>
+      <footer className='h198 w-1400'><Footer /></footer>
     </div>
   )
 }
