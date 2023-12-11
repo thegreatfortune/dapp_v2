@@ -7,7 +7,13 @@ import Image from 'antd/es/image'
 import { AutoComplete } from 'antd'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/react.svg'
+<<<<<<< HEAD
 import searchImg from '@/assets/images/search.png'
+=======
+
+// import NavBg from '@/assets/images/NavBg.png
+import searchImg from '@/assets/images/search.svg'
+>>>>>>> dev-Personal
 import './navBar.css'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
 
@@ -34,10 +40,20 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
+<<<<<<< HEAD
+        <nav className="h120 w-full flex items-center justify-around theme-color text-white" id='navBar'>
+
+=======
         <nav className="h140 w-full flex items-center text-white" id='navBar'>
+>>>>>>> master
             <div className="flex items-center text-center">
+<<<<<<< HEAD
                 <Avatar src={logo} className="mx6 h47 w47"></Avatar>
                 <div className="text-30 font-900"><i>{title}</i></div>
+=======
+                <Avatar src={logo} className="mx5 h47 w47"></Avatar>
+                <div className="text-30 font-900">LOGO</div>
+>>>>>>> dev-Personal
             </div>
 
             <div className='h-full w-176' />
@@ -60,9 +76,12 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
                 </li>
             </ul>
 
+<<<<<<< HEAD
             <div className='h-full w-178' />
             {/* className="h-60 w-410 rounded-30 bg-transparent px-37 c-white placeholder-font-size-14 placeholder-c-[#D2D2D2]" */}
 
+=======
+>>>>>>> dev-Personal
             {
                 showInput
                 && <div className='relative box-border h48 w310'>
@@ -94,6 +113,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
             <div className='h-full w-178' />
 
             <CustomConnectButton />
+
         </nav>
   )
 }
