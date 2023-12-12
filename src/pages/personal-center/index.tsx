@@ -88,8 +88,9 @@ const PersonalCenter = () => {
 
             </div>
             <div className='ml-286 h-88 w-188'>
-              <div className='ml-179 mt-11 h31 w179 text-32 font-400 lh-31 c-#fff'>{`${t('personal.center.userName')}`}</div>
-              <div className='ml-179 mt-15 h18 w80 text-24 font-400 lh-18 c-#d1d5db opacity-60'>{`${t('personal.center.userCareer')}`}</div>
+              <div className='mb-15 ml-179 mt-11 h31 w179 text-32 font-400 lh-31 c-#fff'>{`${t('personal.center.userName')}`}</div>
+              {/* <div className='ml-179 mt-15 h18 w80 text-24 font-400 lh-18 c-#d1d5db opacity-60'>{`${t('personal.center.userCareer')}`}</div> */}
+              <a href="https://twitter.com/" className='ml-179 mt-15 h18 w80 text-24 font-400 lh-18 c-#d1d5db opacity-60'>{`${t('personal.center.userCareer')}`}</a>
             </div>
             <div className='ml-198 mt-15 h-23 w-104 b-rd-15px bg-#333A81 text-center text-10 font-400 lh-23 c-#4959EE opacity-100'>{`${t('personal.center.userAddress')}`}</div>
           </div>
@@ -127,11 +128,11 @@ const PersonalCenter = () => {
               <div className='flex-col'>
                 <div className='flex justify-between'>
                   <div className='mr-50 mt-23 h33 text-14 font-400 lh-32 c-#fff'>{`${t('personal.center.Initial')}`}</div>
-                  <div className='mr-5 mt-30'>{`${t('personal.center.InitialPoints')}`}</div>
+                  <div className='mr-10 mt-30 c-#fff'>{`${t('personal.center.InitialPoints')}`}</div>
                 </div>
                 <div className='flex justify-between'>
-                <div className='mr-20 h33 text-14 font-400 lh-32 c-#fff'>{`${t('personal.center.Additional')}`}</div>
-                <div className='mr-5 mt-8'>{`${t('personal.center.InitialPoints')}`}</div>
+                  <div className='mr-20 h33 text-14 font-400 lh-32 c-#fff'>{`${t('personal.center.Additional')}`}</div>
+                  <div className='mr-10 mt-8 c-#fff'>{`${t('personal.center.AdditionalPoints')}`}</div>
                 </div>
               </div>
             </button>

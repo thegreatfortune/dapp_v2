@@ -13,7 +13,7 @@ const CenterLayout: React.FC<IProps> = (props) => {
 
   return (
     // <div className='relative min-h-full flex flex-col items-center bg-auto bg-auto bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-    <div className='min-h-screen w-full flex flex-col items-center bg-center bg-top bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/personal-center/navImage.png),url(src/assets/images/personal-center/bg3.png)' }}>
+    <div className='min-h-screen w-full flex flex-col items-center bg-center bg-top bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/personal-center/navImage.png),url(src/assets/images/personal-center/bg.png)' }}>
 
       <header className='h-288 w-1400'>
         <Navbar title={t('nav.title')} showInput={props.showInput} />
