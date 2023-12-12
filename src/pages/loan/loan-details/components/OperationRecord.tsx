@@ -2,7 +2,6 @@ import { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useSearchParams } from 'react-router-dom'
 
-// import { Checkbox } from 'antd'
 import dayjs from 'dayjs'
 import { LoanTokenSwapService } from '../../../../.generated/api/LoanTokenSwap'
 import ScrollableList from '@/pages/components/ScrollabletList'
@@ -15,7 +14,6 @@ const OperationRecord = () => {
   const [params] = useState<Models.ApiLoanTokenSwapPageInfoGETParams>({ ...new Models.ApiLoanTokenSwapPageInfoGETParams(), ...{ limit: 8, page: 1 }, tradeId: Number(tradeId), loanId: undefined })
 
   const renderItem = (item: Models.LoanTokenSwapVo) => {
-    // Define the rendering logic for each item here
     return (
       <ul className='flex list-none gap-x-168'>
         <li>{item.timestamp && dayjs.unix(item.timestamp).format('YYYY-MM-DD HH:mm:ss')}</li>
@@ -25,7 +23,6 @@ const OperationRecord = () => {
         </li>
 
         <li>{BigNumber(item.action === 'Reduce' ? item.amount ?? 0 : item.swapTokenAmount ?? 0).div(BigNumber(10).pow(18)).toFixed(2)} {item.action === 'Reduce' ? 'USDC' : item.tokenInfo?.symbol}</li>
-        {/* Add more properties based on your data structure */}
       </ul>
     )
   }

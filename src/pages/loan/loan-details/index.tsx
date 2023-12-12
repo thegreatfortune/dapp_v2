@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Tabs, message } from 'antd'
@@ -51,6 +52,15 @@ const LoanDetails = () => {
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [activeKey, setActiveKey] = useState('1')
+
+  const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
+    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
+    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
+    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
+    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Settled transaction</div>,
+    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#035ff6' >Amount due</div>,
+    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#035ff6' >Blacklist</div>,
+  }
 
   useEffect(() => {
     if (prePage === 'trade')
@@ -301,10 +311,11 @@ const LoanDetails = () => {
 
               {loanInfo.state === 'Following'
                 ? <div className='flex gap-x-20'>
-                  <div className='h33 min-w174 rounded-4 bg-#2d9b31 p-x-15 py-8' >{loanInfo.state}</div>
+                  {loanStateELMap[loanInfo.state]}
+
                   <span className='lh-49' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
                 </div>
-                : <div className='h33 min-w174 rounded-4 bg-#035ff6' >{loanInfo.state}</div>
+                : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
 
               }
 
@@ -351,10 +362,12 @@ const LoanDetails = () => {
           {loanInfo.usageIntro}
         </p>
 
-        <div className='h166 w1047 flex items-center gap-x-24 border-5 border-#0570f5 border-solid p-y-44 text-center'>
+        <div className='h166 w1047 flex items-center gap-x-42 border-5 border-#0570f5 border-solid p-x-43 text-center'>
 
+          {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>
             <li className='text-16'>Loan amount</li>
+            <li className="h10" />
             <li className='text-28 font-bold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
             {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
@@ -362,33 +375,40 @@ const LoanDetails = () => {
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 list-none p0'>
-            <li>Cycle(day)/Periodn</li>
-            <li>{loanInfo.periods} / {loanInfo.repayCount}</li>
+            <li className='text-16'>Loan period</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
+          </ul>
+          {/* </div> */}
+
+          <ul className='m0 list-none p0'>
+            <li className='text-16'>Interest</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)} %</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>Interest</li>
-            <li>{BigNumber(loanInfo.interest ?? 0).div(100).toPrecision(2)} %</li>
+            <li className='text-16'>dividend</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)} %</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>dividend</li>
-            <li>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toPrecision(2)} %</li>
+            <li className='text-16'>Risk level</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>Risk level</li>
-            <li> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+            <li className='text-16'>Total shares</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.goalCopies}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>Number of copies</li>
-            <li>{loanInfo.goalCopies}</li>
-          </ul>
-
-          <ul className='m0 list-none p0'>
-            <li>Purchased copies</li>
-            <li>{loanInfo.collectCopies}</li>
+            <li className='text-16'>Minimum required shares</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
           </ul>
 
         </div>

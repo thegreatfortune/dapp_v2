@@ -196,9 +196,9 @@ const ApplyLoan = () => {
     form && fetchData()
   }, [useDiagram, form])
 
-  useEffect(() => {
-    publishBtnLoading && createLoan()
-  }, [loanRequisitionEditModel])
+  // useEffect(() => {
+  //   createLoan()
+  // }, [loanRequisitionEditModel])
 
   async function uploadFile(file?: RcFile): Promise<string> {
     try {
@@ -208,7 +208,7 @@ const ApplyLoan = () => {
           browserContractService?.getSigner.address ? maskWeb3Address(browserContractService?.getSigner.address) : '',
           String(applyLoan ?? 0),
           tradingFormType === 'SpotGoods' ? 'Low' : 'Hight',
-            `${interest ?? 0}%`, `${dividend ?? 0}%`])
+          `${interest ?? 0}%`, `${dividend ?? 0}%`])
 
         if (!newFile)
           throw new Error('Image upload failed')
@@ -232,22 +232,25 @@ const ApplyLoan = () => {
   }
 
   const handleConfirm = async () => {
-    setPublishBtnLoading(true)
-
-    await createLoan()
-
-    setPublishBtnLoading(false)
+    await createLoan(loanRequisitionEditModel)
   }
 
-  async function createLoan() {
+  async function createLoan(value: Models.LoanContractVO) {
     console.log('%c [ 执行 ]-244', 'font-size:13px; background:#b15b1c; color:#f59f60;')
+
+    console.log('%c [createLoan value ]-239', 'font-size:13px; background:#48c27c; color:#8cffc0;', value)
+
+    setPublishBtnLoading(true)
+
     const poolIsCreated = await checkDoublePoolIsCreated()
 
     if (poolIsCreated === false)
       return
 
+    const models = { ...value, ...loanRequisitionEditModel }
+
     let url
-    if (!loanRequisitionEditModel.imageUrl)
+    if (!models.imageUrl)
       url = await uploadFile()
 
     await form.validateFields()
@@ -257,7 +260,7 @@ const ApplyLoan = () => {
     try {
       setIsModalOpen(true)
 
-      const res = await browserContractService?.capitalPool_createOrder({ ...loanRequisitionEditModel, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
+      const res = await browserContractService?.capitalPool_createOrder({ ...models, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
 
       console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', res)
 
@@ -307,7 +310,6 @@ const ApplyLoan = () => {
       return true
     }
     catch (error) {
-      // setCreatedPoolChecked(false)
       message.error('operation failure')
       console.log(
         '%c [ error ]-61',
@@ -329,7 +331,8 @@ const ApplyLoan = () => {
         ({ ...preState, ...value }),
       )
 
-      await handleConfirm()
+      await createLoan(value)
+      // await handleConfirm()
     }
     catch (error) {
       console.error('%c [ error ]-341', 'font-size:13px; background:#96e638; color:#daff7c;', error)
@@ -338,6 +341,7 @@ const ApplyLoan = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false)
+    setPublishBtnLoading(false)
   }
 
   function onValuesChange(val: Record<string, any>) {

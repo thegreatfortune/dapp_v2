@@ -1,20 +1,11 @@
 import { Image } from 'antd'
-import { useNavigate } from 'react-router-dom'
 import type { Models } from '@/.generated/api/models'
 
 interface CardProps {
   item: Models.LoanOrderVO
 }
 
-interface CustomAvatarProps {
-  src: string
-  name: string
-  twitter: string
-}
-
 const InfoCard: React.FC<CardProps> = ({ item }) => {
-  const navigate = useNavigate()
-
   return (
     <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-10">
       <Image width={300} height={271} src={item.picUrl} />

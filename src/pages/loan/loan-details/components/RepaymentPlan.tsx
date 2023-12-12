@@ -236,7 +236,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                 <ul className='flex list-none gap-x-168'>
                   <li>{item.nowCount} {item.repayTime}</li>
                   {/* <li>{item.nowCount} {dayjs(item.repayTime).format('YYYY-MM-DD HH:mm:ss')}</li> */}
-                  <li>{item.repayFee && ethers.formatUnits(BigInt(item.repayFee))}</li>
+                  <li>{item.repayFee && ethers.formatEther(BigInt(item.repayFee))}</li>
                   <li>{item.state}</li>
                   <li>compute</li>
                   <li>
