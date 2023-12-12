@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Button, Divider, InputNumber, List, Skeleton, message } from 'antd'
-import BigNumber from 'bignumber.js'
-import dayjs from 'dayjs'
+import { Button, InputNumber, List, Skeleton, message } from 'antd'
 import { ethers } from 'ethers'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
+import Address from './Address'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -21,7 +20,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const [pagination, setPagination] = useState<Models.ApiRepayPlanPageInfoGETParams>({
     ...new Models.ApiRepayPlanPageInfoGETParams(),
-    limit: 3,
+    limit: 10,
     page: 0,
   })
   const [result, setResult] = useState(new Models.PageResult<Models.RepayPlanVo>())
@@ -188,27 +187,33 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
               </div>
               : <h2>
                 {/* {currentDebt ?? (BigNumber((currentItem.repayFee as unknown as string)).div(BigNumber(10).pow(18)).toNumber())} */}
-                  {arrears}
+                {arrears}
               </h2>}
           </div>
         </div>
       </SModal>
 
-      <div className='flex items-center'>
-        <h2>Repayment Plan</h2>
+      <div className='flex items-center gap-4'>
+        <span className='text-32 font-400'>Repayment Plan</span>
 
-        <span className='mx-20'>{refundPoolAddress}</span>
+        <div className='mx-20 flex text-center c-#D1D1D1'>
+          <span className='text-16'>address</span>
+          <div className="w6" />
 
-        Arrears $ {arrears}
+          <Address address={refundPoolAddress ?? ''} />
+
+        </div>
+
+        Arrears ${arrears}
       </div>
 
-      <ul className='flex list-none gap-x-168'>
+      <ul className='grid grid-cols-5 list-none c-#666873'>
         <li>TIME</li>
         <li>Repayment Amount</li>
-        <li>State</li>
-        <li>Days Overdue</li>
-        {/* <li>Remaining Amount Due</li> */}
+        <li>Status</li>
+        <li>Overdue days</li>
       </ul>
+
       <span className='c-red'>
       </span>
 
@@ -217,8 +222,6 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         style={{
           height: 400,
           overflow: 'auto',
-          padding: '0 16px',
-          border: '1px solid rgba(140, 140, 140, 0.35)',
         }}
       >
         <InfiniteScroll
@@ -226,29 +229,22 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
           next={fetchData}
           hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
           scrollableTarget="scrollableDivPlan"
         >
           <List
             dataSource={result.records}
-            renderItem={item => (
-              <List.Item key={item.loanId}>
-                <ul className='flex list-none gap-x-168'>
-                  <li>{item.nowCount} {item.repayTime}</li>
-                  {/* <li>{item.nowCount} {dayjs(item.repayTime).format('YYYY-MM-DD HH:mm:ss')}</li> */}
-                  <li>{item.repayFee && ethers.formatEther(BigInt(item.repayFee))}</li>
+            split={false}
+            renderItem={(item, index) => (
+              <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
+                <ul className='grid grid-cols-5 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822'>
+                  <li>{index + 1} {item.repayTime}</li>
+                  <li>${item.repayFee && ethers.formatUnits(item.repayFee)}</li>
+
                   <li>{item.state}</li>
-                  <li>compute</li>
+                  <li>逾期时长</li>
                   <li>
                     <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='h30 w134 primary-btn'>Liquidation</Button>
-
-                    {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading}onClick={() => onOpenModal(item, 'Repayment')} className='h30 w134 primary-btn'>Repayment</Button>}
-
-                    {/* {item.state === 'OVERDUE'
-                      ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Liquidation</Button>
-                      : item.state === 'OVERDUE_ARREARS'
-                        ? <Button onClick={() => onOpenModal(item)} className='h30 w134 primary-btn'>Repayment</Button>
-                        : null} */}
+                    {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repayment')} className='h30 w134 primary-btn'>Repayment</Button>}
                   </li>
                 </ul>
               </List.Item>

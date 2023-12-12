@@ -10,7 +10,7 @@ import { MarketService } from '@/.generated/api/Market'
 import type { User } from '@/models/User'
 
 interface IProps {
-  renderItem: (params: any) => React.ReactNode
+  renderItem: (params: any, index: number) => React.ReactNode
   tradeId: number
   activeUser: User
 }

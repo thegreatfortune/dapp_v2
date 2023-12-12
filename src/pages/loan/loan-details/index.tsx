@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Tabs, message } from 'antd'
+import { Button, Divider, InputNumber, Radio, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
@@ -57,9 +57,9 @@ const LoanDetails = () => {
     Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
     Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
     Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
-    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Settled transaction</div>,
-    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#035ff6' >Amount due</div>,
-    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#035ff6' >Blacklist</div>,
+    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#979797' >Settled transaction</div>,
+    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
+    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
   }
 
   useEffect(() => {
@@ -234,6 +234,16 @@ const LoanDetails = () => {
     setLendState(undefined)
   }
 
+  const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
+    return (<div className='mb-30'>
+      <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Designated Position</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Room trade</div>
+      </div>
+    </div>)
+  }
+
   return (<div className='w-full'>
 
     <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
@@ -329,7 +339,10 @@ const LoanDetails = () => {
               }
 
             </div>
+
             <div className='mb20 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
+
+            <div className="h12" />
 
           </div>
           {
@@ -358,55 +371,59 @@ const LoanDetails = () => {
 
         </div>
 
-        <p className='text-16 font-400'>
-          {loanInfo.usageIntro}
+        <p className='line-clamp-3 my-6 h91 overflow-hidden text-16 font-400'>
+          <Tooltip title={loanInfo.usageIntro}>
+            {loanInfo.usageIntro}
+          </Tooltip>
         </p>
 
-        <div className='h166 w1047 flex items-center gap-x-42 border-5 border-#0570f5 border-solid p-x-43 text-center'>
+        <div className="h20" />
+
+        <div className='box-border h166 w1047 flex items-center gap-x-19 border-5 border-#0570f5 border-solid p-x-38 text-center'>
 
           {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Loan amount</li>
+            <li className='text-16 c-#D1D1D1'>Loan amount</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
+            <li className='text-24 font-bold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
             {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
 
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Loan period</li>
+            <li className='text-16 c-#D1D1D1'>Loan period</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
           </ul>
           {/* </div> */}
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Interest</li>
+            <li className='text-16 c-#D1D1D1'>Interest</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)} %</li>
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>dividend</li>
+            <li className='text-16 c-#D1D1D1'>dividend</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)} %</li>
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Risk level</li>
+            <li className='text-16 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
             <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Total shares</li>
+            <li className='text-16 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.goalCopies}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li className='text-16'>Minimum required shares</li>
+            <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
           </ul>
@@ -416,13 +433,9 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} />
+    <div className="h50" />
 
-    {/* <Radio.Group value='large' >
-      <Radio.Button value="large">Designated Position</Radio.Button>
-      <Radio.Button value="default">Operation record</Radio.Button>
-      <Radio.Button value="small">Room trade</Radio.Button>
-    </Radio.Group> */}
+    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
 
   </div>)
 }

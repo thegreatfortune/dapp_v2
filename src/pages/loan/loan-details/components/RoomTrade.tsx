@@ -25,17 +25,16 @@ const RoomTrade = () => {
 
   const { isWalletConnected } = useBrowserContract()
 
-  const renderItem = (item: Models.TokenMarketVo) => {
+  const renderItem = (item: Models.TokenMarketVo, index: number) => {
     return (
-      <ul className='flex list-none gap-x-168' key={item.loanId}>
-        <li>User </li>
+      <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822' key={item.loanId}>
+        <li>{index + 1} User </li>
         <li>{item.price && ethers.formatUnits(item.price)} </li>
         <li>{item.remainingQuantity}</li>
         {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
         <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
         <li>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
         <li>
-          {item.state}
           {isWalletConnected
             ? (
               // 用户已连接钱包
@@ -43,10 +42,10 @@ const RoomTrade = () => {
                 {
                   activeUser.id === item.userId
                     ? (
-                      <Button className='primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+                      <Button className='h25 w72 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
                       )
                     : (
-                      <Button className='primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                      <Button className='h25 w72 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
                       )
                 }
               </>

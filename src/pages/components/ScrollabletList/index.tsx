@@ -20,7 +20,7 @@ export interface IColumn<T> {
 export interface IScrollableListProps {
   api: (params: IPaged) => Promise<Models.PageResult<any>>
   params: IPaged & any
-  renderItem: (item: any) => React.ReactNode
+  renderItem: (item: any, index: number) => React.ReactNode
   containerId: string
   className?: string
   columns?: IColumn<any>[]
@@ -135,10 +135,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           scrollableTarget={containerId}
         >
           <List
+            split={false}
             dataSource={result.records}
-            renderItem={item => (
-              <List.Item >
-                {renderItem(item)}
+            renderItem={(item, index) => (
+              <List.Item style={{ paddingTop: 3, paddingBottom: 3 }}>
+                {renderItem(item, index)}
               </List.Item>
             )}
           />
