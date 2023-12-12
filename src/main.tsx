@@ -30,6 +30,8 @@ import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
 
+console.log('%c [ import.meta.env ]-34', 'font-size:13px; background:pink; color:#bf2c9f;', import.meta.env)
+
 const localhost = {
   ...polygonMumbai,
   id: 31337,
