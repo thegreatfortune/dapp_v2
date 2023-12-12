@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
-    <nav className="h105 w-full flex items-center justify-between text-white" id='navBar'>
+    <nav className="z-2 h88 w-full flex items-center justify-between pb-100 text-white" id='navBar' style={{ backgroundImage: 'url(src/assets/images/personal-center/ )' }}>
     <div className="flex items-center text-center">
         <Avatar src={logo} className="mx5 h47 w47"></Avatar>
         <div className="text-30 font-900">LOGO</div>

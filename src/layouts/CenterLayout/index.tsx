@@ -12,15 +12,17 @@ const CenterLayout: React.FC<IProps> = (props) => {
   const { t } = useTranslation()
 
   return (
-  // <div className='relative min-h-full flex flex-col items-center bg-auto bg-auto bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-      <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-      <header className='w-1400'>
+    // <div className='relative min-h-full flex flex-col items-center bg-auto bg-auto bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
+    <div className='min-h-screen w-full flex flex-col items-center bg-center bg-top bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/personal-center/navImage.png),url(src/assets/images/personal-center/bg3.png)' }}>
+
+      <header className='h-288 w-1400'>
         <Navbar title={t('nav.title')} showInput={props.showInput} />
       </header>
+      {/* <div className='h390 w1920 bg-#171822'>test</div> */}
 
       {/* <div className="h80 w-full" /> */}
 
-      <main className='h-1583 w-1400 items-center'>
+      <main className='h-1583 w-1920 items-center'>
         {props.children}
       </main>
 
