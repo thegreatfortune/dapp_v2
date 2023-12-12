@@ -41,6 +41,25 @@
 
   "personal.myLend.endMessage": "It is all, nothing more 🤐",
   "personal.myLoan.endMessage": "It is all, nothing more 🤐",
-  "personal.myLoan.button": "Extract"
+  "personal.myLoan.button": "Extract",
+
+  "personal.center.userName": "bu.darmani1",
+  "personal.center.userCareer": "@Artist",
+  "personal.center.userAddress": "0xf34cc...6fefa +",
+  "personal.center.userLoan": "Apply for a loan",
+  "personal.center.userFollow": "Follow",
+  "personal.center.userLink": "Invitation link",
+  "personal.center.userPoint": "Point",
+  "personal.center.userPoints": "300",
+  "personal.center.userScore": "Credit score",
+  "personal.center.userScores": "120",
+  "personal.center.Initial": "Initial Points",
+  "personal.center.InitialPoints": "90",
+  "personal.center.Additional": "Additional Points",
+  "personal.center.AdditionalPoints": "30",
+  "personal.center.Details": "Points details",
+  "personal.center.NFT": "NFT",
+  "personal.center.time": "TIME",
+  "personal.center.quantify": "Quantify"
 
 }
