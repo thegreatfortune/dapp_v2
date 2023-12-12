@@ -13,7 +13,7 @@ interface IProps {
   backgroundImage?: string
 }
 
-const BasicLayout: React.FC<IProps> = ({ showInput }, props) => {
+const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
   const { t } = useTranslation()
 
   return (
@@ -28,7 +28,7 @@ const BasicLayout: React.FC<IProps> = ({ showInput }, props) => {
       <div className="h30 w-full" />
 
       <main className='h-full w-1400 items-center'>
-        {props.children}
+        {children}
       </main>
 
       {/* <div className='h70' /> */}
