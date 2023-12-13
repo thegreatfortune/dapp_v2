@@ -3,16 +3,17 @@ import React, { lazy } from 'react'
 import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
 import CenterLayout from '@/layouts/CenterLayout'
-import PersonalCenter from '@/pages/personal-center'
-import Trade from '@/pages/trade'
-import ApplyLoan from '@/pages/loan/apply-loan'
-import MyLoan from '@/pages/personal-center/my-loan'
-import OrderViewAll from '@/pages/market/order-view-all'
-import LoanDetails from '@/pages/loan/loan-details'
-import MyLend from '@/pages/personal-center/my-lend'
+
 import Test from '@/pages/Test'
 
 const Market = lazy(() => import('../pages/market'))
+const Trade = lazy(() => import('../pages/trade'))
+const OrderViewAll = lazy(() => import('../pages/market/order-view-all'))
+const LoanDetails = lazy(() => import('../pages/loan/loan-details'))
+const PersonalCenter = lazy(() => import('../pages/personal-center'))
+const ApplyLoan = lazy(() => import('../pages/loan/apply-loan'))
+const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
+const MyLend = lazy(() => import('../pages/personal-center/my-lend'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
 interface IRouterMeta {
@@ -50,11 +51,9 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/personal-center',
     element: (
-      <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
-      </CenterLayout>
     ),
   },
   {
