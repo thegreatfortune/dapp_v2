@@ -3,7 +3,7 @@ import { debounce } from 'lodash-es'
 import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
-import { UserService } from '../../.generated/api/User'
+import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
@@ -11,6 +11,8 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 
 const CustomConnectButton = () => {
   const { address, isConnected } = useAccount()
+
+  const { activeUser } = useUserStore()
 
   const { resetProvider, signer } = useBrowserContract()
 
@@ -21,21 +23,21 @@ const CustomConnectButton = () => {
   async function login(address: string) {
     try {
       const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
-      console.log('%c [ nonce ]-24', 'font-size:13px; background:#32fa14; color:#76ff58;', nonce)
 
       if (!nonce)
         return
 
-      const signature = await signer?.signMessage('555555555555555555555555555')
+      let signature
 
-      console.log('%c [ signature ]-35', 'font-size:13px; background:#21ce2a; color:#65ff6e;', signature)
+      if (!activeUser.accessToken)
+        signature = await signer?.signMessage(nonce)
 
       const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
 
       if (res.success)
         signIn({ address, accessToken: res.accessToken })
 
-      const user = await UserService.ApiUserUserInfo_GET()
+      const user = await UserInfoService.ApiUserInfo_GET()
 
       signIn({ accessToken: res.accessToken, id: user.userId, ...user })
 
@@ -43,7 +45,7 @@ const CustomConnectButton = () => {
 
       setCanLogin(false)
 
-      // window.location.reload()
+      window.location.reload()
     }
     catch (error) {
       message.error('login failed')

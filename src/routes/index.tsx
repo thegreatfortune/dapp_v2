@@ -2,7 +2,6 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 import React, { lazy } from 'react'
 import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
-import CenterLayout from '@/layouts/CenterLayout'
 
 import Test from '@/pages/Test'
 import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
@@ -53,7 +52,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     path: '/personal-center',
     element: (
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <PersonalCenter text={''} />
+          <PersonalCenter />
         </React.Suspense>
     ),
   },

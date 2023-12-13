@@ -1,6 +1,6 @@
 import type { TabsProps } from 'antd'
 import { Avatar, Button, Divider, Image, Tabs, message } from 'antd'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
@@ -96,7 +96,7 @@ const PersonalCenter = () => {
       </div>
 
       <div className="h338 bg-#171822">
-        <div className="relative mx-a box-border h-131 w1400 bg-red p-x-30">
+        <div className="relative mx-a box-border h-131 w1400 p-x-30">
           <div className="absolute top--80 h160 w160 rounded-160 bg-#171822">
             <Avatar className='left-10 top-10' shape="circle" size={140} src={defaultAvatar} />
           </div>
@@ -129,7 +129,7 @@ const PersonalCenter = () => {
 
         </div>
 
-        <div className='mx-a box-border h207 w1400 bg-green px-30'>
+        <div className='mx-a box-border h207 w1400 px-30'>
           <div className='h30 flex lh-30'>
             Invitation link：
             <div className='text-10'>

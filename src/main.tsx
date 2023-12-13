@@ -30,8 +30,6 @@ import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
 
-console.log('%c [ import.meta.env ]-34', 'font-size:13px; background:pink; color:#bf2c9f;', import.meta.env)
-
 const localhost = {
   ...polygonMumbai,
   id: 31337,
@@ -55,7 +53,7 @@ const localhost = {
 }
 
 const { chains, publicClient } = configureChains(
-  [polygonMumbai, arbitrum, mainnet],
+  [localhost, polygonMumbai, arbitrum],
   [
     alchemyProvider({
       apiKey: import.meta.env.VITE_ALCHEMY_ID,

@@ -49,13 +49,4 @@ export class UserService {
       ...(options || {}),
     });
   }
-
-  /** 获取当期登录用户的信息 GET /api/user/userInfo */
-  static async ApiUserUserInfo_GET(options?: { [key: string]: any }) {
-    return request<Models.UserInfoVo>({
-      url: '/api/user/userInfo',
-      method: 'GET',
-      ...(options || {}),
-    });
-  }
 }
