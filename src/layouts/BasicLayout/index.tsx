@@ -5,8 +5,6 @@ import Navbar from './Navbar'
 interface IProps {
   children: React.ReactNode
   showInput?: boolean
-  backgroundImage?: string
-  image?: string
 }
 
 const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
@@ -15,8 +13,6 @@ const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
   return (
 
    <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}>
-     {/* <div className='relative min-h-full w-full flex flex-col items-center bg-auto bg-auto bg-cover bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(src/assets/images/market/marketBackground.svg)' }}> */}
-
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={showInput} />
       </header>

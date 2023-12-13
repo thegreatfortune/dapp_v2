@@ -1,5 +1,5 @@
 export namespace Models {
-  export class ApiCreditAddressQueryAddressCreditScoreGETParams {
+  export class ApiCreditRecordPageGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
@@ -7,25 +7,10 @@ export namespace Models {
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
+    userId?: number = 0;
   }
 
-  export class ApiCreditAddressQueryAddressExceptionGETParams {
-    /** 分页查询页码 */
-    page?: number = 0;
-    /** 分页查询每页数量 */
-    limit?: number = 0;
-    /** 排序字段
-<p>true == asc, false == desc</p> */
-    orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
-  }
-
-  export class ApiCreditAddressQueryAddressPageGETParams {
+  export class ApiIntegralRecordPageGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
@@ -33,9 +18,7 @@ export namespace Models {
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
+    userId?: number = 0;
   }
 
   export class ApiLendingPageInfoGETParams {
@@ -168,17 +151,26 @@ Canceled :订单取消 */
     accessToken?: string = undefined;
   }
 
+  export class CreditRecordVo {
+    points?: number = 0;
+    createDate?: string = undefined;
+  }
+
   export class CreditScoreVo {
     /** 分数 */
-    score?: number = 0;
-    /** 还款状态 */
-    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS' =
-      undefined;
+    totalPoints?: number = 0;
+    initialPoints?: number = 0;
+    additionalPoints?: number = 0;
   }
 
   export class HttpStatusCode {}
 
   export class IChainToken {}
+
+  export class IntegralVo {
+    points?: number = 0;
+    createDate?: string = undefined;
+  }
 
   export class ISysWallet {}
 
@@ -454,7 +446,6 @@ Canceled :订单取消 */
   export class Result<T> {
     code?: number = 0;
     message?: string = undefined;
-    /** com.sszh.modules.credit.vo.CreditScoreVo */
     data?: T = undefined;
   }
 
@@ -530,6 +521,12 @@ Canceled :订单取消 */
     solder?: string = undefined;
   }
 
+  export class TotalScoreVo {
+    /** com.sszh.modules.score.integral.IntegralVo */
+    integral?: IntegralVo = undefined;
+    credit?: CreditScoreVo = undefined;
+  }
+
   export enum TradingFormType {
     'Empty' = 'Empty',
     'SpotGoods' = 'SpotGoods',
@@ -549,10 +546,9 @@ Canceled :订单取消 */
   }
 
   export class UserInfoVo1 {
-    nickName?: string = undefined;
-    address?: string = undefined;
-    platformName?: string = undefined;
-    pictureUrl?: string = undefined;
     userId?: number = 0;
+    nickName?: string = undefined;
+    walletId?: number = 0;
+    address?: string = undefined;
   }
 }

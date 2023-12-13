@@ -1,60 +1,70 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
+import { useAccount } from 'wagmi'
+import { useEffect, useState } from 'react'
+import { message } from 'antd'
 import { UserService } from '../../.generated/api/User'
+import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 const CustomConnectButton = () => {
-  const { resetProvider } = useBrowserContract()
+  const { address, isConnected } = useAccount()
 
-  const { signIn } = useUserStore()
+  const { resetProvider, signer } = useBrowserContract()
+
+  const { signIn, signOut } = useUserStore()
+
+  const [canLogin, setCanLogin] = useState(false)
+
+  async function login(address: string) {
+    try {
+      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
+      console.log('%c [ nonce ]-24', 'font-size:13px; background:#32fa14; color:#76ff58;', nonce)
+
+      if (!nonce)
+        return
+
+      const signature = await signer?.signMessage('555555555555555555555555555')
+
+      console.log('%c [ signature ]-35', 'font-size:13px; background:#21ce2a; color:#65ff6e;', signature)
+
+      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
+
+      if (res.success)
+        signIn({ address, accessToken: res.accessToken })
+
+      const user = await UserService.ApiUserUserInfo_GET()
+
+      signIn({ accessToken: res.accessToken, id: user.userId, ...user })
+
+      resetProvider()
+
+      setCanLogin(false)
+
+      // window.location.reload()
+    }
+    catch (error) {
+      message.error('login failed')
+      console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
+      throw new Error('login failed')
+    }
+  }
+
+  useEffect(() => {
+    if (isConnected)
+      address && canLogin && login(address as string)
+    else signOut()
+  }, [isConnected])
 
   if (!window.ethereum._accountsChangedHandler) {
-    // window.ethereum._accountsChangedHandler = async (addressList: string[]) => {
-    //   const [address] = addressList
-    //   console.log('%c [ address ]-16', 'font-size:13px; background:#e13859; color:#ff7c9d;', address)
-
-    //   if (address) {
-    //     try {
-    //       const res = await UserService.ApiUserLogin_POST({ address })
-
-    //       if (res.success)
-    //         signIn({ address, accessToken: res.accessToken })
-
-    //       const user = await UserService.ApiUserUserInfo_GET()
-    //       console.log('%c [ user ]-26', 'font-size:13px; background:#2a08d1; color:#6e4cff;', user)
-
-    //       signIn({ accessToken: res.accessToken, id: user.userId, ...user })
-
-    //       resetProvider()
-
-    //       window.location.reload()
-    //     }
-    //     catch (error) {
-    //       console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
-    //     }
-    //   }
-    // }
-
     window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
       const [address] = addressList
-      console.log('%c [ address ]-16', 'font-size:13px; background:#e13859; color:#ff7c9d;', address)
 
       if (address) {
         try {
-          const res = await UserService.ApiUserLogin_POST({ address })
-
-          if (res.success)
-            signIn({ address, accessToken: res.accessToken })
-
-          const user = await UserService.ApiUserUserInfo_GET()
-          console.log('%c [ user ]-26', 'font-size:13px; background:#2a08d1; color:#6e4cff;', user)
-
-          signIn({ accessToken: res.accessToken, id: user.userId, ...user })
-
-          resetProvider()
-          window.location.reload()
+          login(address)
         }
         catch (error) {
           console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
@@ -84,6 +94,11 @@ const CustomConnectButton = () => {
         && (!authenticationStatus
           || authenticationStatus === 'authenticated')
 
+      async function onOpenConnectModal() {
+        openConnectModal()
+        setCanLogin(true)
+      }
+
       return (
         <div
 
@@ -100,7 +115,7 @@ const CustomConnectButton = () => {
             if (!connected) {
               return (
 
-                <button onClick={openConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
+                <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
                   Connect Wallet
                 </button>
               )

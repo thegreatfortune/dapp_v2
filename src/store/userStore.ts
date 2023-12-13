@@ -7,43 +7,44 @@ interface IUserState {
   userList: Array<User>
   setActiveUser(user: User): void
   addUser(user: User): void
-  //   removeUser(userId: string): void
-  //   updateUser(user: User): void
-
   signIn(user: User): void
-
   switchActiveUser(user: User): void
-
+  signOut(): void
   getToken: string | undefined
-
 }
 
 const useUserStore = create<IUserState>()(
   devtools(
     persist(
-      set => ({
+      (set, get) => ({
         activeUser: new User(),
         userList: [],
         get getToken(): string | undefined {
-          return this.activeUser.accessToken
+          return get().activeUser.accessToken
         },
-        setActiveUser: user => set(state => ({ activeUser: user })),
-        addUser: user => set(state => ({ userList: [...state.userList, user] })),
-
-        signIn(user: User) {
+        setActiveUser: user => set({ activeUser: user }),
+        addUser: user => set({ userList: [...get().userList, user] }),
+        signIn: (user) => {
           set((state) => {
             if (!state.userList.find(e => e.address === user.address))
               state.addUser(user)
 
-            return ({ activeUser: user })
+            return { activeUser: user }
           })
         },
+        signOut: () => {
+          // Clear relevant state properties
+          set({ activeUser: new User(), userList: [] })
 
-        switchActiveUser(user: User) {
+          // Remove any stored information from local storage
+          localStorage.removeItem('persist:userStore')
+        },
+        switchActiveUser: (user) => {
           set((state) => {
             if (!state.userList.find(e => e.address === user.address))
               state.addUser(user)
-            return ({ activeUser: user })
+
+            return { activeUser: user }
           })
         },
       }),
