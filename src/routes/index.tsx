@@ -97,11 +97,11 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     ),
   },
   {
-    path: '/components',
+    path: '/loan-details',
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <DetailCard />
+          <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
         </React.Suspense>
       </BasicLayout>
     ),
