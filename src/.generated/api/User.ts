@@ -4,7 +4,7 @@ import request from '../../utils/request';
 import { Models } from './models';
 
 export class UserService {
-  /** login POST /api/user/login */
+  /** 用户登录 POST /api/user/login */
   static async ApiUserLogin_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
     return request<Models.AuthResult>({
       url: '/api/user/login',
