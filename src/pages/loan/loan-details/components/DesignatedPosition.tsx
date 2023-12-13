@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Input, Spin, message } from 'antd'
+import { Button, Image, Input, Spin, Tooltip, message } from 'antd'
+
+// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// // @ts-expect-error
+// import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { ethers } from 'ethers'
-import tradingPairTokenMap from './tradingPairTokenMap'
+import tradingPairTokenMap from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
+
+// import Address from './Address'
+import Address from './Address'
+import LoanHistory from './LoanHistory'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
@@ -110,8 +118,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
     // 查询代币的符号和小数位数
     const symbol = await ERC20Contract?.symbol()
     const decimals = await ERC20Contract?.decimals()
-    // console.log('%c [ decimals ]-62', 'font-size:13px; background:#4e2dff; color:#9271ff;', decimals)
-    // console.log('%c [ symbol ]-72', 'font-size:13px; background:#5b20b6; color:#9f64fa;', symbol)
 
     const tokenName = name ?? symbol
 
@@ -125,11 +131,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
     const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
     const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (Number(ratio)))
-    // console.log('%c [ dollars ]-118', 'font-size:13px; background:#597ebe; color:#9dc2ff;', dollars)
 
     return {
       name: tokenName,
-      // balance: Number((balance ?? BigInt(0)) / BigInt(10 ** Number(decimals)) ?? 1),
       balance: trulyBalance,
       decimals: Number(decimals) ?? 0,
       address,
@@ -160,8 +164,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
     try {
       const res = await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
       setSupplyState('Succeed')
-
-      console.log('%c [ res ]-124', 'font-size:13px; background:#4871f9; color:#8cb5ff;', res)
     }
     catch (error) {
       message.error('Fail supply')
@@ -174,7 +176,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   }
 
   return (
-    <div>
+    <div className='w-full'>
       <SwapModal tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
 
       <SModal open={isDepositModalOpen} onCancel={() => setDepositIsModalOpen(false)} footer={
@@ -210,20 +212,35 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       </SModal>
 
-      <div className="flex justify-between">
-        <div className="h560 w634">
-          <Button type='primary' onClick={onDeposit}>Deposit</Button>
-
+      <div className="h560 w-full flex justify-between">
+        <div className="box-border h560 w634 flex justify-between s-container p-x-30 p-y-16">
           <div>
-            total ${BigNumber(tokenTotals).toFixed(2)}
-          </div>
-          <div>
-            {capitalPoolAddress}
+            <div className='flex text-center c-#D1D1D1'>
+              <span className='text-16'>address</span>
 
+              <div className="w6" />
+
+              <Address address={capitalPoolAddress ?? ''} />
+
+            </div>
+
+            <div>
+              <div className='text-left text-16 c-#D1D1D1'>
+                total
+              </div>
+              <span className="text-34">
+                ${BigNumber(tokenTotals).toFixed(2)}
+              </span>
+            </div>
           </div>
+
+          <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+
         </div>
 
-        <div className="flex flex-wrap" >
+        <div className="w48" />
+
+        <div className="w691 flex flex-wrap" >
           {
             tokenInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
@@ -244,12 +261,13 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                 </div>
                 <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
 
-                {/* // TODO 用户创建的才能看 */}
+                {/* //用户创建的才能看 */}
                 {
                   item.name !== 'USDC'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                     : null
                 }
+                {/* // 下面这个才是要的 */}
                 {/* {
                   item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
                     ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
@@ -261,7 +279,13 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         </div>
       </div>
 
+      <div className="h58"/>
+
       <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
+
+      <LoanHistory tradeId={String(tradeId ?? '')} />
+
+      <div className="40" />
     </div>
   )
 }

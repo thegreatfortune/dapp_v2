@@ -1,7 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Tabs, message } from 'antd'
+import { Button, Divider, InputNumber, Radio, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
@@ -51,6 +52,15 @@ const LoanDetails = () => {
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [activeKey, setActiveKey] = useState('1')
+
+  const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
+    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
+    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
+    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
+    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#979797' >Settled transaction</div>,
+    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
+    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
+  }
 
   useEffect(() => {
     if (prePage === 'trade')
@@ -199,32 +209,6 @@ const LoanDetails = () => {
       if (!browserContractService?.getSigner.address)
         return
 
-      // const ERC20Contract = await browserContractService?.getERC20Contract()
-
-      const followManageContract = await browserContractService?.getFollowManageContract()
-
-      // const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
-
-      // console.log('%c [ cp ]-60', 'font-size:13px; background:#8ef2e0; color:#d2ffff;', cp)
-
-      // if (!cp)
-      //   return
-
-      // const amount = ethers.parseEther(BigNumber(loanInfo.loanMoney ?? 0).minus(loanInfo.goalCopies ?? 0).times(copies).toString())
-      // console.log('%c [asasa amount ]-210', 'font-size:13px; background:#5d338d; color:#a177d1;', amount)
-
-      // console.log('%c [55 approveState ]-216', 'font-size:13px; background:#2d89c2; color:#71cdff;', approveState)
-
-      // const amount = await processContract.getLendStakeMoney(tradeId, BigInt(copies))
-
-      // // const approveState = await processContract.checkERC20Allowance(import.meta.env.VITE_USDC_TOKEN, browserContractService?.getSigner.address, cp, amount)
-
-      // const approveState = await browserContractService.ERC20_approve(browserContractService?.getSigner.address, cp, amount, import.meta.env.VITE_USDC_TOKEN)
-      // console.log('%c [sas approveState ]-213', 'font-size:13px; background:#a01e3a; color:#e4627e;', approveState)
-
-      // if (!approveState)
-      //   return
-
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
@@ -248,6 +232,16 @@ const LoanDetails = () => {
     navigate('/my-lend')
     setIsModalOpen(false)
     setLendState(undefined)
+  }
+
+  const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
+    return (<div className='mb-30'>
+      <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Designated Position</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Room trade</div>
+      </div>
+    </div>)
   }
 
   return (<div className='w-full'>
@@ -321,22 +315,19 @@ const LoanDetails = () => {
 
       <div className='h419 w1048'>
 
-        <div className='flex justify-between'>
+        <div className='flex justify-between lh-33'>
           <div>
-            <div className='flex'>
+            <div className='flex text-center'>
 
               {loanInfo.state === 'Following'
-                ? <div>
-                  <div className='mr-33 h33 min-w110 rounded-4 bg-#2d9b31 p-x-20 py-12' >{loanInfo.state}</div>
-                  <span> {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
-                </div>
-                : <div>
-                  <div className='mr-33 h33 min-w110 rounded-4 bg-#035ff6 p-x-20 py-12' >{loanInfo.state}</div>
+                ? <div className='flex gap-x-20'>
+                  {loanStateELMap[loanInfo.state]}
 
-                  {/* {prePage === 'lend' && <span>{searchParams.get('subscriptionCopies')} share = { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() } U</span>}
-                  +<span>principal { BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0).toString() }U</span>
-                  +<span>interest { BigNumber(principalAndInterest).minus(BigNumber(searchParams.get('subscriptionCopies') ?? 0).times(searchParams.get('subscriptionUnitPrice') ?? 0)).toString() }U</span> */}
-                </div>}
+                  <span className='lh-49' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
+                </div>
+                : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
+
+              }
 
               {
                 loanInfo.state !== 'Invalid'
@@ -348,64 +339,93 @@ const LoanDetails = () => {
               }
 
             </div>
-            <div className='mb20 mt30'> {loanInfo.loanName}</div>
+
+            <div className='mb20 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
+
+            <div className="h12" />
 
           </div>
           {
-            prePage === 'market'
-              ? <Button className='h60 w180 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
-              : prePage === 'lend'
-                ? <div>
-                  <Button className='h60 w180 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
-                  <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
-                </div>
-                : <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+            prePage === 'market' && loanInfo.state === 'Following'
+            && <Button className='h60 w180 rounded-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
           }
+
+          {
+            prePage === 'lend'
+            && <div className='flex'>
+              {
+                loanInfo.state === 'PaidOff'
+                  ? (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'PaidOff'
+                  && <Button className='h60 w180 primary-btn'>Liquidate</Button>
+                  : <Button className='h60 w180 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+              }
+
+              <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+            </div>
+          }
+
+          {
+            prePage === 'loan'
+            && <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+          }
+
         </div>
 
-        <p>
-          {loanInfo.usageIntro}
+        <p className='line-clamp-3 my-6 h91 overflow-hidden text-16 font-400'>
+          <Tooltip title={loanInfo.usageIntro}>
+            {loanInfo.usageIntro}
+          </Tooltip>
         </p>
 
-        <div className='h191 w1047 flex gap-x-24 border-5 border-#0394e8 border-solid'>
+        <div className="h20" />
 
+        <div className='box-border h166 w1047 flex items-center gap-x-19 border-5 border-#0570f5 border-solid p-x-38 text-center'>
+
+          {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>
-            <li>Apply for loan </li>
-            <li>{BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
-            <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li>
-            <li>USDC</li>
+            <li className='text-16 c-#D1D1D1'>Loan amount</li>
+            <li className="h10" />
+            <li className='text-24 font-bold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
+            {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
 
-          <Divider type='vertical' className='box-border h-full bg-#fff' />
+          <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 list-none p0'>
-            <li>Cycle(day)/Periodn</li>
-            <li>{loanInfo.periods} / {loanInfo.repayCount}</li>
+            <li className='text-16 c-#D1D1D1'>Loan period</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
           </ul>
+          {/* </div> */}
 
           <ul className='m0 list-none p0'>
-            <li>Interest</li>
-            <li>{BigNumber(loanInfo.interest ?? 0).div(100).toPrecision(2)} %</li>
-          </ul>
-
-          <ul className='m0 list-none p0'>
-            <li>dividend</li>
-            <li>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toPrecision(2)} %</li>
-          </ul>
-
-          <ul className='m0 list-none p0'>
-            <li>Risk level</li>
-            <li> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+            <li className='text-16 c-#D1D1D1'>Interest</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>Number of copies</li>
-            <li>{loanInfo.goalCopies}</li>
+            <li className='text-16 c-#D1D1D1'>dividend</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
-            <li>Purchased copies</li>
-            <li>{loanInfo.collectCopies}</li>
+            <li className='text-16 c-#D1D1D1'>Risk level</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+          </ul>
+
+          <ul className='m0 list-none p0'>
+            <li className='text-16 c-#D1D1D1'>Total shares</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.goalCopies}</li>
+          </ul>
+
+          <ul className='m0 list-none p0'>
+            <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
+            <li className="h10" />
+            <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
           </ul>
 
         </div>
@@ -413,13 +433,9 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} />
+    <div className="h50" />
 
-    {/* <Radio.Group value='large' >
-      <Radio.Button value="large">Designated Position</Radio.Button>
-      <Radio.Button value="default">Operation record</Radio.Button>
-      <Radio.Button value="small">Room trade</Radio.Button>
-    </Radio.Group> */}
+    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
 
   </div>)
 }

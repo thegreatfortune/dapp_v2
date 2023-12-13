@@ -22,7 +22,17 @@
 	},
 	{
 		"inputs": [],
+		"name": "AlreadyDoRefund",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "AlreadyDone",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "BalanceError",
 		"type": "error"
 	},
 	{
@@ -93,11 +103,6 @@
 	{
 		"inputs": [],
 		"name": "NotInitialize",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotLend",
 		"type": "error"
 	},
 	{
@@ -239,6 +244,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getIfDoRefund",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getLastId",
 		"outputs": [
@@ -363,30 +387,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "getPersonlLend",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "initCreateOrder",
 		"outputs": [
@@ -457,15 +457,16 @@
 				"internalType": "uint256",
 				"name": "_id",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
 			}
 		],
 		"name": "refund",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

@@ -20,7 +20,7 @@ import ERC3525_ABI from '@/abis/ERC3525.json'
 import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
-import { tokenList } from '@/pages/loan/loan-details/components/tradingPairTokenMap'
+import { tokenList } from '@/contract/tradingPairTokenMap'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -960,6 +960,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_createOrder(model: LoanRequisitionEditModel) {
+    console.log('%c [ model ]-963', 'font-size:13px; background:#d9e02b; color:#ffff6f;', model)
+
     const followRouterContract = await this.getFollowRouterContract()
 
     const cp = await this.getCapitalPoolAddress()

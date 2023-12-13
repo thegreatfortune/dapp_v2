@@ -1,931 +1,897 @@
 [
-	  {
+	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
-	  },
-	  {
+	},
+	{
 		"inputs": [],
 		"name": "OrderError",
 		"type": "error"
-	  },
-	  {
+	},
+	{
 		"inputs": [],
 		"name": "ZeroAddress",
 		"type": "error"
-	  },
-	  {
+	},
+	{
 		"anonymous": false,
 		"inputs": [
-		  {
-			"indexed": true,
-			"internalType": "address",
-			"name": "previousOwner",
-			"type": "address"
-		  },
-		  {
-			"indexed": true,
-			"internalType": "address",
-			"name": "newOwner",
-			"type": "address"
-		  }
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
 		],
 		"name": "OwnershipTransferred",
 		"type": "event"
-	  },
-	  {
+	},
+	{
 		"anonymous": false,
 		"inputs": [
-		  {
-			"indexed": false,
-			"internalType": "address",
-			"name": "user",
-			"type": "address"
-		  },
-		  {
-			"indexed": false,
-			"internalType": "address",
-			"name": "capitalPool",
-			"type": "address"
-		  },
-		  {
-			"indexed": false,
-			"internalType": "uint256",
-			"name": "tradeId",
-			"type": "uint256"
-		  },
-		  {
-			"indexed": false,
-			"internalType": "uint256",
-			"name": "amount",
-			"type": "uint256"
-		  }
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "capitalPool",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tradeId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
 		],
 		"name": "supplyEvent",
 		"type": "event"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "capitalPoolAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "capitalPoolAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getBorrower",
 		"outputs": [
-		  {
-			"internalType": "address",
-			"name": "thisBorrower",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "thisBorrower",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "_getBorrowerIfWithdrawProfit",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "refundAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "refundAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getCreateRefundState",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "catpitalAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "catpitalAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getCreateState",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [],
 		"name": "_getFactory",
 		"outputs": [
-		  {
-			"internalType": "address",
-			"name": "a",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "b",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "a",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "b",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getIfBlackList",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getIfCreateCaptitalPool",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "capitalPoolAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "capitalPoolAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getIfCreateRefundPool",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [],
 		"name": "_getLastTradeId",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "_getLenderIfWithdrawProfit",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "_getList",
 		"outputs": [
-		  {
-			"internalType": "uint256[18]",
-			"name": "newList",
-			"type": "uint256[18]"
-		  }
+			{
+				"internalType": "uint256[18]",
+				"name": "newList",
+				"type": "uint256[18]"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint16",
-			"name": "_profitRate",
-			"type": "uint16"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_alreadyCollectMoney",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint16",
+				"name": "_profitRate",
+				"type": "uint16"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_alreadyCollectMoney",
+				"type": "uint256"
+			}
 		],
 		"name": "_getMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "pure",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "_getOrderWithdrawMes",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_thisTradeId",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_alreadyWithdrawAmount",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_borrowerMoney",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint256[]",
-			"name": "_withdrawTotalAmount",
-			"type": "uint256[]"
-		  },
-		  {
-			"internalType": "address",
-			"name": "_borrower",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address[]",
-			"name": "_userGroup",
-			"type": "address[]"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_thisTradeId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_alreadyWithdrawAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_borrowerMoney",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_borrower",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  }
-		],
-		"name": "_getPersonlLend",
-		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
-		],
-		"stateMutability": "view",
-		"type": "function"
-	  },
-	  {
-		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "capitalPoolAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "capitalPoolAddress",
+				"type": "address"
+			}
 		],
 		"name": "_getRefundPool",
 		"outputs": [
-		  {
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "_getTradeIdToCapitalPool",
 		"outputs": [
-		  {
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "token",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			}
 		],
 		"name": "_judgeInputToken",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
 		],
 		"name": "_userToCatpitalPool",
 		"outputs": [
-		  {
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "token",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "tokenOwner",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "spender",
-			"type": "address"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "checkAmount",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "tokenOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "checkAmount",
+				"type": "uint256"
+			}
 		],
 		"name": "checkERC20Allowance",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "spender",
-			"type": "address"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "tokenId",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "amount",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
 		],
 		"name": "checkERC3525Allowance",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "tokenAddress",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "checkAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "checkAddress",
+				"type": "address"
+			}
 		],
 		"name": "getAddressBalance",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getBorrowerToProfit",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint8",
-			"name": "periods",
-			"type": "uint8"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint8",
+				"name": "periods",
+				"type": "uint8"
+			}
 		],
 		"name": "getEveryPayTime",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "userAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			}
 		],
 		"name": "getIfAgainCreateOrder",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint16",
-			"name": "partAmount",
-			"type": "uint16"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint16",
+				"name": "partAmount",
+				"type": "uint16"
+			}
 		],
 		"name": "getLendStakeMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tokenId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
 		],
 		"name": "getLenderToRepayMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tokenId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
 		],
 		"name": "getLenderToSurplusMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getMultiProtocolFee",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getNextPayTime",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "capitalAddress",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "capitalAddress",
+				"type": "address"
+			}
 		],
 		"name": "getOrderCreateState",
 		"outputs": [
-		  {
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		  }
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getOrderReapyMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getOrderState",
 		"outputs": [
-		  {
-			"internalType": "enum IProcessCenter.OrderState",
-			"name": "state",
-			"type": "uint8"
-		  }
+			{
+				"internalType": "enum IProcessCenter.OrderState",
+				"name": "state",
+				"type": "uint8"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getRemainEndSeconds",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getRemainSeconds",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tokenId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
 		],
 		"name": "getShareProfit",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getSingleProtocolFee",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "getTradeIdToEveryMultiFee",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "uint256",
-			"name": "_tokenId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			}
 		],
 		"name": "getUserTotalMoney",
 		"outputs": [
-		  {
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "_followFactory",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "_followManage",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "_refundFactory",
-			"type": "address"
-		  },
-		  {
-			"internalType": "address",
-			"name": "ERC3525Address",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "_followFactory",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_followManage",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_refundFactory",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "ERC3525Address",
+				"type": "address"
+			}
 		],
 		"name": "set",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "USDC",
-			"type": "address"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "amount",
-			"type": "uint256"
-		  },
-		  {
-			"internalType": "uint256",
-			"name": "_tradeId",
-			"type": "uint256"
-		  }
+			{
+				"internalType": "address",
+				"name": "USDC",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
 		],
 		"name": "supply",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	  },
-	  {
+	},
+	{
 		"inputs": [
-		  {
-			"internalType": "address",
-			"name": "newOwner",
-			"type": "address"
-		  }
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
 		],
 		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	  }
+	}
 ]

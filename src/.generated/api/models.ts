@@ -448,7 +448,7 @@ Canceled :订单取消 */
     /** 表示是第几期偿还 */
     nowCount?: number = 0;
     /** 偿还token */
-    repayFee?: number = 0;
+    repayFee?: string = undefined;
   }
 
   export class Result<T> {

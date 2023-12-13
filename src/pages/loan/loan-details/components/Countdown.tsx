@@ -40,16 +40,16 @@ function Countdown(props: Props) {
   }, [props.targetTimestamp])
 
   return (
-    <span >
+    <span className='flex'>
       {/* 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
       {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。 */}
 
-      <span >
-        follow end time day
+      <span className='text-14 font-400'>
+      Fundraising countdown
       </span>
-
+      <div className="w8"></div>
       <span className='text-16 c-#FDB600'>
-        {timeRemaining.days}{timeRemaining.hours} : {timeRemaining.minutes} : {timeRemaining.seconds}
+        {timeRemaining.days}day {timeRemaining.hours}:{timeRemaining.minutes}:{timeRemaining.seconds}
       </span>
 
     </span>
