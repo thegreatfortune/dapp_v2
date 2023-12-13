@@ -6,6 +6,7 @@ interface IProps {
   children: React.ReactNode
   showInput?: boolean
   backgroundImage?: string
+  image?: string
 }
 
 const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {

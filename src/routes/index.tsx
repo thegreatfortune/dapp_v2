@@ -11,6 +11,7 @@ import OrderViewAll from '@/pages/market/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
 import Test from '@/pages/Test'
+import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
 
 const Market = lazy(() => import('../pages/market'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -52,7 +53,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     element: (
       <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <PersonalCenter />
+          <PersonalCenter text={''} />
         </React.Suspense>
       </CenterLayout>
     ),
@@ -93,6 +94,16 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <LoanDetails />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+  },
+  {
+    path: '/components',
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <DetailCard />
         </React.Suspense>
       </BasicLayout>
     ),

@@ -237,7 +237,7 @@ const LoanDetails = () => {
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Designated Position</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Poll</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Room trade</div>
       </div>
@@ -392,7 +392,7 @@ const LoanDetails = () => {
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Loan period</li>
+            <li className='text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
           </ul>

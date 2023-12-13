@@ -13,8 +13,8 @@ const UserDropdown = () => {
     {
       key: '1',
       label: (
-        <Link className='my-12 h18 text-12' to={'/my-loan'}>
-          {t('nav.menu.loan')}
+        <Link className='flex items-center c-#fff' to={'/my-loan'} key='myLoan'>
+        <img src="src/assets/images/personal-center/myLoan.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.loan')}
         </Link>
 
       ),
@@ -22,8 +22,8 @@ const UserDropdown = () => {
     {
       key: '2',
       label: (
-        <Link className='my-12 h18 text-12' to='/my-lend'>
-          {t('nav.menu.follow')}
+        <Link className='flex items-center c-#fff' to='/my-lend'>
+          <img src="src/assets/images/personal-center/myFollow.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.follow')}
         </Link>
 
       ),
@@ -31,8 +31,8 @@ const UserDropdown = () => {
     {
       key: 'personalCenter',
       label: (
-        <Link className='my-12 h18 text-12' to='/personal-center'>
-          {t('nav.menu.personalCenter')}
+        <Link className='flex items-center c-#fff' to='/personal-center'>
+          <img src="src/assets/images/personal-center/Personal.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.personalCenter')}
         </Link>
 
       ),
@@ -43,14 +43,14 @@ const UserDropdown = () => {
     {
       key: 'signOut',
       label: (
-        <a className='my-12 h18 text-12' onClick={openAccountModal}>
-          {t('nav.menu.signOut')}
+        <a className='flex items-center c-#fff' onClick={openAccountModal}>
+          <img src="src/assets/images/personal-center/Disconnect.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.signOut')}
         </a>
       ),
     },
   ]
   return (
-    <Dropdown menu={{ items }} placement="bottomRight" overlayClassName='pt-12 text-12 w166 box-border'>
+    <Dropdown menu={{ items }} placement="bottomRight" overlayClassName='pt-12 text-12 box-border h18'>
       <a onClick={e => e.preventDefault()}>
         <div>
           User
