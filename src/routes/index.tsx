@@ -53,7 +53,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     element: (
       <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <PersonalCenter text={''} />
+          <PersonalCenter text={'???'} />
         </React.Suspense>
       </CenterLayout>
     ),
@@ -99,11 +99,11 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     ),
   },
   {
-    path: '/components',
+    path: '/loan-details',
     element: (
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <DetailCard />
+          <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
         </React.Suspense>
       </BasicLayout>
     ),
