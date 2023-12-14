@@ -1,8 +1,8 @@
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
-import TransparentCard from './TransparentCard'
 import type { Models } from '@/.generated/api/models'
+import TransparentCard from '@/pages/components/TransparentCard'
 
 interface ICardsContainerProps {
   records: Models.LoanOrderVO[]
@@ -47,8 +47,8 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
       <div className='h30 w-full'></div>
 
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
-      {
-       records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
+        {
+          records.splice(0, 7).map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
         }
       </div>
 

@@ -19,6 +19,7 @@ const NotFound = lazy(() => import('../pages/NotFound'))
 interface IRouterMeta {
   title?: string
   icon?: string
+  isLoggedIn: boolean
 }
 
 const routes: (RouteObject & { meta?: IRouterMeta })[] = [

@@ -73,8 +73,6 @@ const LoanDetails = () => {
         setExtraBtnLoading(true)
 
         if (prePage === 'loan') {
-          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
-
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
@@ -82,8 +80,6 @@ const LoanDetails = () => {
           setExtractMoney(ethers.formatUnits(res ?? 0))
         }
         else if (prePage === 'lend') {
-          console.log('%c [ getUserTotalMoney ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
-
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getUserTotalMoney(BigInt(tradeId))

@@ -1,6 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { UserInfoService } from '../../.generated/api/UserInfo'
@@ -12,7 +12,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 const CustomConnectButton = () => {
   const { address, isConnected } = useAccount()
 
-  const { activeUser } = useUserStore()
+  const { activeUser, userList, switchActiveUser, setUserInfo } = useUserStore()
 
   const { resetProvider, signer } = useBrowserContract()
 
@@ -20,34 +20,45 @@ const CustomConnectButton = () => {
 
   const [canLogin, setCanLogin] = useState(false)
 
+  // function getNonce() {
+
+  // }
+
   async function login(address: string) {
     try {
+      resetProvider()
+
+      if (!signer)
+        return login(address)
+        // message.error('signer cannot be empty')
+        // return
+
       const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
+      console.log('%c [ nonce ]-29', 'font-size:13px; background:#ca6f56; color:#ffb39a;', nonce)
+      const signature = await signer?.signMessage(nonce)
 
-      if (!nonce)
+      if (!signature) {
+        message.error('signature cannot be empty')
         return
-
-      let signature
-
-      if (!activeUser.accessToken)
-        signature = await signer?.signMessage(nonce)
+      }
 
       const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
 
-      if (res.success)
-        signIn({ address, accessToken: res.accessToken })
+      signIn({ accessToken: res.accessToken, address })
 
-      const user = await UserInfoService.ApiUserInfo_GET()
+      if (res.success) {
+        const user = await UserInfoService.ApiUserInfo_GET()
+        console.log('%c [ user ]-83', 'font-size:13px; background:#eb01a1; color:#ff45e5;', user)
 
-      signIn({ accessToken: res.accessToken, id: user.userId, ...user })
+        setUserInfo({ accessToken: res.accessToken, ...user })
 
-      resetProvider()
+        // signIn({ accessToken: res.accessToken, address, ...user })
+      }
 
-      setCanLogin(false)
-
-      window.location.reload()
+      // window.location.reload()
     }
     catch (error) {
+      signOut()
       message.error('login failed')
       console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
       throw new Error('login failed')
@@ -55,25 +66,49 @@ const CustomConnectButton = () => {
   }
 
   useEffect(() => {
-    if (isConnected)
-      address && canLogin && login(address as string)
-    else signOut()
-  }, [isConnected])
+    if (isConnected) {
+      if (address && canLogin) {
+        const havenUser = userList.find(user => user.address === address)
+
+        if (havenUser)
+          switchActiveUser(havenUser)
+        else
+          login(address)
+      }
+    }
+    else {
+      signOut()
+    }
+  }, [isConnected, address])
 
   if (!window.ethereum._accountsChangedHandler) {
-    window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
-      const [address] = addressList
-
-      if (address) {
-        try {
-          login(address)
-        }
-        catch (error) {
-          console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
-        }
-      }
+    window.ethereum._accountsChangedHandler = debounce(async () => {
+      signOut()
     }, 1000)
   }
+
+  // if (!window.ethereum._accountsChangedHandler) {
+  //   window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
+  //     if (!isConnected)
+  //       return
+
+  //     const [address] = addressList
+
+  //     if (address) {
+  //       try {
+  //         const havenUser = userList.find(user => user.address === address && user.id)
+
+  //         if (havenUser)
+  //           switchActiveUser(havenUser)
+  //         else
+  //           login(address)
+  //       }
+  //       catch (error) {
+  //         console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
+  //       }
+  //     }
+  //   }, 1000)
+  // }
 
   window.ethereum.on('accountsChanged', window.ethereum._accountsChangedHandler)
 
@@ -98,6 +133,7 @@ const CustomConnectButton = () => {
 
       async function onOpenConnectModal() {
         openConnectModal()
+
         setCanLogin(true)
       }
 
@@ -117,9 +153,12 @@ const CustomConnectButton = () => {
             if (!connected) {
               return (
 
-                <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
-                  Connect Wallet
-                </button>
+                <div>
+                  <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
+                    Connect Wallet
+                  </button>
+                </div>
+
               )
             }
 

@@ -17,6 +17,15 @@ export class UserService {
     });
   }
 
+  /** 用户登出 PUT /api/user/logOut */
+  static async ApiUserLogOut_PUT(options?: { [key: string]: any }) {
+    return request<boolean>({
+      url: '/api/user/logOut',
+      method: 'PUT',
+      ...(options || {}),
+    });
+  }
+
   /** uploadFile POST /api/user/upload */
   static async ApiUserUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
     const formData = new FormData();
