@@ -13,6 +13,7 @@ import SwapModal from './SwapModal'
 // import Address from './Address'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
+import DetailCard from './DetailCard'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
@@ -241,24 +242,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         <div className="w48" />
 
         <div className="w691 flex flex-wrap" >
-          {/* style={{ backgroundImage: 'url(src/assets/images/loan-details/cardBackGround.png)' }} */}
-          <div className='flex justify-between'>
-            <div className='grid gap-40' >
-              <div className='h160 w321 b-rd-16' style={{ backgroundImage: 'url(src/assets/images/loan-details/cardBackGround.png)' }}>
-                <div className='grid gap-20'>
-                  <div>12313</div>
-                  <div>123213</div>
-                </div>
-              </div>
-              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
-              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
-            </div>
-            <div className='grid ml-50 gap-40'>
-              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
-              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
-              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
-            </div>
-          </div>
+          <DetailCard />
           {
             tokenInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
