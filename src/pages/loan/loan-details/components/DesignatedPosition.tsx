@@ -241,6 +241,24 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         <div className="w48" />
 
         <div className="w691 flex flex-wrap" >
+          {/* style={{ backgroundImage: 'url(src/assets/images/loan-details/cardBackGround.png)' }} */}
+          <div className='flex justify-between'>
+            <div className='grid gap-40' >
+              <div className='h160 w321 b-rd-16' style={{ backgroundImage: 'url(src/assets/images/loan-details/cardBackGround.png)' }}>
+                <div className='grid gap-20'>
+                  <div>12313</div>
+                  <div>123213</div>
+                </div>
+              </div>
+              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
+              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
+            </div>
+            <div className='grid ml-50 gap-40'>
+              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
+              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
+              <img src="src/assets/images/loan-details/cardBackGround.png" alt="" className='h160 w321 opacity-100' />
+            </div>
+          </div>
           {
             tokenInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
@@ -279,7 +297,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         </div>
       </div>
 
-      <div className="h58"/>
+      <div className="h58" />
 
       <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
 

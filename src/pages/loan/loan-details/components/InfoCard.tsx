@@ -16,10 +16,10 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-x-6 p0'>
             <li className='text-21'>
-              bu.darmani1
+              bu.darmani16666
             </li>
             <li className='h29 text-16 c-#43465C'>
-              @bu.darmani1
+              @bu.darmani16666
             </li>
             <li className='mt16'>
             <div>
