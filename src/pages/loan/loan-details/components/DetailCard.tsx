@@ -7,10 +7,12 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 interface IProps {
   address: string
+  porps: string
 
 }
 
-const DetailCard: React.FC<IProps> = ({ address }) => {
+// eslint-disable-next-line no-empty-pattern
+const DetailCard: React.FC<IProps> = ({ }) => {
   return (
     // <CopyToClipboard text={address} onCopy={() => message.success('Copied')} >
     //     <div className='h-23 w-104 flex transform cursor-pointer items-center justify-center rounded-15 bg-#272C62 text-10 c-#4959EE transition-transform hover:scale-105 focus:outline-none'>

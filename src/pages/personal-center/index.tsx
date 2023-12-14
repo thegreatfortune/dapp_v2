@@ -1,16 +1,25 @@
 import type { TabsProps } from 'antd'
-import { Avatar, Button, Divider, Image, Tabs, message } from 'antd'
+import { Avatar, Button, Divider, Image, Tabs, Tooltip, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
+
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Address from '../loan/loan-details/components/Address'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import Navbar from '@/layouts/BasicLayout/Navbar'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
 
+interface IProps {
+  address: string
+
+}
+
 const PersonalCenter = () => {
   const { t } = useTranslation()
+
+  const text = <span>Copy to Clipboard</span>
 
   const navigate = useNavigate()
 
@@ -106,12 +115,14 @@ const PersonalCenter = () => {
             <div>
               <div className='flex'>
                 <span>
-                  H
+                  H666
                 </span>
 
                 <div className="w10" />
 
+                <Tooltip placement='top' title={text}>
                 <Address address='456' />
+                </Tooltip>
               </div>
 
               <div className="h12" />
@@ -120,7 +131,7 @@ const PersonalCenter = () => {
             </div>
 
             <div className='flex gap-x-50'>
-              <Button className='h60 w254 rounded-30'>Apply for a loan</Button>
+              <Button className='h60 w254 rounded-30 primary-btn'>Apply for a loan</Button>
 
               <Button className='h60 w127 rounded-30 primary-btn'>Follow</Button>
             </div>
@@ -133,7 +144,11 @@ const PersonalCenter = () => {
           <div className='h30 flex lh-30'>
             Invitation link：
             <div className='text-10'>
+              <CopyToClipboard text={Address} onCopy={() => message.success('Copied')}>
+              <Tooltip title="Copy to Clipboard">
               <span className='c-#307DF5'>https://www.bing.com/search?q=%E7%BF%BB%E8%AF%91&PC</span>
+              </Tooltip>
+              </CopyToClipboard>
 
               <Image preview={false} width={10} height={10} className='ml-6' src='src/assets/images/loan-details/copy.svg' />
             </div>
