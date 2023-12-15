@@ -190,7 +190,7 @@ const PersonalCenter = () => {
             <div className="h-full w-312 flex items-center rounded-15 bg-#333341 pl-21">
               <div className='w133 flex flex-col items-center'>
                 <span className='text-20'>Credit score</span>
-                <span className='text-24'>{((totalScoreVo.credit?.totalPoints ?? 0) / 100).toFixed()}</span>
+                <span className='text-24'>{(totalScoreVo.credit?.totalPoints ?? 0) / 100}</span>
               </div>
 
               <Divider className='h-85' type='vertical' />
@@ -198,12 +198,12 @@ const PersonalCenter = () => {
               <div className='w-164 flex flex-col items-center gap-y-16 pr-35 text-14'>
                 <ul className='m0 w-full flex list-none justify-between p0'>
                   <li>Initial Points</li>
-                  <li>{((totalScoreVo.credit?.initialPoints ?? 0) / 100).toFixed(2)}</li>
+                  <li>{(totalScoreVo.credit?.initialPoints ?? 0) / 100}</li>
                 </ul>
 
                 <ul className='m0 w-full flex list-none justify-between p0'>
                   <li>Additional Points</li>
-                  <li>{((totalScoreVo.credit?.additionalPoints ?? 0) / 100).toFixed(2)}</li>
+                  <li>{(totalScoreVo.credit?.additionalPoints ?? 0) / 100}</li>
                 </ul>
               </div>
             </div>
