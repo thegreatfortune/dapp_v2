@@ -25,7 +25,18 @@ interface IRouterMeta {
 const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/',
-    element: <Navigate to="/market" replace={true} />,
+    element: <Navigate to="/portal" replace={true} />,
+  },
+  {
+    path: '/portal',
+    // meta: { showInput: false },
+    element: (
+      <PortalLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Portal />
+        </React.Suspense>
+      </PortalLayout>
+    ),
   },
   {
     path: '/market',
@@ -107,17 +118,6 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
           <OrderViewAll />
         </React.Suspense>
       </BasicLayout>
-    ),
-  },
-  {
-    path: '/portal',
-    // meta: { showInput: false },
-    element: (
-      <PortalLayout>
-        <React.Suspense fallback={<div>Loading...</div>}>
-          <Portal />
-        </React.Suspense>
-      </PortalLayout>
     ),
   },
   {
