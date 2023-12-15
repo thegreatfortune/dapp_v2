@@ -2,24 +2,26 @@ import { Navigate, type RouteObject } from 'react-router-dom'
 import React, { lazy } from 'react'
 import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
-import CenterLayout from '@/layouts/CenterLayout'
-import PersonalCenter from '@/pages/personal-center'
-import Trade from '@/pages/trade'
-import ApplyLoan from '@/pages/loan/apply-loan'
-import MyLoan from '@/pages/personal-center/my-loan'
-import OrderViewAll from '@/pages/market/order-view-all'
-import LoanDetails from '@/pages/loan/loan-details'
-import MyLend from '@/pages/personal-center/my-lend'
+
 import Test from '@/pages/Test'
 import PortalLayout from '@/layouts/PortalLayout'
-import Portal from '@/pages/Portal'
+import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
 
 const Market = lazy(() => import('../pages/market'))
+const Portal = lazy(() => import('../pages/Portal'))
+const Trade = lazy(() => import('../pages/trade'))
+const OrderViewAll = lazy(() => import('../pages/market/order-view-all'))
+const LoanDetails = lazy(() => import('../pages/loan/loan-details'))
+const PersonalCenter = lazy(() => import('../pages/personal-center'))
+const ApplyLoan = lazy(() => import('../pages/loan/apply-loan'))
+const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
+const MyLend = lazy(() => import('../pages/personal-center/my-lend'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 
 interface IRouterMeta {
   title?: string
   icon?: string
+  isLoggedIn: boolean
 }
 
 const routes: (RouteObject & { meta?: IRouterMeta })[] = [
@@ -63,11 +65,9 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/personal-center',
     element: (
-      <CenterLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <PersonalCenter />
         </React.Suspense>
-      </CenterLayout>
     ),
   },
   {
@@ -110,6 +110,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       </BasicLayout>
     ),
   },
+
   {
     path: '/view-all',
     element: (
@@ -132,17 +133,28 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
 
 if (import.meta.env.DEV) {
   routes.push(
-    {
-      path: 'test',
-      element: (
+    ...[
+      {
+        path: '/loan-details',
+        element: (
+          <BasicLayout>
+            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+              <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
+            </React.Suspense>
+          </BasicLayout>
+        ),
+      },
+      {
+        path: 'test',
+        element: (
         <BasicLayout>
           <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
             <Test />
           </React.Suspense>
         </BasicLayout>
-      ),
+        ),
 
-    })
+      }])
 }
 
 export default routes

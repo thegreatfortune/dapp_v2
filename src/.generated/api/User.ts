@@ -4,7 +4,7 @@ import request from '../../utils/request';
 import { Models } from './models';
 
 export class UserService {
-  /** login POST /api/user/login */
+  /** 用户登录 POST /api/user/login */
   static async ApiUserLogin_POST(body: Models.LoginDto, options?: { [key: string]: any }) {
     return request<Models.AuthResult>({
       url: '/api/user/login',
@@ -13,6 +13,15 @@ export class UserService {
         'Content-Type': 'application/json',
       },
       data: body,
+      ...(options || {}),
+    });
+  }
+
+  /** 用户登出 PUT /api/user/logOut */
+  static async ApiUserLogOut_PUT(options?: { [key: string]: any }) {
+    return request<boolean>({
+      url: '/api/user/logOut',
+      method: 'PUT',
       ...(options || {}),
     });
   }
@@ -46,15 +55,6 @@ export class UserService {
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },
-      ...(options || {}),
-    });
-  }
-
-  /** 获取当期登录用户的信息 GET /api/user/userInfo */
-  static async ApiUserUserInfo_GET(options?: { [key: string]: any }) {
-    return request<Models.UserInfoVo>({
-      url: '/api/user/userInfo',
-      method: 'GET',
       ...(options || {}),
     });
   }

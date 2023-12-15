@@ -3,8 +3,6 @@ import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import { useJsonContract } from '@/hooks/useJsonContract'
 
-// import useBrowserContract from '@/hooks/useBrowserContract'
-
 export class ContractService {
   /**
    *贷款
@@ -27,8 +25,4 @@ export class ContractService {
   static getFollowFactoryContract() {
     return useJsonContract<FollowFactory>(import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS, followFactory_ABI)
   }
-
-  // static browserFollowFactoryContract() {
-  //   return useBrowserContract<FollowFactory>(import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS, followFactory_ABI)
-  // }
 }

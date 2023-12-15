@@ -11,6 +11,7 @@ import DesignatedPosition from './components/DesignatedPosition'
 import RoomTrade from './components/RoomTrade'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
+import DetailCard from './components/DetailCard'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
@@ -73,8 +74,6 @@ const LoanDetails = () => {
         setExtraBtnLoading(true)
 
         if (prePage === 'loan') {
-          console.log('%c [ getBorrowerToProfit ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
-
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
@@ -82,8 +81,6 @@ const LoanDetails = () => {
           setExtractMoney(ethers.formatUnits(res ?? 0))
         }
         else if (prePage === 'lend') {
-          console.log('%c [ getUserTotalMoney ]-45', 'font-size:13px; background:#98c870; color:#dcffb4;')
-
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
@@ -237,7 +234,7 @@ const LoanDetails = () => {
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Designated Position</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Poll</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Room trade</div>
       </div>
@@ -392,7 +389,7 @@ const LoanDetails = () => {
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Loan period</li>
+            <li className='text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
           </ul>

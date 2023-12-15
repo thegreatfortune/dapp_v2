@@ -1,5 +1,5 @@
 export namespace Models {
-  export class ApiCreditAddressQueryAddressCreditScoreGETParams {
+  export class ApiBlacklistPageInfoGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
@@ -7,25 +7,10 @@ export namespace Models {
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
+    userAddress?: string = undefined;
   }
 
-  export class ApiCreditAddressQueryAddressExceptionGETParams {
-    /** 分页查询页码 */
-    page?: number = 0;
-    /** 分页查询每页数量 */
-    limit?: number = 0;
-    /** 排序字段
-<p>true == asc, false == desc</p> */
-    orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
-  }
-
-  export class ApiCreditAddressQueryAddressPageGETParams {
+  export class ApiCreditRecordPageGETParams {
     /** 分页查询页码 */
     page?: number = 0;
     /** 分页查询每页数量 */
@@ -33,9 +18,18 @@ export namespace Models {
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    id?: number = 0;
-    /** 地址id */
-    addressId?: number = 0;
+    userId?: number = 0;
+  }
+
+  export class ApiIntegralRecordPageGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 排序字段, 规则: price=false,id=true
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
+    userId?: number = 0;
   }
 
   export class ApiLendingPageInfoGETParams {
@@ -82,6 +76,8 @@ PaidOff :已还清, 借款订单结束
 PaidButArrears :支付部分, 但是还有欠款
 Blacklist :黑名单 */
     state?: string = undefined;
+    /** 逗号拼接, 见state选项 */
+    stateList?: string = undefined;
     /** 根据用户昵称筛选 */
     userNickname?: string = undefined;
     /** 根据绑定平台名称筛选 */
@@ -168,17 +164,37 @@ Canceled :订单取消 */
     accessToken?: string = undefined;
   }
 
+  export class BlacklistVo {
+    userAddress?: string = undefined;
+    userPictureUrl?: string = undefined;
+    userNickname?: string = undefined;
+  }
+
+  export class CreditRecordVo {
+    points?: number = 0;
+    createDate?: string = undefined;
+  }
+
   export class CreditScoreVo {
     /** 分数 */
-    score?: number = 0;
-    /** 还款状态 */
-    repaymentState?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS' =
-      undefined;
+    totalPoints?: number = 0;
+    initialPoints?: number = 0;
+    additionalPoints?: number = 0;
   }
 
   export class HttpStatusCode {}
 
   export class IChainToken {}
+
+  export class IntegralVo {
+    points?: number = 0;
+    createDate?: string = undefined;
+  }
+
+  export class InviteByInviteCodeGETParams {
+    /** 邀请码 */
+    inviteCode: string = '';
+  }
 
   export class ISysWallet {}
 
@@ -311,6 +327,7 @@ Canceled :订单取消 */
     showPlatformUserList?: PlatformUserVo[] = undefined;
     /** 已筹集份数 */
     collectCopies?: number = 0;
+    balance: any;
   }
 
   export class LoanTokenSwapVo {
@@ -364,6 +381,8 @@ Canceled :订单取消 */
   export class MetaMaskLoginParam {
     /** 钱包 */
     address?: string = undefined;
+    /** 用户邀请码 */
+    inviteCode?: string = undefined;
     /** 签名 */
     sign?: string = undefined;
   }
@@ -454,7 +473,6 @@ Canceled :订单取消 */
   export class Result<T> {
     code?: number = 0;
     message?: string = undefined;
-    /** com.sszh.modules.credit.vo.CreditScoreVo */
     data?: T = undefined;
   }
 
@@ -530,6 +548,12 @@ Canceled :订单取消 */
     solder?: string = undefined;
   }
 
+  export class TotalScoreVo {
+    /** com.sszh.modules.score.integral.IntegralVo */
+    integral?: IntegralVo = undefined;
+    credit?: CreditScoreVo = undefined;
+  }
+
   export enum TradingFormType {
     'Empty' = 'Empty',
     'SpotGoods' = 'SpotGoods',
@@ -549,10 +573,16 @@ Canceled :订单取消 */
   }
 
   export class UserInfoVo1 {
+    /** 昵称 */
     nickName?: string = undefined;
+    /** 地址 */
     address?: string = undefined;
+    /** 推特平台名称 */
     platformName?: string = undefined;
+    /** 头像 */
     pictureUrl?: string = undefined;
+    /** 邀请码 */
+    inviteCode?: string = undefined;
     userId?: number = 0;
   }
 }

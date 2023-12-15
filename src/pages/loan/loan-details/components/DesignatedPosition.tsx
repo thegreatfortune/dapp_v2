@@ -13,6 +13,7 @@ import SwapModal from './SwapModal'
 // import Address from './Address'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
+import DetailCard from './DetailCard'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
@@ -241,6 +242,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         <div className="w48" />
 
         <div className="w691 flex flex-wrap" >
+          <DetailCard />
           {
             tokenInfos.map(item => (
               <div key={item.name} className="h160 w321 s-container">
@@ -279,7 +281,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         </div>
       </div>
 
-      <div className="h58"/>
+      <div className="h58" />
 
       <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
 

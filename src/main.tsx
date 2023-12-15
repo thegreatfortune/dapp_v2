@@ -1,5 +1,4 @@
 import 'uno.css'
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd'
@@ -18,6 +17,7 @@ import {
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import {
   arbitrum,
+  mainnet,
   polygonMumbai,
 } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -29,8 +29,6 @@ import App from './App.tsx'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
-
-console.log('%c [ import.meta.env ]-34', 'font-size:13px; background:pink; color:#bf2c9f;', import.meta.env)
 
 const localhost = {
   ...polygonMumbai,
@@ -81,7 +79,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!)
 const browserLanguageLib = getLanguageLib()
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ConfigProvider locale={browserLanguageLib.locale} theme={{
       // 使用暗色算法
       algorithm: theme.darkAlgorithm,
@@ -96,6 +94,5 @@ root.render(
           </RainbowKitProvider>
         </WagmiConfig>
       </BrowserRouter>
-    </ConfigProvider>
-  </React.StrictMode>,
+    </ConfigProvider>,
 )
