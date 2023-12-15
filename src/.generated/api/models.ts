@@ -327,6 +327,7 @@ Canceled :订单取消 */
     showPlatformUserList?: PlatformUserVo[] = undefined;
     /** 已筹集份数 */
     collectCopies?: number = 0;
+    balance: any;
   }
 
   export class LoanTokenSwapVo {
