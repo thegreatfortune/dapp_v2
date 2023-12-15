@@ -113,13 +113,7 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "partAmount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "lendTime",
+				"name": "shareCount",
 				"type": "uint256"
 			}
 		],
@@ -155,37 +149,6 @@
 			}
 		],
 		"name": "repayEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "capitalPoolAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "repayWithdrawTime",
-				"type": "uint256"
-			}
-		],
-		"name": "wthdrawRefundEvent",
 		"type": "event"
 	},
 	{
@@ -416,6 +379,19 @@
 			}
 		],
 		"name": "setCapitalPool",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "refundPool",
+				"type": "address"
+			}
+		],
+		"name": "setRefundPool",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

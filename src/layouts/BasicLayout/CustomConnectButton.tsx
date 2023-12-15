@@ -3,6 +3,7 @@ import { debounce } from 'lodash-es'
 import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
+import { ethers } from 'ethers'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
@@ -12,9 +13,9 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 const CustomConnectButton = () => {
   const { address, isConnected } = useAccount()
 
-  const { activeUser } = useUserStore()
+  const { userList, switchActiveUser, setUserInfo } = useUserStore()
 
-  const { resetProvider, signer } = useBrowserContract()
+  const { resetProvider, initializeProvider, setNewProvider } = useBrowserContract()
 
   const { signIn, signOut } = useUserStore()
 
@@ -22,56 +23,86 @@ const CustomConnectButton = () => {
 
   async function login(address: string) {
     try {
-      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
-
-      if (!nonce)
+      if (!address) {
+        message.error('address cannot be empty')
         return
-
-      let signature
-
-      if (!activeUser.accessToken)
-        signature = await signer?.signMessage(nonce)
-
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
-
-      if (res.success)
-        signIn({ address, accessToken: res.accessToken })
-
-      const user = await UserInfoService.ApiUserInfo_GET()
-
-      signIn({ accessToken: res.accessToken, id: user.userId, ...user })
+      }
 
       resetProvider()
 
-      setCanLogin(false)
+      const newProvider = new ethers.BrowserProvider(window.ethereum)
 
-      window.location.reload()
+      // await initializeProvider (newProvider)
+
+      const signer = await newProvider.getSigner()
+
+      if (!signer)
+        return login(address)
+
+      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
+      const signature = await signer?.signMessage(nonce)
+
+      if (!signature) {
+        message.error('signature cannot be empty')
+        return
+      }
+
+      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
+
+      signIn({ accessToken: res.accessToken, address })
+
+      if (res.success) {
+        const user = await UserInfoService.ApiUserInfo_GET()
+
+        setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
+      }
+
+      setNewProvider(newProvider)
+
+      // await initializeProvider (newProvider)
     }
     catch (error) {
+      // signOut()
       message.error('login failed')
       console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
       throw new Error('login failed')
     }
   }
 
+  async function logInOrSwitching(address: string) {
+    if (isConnected) {
+      const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+
+      if (havenUser)
+        switchActiveUser(havenUser)
+      else
+        await login(address)
+
+      // window.location.reload()
+    }
+  }
+
   useEffect(() => {
-    if (isConnected)
-      address && canLogin && login(address as string)
-    else signOut()
-  }, [isConnected])
+    if (isConnected) {
+      if (address && canLogin)
+        logInOrSwitching(address)
+    }
+    else {
+      signOut()
+      // window.location.reload()
+    }
+  }, [isConnected, address, canLogin])
 
   if (!window.ethereum._accountsChangedHandler) {
-    window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
-      const [address] = addressList
+    window.ethereum._accountsChangedHandler = debounce(async () => {
+      setCanLogin(false)
 
-      if (address) {
-        try {
-          login(address)
-        }
-        catch (error) {
-          console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
-        }
-      }
+      signOut()
+
+      window.location.reload()
+
+      // if (address)
+      //   logInOrSwitching(address)
     }, 1000)
   }
 
@@ -98,6 +129,7 @@ const CustomConnectButton = () => {
 
       async function onOpenConnectModal() {
         openConnectModal()
+
         setCanLogin(true)
       }
 
@@ -117,9 +149,12 @@ const CustomConnectButton = () => {
             if (!connected) {
               return (
 
-                <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
-                  Connect Wallet
-                </button>
+                <div>
+                  <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
+                    Connect Wallet
+                  </button>
+                </div>
+
               )
             }
 

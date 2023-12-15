@@ -16,3 +16,5 @@ export * from './File';
 export * from './UserInfo';
 export * from './CreditRecord';
 export * from './IntegralRecord';
+export * from './Blacklist';
+export * from './UserInviteRedirect';

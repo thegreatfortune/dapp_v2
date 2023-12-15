@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
@@ -12,14 +11,10 @@ interface ICardsContainerProps {
   to?: string
   image: string
   fetchData?(type?: string): Promise<void>
-
-  //   children: React.ReactNode
 }
 
 const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image, fetchData }) => {
   const navigate = useNavigate()
-
-  // const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
   return (
     <div>
@@ -52,8 +47,8 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
       <div className='h30 w-full'></div>
 
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
-        {
-          records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
+      {
+       records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
         }
       </div>
 

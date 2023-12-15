@@ -150,11 +150,10 @@ const ApplyLoan = () => {
         return
 
       const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
-      console.log('%c [ orderCanCreatedAgain ]-153', 'font-size:13px; background:#d48ca9; color:#ffd0ed;', orderCanCreatedAgain)
 
       if (!orderCanCreatedAgain) {
         message.warning('Order can not be created')
-        navigate('/personal-center')
+        navigate(-1)
       }
     }
 

@@ -56,6 +56,42 @@
   "personal.center.Details": "Points details",
   "personal.center.NFT": "NFT",
   "personal.center.time": "TIME",
-  "personal.center.quantify": "Quantify"
+  "personal.center.quantify": "Quantify",
+
+  "portal.title.theme1": "Collateral-free Financing",
+  "portal.title.theme2": "Decentralized Credit Score",
+  "portal.title.theme3": "Collateral-free lending market",
+  "portal.title.theme4": "How to follow",
+  "portal.title.theme5": "FollowFi's Ten Pledges:",
+  "portal.title.annotate1": "Decentralized credit loan and financing protocol with multiple yields and rewards",
+  "portal.title.annotate2": "Participate in lending to build your credit score and gain investments,creating more wealth",
+  "portal.title.annotate3": "Discovering a growing demand for decentralized credit loans",
+  "portal.title.annotate4": "Seeking more credit loans and initiating lending! Utilize decentralized wallets for 100% secure transactions",
+  "portal.login.button": "Launch App",
+  "portal.swap.button": "Swap",
+  "portal.loan.button": "Discover more loans",
+  "portal.follow.button": "Follow",
+  "portal.follow.way1": "Create an wallet",
+  "portal.follow.way2": "Participate in lending",
+  "portal.follow.way3": "Gain yield",
+  "portal.follow.annotate1": "Connect to wallet and link to X to secure a higher initial credit score",
+  "portal.follow.annotate2": "Follow popular loans in the market or initiate a loan application yourself",
+  "portal.follow.annotate3": "Obtain interest/yield accumulating points to future airdrop",
+  "portal.pledges1": "1、Embrace FollowFi's core values in every part of our lives: Discipline,Unity,Courage,and Effort.",
+  "portal.pledges2": "2、Secure our wallets,keep handwritten mnemonic records,and avoid connecting wallets to sketchy dApps.",
+  "portal.pledges3": "3、Stay ahead with the latest tech trends,learn continuously,and share insights generously.",
+  "portal.pledges4": "4、Grow our wealth by consistently acquiring valuable assets and using smart compounding.",
+  "portal.pledges5": "5、Plan wisely,spend and invest with reason,cut unnecessary costs,and prioritize health.",
+  "portal.pledges6": "6、Uphold fairness, reject unjust actions, and oppose those who try to go against this principle.",
+  "portal.pledges7": "7、Pool resources for significant investments aiming for higher returns.",
+  "portal.pledges8": "8、Stand by to support one another whenever challenges arise.",
+  "portal.pledges9": "9、Unite to address any discipline issues within our communities.",
+  "portal.pledges10": "10、Introduce physical activities in all communities and actively join social events."
+
+
+
+
+
+
 
 }

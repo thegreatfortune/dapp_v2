@@ -4,9 +4,11 @@ import { Spin } from 'antd'
 import BasicLayout from '@/layouts/BasicLayout'
 
 import Test from '@/pages/Test'
+import PortalLayout from '@/layouts/PortalLayout'
 import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
 
 const Market = lazy(() => import('../pages/market'))
+const Portal = lazy(() => import('../pages/Portal'))
 const Trade = lazy(() => import('../pages/trade'))
 const OrderViewAll = lazy(() => import('../pages/market/order-view-all'))
 const LoanDetails = lazy(() => import('../pages/loan/loan-details'))
@@ -19,12 +21,24 @@ const NotFound = lazy(() => import('../pages/NotFound'))
 interface IRouterMeta {
   title?: string
   icon?: string
+  isLoggedIn: boolean
 }
 
 const routes: (RouteObject & { meta?: IRouterMeta })[] = [
   {
     path: '/',
-    element: <Navigate to="/market" replace={true} />,
+    element: <Navigate to="/portal" replace={true} />,
+  },
+  {
+    path: '/portal',
+    // meta: { showInput: false },
+    element: (
+      <PortalLayout>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Portal />
+        </React.Suspense>
+      </PortalLayout>
+    ),
   },
   {
     path: '/market',
@@ -96,16 +110,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
       </BasicLayout>
     ),
   },
-  {
-    path: '/loan-details',
-    element: (
-      <BasicLayout>
-        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
-        </React.Suspense>
-      </BasicLayout>
-    ),
-  },
+
   {
     path: '/view-all',
     element: (
@@ -128,17 +133,28 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
 
 if (import.meta.env.DEV) {
   routes.push(
-    {
-      path: 'test',
-      element: (
+    ...[
+      {
+        path: '/loan-details',
+        element: (
+          <BasicLayout>
+            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+              <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
+            </React.Suspense>
+          </BasicLayout>
+        ),
+      },
+      {
+        path: 'test',
+        element: (
         <BasicLayout>
           <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
             <Test />
           </React.Suspense>
         </BasicLayout>
-      ),
+        ),
 
-    })
+      }])
 }
 
 export default routes
