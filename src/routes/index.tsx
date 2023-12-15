@@ -11,6 +11,7 @@ import OrderViewAll from '@/pages/market/order-view-all'
 import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
 import Test from '@/pages/Test'
+import PortalLayout from '@/layouts/PortalLayout'
 
 const Market = lazy(() => import('../pages/market'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -105,6 +106,16 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
           <OrderViewAll />
         </React.Suspense>
       </BasicLayout>
+    ),
+  },
+  {
+    path: '/Portal',
+    element: (
+      <PortalLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <MyLoan />
+        </React.Suspense>
+      </PortalLayout>
     ),
   },
   {
