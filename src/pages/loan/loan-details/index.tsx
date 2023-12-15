@@ -395,32 +395,32 @@ const LoanDetails = () => {
           <ul className='m0 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
+            <li className='w140 text-28 font-bold'>{loanInfo.periods}18 / {loanInfo.repayCount}10</li>
           </ul>
           {/* </div> */}
 
           <ul className='m0 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Interest</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
+            <li className='w100 text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
             <li className='text-16 c-#D1D1D1'>dividend</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
+            <li className='w-100 text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
-            <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+            <li className='w70 text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.goalCopies}</li>
+            <li className='w-100 text-28 font-bold'>{loanInfo.goalCopies}</li>
           </ul>
 
           <ul className='m0 list-none p0'>
