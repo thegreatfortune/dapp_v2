@@ -58,7 +58,7 @@ const LoanDetails = () => {
     Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
     Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
     Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
-    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#979797' >Settled transaction</div>,
+    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a' >Settled transaction</div>,
     PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
     Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
   }
