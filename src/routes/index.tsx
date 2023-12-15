@@ -12,6 +12,7 @@ import LoanDetails from '@/pages/loan/loan-details'
 import MyLend from '@/pages/personal-center/my-lend'
 import Test from '@/pages/Test'
 import PortalLayout from '@/layouts/PortalLayout'
+import Portal from '@/pages/Portal'
 
 const Market = lazy(() => import('../pages/market'))
 const NotFound = lazy(() => import('../pages/NotFound'))
@@ -109,11 +110,12 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
     ),
   },
   {
-    path: '/Portal',
+    path: '/portal',
+    // meta: { showInput: false },
     element: (
       <PortalLayout>
-        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <MyLoan />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Portal />
         </React.Suspense>
       </PortalLayout>
     ),
