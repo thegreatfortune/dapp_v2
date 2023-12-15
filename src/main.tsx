@@ -52,8 +52,13 @@ const localhost = {
   },
 }
 
+const chainList = [polygonMumbai, arbitrum]
+
+if (import.meta.env.DEV)
+  chainList.push(localhost as any)
+
 const { chains, publicClient } = configureChains(
-  [localhost, polygonMumbai, arbitrum],
+  chainList,
   [
     alchemyProvider({
       apiKey: import.meta.env.VITE_ALCHEMY_ID,

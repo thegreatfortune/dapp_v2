@@ -19,10 +19,10 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
     page: 0,
   })
 
-  const renderItem = (item: Models.LoanOrderVO) => {
+  const renderItem = (item: Models.LoanOrderVO, index: number) => {
     return (
       <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822' key={item.tradeId}>
-        <li>{item.collectEndTime && dayjs.unix(item.collectEndTime).format('YYYY-MM-DD HH:mm:ss')}</li>
+        <li className='relative'><span className='absolute left--22'>{index}</span>{item.collectEndTime && dayjs.unix(item.collectEndTime).format('YYYY-MM-DD HH:mm:ss')}</li>
         <li>${BigNumber(ethers.formatUnits(BigInt(item.loanMoney ?? 0))).toFixed(1)}</li>
         <li>{item.state === 'PaidButArrears' ? 'YES' : 'NO'}</li>
         <li>{item.periods} / {item.repayCount}</li>

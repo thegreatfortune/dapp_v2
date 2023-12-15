@@ -33,6 +33,8 @@ const PersonalCenter = () => {
 
   const [totalScoreVo, setTotalScoreVo] = useState(new Models.TotalScoreVo())
 
+  // TODO 绑定推特后更新信息
+
   useEffect(() => {
     async function fetchData() {
       const res = await UserInfoService.ApiUserInfoTotalScoreInfo_GET()

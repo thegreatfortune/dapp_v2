@@ -7,7 +7,7 @@ import ScrollableList from '@/pages/components/ScrollabletList'
 const PointsDetail = () => {
   const { activeUser } = useUserStore()
 
-  const [params, setParams] = useState({ ...new Models.ApiIntegralRecordPageGETParams(), limit: 10, page: 1, userId: activeUser.id })
+  const [params] = useState({ ...new Models.ApiIntegralRecordPageGETParams(), limit: 10, page: 1, userId: activeUser.id })
 
   //   useEffect(() => {
   //     async function fetchData() {

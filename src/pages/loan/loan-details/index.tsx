@@ -164,14 +164,10 @@ const LoanDetails = () => {
   async function extractConfirm() {
     if (!tradeId)
       return
-    console.log('%c [  888888888]-203', 'font-size:13px; background:#6e3438; color:#b2787c;')
     setExtraModalLoading(true)
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      console.log('%c [ activeUser.id === loanInfo.userId ]-215', 'font-size:13px; background:#177acd; color:#5bbeff;', activeUser.id, loanInfo.userId)
-
-      // TODO
       if (prePage === 'my-lend' && loanInfo.state === 'PaidOff')
         return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
 

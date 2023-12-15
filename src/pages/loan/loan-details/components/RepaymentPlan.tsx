@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button, InputNumber, List, Skeleton, message } from 'antd'
 import { ethers } from 'ethers'
+import dayjs from 'dayjs'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
 import Address from './Address'
 import { Models } from '@/.generated/api/models'
@@ -13,6 +14,22 @@ interface IProps {
   repayCount: number
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
+}
+
+function calculateOverdueDays(startTime: string): number {
+  // 将后端返回的时间字符串转换为 dayjs 对象
+  const startDate = dayjs(startTime)
+
+  // 获取当前时间
+  const currentDate = dayjs()
+
+  // 计算时间差（以毫秒为单位）
+  const timeDifference = currentDate.diff(startDate, 'day')
+
+  // 获取整数部分作为逾期天数
+  const overdueDays = Math.floor(timeDifference)
+
+  return overdueDays
 }
 
 const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
@@ -237,11 +254,11 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             renderItem={(item, index) => (
               <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
                 <ul className='grid grid-cols-5 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822'>
-                  <li>{index + 1} {item.repayTime}</li>
+                  <li className='relative'><span className='absolute left--22'>{index + 1}</span> {item.repayTime}</li>
                   <li>${item.repayFee && ethers.formatUnits(item.repayFee)}</li>
 
                   <li>{item.state}</li>
-                  <li>逾期时长</li>
+                  <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
                   <li>
                     <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='h30 w134 primary-btn'>Liquidation</Button>
                     {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repayment')} className='h30 w134 primary-btn'>Repayment</Button>}
