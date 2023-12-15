@@ -28,14 +28,9 @@ const MyLoan = () => {
     //   return
 
     setLoading(true)
-    console.log('%c [ pre ]-44', 'font-size:13px; background:#57ef71; color:#9bffb5;')
-
-    console.log('%c [ activeUser ]-34', 'font-size:13px; background:#d43f2b; color:#ff836f;', activeUser)
 
     if (!activeUser.id)
       return
-
-    console.log('%c [ before ]-44', 'font-size:13px; background:#57ef71; color:#9bffb5;')
 
     const params = new Models.ApiLoanPageLoanContractGETParams()
 
@@ -62,6 +57,7 @@ const MyLoan = () => {
       }
     }
     catch (error) {
+      console.log('%c [ error ]-60', 'font-size:13px; background:#6d0066; color:#b144aa;', error)
       // Handle error
     }
     finally {
@@ -88,13 +84,13 @@ const MyLoan = () => {
           hasMore={(total !== undefined) && (loanOrderVOList.length < total) }
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
           endMessage={<Divider plain>{`${t('personal.myLoan.endMessage')}`}</Divider>}
-          scrollableTarget="scrollableDiv"
+          scrollableTarget="loanScrollableDiv"
         >
           <List
           grid={{ gutter: 16, column: 4 }}
             dataSource={loanOrderVOList}
             renderItem={item => (
-              <List.Item key={item.id} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
+              <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
                 <TransparentCard item={item} btnText='Repayment' >
                 <Button className='h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>
               </TransparentCard>

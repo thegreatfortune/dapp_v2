@@ -18,3 +18,5 @@ export * from './CreditRecord';
 export * from './IntegralRecord';
 export * from './Blacklist';
 export * from './UserInviteRedirect';
+export * from './Portfolio';
+export * from './MarketBalance';

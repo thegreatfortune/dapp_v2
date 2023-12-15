@@ -10,7 +10,12 @@ export class BlacklistService {
     params: Models.ApiBlacklistPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.BlacklistVo>>({
+    return request<{
+      records?: { userAddress?: string; userPictureUrl?: string; userNickname?: string }[];
+      total?: number;
+      size?: number;
+      current?: number;
+    }>({
       url: '/api/blacklist/pageInfo',
       method: 'GET',
       params: {

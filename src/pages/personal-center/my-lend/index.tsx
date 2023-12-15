@@ -3,19 +3,13 @@ import { Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
-import { ethers } from 'ethers'
 import { useTranslation } from 'react-i18next'
 import LendTransparentCard from './components/LendTransparentCard'
-import { LendingService } from '@/.generated/api/Lending'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
-import useNavbarQueryStore from '@/store/useNavbarQueryStore'
-import { isContractAddress, isTwitterHandle } from '@/utils/regex'
-import { MarketService } from '@/.generated/api/Market'
+import { MarketBalanceService } from '@/.generated/api'
 
 const MyLend = () => {
-  const { queryString } = useNavbarQueryStore()
-
   const { activeUser } = useUserStore()
 
   const { t } = useTranslation()
@@ -39,17 +33,16 @@ const MyLend = () => {
     if (!activeUser.id)
       return
 
-    const params = new Models.ApiLendingPageInfoGETParams()
+    const params = new Models.ApiMarketBalancePageMyFollowGETParams()
 
     params.limit = 4
     params.page = page + 1
 
     params.userId = BigNumber(activeUser.id).toNumber()
     params.loanId = undefined
-    params.borrowUserId = undefined
 
     try {
-      const res = await LendingService.ApiLendingPageInfo_GET(params)
+      const res = await MarketBalanceService.ApiMarketBalancePageMyFollow_GET(params)
 
       if (res?.records && res.records.length > 0) {
         setTotal(res.total)
@@ -76,25 +69,6 @@ const MyLend = () => {
   useEffect(() => {
     loadMoreData()
   }, [activeUser.id])
-
-  useEffect(() => {
-    async function fetchData() {
-      const params = { ...new Models.ApiLoanPageLoanContractGETParams(), borrowUserId: undefined }
-      params.limit = 8
-
-      if (isContractAddress(queryString ?? ''))
-        params.capitalPoolContract = queryString
-      else if (isTwitterHandle(queryString ?? ''))
-        params.bindPlatform = queryString && (params.platformType = 'Twitter')
-      else
-        params.loanName = queryString
-
-      const res = await MarketService.ApiMarketHomeInfo_GET()
-      console.log('%c [ ApiMarketHomeInfo_GET ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', res)
-    }
-
-    fetchData()
-  }, [])
 
   return (
     <div>

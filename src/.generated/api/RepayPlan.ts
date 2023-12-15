@@ -10,7 +10,18 @@ export class RepayPlanService {
     params: Models.ApiRepayPlanPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.RepayPlanVo>>({
+    return request<{
+      records?: {
+        loanId?: string;
+        repayTime?: string;
+        state?: 'UNPAID' | 'REPAID' | 'OVERDUE' | 'OVERDUE_REPAID' | 'OVERDUE_ARREARS';
+        nowCount?: number;
+        repayFee?: string;
+      }[];
+      total?: number;
+      size?: number;
+      current?: number;
+    }>({
       url: '/api/repayPlan/pageInfo',
       method: 'GET',
       params: {

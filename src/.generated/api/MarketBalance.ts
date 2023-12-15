@@ -3,16 +3,15 @@
 import request from '../../utils/request';
 import { Models } from './models';
 
-export class LendingService {
-  /** 分页查询自己的借出记录, 强制登录 GET /api/lending/pageInfo */
-  static async ApiLendingPageInfo_GET(
+export class MarketBalanceService {
+  /** 查询我的跟随 GET /api/market/balance/pageMyFollow */
+  static async ApiMarketBalancePageMyFollow_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-    params: Models.ApiLendingPageInfoGETParams,
+    params: Models.ApiMarketBalancePageMyFollowGETParams,
     options?: { [key: string]: any },
   ) {
     return request<{
       records?: {
-        userId?: string;
         borrowUserId?: string;
         loanId?: string;
         loan?: {
@@ -34,14 +33,13 @@ export class LendingService {
           collectEndTime?: number;
         };
         lendTime?: number;
-        partAmount?: number;
         marketBalance?: { tokenId?: number; amount?: number };
       }[];
       total?: number;
       size?: number;
       current?: number;
     }>({
-      url: '/api/lending/pageInfo',
+      url: '/api/market/balance/pageMyFollow',
       method: 'GET',
       params: {
         ...params,

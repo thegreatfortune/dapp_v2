@@ -104,6 +104,20 @@ Twitter :推特 */
     loanId?: number = 0;
   }
 
+  export class ApiMarketBalancePageMyFollowGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 排序字段, 规则: price=false,id=true
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
+    loanId?: number = 0;
+    userId?: number = 0;
+    /** 过滤掉低于这个值的结果 */
+    minHoldAmount?: number = 0;
+  }
+
   export class ApiMarketPageInfoGETParams {
     /** 分页查询页码 */
     page?: number = 0;
@@ -150,7 +164,7 @@ Canceled :订单取消 */
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    tradeId?: number = 0;
+    tradeId: number = 0;
   }
 
   export class ApiUserInviteInvitedOrNotGETParams {
@@ -204,11 +218,11 @@ Canceled :订单取消 */
 
   export class LendingLoanVo {
     /** 贷方id */
-    userId?: number = 0;
+    userId?: string = undefined;
     /** 借方id */
-    borrowUserId?: number = 0;
+    borrowUserId?: string = undefined;
     /** 借款订单id */
-    loanId?: number = 0;
+    loanId?: string = undefined;
     loan?: SimpleLoanVo = undefined;
     /** 时间戳 */
     lendTime?: number = 0;
@@ -280,16 +294,18 @@ Canceled :订单取消 */
   }
 
   export class LoanOrderVO {
-    id?: number = 0;
+    showPlatformUserList?: PlatformUserVo[] = undefined;
+    /** 已筹集份数 */
+    collectCopies?: number = 0;
+    /** 借款单的用户信息 */
+    userInfo?: UserInfoVo1 = undefined;
     /** 借方id */
-    userId?: number = 0;
+    userId?: string = undefined;
     /** 在合约中的订单id */
     tradeId?: number = 0;
     /** 生效状态 */
     state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
       undefined;
-    /** 获取接收贷款的地址 */
-    receiveAddress?: string = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 交易形式, 或者不指定 */
@@ -299,7 +315,7 @@ Canceled :订单取消 */
     /** 展示图片地址 */
     picUrl?: string = undefined;
     /** 贷款金额 */
-    loanMoney?: number = 0;
+    loanMoney?: string = undefined;
     /** 利息 */
     interest?: number = 0;
     /** 总还款次数 */
@@ -316,18 +332,12 @@ Canceled :订单取消 */
     dividendRatio?: number = 0;
     /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
     transactionPairs?: string[] = undefined;
-    /** 是否展示绑定的平台用户, 如果不展示则是空数组, 里面是bind表的id */
-    showPlatformUser?: number[] = undefined;
     /** 用途介绍 */
     usageIntro?: string = undefined;
     createDate?: string = undefined;
     /** 订单结束时间(清算时间) */
     endTime?: number = 0;
     isConfirm?: number = 0;
-    showPlatformUserList?: PlatformUserVo[] = undefined;
-    /** 已筹集份数 */
-    collectCopies?: number = 0;
-    balance: any;
   }
 
   export class LoanTokenSwapVo {
@@ -361,7 +371,7 @@ Canceled :订单取消 */
   }
 
   export class MarketLoanVo {
-    loanId?: number = 0;
+    loanId?: string = undefined;
     tradeId?: number = 0;
     /** 借款单的用户信息 */
     user?: UserInfoVo1 = undefined;
@@ -529,8 +539,8 @@ Canceled :订单取消 */
   }
 
   export class TokenMarketVo {
-    loanId?: number = 0;
-    userId?: number = 0;
+    loanId?: string = undefined;
+    userId?: string = undefined;
     /** 挂单后在链上对应的id */
     marketId?: number = 0;
     /** 每次转移这个tokenId会改变 */
@@ -583,6 +593,6 @@ Canceled :订单取消 */
     pictureUrl?: string = undefined;
     /** 邀请码 */
     inviteCode?: string = undefined;
-    userId?: number = 0;
+    userId?: string = undefined;
   }
 }

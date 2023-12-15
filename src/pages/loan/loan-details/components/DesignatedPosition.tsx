@@ -1,27 +1,20 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Image, Input, Spin, Tooltip, message } from 'antd'
-
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-expect-error
-// import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { Button, Input, Spin, message } from 'antd'
 import { ethers } from 'ethers'
-import tradingPairTokenMap from '../../../../contract/tradingPairTokenMap'
+import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
-
-// import Address from './Address'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
-import DetailCard from './DetailCard'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
+import cardBackGround from '@/assets/images/loan-details/cardBackGround.png'
 
 interface IProps {
   tradeId: bigint | null
   transactionPair: string[]
-  loanMoney: number
   repayCount: number
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
@@ -36,6 +29,7 @@ export class TokenInfo {
   address: string | undefined
   ratio: string = '0'
   dollars: string | undefined
+  icon: string | undefined
 }
 
 const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
@@ -140,6 +134,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       address,
       ratio: ratio ? String(ratio) : '0',
       dollars,
+      icon: tokenList.find(token => ethers.getAddress(token.address) === ethers.getAddress(address))?.icon,
     }
   }
 
@@ -239,13 +234,13 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
         </div>
 
-        <div className="w48" />
+        {/* <div className="w48" /> */}
 
-        <div className="w691 flex flex-wrap" >
-          <DetailCard />
+        <div className="grid grid-cols-2 w715 gap-x-36" >
+
           {
             tokenInfos.map(item => (
-              <div key={item.name} className="h160 w321 s-container">
+              <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(src/assets/images/loan-details/cardBackGround.png)' }}>
                 <div>
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果
