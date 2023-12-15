@@ -15,7 +15,7 @@ const CustomConnectButton = () => {
 
   const { userList, switchActiveUser, setUserInfo } = useUserStore()
 
-  const { resetProvider, initializeProvider } = useBrowserContract()
+  const { resetProvider, initializeProvider, setNewProvider } = useBrowserContract()
 
   const { signIn, signOut } = useUserStore()
 
@@ -32,7 +32,7 @@ const CustomConnectButton = () => {
 
       const newProvider = new ethers.BrowserProvider(window.ethereum)
 
-      await initializeProvider (newProvider)
+      // await initializeProvider (newProvider)
 
       const signer = await newProvider.getSigner()
 
@@ -54,10 +54,12 @@ const CustomConnectButton = () => {
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
 
-        setUserInfo({ accessToken: res.accessToken, ...user })
+        setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
       }
 
-      // window.location.reload()
+      setNewProvider(newProvider)
+
+      // await initializeProvider (newProvider)
     }
     catch (error) {
       // signOut()
@@ -67,14 +69,16 @@ const CustomConnectButton = () => {
     }
   }
 
-  function logInOrSwitching(address: string) {
-    if (isConnected && canLogin) {
-      const havenUser = userList.find(user => user.address === address && user?.id)
+  async function logInOrSwitching(address: string) {
+    if (isConnected) {
+      const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
 
       if (havenUser)
         switchActiveUser(havenUser)
       else
-        login(address)
+        await login(address)
+
+      // window.location.reload()
     }
   }
 
@@ -85,24 +89,20 @@ const CustomConnectButton = () => {
     }
     else {
       signOut()
+      // window.location.reload()
     }
   }, [isConnected, address, canLogin])
 
   if (!window.ethereum._accountsChangedHandler) {
-    window.ethereum._accountsChangedHandler = debounce(async (addressList: string[]) => {
-      if (!isConnected)
-        return
+    window.ethereum._accountsChangedHandler = debounce(async () => {
+      setCanLogin(false)
 
-      const [address] = addressList
+      signOut()
 
-      if (address) {
-        try {
-          logInOrSwitching(address)
-        }
-        catch (error) {
-          console.log('%c [ error ]-16', 'font-size:13px; background:#b3d82d; color:#f7ff71;', error)
-        }
-      }
+      window.location.reload()
+
+      // if (address)
+      //   logInOrSwitching(address)
     }, 1000)
   }
 

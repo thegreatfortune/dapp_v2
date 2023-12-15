@@ -15,7 +15,7 @@ const Market = () => {
 
   const [popularToFollowData, setPopularToFollowData] = useState<Models.MarketLoanVo[]>([])
 
-  const [loanPage, setLoanPage] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
 
   const { t } = useTranslation()
 
@@ -58,7 +58,7 @@ const Market = () => {
 
       const res = await LoanService.ApiLoanPageLoanContract_GET(params)
 
-      setLoanPage(res)
+      setBlacklist(res)
     }
     fetchData()
   }, [])
@@ -118,10 +118,12 @@ const Market = () => {
         popularToFollowData.length > 0
         && <CardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData} to='/view-all?title=💥Popular to follow' />
       }
+
       <div className='h-44 w-full' />
+
       {
-      (loanPage.total && loanPage.total > 0)
-        ? <CardsContainer image='src/assets/images/market/blacklist1.png' key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={loanPage.records ?? []} to='/view-all?title=Blacklist' />
+      (blacklist.total && blacklist.total > 0)
+        ? <CardsContainer image='src/assets/images/market/blacklist1.png' key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist' />
         : null
       }
 

@@ -6,7 +6,7 @@ import Image from 'antd/es/image'
 import { AutoComplete } from 'antd'
 import BigNumber from 'bignumber.js'
 import CustomConnectButton from './CustomConnectButton'
-import logo from '@/assets/react.svg'
+import logo from '@/assets/images/logo.png'
 import searchImg from '@/assets/images/search.png'
 import './navBar.css'
 import { Models } from '@/.generated/api/models'
@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   return (
         <nav className="h140 w-full flex items-center justify-between text-white" id='navBar'>
             <div className="flex items-center text-center">
-                <Avatar src={logo} className="mx6 h47 w47"></Avatar>
+                <Avatar src={logo} className="mx6 h34 w34"></Avatar>
                 <div className="text-30 font-900"><i>{title}</i></div>
             </div>
 

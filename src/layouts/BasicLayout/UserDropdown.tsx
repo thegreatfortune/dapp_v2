@@ -1,13 +1,17 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit'
+import { Avatar } from 'antd'
 import Dropdown from 'antd/es/dropdown'
 import type { MenuProps } from 'antd/es/menu'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import useUserStore from '@/store/userStore'
 
 const UserDropdown = () => {
   const { t } = useTranslation()
 
   const { openAccountModal } = useAccountModal()
+
+  const { activeUser } = useUserStore()
 
   const items: MenuProps['items'] = [
     {
@@ -52,9 +56,7 @@ const UserDropdown = () => {
   return (
     <Dropdown menu={{ items }} placement="bottomRight" overlayClassName='pt-12 text-12 box-border h18'>
       <a onClick={e => e.preventDefault()}>
-        <div>
-          User
-        </div>
+      <Avatar src={activeUser.pictureUrl} className="mx6 h34 w34"/>
       </a>
     </Dropdown>
   )

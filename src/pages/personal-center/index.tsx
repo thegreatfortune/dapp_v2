@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
 import Address from '../loan/loan-details/components/Address'
+import PointsDetail from './components/PointsDetail'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import Navbar from '@/layouts/BasicLayout/Navbar'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
@@ -45,7 +46,7 @@ const PersonalCenter = () => {
     {
       key: '1',
       label: 'Points detail',
-      children: <div>4545</div>,
+      children: <PointsDetail/>,
     },
     {
       key: '2',
@@ -53,6 +54,13 @@ const PersonalCenter = () => {
       children: <div>NFT</div>,
     },
   ]
+
+  useEffect(() => {
+    if (!activeUser.accessToken) {
+      navigate(-1)
+      message.warning('not logged in')
+    }
+  }, [activeUser])
 
   const checkLoanOrderAndUserState = async () => {
     try {
@@ -94,7 +102,7 @@ const PersonalCenter = () => {
   }
 
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
-    return (<div>
+    return (<div className='mb-10'>
       <div className='h79 w486 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
         <div className={`h49 w210 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Points detail</div>
         <div className={` h49 w210 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >NFT</div>
@@ -114,7 +122,7 @@ const PersonalCenter = () => {
             <Avatar className='left-10 top-10' shape="circle" size={140} src={activeUser.pictureUrl ?? defaultAvatar} />
           </div>
 
-          <div className='absolute left-210 top-15 w-1160 flex items-end justify-between'>
+          <div className='absolute left-210 top-15 w-1130 flex items-end justify-between'>
 
             <div>
               <div className='flex items-center'>
@@ -141,9 +149,9 @@ const PersonalCenter = () => {
             </div>
 
             <div className='flex gap-x-50'>
-              <Button loading={applyLoanLoading} onClick={checkLoanOrderAndUserState} className='h60 w254 rounded-30'>Apply for a loan</Button>
+              <Button loading={applyLoanLoading} onClick={checkLoanOrderAndUserState} className='h48 w172 rounded-30 primary-btn'>Apply for a loan</Button>
 
-              <Button className='h60 w127 rounded-30 primary-btn'>Follow</Button>
+              <Button className='h48 w120 rounded-30 primary-btn'>Follow</Button>
             </div>
 
           </div>
@@ -174,7 +182,7 @@ const PersonalCenter = () => {
           <div className='h-115 flex'>
             <div className='h-full w-136 flex flex-col items-center justify-center gap-y-13 rounded-15 from-blue-500 to-blue-300 bg-gradient-to-b'>
               <span>Points</span>
-              <span>{ totalScoreVo.integral?.points}</span>
+              <span>{ ((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2) }</span>
             </div>
 
             <div className="w50" />
@@ -182,7 +190,7 @@ const PersonalCenter = () => {
             <div className="h-full w-312 flex items-center rounded-15 bg-#333341 pl-21">
               <div className='w133 flex flex-col items-center'>
                 <span className='text-20'>Credit score</span>
-                <span className='text-24'>{totalScoreVo.credit?.totalPoints}</span>
+                <span className='text-24'>{((totalScoreVo.credit?.totalPoints ?? 0) / 100).toFixed()}</span>
               </div>
 
               <Divider className='h-85' type='vertical' />
@@ -190,12 +198,12 @@ const PersonalCenter = () => {
               <div className='w-164 flex flex-col items-center gap-y-16 pr-35 text-14'>
                 <ul className='m0 w-full flex list-none justify-between p0'>
                   <li>Initial Points</li>
-                  <li>{totalScoreVo.credit?.initialPoints}</li>
+                  <li>{((totalScoreVo.credit?.initialPoints ?? 0) / 100).toFixed(2)}</li>
                 </ul>
 
                 <ul className='m0 w-full flex list-none justify-between p0'>
                   <li>Additional Points</li>
-                  <li>{totalScoreVo.credit?.additionalPoints}</li>
+                  <li>{((totalScoreVo.credit?.additionalPoints ?? 0) / 100).toFixed(2)}</li>
                 </ul>
               </div>
             </div>

@@ -23,10 +23,7 @@ const useBrowserContract = () => {
     }
   }
 
-  const initializeSigner = async (newSigner?: ethers.JsonRpcSigner) => {
-    if (newSigner)
-      setSigner(newSigner)
-
+  const initializeSigner = async () => {
     if (!signer && provider) {
       const newSigner = await provider.getSigner()
       const newBrowserContractService = new BrowserContractService(newSigner)
@@ -38,27 +35,36 @@ const useBrowserContract = () => {
     }
   }
 
-  const initializeProvider = async (newProvider?: ethers.BrowserProvider) => {
-    if (newProvider) {
-      setProvider(newProvider)
-      const newSigner = await newProvider.getSigner()
-
-      initializeSigner(newSigner)
-    }
-
+  const initializeProvider = async () => {
     if (!provider) {
       const newProvider = new ethers.BrowserProvider(window.ethereum)
       setProvider(newProvider)
-      const newSigner = await newProvider.getSigner()
+      // const newSigner = await newProvider.getSigner()
 
-      initializeSigner(newSigner)
+      // initializeSigner(newSigner)
     }
   }
 
-  // useEffect(() => {
-  //   initializeProvider()
-  //   initializeSigner()
-  // }, [provider, signer])
+  const setNewSigner = async (newSigner: ethers.JsonRpcSigner) => {
+    setSigner(newSigner)
+    const newBrowserContractService = new BrowserContractService(newSigner)
+    setBrowserContractService(() => newBrowserContractService)
+
+    const connected = await checkWalletConnection(newSigner)
+    setIsWalletConnected(connected)
+  }
+
+  const setNewProvider = async (newProvider: ethers.BrowserProvider) => {
+    setProvider(newProvider)
+    const newSigner = await newProvider.getSigner()
+
+    setNewSigner(newSigner)
+  }
+
+  useEffect(() => {
+    initializeProvider()
+    initializeSigner()
+  }, [provider, signer])
 
   const resetProvider = () => {
     setProvider(undefined)
@@ -78,6 +84,8 @@ const useBrowserContract = () => {
     isWalletConnected,
     resetProvider,
     initializeProvider,
+    setNewProvider,
+    setNewSigner,
   }
 }
 

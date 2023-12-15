@@ -28,9 +28,14 @@ const MyLoan = () => {
     //   return
 
     setLoading(true)
+    console.log('%c [ pre ]-44', 'font-size:13px; background:#57ef71; color:#9bffb5;')
+
+    console.log('%c [ activeUser ]-34', 'font-size:13px; background:#d43f2b; color:#ff836f;', activeUser)
 
     if (!activeUser.id)
       return
+
+    console.log('%c [ before ]-44', 'font-size:13px; background:#57ef71; color:#9bffb5;')
 
     const params = new Models.ApiLoanPageLoanContractGETParams()
 

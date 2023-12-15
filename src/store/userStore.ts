@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { disconnect } from 'wagmi/actions'
+import { ethers } from 'ethers'
 import { User } from '@/models/User'
 
 interface IUserState {
@@ -38,7 +39,7 @@ const useUserStore = create<IUserState>()(
 
             let updateUserList = [...get().userList]
 
-            const index = updateUserList.findIndex(e => e.address === user.address)
+            const index = updateUserList.findIndex(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? ''))
 
             if (index > -1)
               updateUserList[index] = user
@@ -55,7 +56,7 @@ const useUserStore = create<IUserState>()(
 
         signIn(user: User) {
           set((state) => {
-            if (!get().userList.find(e => e.address === user.address) && user?.id)
+            if (!get().userList.find(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? '')) && user?.id)
               get().addUser(user)
 
             get().setActiveUser(user)
