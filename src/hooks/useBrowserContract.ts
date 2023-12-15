@@ -23,30 +23,42 @@ const useBrowserContract = () => {
     }
   }
 
-  const initializeProvider = async () => {
-    if (!provider) {
-      const newProvider = new ethers.BrowserProvider(window.ethereum)
-      setProvider(newProvider)
-    }
-  }
+  const initializeSigner = async (newSigner?: ethers.JsonRpcSigner) => {
+    if (newSigner)
+      setSigner(newSigner)
 
-  const initializeSigner = async () => {
     if (!signer && provider) {
       const newSigner = await provider.getSigner()
       const newBrowserContractService = new BrowserContractService(newSigner)
       setBrowserContractService(() => newBrowserContractService)
       setSigner(newSigner)
 
-      // Check if wallet is connected
       const connected = await checkWalletConnection(newSigner)
       setIsWalletConnected(connected)
     }
   }
 
-  useEffect(() => {
-    initializeProvider()
-    initializeSigner()
-  }, [provider, signer])
+  const initializeProvider = async (newProvider?: ethers.BrowserProvider) => {
+    if (newProvider) {
+      setProvider(newProvider)
+      const newSigner = await newProvider.getSigner()
+
+      initializeSigner(newSigner)
+    }
+
+    if (!provider) {
+      const newProvider = new ethers.BrowserProvider(window.ethereum)
+      setProvider(newProvider)
+      const newSigner = await newProvider.getSigner()
+
+      initializeSigner(newSigner)
+    }
+  }
+
+  // useEffect(() => {
+  //   initializeProvider()
+  //   initializeSigner()
+  // }, [provider, signer])
 
   const resetProvider = () => {
     setProvider(undefined)
@@ -65,6 +77,7 @@ const useBrowserContract = () => {
     browserContractService,
     isWalletConnected,
     resetProvider,
+    initializeProvider,
   }
 }
 

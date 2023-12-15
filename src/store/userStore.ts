@@ -24,7 +24,7 @@ interface IUserState {
 const useUserStore = create<IUserState>()(
   devtools(
     persist(
-      set => ({
+      (set, get) => ({
         activeUser: new User(),
         userList: [],
         get getToken(): string | undefined {
@@ -34,29 +34,31 @@ const useUserStore = create<IUserState>()(
 
         setUserInfo: (user) => {
           set((state) => {
-            state.activeUser = { ...state.activeUser, ...user }
+            const updateUser = { ...get().activeUser, ...user }
 
-            const index = state.userList.findIndex(e => e.address === user.address)
+            let updateUserList = [...get().userList]
+
+            const index = updateUserList.findIndex(e => e.address === user.address)
 
             if (index > -1)
-              state.userList[index] = user
-            else state.userList = [...state.userList, user]
+              updateUserList[index] = user
+            else updateUserList = [...get().userList, user]
 
             return ({
-              activeUser: state.activeUser,
-              userList: state.userList,
+              activeUser: updateUser,
+              userList: updateUserList,
             })
           })
         },
 
-        addUser: user => set(state => ({ userList: [...state.userList, user].filter(e => e?.id) })),
+        addUser: user => set(state => ({ userList: [...get().userList, user] })),
 
         signIn(user: User) {
           set((state) => {
-            // if (!state.userList.find(e => e.address === user.address))
-            //   state.addUser(user)
+            if (!get().userList.find(e => e.address === user.address) && user?.id)
+              get().addUser(user)
 
-            state.setActiveUser(user)
+            get().setActiveUser(user)
 
             return ({ activeUser: user })
           })
@@ -71,13 +73,17 @@ const useUserStore = create<IUserState>()(
         },
 
         switchActiveUser(user: User) {
-          set((state) => {
-            if (!state.userList.find(e => e.address === user.address))
-              state.addUser(user)
+          get().signIn(user)
 
-            state.setActiveUser(user)
-            return ({ activeUser: user })
-          })
+          // set((state) => {
+          //   const localUser = get().userList.find(e => e.address === user.address)
+
+          //   // if (!state.userList.find(e => e.address === user.address))
+          //   //   state.addUser(user)
+
+          //   // state.setActiveUser(user)
+          //   return ({ activeUser: user })
+          // })
         },
       }),
       { name: 'userStore' },
