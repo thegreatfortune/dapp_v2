@@ -1,6 +1,24 @@
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
+// import { Image } from 'antd'
+import homePageImage from '../assets/images/portalImages/homepage.png'
+import TinyImage from '../assets/images/portalImages/portalImagesTiny.png'
+import frame1Image from '../assets/images/portalImages/loanNoteFrame1.png'
+import frame2Image from '../assets/images/portalImages/loanNoteFrame2.png'
+import frame3Image from '../assets/images/portalImages/loanNoteFrame3.png'
+import trading1Image from '../assets/images/portalImages/loanNoteTrading1.png'
+import trading2Image from '../assets/images/portalImages/loanNoteTrading2.png'
+import trading3Image from '../assets/images/portalImages/loanNoteTrading3.png'
+import note1Image from '../assets/images/portalImages/loanNote1.jpg'
+import note2Image from '../assets/images/portalImages/loanNote2.jpg'
+import note3Image from '../assets/images/portalImages/loanNote3.jpg'
+import noteCoin1 from '../assets/images/portalImages/loanNoteCoin1.png'
+import noteCoin2 from '../assets/images/portalImages/loanNoteCoin2.png'
+import noteCoin3 from '../assets/images/portalImages/loanNoteCoin3.png'
+import pledgesImage from '../assets/images/portalImages/pledges.png'
+import quotationsImage from '@/assets/images/portalImages/marketQuotations.png'
+
 const Portal = () => {
   const { t } = useTranslation()
   //   const navigate = useNavigate()
@@ -15,10 +33,7 @@ const Portal = () => {
                     <NavLink to="/market" ><button className="mt-100 h-92 w-324 justify-between b-rd-8 text-24 c-#fff primary-btn" >{`${t('portal.login.button')}`}</button></NavLink>
 
                 </div>
-                <div className="">
-                    <img src="/src/assets/images/portalImages/homepage.png" alt="" className="float-right" />
-
-                </div>
+                <img src={ homePageImage } className='float-right'/>
             </div>
             <div className="h-20rem w-full"></div>
             <div>
@@ -29,9 +44,9 @@ const Portal = () => {
             <div className="h-17.5rem w-full"></div>
             <div className="flex justify-between">
                 <div className="relative">
-                    <img src="/src/assets/images/portalImages/marketQuotations.png" alt="" className="absolute z-1" />
+                    <img src={ quotationsImage } className='absolute z-1'/>
                     <div className="absolute z-2 float-right ml-574 mt-219 h-143 w-297 transform transition-transform active:scale-95 hover:scale-105">
-                        <img src="/src/assets/images/portalImages/portalImagesTiny.png" alt="" className="absolute z-3" />
+                        <img src={ TinyImage } className='absolute z-3'/>
                         <button className="absolute z-4 float-right m-auto ml-223 mt-104 h-25 w-46 b-rd-30px text-center text-12 lh-25 opacity-100 primary-btn">{`${t('portal.swap.button')}`}</button>
                     </div>
                 </div>
@@ -53,24 +68,24 @@ const Portal = () => {
 
             <div className="flex justify-around">
                 <div className="flex transform transition-transform active:scale-95 hover:scale-105">
-                    <img src="/src/assets/images/portalImages/loanNoteFrame1.png" alt="" className="relative z-1 mt-200 h535 w393" />
-                    <img src="/src/assets/images/portalImages/loanNoteTrading1.png" alt="" className="absolute z-2 ml-28 mt-538 h-23 w-151 text-24" />
-                    <img src="/src/assets/images/portalImages/loanNote1.jpg" alt="1" className="absolute z-3 ml-51 mt-242" />
-                    <img src="/src/assets/images/portalImages/loanNoteCoin1.png" alt="1" className="absolute z-4 ml-26 mt-649" />
+                    <img src={ frame1Image } alt="" className="relative z-1 mt-200 h535 w393" />
+                    <img src={ trading1Image } alt="" className="absolute z-2 ml-28 mt-538 h-23 w-151 text-24" />
+                    <img src={ note1Image } alt="1" className="absolute z-3 ml-51 mt-242" />
+                    <img src={ noteCoin1 } alt="1" className="absolute z-4 ml-26 mt-649" />
                     <div className="absolute z-5 m-a ml-230 mt-671 h-30 w-110 b-rd-8 text-center lh-30 primary-btn">{`${t('portal.follow.button')}`}</div>
                 </div>
                 <div className="flex transform transition-transform active:scale-95 hover:scale-105">
-                    <img src="/src/assets/images/portalImages/loanNoteFrame2.png" alt="" className="relative z-1 mt-80 h655 w454" />
-                    <img src="/src/assets/images/portalImages/loanNoteTrading2.png" alt="" className="absolute z-2 ml-28 mt-488 h-23 w-171 text-24" />
-                    <img src="/src/assets/images/portalImages/loanNote2.jpg" alt="1" className="absolute z-2 ml-61 mt-143" />
-                    <img src="/src/assets/images/portalImages/loanNoteCoin2.png" alt="1" className="absolute z-3 ml-32 mt-637" />
+                    <img src={ frame2Image } alt="" className="relative z-1 mt-80 h655 w454" />
+                    <img src={ trading2Image } alt="" className="absolute z-2 ml-28 mt-488 h-23 w-171 text-24" />
+                    <img src={ note2Image } alt="1" className="absolute z-2 ml-61 mt-143" />
+                    <img src={ noteCoin2 } alt="1" className="absolute z-3 ml-32 mt-637" />
                     <div className="absolute z-4 m-a ml-265 mt-661 h-30 w-110 b-rd-8 text-center lh-30 primary-btn">{`${t('portal.follow.button')}`}</div>
                 </div>
                 <div className="flex transform transition-transform active:scale-95 hover:scale-105">
-                    <img src="/src/assets/images/portalImages/loanNoteFrame3.png" alt="" className="relative z-1 mt-200 h535 w393" />
-                    <img src="/src/assets/images/portalImages/loanNoteTrading3.png" alt="" className="absolute z-2 ml-28 mt-538 h-23 w-151 text-24" />
-                    <img src="/src/assets/images/portalImages/loanNote3.jpg" alt="1" className="absolute z-3 ml-51 mt-242" />
-                    <img src="/src/assets/images/portalImages/loanNoteCoin3.png" alt="1" className="absolute z-4 ml-26 mt-649" />
+                    <img src={ frame3Image } alt="" className="relative z-1 mt-200 h535 w393" />
+                    <img src={ trading3Image } alt="" className="absolute z-2 ml-28 mt-538 h-23 w-151 text-24" />
+                    <img src={ note3Image } className="absolute z-3 ml-51 mt-242" />
+                    <img src={ noteCoin3 } alt="1" className="absolute z-4 ml-26 mt-649" />
                     <div className="absolute z-5 m-a ml-230 mt-671 h-30 w-110 b-rd-8 text-center lh-30 primary-btn">{`${t('portal.follow.button')}`}</div>
                 </div>
             </div>
@@ -125,7 +140,7 @@ const Portal = () => {
             <div className="flex justify-between">
                 <div className="relative">
                     <div className="opacity absolute z-1 mt-10.25rem h-664 w-473 transform rounded-30 bg-#2159e9 transition-transform active:scale-95 hover:scale-105"></div>
-                    <img src="/src/assets/images/portalImages/pledges.png" alt="没图" className="absolute z-2 float-inherit ml-10.25rem transform transition-transform active:scale-95 hover:scale-105" />
+                    <img src={ pledgesImage } alt="" className="absolute z-2 float-inherit ml-10.25rem transform transition-transform active:scale-95 hover:scale-105" />
                 </div>
                 <div>
                     <div className="mr-12 h-75 w-775 text-64 font-500 lh-74 c-#fff">{`${t('portal.title.theme5')}`}</div>
