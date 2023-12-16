@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 const Portal = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  //   const navigate = useNavigate()
 
   return (
         <div>

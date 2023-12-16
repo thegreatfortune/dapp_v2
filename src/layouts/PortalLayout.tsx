@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 // import { useTranslation } from 'react-i18next'
 
@@ -12,6 +13,8 @@ interface IProps {
 const PortalLayout: React.FC<IProps> = (props) => {
 //   const { t } = useTranslation()
 
+  //   const navigate = useNavigate()
+
   return (
         <div className='flex flex-col items-center bg-cover' style={{ backgroundImage: 'url(src/assets/images/portalImages/backGround1.png),url(src/assets/images/portalImages/backGround2.png)' }} >
             <header className='w-1400'>
@@ -23,9 +26,9 @@ const PortalLayout: React.FC<IProps> = (props) => {
                         <div className='m-auto ml-12 w-115 text-center text-22 font-normal lh-52 font-mono c-#fff'>FOLLOWFI</div>
                     </div>
                     <div className='flex justify-between'>
-                        <div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Home</div>
-                        <div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Market</div>
-                        <div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Trade</div>
+                        <NavLink to="/portal"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Home</div></NavLink>
+                        <NavLink to="/market"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Market</div></NavLink>
+                        <NavLink to="/trade"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>Trade</div></NavLink>
                     </div>
 
                 </div>
