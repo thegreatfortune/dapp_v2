@@ -389,7 +389,6 @@ export class BrowserContractService {
     if (this._processCenterContract)
       return this._processCenterContract
 
-    console.log('%c [  import.meta.env.VITE_PROCESS_CENTER_ADDRESS ]-315', 'font-size:13px; background:#b2d26f; color:#f6ffb3;', import.meta.env.VITE_PROCESS_CENTER_ADDRESS)
     return this._processCenterContract = createContract<ProcessCenter>(
       import.meta.env.VITE_PROCESS_CENTER_ADDRESS,
       processCenter_ABI,

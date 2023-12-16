@@ -101,7 +101,8 @@ const Market = () => {
     <div className="relative m-auto h-full min-h-full">
       <div>
         <img
-          src="src/assets/images/market/banner.png"
+          src="/assets/images/market/banner.png"
+          // src="src/assets/images/market/banner.png"
           alt='Image 2'
           className='h-280 w-full b-rd-20 object-cover'
         />
