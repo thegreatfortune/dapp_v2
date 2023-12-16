@@ -391,7 +391,7 @@ const LoanDetails = () => {
           <ul className='m0 w150 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.periods}1/ {loanInfo.repayCount}20</li>
+            <li className='text-28 font-bold'>{loanInfo.periods}/ {loanInfo.repayCount}</li>
           </ul>
           {/* </div> */}
 
@@ -419,10 +419,10 @@ const LoanDetails = () => {
             <li className='w-100 text-28 font-bold'>{loanInfo.goalCopies}</li>
           </ul>
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w230 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.collectCopies}666666666</li>
+            <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
           </ul>
 
         </div>
