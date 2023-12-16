@@ -9,6 +9,13 @@ const tradingPairTokenMap = {
   FTT: import.meta.env.VITE_FOLLOW_TOKEN,
   BTC: import.meta.env.VITE_BTC_TOKEN,
   ETH: import.meta.env.VITE_ETH_TOKEN,
+  SOL: import.meta.env.VITE_SOL_TOKEN,
+  DOGE: import.meta.env.VITE_DOGE_TOKEN,
+  ARB: import.meta.env.VITE_ARB_TOKEN,
+  LINK: import.meta.env.VITE_LINK_TOKEN,
+  UNI: import.meta.env.VITE_UNI_TOKEN,
+  LDO: import.meta.env.VITE_LDO_TOKEN,
+  AAVE: import.meta.env.VITE_AAVE_TOKEN,
 }
 
 export const tokenList = [

@@ -12,6 +12,7 @@ import PointsDetail from './components/PointsDetail'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import Navbar from '@/layouts/BasicLayout/Navbar'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
+import copyImg from '@/assets/images/loan-details/copy.svg'
 import { TwitterService, UserInfoService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
@@ -114,7 +115,7 @@ const PersonalCenter = () => {
 
   return (
     <div >
-      <div className="h368 bg-cover bg-no-repeat" style={{ backgroundImage: 'url(/src/assets/images/personal-center/bg-header.jpg)' }}>
+      <div className="h368 bg-cover bg-no-repeat" style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}>
         <div className="m-x-a w1400"><Navbar title={t('nav.title')} showInput={false} /></div>
       </div>
 
@@ -168,7 +169,7 @@ const PersonalCenter = () => {
               <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
                   <div className='cursor-pointer'>
                   <span className='c-#307DF5'> {`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}</span>
-                  <Image preview={false} width={10} height={10} className='ml-6' src='/src/assets/images/loan-details/copy.svg' />
+                  <Image preview={false} width={10} height={10} className='ml-6' src={copyImg} />
                   </div>
               </CopyToClipboard>
 

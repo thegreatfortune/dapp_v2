@@ -203,7 +203,7 @@ const ApplyLoan = () => {
     try {
       if (useDiagram && !file) {
         const { itemTitle, applyLoan, tradingFormType, interest, dividend } = loanRequisitionEditModel
-        const newFile = await handleImageCanvas('/src/assets/images/default.png', [itemTitle,
+        const newFile = await handleImageCanvas(defaultImage, [itemTitle,
           browserContractService?.getSigner.address ? maskWeb3Address(browserContractService?.getSigner.address) : '',
           String(applyLoan ?? 0),
           tradingFormType === 'SpotGoods' ? 'Low' : 'Hight',
