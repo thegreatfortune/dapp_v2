@@ -349,16 +349,16 @@ const LoanDetails = () => {
                 loanInfo.state === 'PaidOff'
                   ? (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'PaidOff'
                   && <Button className='h60 w180 primary-btn'>Liquidate</Button>
-                  : <Button className='h60 w180 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+                  : <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
               }
 
-              <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+              <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
             </div>
           }
 
           {
             prePage === 'loan'
-            && <Button className='h60 w180 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+            && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
           }
 
         </div>
