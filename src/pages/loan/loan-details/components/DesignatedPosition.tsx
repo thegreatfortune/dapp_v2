@@ -239,7 +239,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
           {
             tokenInfos.map(item => (
-              <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/src/assets/images/loan-details/cardBackGround.png)' }}>
+              <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
                 <div>
                   {item.name}({
                     // 如果余额大于零，则计算比例并显示结果

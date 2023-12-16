@@ -12,7 +12,7 @@ const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
 
   return (
 
-   <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(/src/assets/images/market/marketBackground.svg)' }}>
+   <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border' style={{ backgroundImage: 'url(/static/marketBackground.svg)' }}>
       <header className='w-1400'>
         <Navbar title={t('nav.title')} showInput={showInput} />
       </header>
