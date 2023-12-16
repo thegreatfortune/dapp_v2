@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
-import { message } from 'antd'
 import { LoanService } from '../../.generated/api/Loan'
 import CardsContainer from '../components/CardsContainer'
-import { UserInfoService } from '../../.generated/api/UserInfo'
 import { Models } from '@/.generated/api/models'
-import { MarketService, MetamaskService } from '@/.generated/api'
-import useUserStore from '@/store/userStore'
-import useBrowserContract from '@/hooks/useBrowserContract'
+import { MarketService } from '@/.generated/api'
+
 import bannerImage from '@/assets/images/market/banner.png'
 import blacklist1 from '@/assets/images/market/blacklist1.png'
 
@@ -23,12 +20,6 @@ const Market = () => {
 
   const [searchParams] = useSearchParams()
   const inviteCode = searchParams.get('inviteCode')
-
-  const { activeUser } = useUserStore()
-
-  const { resetProvider, signer } = useBrowserContract()
-
-  const { signIn, signOut } = useUserStore()
 
   // TODO 收到邀请码的后续操作
   useEffect(() => {
@@ -64,40 +55,6 @@ const Market = () => {
     }
     fetchData()
   }, [])
-
-  async function login(address: string) {
-    try {
-      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
-
-      if (!nonce)
-        return
-
-      let signature
-
-      if (!activeUser.accessToken)
-        signature = await signer?.signMessage(nonce)
-
-      // TODO signOut()
-
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
-
-      if (res.success) {
-        signIn({ address, accessToken: res.accessToken })
-        const user = await UserInfoService.ApiUserInfo_GET()
-
-        signIn({ accessToken: res.accessToken, id: user.userId, ...user })
-        resetProvider()
-      }
-
-      // window.location.reload()
-    }
-    catch (error) {
-      signOut()
-      message.error('login failed')
-      console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
-      throw new Error('login failed')
-    }
-  }
 
   return (
     <div className="relative m-auto h-full min-h-full">

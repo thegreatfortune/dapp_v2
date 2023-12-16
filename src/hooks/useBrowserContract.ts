@@ -1,12 +1,15 @@
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { BrowserContractService } from '../contract/browserContractService'
+import useUserStore from '@/store/userStore'
 
 const useBrowserContract = () => {
   const [provider, setProvider] = useState<ethers.BrowserProvider>()
   const [signer, setSigner] = useState<ethers.JsonRpcSigner>()
   const [browserContractService, setBrowserContractService] = useState<BrowserContractService>()
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false)
+
+  const { activeUser } = useUserStore()
 
   const checkWalletConnection = async (currentSigner: ethers.JsonRpcSigner): Promise<boolean> => {
     try {
@@ -62,9 +65,12 @@ const useBrowserContract = () => {
   }
 
   useEffect(() => {
+    if (!activeUser.accessToken)
+      return
+
     initializeProvider()
     initializeSigner()
-  }, [provider, signer])
+  }, [provider, signer, activeUser])
 
   const resetProvider = () => {
     setProvider(undefined)

@@ -39,6 +39,7 @@ import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import useUserStore from '@/store/userStore'
 
 const ApplyLoan = () => {
   /* #region  */
@@ -47,6 +48,8 @@ const ApplyLoan = () => {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
+
+  const { activeUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -140,6 +143,14 @@ const ApplyLoan = () => {
       message: 'Please upload your loan image!',
     },
   ])
+
+  // TODO 全局路由守卫
+  useEffect(() => {
+    if (!activeUser.accessToken) {
+      message.warning('You must be logged in ')
+      navigate('/personal-center')
+    }
+  }, [activeUser])
 
   /**
    *  检查订单是否可创建
