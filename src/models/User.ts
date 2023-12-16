@@ -1,7 +1,7 @@
 import { Models } from '@/.generated/api/models'
 
 export class User extends Models.UserInfoVo1 {
-  id?: number
+  id?: string
   // address?: string
   accessToken?: string
 }

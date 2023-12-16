@@ -3,7 +3,6 @@ import type { ConfigEnv, UserConfig } from 'vite'
 import { defineConfig, loadEnv } from 'vite'
 import UnoCSS from 'unocss/vite'
 import react from '@vitejs/plugin-react'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
@@ -20,13 +19,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
 
-    plugins: [UnoCSS(), react(),
-      viteStaticCopy({
-        targets: [
-          { src: 'src/assets/**', dest: 'dist/assets' },
-        ],
-      }),
-    ],
+    plugins: [UnoCSS(), react()],
 
     server: {
       host: true,

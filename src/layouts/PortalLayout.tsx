@@ -16,13 +16,13 @@ const PortalLayout: React.FC<IProps> = (props) => {
   //   const navigate = useNavigate()
 
   return (
-        <div className='flex flex-col items-center bg-cover' style={{ backgroundImage: 'url(src/assets/images/portalImages/backGround1.png),url(src/assets/images/portalImages/backGround2.png)' }} >
+        <div className='flex flex-col items-center bg-cover' style={{ backgroundImage: 'url(/src/assets/images/portalImages/backGround1.png),url(/src/assets/images/portalImages/backGround2.png)' }} >
             <header className='w-1400'>
                 {/* <Navbar title={t('nav.title')} />u */}
                 <div className='h-40 w-full'></div>
                 <div className='flex justify-between'>
                     <div className='flex justify-between'>
-                        <img src="src/assets/images/portalImages/navCoin.png" alt="没引入进来" className='mt-14 h-34 w-34' />
+                        <img src="/src/assets/images/portalImages/navCoin.png" alt="没引入进来" className='mt-14 h-34 w-34' />
                         <div className='m-auto ml-12 w-115 text-center text-22 font-normal lh-52 font-mono c-#fff'>FOLLOWFI</div>
                     </div>
                     <div className='flex justify-between'>
@@ -45,20 +45,20 @@ const PortalLayout: React.FC<IProps> = (props) => {
                 {/* <Footer /> */}
                 <div className='flex justify-between'>
                     <div className='flex justify-between'>
-                        <img src="src/assets/images/portalImages/navCoin.png" alt="没引入进来" className='mt-10 h-34 w-34' />
+                        <img src="/src/assets/images/portalImages/navCoin.png" alt="没引入进来" className='mt-10 h-34 w-34' />
                         <div className='m-auto mb-75 ml-12 mt-12 w-115 text-center text-22 font-normal font-mono c-#fff'>FOLLOWFI</div>
                     </div>
                     <div className=''>
                         <div className='m-auto mt-10 h-65 w-630 text-center text-18 font-400 lh-35 c-#fff'>One stop P2P market, secure loans, and secure financial management.</div>
                         <div className='flex justify-center'>
                             <div className='w-89'>
-                                <img src="src/assets/images/portalImages/Group 1597883307.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
+                                <img src="/src/assets/images/portalImages/Group 1597883307.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
                             </div>
                             <div className='w-89'>
-                                <img src="src/assets/images/portalImages/Group 1597883308.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
+                                <img src="/src/assets/images/portalImages/Group 1597883308.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
                             </div>
                             <div className='w-89'>
-                                <img src="src/assets/images/portalImages/Group 1597883309.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
+                                <img src="/src/assets/images/portalImages/Group 1597883309.png" alt="" className='transform transition-transform active:scale-95 hover:scale-105'/>
                             </div>
                         </div>
                     </div>

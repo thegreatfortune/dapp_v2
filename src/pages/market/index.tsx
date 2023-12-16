@@ -9,6 +9,7 @@ import { Models } from '@/.generated/api/models'
 import { MarketService, MetamaskService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import bannerImage from '@/assets/images/market/banner.png'
 
 const Market = () => {
   const [hotStarterData, setHotStarterData] = useState<Models.LoanOrderVO[]>([])
@@ -99,10 +100,10 @@ const Market = () => {
 
   return (
     <div className="relative m-auto h-full min-h-full">
-      <div>
+      <div >
+
         <img
-          src="/assets/images/market/banner.png"
-          // src="src/assets/images/market/banner.png"
+          src="/src/assets/images/market/banner.png"
           alt='Image 2'
           className='h-280 w-full b-rd-20 object-cover'
         />
@@ -124,7 +125,7 @@ const Market = () => {
 
       {
       (blacklist.total && blacklist.total > 0)
-        ? <CardsContainer image='src/assets/images/market/blacklist1.png' key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist' />
+        ? <CardsContainer image='/src/assets/images/market/blacklist1.png' key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist' />
         : null
       }
 

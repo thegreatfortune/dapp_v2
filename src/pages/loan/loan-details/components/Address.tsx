@@ -17,7 +17,7 @@ const Address: React.FC<IProps> = ({ address }) => {
          <Tooltip placement='top' title={text}>
          <div className='h-23 w-104 flex transform cursor-pointer items-center justify-center rounded-15 bg-#272c62 text-10 c-#4959EE transition-transform hover:scale-105 focus:outline-none'>
                 {address && maskWeb3Address(address)}
-                <Image preview={false} className='px-6' src='src/assets/images/loan-details/copy.svg' />
+                <Image preview={false} className='px-6' src='/src/assets/images/loan-details/copy.svg' />
             </div>
          </Tooltip>
         </CopyToClipboard>
