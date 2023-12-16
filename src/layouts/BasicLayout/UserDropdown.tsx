@@ -5,6 +5,10 @@ import type { MenuProps } from 'antd/es/menu'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import useUserStore from '@/store/userStore'
+import myLoanImg from '@/assets/images/personal-center/myLoan.png'
+import myFollowImg from '@/assets/images/personal-center/myFollow.png'
+import personalImg from '@/assets/images/personal-center/Personal.png'
+import disconnectImg from '@/assets/images/personal-center/Disconnect.png'
 
 const UserDropdown = () => {
   const { t } = useTranslation()
@@ -18,7 +22,7 @@ const UserDropdown = () => {
       key: '1',
       label: (
         <Link className='flex items-center c-#fff' to={'/my-loan'} key='myLoan'>
-        <img src="/src/assets/images/personal-center/myLoan.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.loan')}
+        <img src={myLoanImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.loan')}
         </Link>
 
       ),
@@ -27,7 +31,7 @@ const UserDropdown = () => {
       key: '2',
       label: (
         <Link className='flex items-center c-#fff' to='/my-lend'>
-          <img src="/src/assets/images/personal-center/myFollow.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.follow')}
+          <img src={myFollowImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.follow')}
         </Link>
 
       ),
@@ -36,7 +40,7 @@ const UserDropdown = () => {
       key: 'personalCenter',
       label: (
         <Link className='flex items-center c-#fff' to='/personal-center'>
-          <img src="/src/assets/images/personal-center/Personal.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.personalCenter')}
+          <img src={personalImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.personalCenter')}
         </Link>
 
       ),
@@ -48,7 +52,7 @@ const UserDropdown = () => {
       key: 'signOut',
       label: (
         <a className='flex items-center c-#fff' onClick={openAccountModal}>
-          <img src="/src/assets/images/personal-center/Disconnect.png" alt="" className='mr-9 h15 w15'/> {t('nav.menu.signOut')}
+          <img src={disconnectImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.signOut')}
         </a>
       ),
     },
