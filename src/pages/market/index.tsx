@@ -103,7 +103,7 @@ const Market = () => {
       <div >
 
         <img
-          src="/src/assets/images/market/banner.png"
+          src={ bannerImage }
           alt='Image 2'
           className='h-280 w-full b-rd-20 object-cover'
         />

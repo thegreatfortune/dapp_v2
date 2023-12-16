@@ -28,8 +28,16 @@ const RoomTrade = () => {
   const renderItem = (item: Models.TokenMarketVo, index: number) => {
     return (
       <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822' key={item.loanId}>
-        <li>{index + 1} User </li>
-        <li>{item.price && ethers.formatUnits(item.price)} </li>
+        <li>{index + 1}
+        <div className='flex'>
+          <span className='h40 w40' >头像</span>
+          <span className=''>
+            <div>michasi007</div>
+            <span>@Artist</span>
+          </span>
+          </div>
+        </li>
+        <li>{item.price && ethers.formatUnits(item.price)}</li>
         <li>{item.remainingQuantity}</li>
         {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
         <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
