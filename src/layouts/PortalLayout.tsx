@@ -16,7 +16,7 @@ const PortalLayout: React.FC<IProps> = (props) => {
   //   const navigate = useNavigate()
 
   return (
-        <div className='flex flex-col items-center bg-cover' style={{ backgroundImage: 'url(/src/assets/images/portalImages/backGround1.png),url(/src/assets/images/portalImages/backGround2.png)' }} >
+        <div className='flex flex-col items-center bg-cover' style={{ backgroundImage: 'url(/static/backGround1.png),url(/static/backGround2.png)' }} >
             <header className='w-1400'>
                 {/* <Navbar title={t('nav.title')} />u */}
                 <div className='h-40 w-full'></div>
