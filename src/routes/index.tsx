@@ -5,7 +5,8 @@ import BasicLayout from '@/layouts/BasicLayout'
 
 import Test from '@/pages/Test'
 import PortalLayout from '@/layouts/PortalLayout'
-import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
+
+// import DetailCard from '@/pages/loan/loan-details/components/DetailCard'
 
 const Market = lazy(() => import('../pages/market'))
 const Portal = lazy(() => import('../pages/Portal'))
@@ -134,16 +135,7 @@ const routes: (RouteObject & { meta?: IRouterMeta })[] = [
 if (import.meta.env.DEV) {
   routes.push(
     ...[
-      {
-        path: '/loan-details',
-        element: (
-          <BasicLayout>
-            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-              <DetailCard address={'src/pages/loan/loan-details/components/DetailCard.tsx'} />
-            </React.Suspense>
-          </BasicLayout>
-        ),
-      },
+
       {
         path: 'test',
         element: (

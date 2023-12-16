@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next'
+import { NavLink } from 'react-router-dom'
 
 const Portal = () => {
   const { t } = useTranslation()
+  //   const navigate = useNavigate()
 
   return (
         <div>
@@ -10,7 +12,7 @@ const Portal = () => {
                 <div className="absolute z-3 pt-5rem text-16rem font-500 lh-21rem not-italic c-#fff">{`${t('portal.title.theme1')}`}</div>
                 <div className="float-left mt-12.5rem">
                     <div className="z-2 mt-12.5rem h-81 w-753 flex-content-between pt-12.5rem text-26 font-400 lh-34 c-gray opacity-100">{`${t('portal.title.annotate1')}`}</div>
-                    <button className="mt-100 h-92 w-324 justify-between b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.login.button')}`}</button>
+                    <NavLink to="/market" ><button className="mt-100 h-92 w-324 justify-between b-rd-8 text-24 c-#fff primary-btn" >{`${t('portal.login.button')}`}</button></NavLink>
 
                 </div>
                 <div className="">
@@ -30,7 +32,7 @@ const Portal = () => {
                     <img src="src/assets/images/portalImages/marketQuotations.png" alt="" className="absolute z-1" />
                     <div className="absolute z-2 float-right ml-574 mt-219 h-143 w-297 transform transition-transform active:scale-95 hover:scale-105">
                         <img src="src/assets/images/portalImages/portalImagesTiny.png" alt="" className="absolute z-3" />
-                        <div className="absolute z-4 float-right m-auto ml-223 mt-104 h-25 w-46 b-rd-30px text-center text-12 lh-25 opacity-100 primary-btn">{`${t('portal.swap.button')}`}</div>
+                        <button className="absolute z-4 float-right m-auto ml-223 mt-104 h-25 w-46 b-rd-30px text-center text-12 lh-25 opacity-100 primary-btn">{`${t('portal.swap.button')}`}</button>
                     </div>
                 </div>
                 <div className="">
@@ -38,7 +40,7 @@ const Portal = () => {
                     <div className="h-10rem"></div>
                     <div className="mr-1 h-103 w-515 text-26 font-400 lh-8.55rem c-gray opacity-100">{`${t('portal.title.annotate2')}`}</div>
                     <div className="h-12.5rem"></div>
-                    <button className="ml-30 h-92 w-324 b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.login.button')}`}</button>
+                    <NavLink to="/market"><button className="ml-30 h-92 w-324 b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.login.button')}`}</button></NavLink>
                 </div>
             </div>
             <div className="h-43rem w-full"></div>
@@ -77,7 +79,7 @@ const Portal = () => {
             <div className="h-full w-full">
                 <div className="m-auto h-79 w-750 flex text-center text-28 font-400 lh-44 text-slate-300">{`${t('portal.title.annotate4')}`}</div>
                 <div className="h-50"></div>
-                <button className="m-auto ml-538 h-92 w-324 b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.loan.button')}`}</button>
+                <NavLink to="/market"><button className="m-auto ml-538 h-92 w-324 b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.loan.button')}`}</button></NavLink>
             </div>
             <div className="h-140 w-full"></div>
             <div>

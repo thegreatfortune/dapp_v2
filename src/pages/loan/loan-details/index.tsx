@@ -58,7 +58,7 @@ const LoanDetails = () => {
     Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
     Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
     Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
-    PaidOff: <div className='box-border h33 min-w174 rounded-4 bg-#979797' >Settled transaction</div>,
+    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a' >Settled transaction</div>,
     PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
     Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
   }
@@ -384,38 +384,38 @@ const LoanDetails = () => {
 
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w150 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.periods} / {loanInfo.repayCount}</li>
+            <li className='text-28 font-bold'>{loanInfo.periods}/ {loanInfo.repayCount}</li>
           </ul>
           {/* </div> */}
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w100 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Interest</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w100 list-none p0'>
             <li className='text-16 c-#D1D1D1'>dividend</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w80 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
             <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w100 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.goalCopies}</li>
+            <li className='w-100 text-28 font-bold'>{loanInfo.goalCopies}</li>
           </ul>
 
-          <ul className='m0 list-none p0'>
+          <ul className='m0 w230 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
             <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
