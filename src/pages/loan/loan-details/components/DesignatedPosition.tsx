@@ -10,7 +10,6 @@ import LoanHistory from './LoanHistory'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
-import cardBackGround from '@/assets/images/loan-details/cardBackGround.png'
 
 interface IProps {
   tradeId: bigint | null

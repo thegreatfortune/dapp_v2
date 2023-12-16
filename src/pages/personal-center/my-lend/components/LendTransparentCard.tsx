@@ -1,7 +1,5 @@
-import Avatar from 'antd/es/avatar'
 import Button from 'antd/es/button'
 import { useNavigate } from 'react-router-dom'
-import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import type { Models } from '@/.generated/api/models'
 

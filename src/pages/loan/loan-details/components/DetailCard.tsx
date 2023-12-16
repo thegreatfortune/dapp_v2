@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import type { Models } from '@/.generated/api/models'
 
 // import { Image, message } from 'antd'

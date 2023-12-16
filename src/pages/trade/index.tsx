@@ -1,5 +1,5 @@
 import { Radio } from 'antd'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { MarketService } from '../../.generated/api/Market'

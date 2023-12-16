@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
-import type { Models } from '@/.generated/api/models'
 
 interface ICardsContainerProps {
 //   records: Models.LoanOrderVO[]

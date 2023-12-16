@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber } from 'antd'
+import { Button, InputNumber } from 'antd'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import useBrowserContract from '@/hooks/useBrowserContract'

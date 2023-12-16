@@ -1,14 +1,8 @@
 import { Contract, type ethers } from 'ethers'
-import { useEffect, useMemo, useState } from 'react'
-import { BrowserContractService } from '../contract/browserContractService'
+import { useMemo } from 'react'
 import useBrowserContract from './useBrowserContract'
-import type { FollowCapitalPool, FollowFactory, FollowManage, FollowRefundFactory, FollowRefundPool, ProcessCenter } from '@/abis/types'
+import type { FollowFactory } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
-import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
-import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
-import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
-import processCenter_ABI from '@/abis/ProcessCenter.json'
-import followManage_ABI from '@/abis/FollowManage.json'
 
 function createContract<T>(
   address: string,

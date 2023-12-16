@@ -8,7 +8,7 @@
   "nav.menu.follow": "My Follow",
   "nav.menu.transaction": "My Transaction",
   "nav.menu.personalCenter": "Personal Center",
-  "nav.menu.signOut":"Disconnect & Sign Out",
+  "nav.menu.signOut": "Disconnect & Sign Out",
 
   "applyLoan.formItem.upload.title": "Drag or Drop an image",
   "applyLoan.formItem.upload.description": "PNG or JPG files recommended",
@@ -31,7 +31,6 @@
   "applyLoan.formItem.designatedTransaction.label": "Designated Transaction",
 
   "applyLoan.btn.submit": "Publish Now",
-
 
   "market.CardsContainer1.title": "Hot starter",
   "market.CardsContainer2.title": "Popular to follow",
@@ -87,11 +86,5 @@
   "portal.pledges8": "8、Stand by to support one another whenever challenges arise.",
   "portal.pledges9": "9、Unite to address any discipline issues within our communities.",
   "portal.pledges10": "10、Introduce physical activities in all communities and actively join social events."
-
-
-
-
-
-
 
 }

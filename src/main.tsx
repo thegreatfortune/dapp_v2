@@ -17,7 +17,6 @@ import {
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import {
   arbitrum,
-  mainnet,
   polygonMumbai,
 } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'

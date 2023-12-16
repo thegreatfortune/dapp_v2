@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { IntegralRecordService } from '@/.generated/api'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
