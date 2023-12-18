@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { LoanService } from '../../.generated/api/Loan'
 import CardsContainer from '../components/CardsContainer'
 import useInviteCode from './hooks/useInviteCode'
@@ -18,6 +18,8 @@ const Market = () => {
   const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
 
   const { t } = useTranslation()
+
+  useInviteCode()
 
   useEffect(() => {
     async function fetchData() {

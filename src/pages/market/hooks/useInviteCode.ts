@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { MetamaskService, UserInfoService, UserInviteService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -11,15 +11,21 @@ const useInviteCode = () => {
 
   const { activeUser } = useUserStore()
 
-  const { setNewProvider } = useBrowserContract()
+  const { resetProvider, setNewProvider } = useBrowserContract()
 
   const [searchParams] = useSearchParams()
 
   const inviteCode = searchParams.get('inviteCode') ?? undefined
 
+  const location = useLocation()
+
   useEffect(() => {
-    inviteCode && login()
-  }, [inviteCode])
+    const searchParams = new URLSearchParams(location.search)
+    const inviteCode = searchParams.get('inviteCode') || undefined
+
+    if (inviteCode)
+      login()
+  }, [location])
 
   async function login() {
     if (activeUser.address) {
@@ -27,17 +33,14 @@ const useInviteCode = () => {
       if (isInvited)
         return
     }
-    else {
-      return
-    }
 
-    // if (activeUser.accessToken)
-    //   return
+    resetProvider()
 
     try {
       const newProvider = new ethers.BrowserProvider(window.ethereum)
 
       const signer = await newProvider.getSigner()
+      console.log('%c [ signer ]-52', 'font-size:13px; background:#fd5682; color:#ff9ac6;', signer)
 
       const address = await signer.getAddress()
 
