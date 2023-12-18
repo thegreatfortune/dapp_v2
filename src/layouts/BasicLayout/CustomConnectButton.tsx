@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { ethers } from 'ethers'
+import { useLocation } from 'react-router-dom'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
@@ -22,12 +23,12 @@ const CustomConnectButton = () => {
 
   const [canLogin, setCanLogin] = useState(false)
 
-  async function login(address: string) {
+  const location = useLocation()
+
+  async function login(address?: string) {
     try {
-      if (!address) {
-        message.error('address cannot be empty')
+      if (!address)
         return
-      }
 
       resetProvider()
 
@@ -134,6 +135,14 @@ const CustomConnectButton = () => {
         && chain
         && (!authenticationStatus
           || authenticationStatus === 'authenticated')
+
+      useEffect(() => {
+        const searchParams = new URLSearchParams(location.search)
+        const inviteCode = searchParams.get('inviteCode') || undefined
+
+        if (location.pathname === '/market' && inviteCode)
+          onOpenConnectModal()
+      }, [location])
 
       async function onOpenConnectModal() {
         openConnectModal()

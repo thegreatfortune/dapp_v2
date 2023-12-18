@@ -13,10 +13,6 @@ const useInviteCode = () => {
 
   const { resetProvider, setNewProvider } = useBrowserContract()
 
-  const [searchParams] = useSearchParams()
-
-  const inviteCode = searchParams.get('inviteCode') ?? undefined
-
   const location = useLocation()
 
   useEffect(() => {
@@ -40,7 +36,6 @@ const useInviteCode = () => {
       const newProvider = new ethers.BrowserProvider(window.ethereum)
 
       const signer = await newProvider.getSigner()
-      console.log('%c [ signer ]-52', 'font-size:13px; background:#fd5682; color:#ff9ac6;', signer)
 
       const address = await signer.getAddress()
 

@@ -19,8 +19,6 @@ const Market = () => {
 
   const { t } = useTranslation()
 
-  useInviteCode()
-
   useEffect(() => {
     async function fetchData() {
       const res = await LoanService.ApiLoanHomeInfo_GET()
