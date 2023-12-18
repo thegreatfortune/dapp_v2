@@ -13,7 +13,7 @@ import blacklist1 from '@/assets/images/market/blacklist1.png'
 const Market = () => {
   const [hotStarterData, setHotStarterData] = useState<Models.LoanOrderVO[]>([])
 
-  const [popularToFollowData, setPopularToFollowData] = useState<Models.MarketLoanVo[]>([])
+  const [popularToFollowData, setPopularToFollowData] = useState<Models.PageResult<Models.MarketLoanVo>>(new Models.PageResult())
 
   const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
 
@@ -29,7 +29,8 @@ const Market = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await MarketService.ApiMarketHomeInfo_GET()
+      const res = await MarketService.ApiMarketPageTradingLoan_GET({ page: 1, limit: 4 })
+
       setPopularToFollowData(res)
     }
     fetchData()
@@ -65,8 +66,8 @@ const Market = () => {
       }
       <div className='h-44 w-full' />
       {
-        popularToFollowData.length > 0
-        && <CardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData} to='/view-all?title=💥Popular to follow' />
+       popularToFollowData.records && popularToFollowData.records.length > 0
+        && <CardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData.records} to='/view-all?title=💥Popular to follow' />
       }
 
       <div className='h-44 w-full' />

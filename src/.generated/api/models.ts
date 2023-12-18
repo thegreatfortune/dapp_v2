@@ -171,6 +171,10 @@ Canceled :订单取消 */
     address?: string = undefined;
   }
 
+  export class ApiUserSetChainNetworkByIdPUTParams {
+    id: string = '';
+  }
+
   export class ApplicationContext {}
 
   export class AuthResult {

@@ -965,8 +965,6 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_createOrder(model: LoanRequisitionEditModel) {
-    console.log('%c [ model ]-963', 'font-size:13px; background:#d9e02b; color:#ffff6f;', model)
-
     const followRouterContract = await this.getFollowRouterContract()
 
     const transaction = await followRouterContract?.borrowerCreateOrder(
@@ -997,6 +995,8 @@ export class BrowserContractService {
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
       }
+
+      console.log('%c [ ApiLoanConfirm_POST ]-989', 'font-size:13px; background:#bf58c2; color:#ff9cff;', new Date())
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }
