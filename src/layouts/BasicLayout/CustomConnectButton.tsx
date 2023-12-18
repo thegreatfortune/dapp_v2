@@ -9,6 +9,7 @@ import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import { UserService } from '@/.generated/api'
 
 const CustomConnectButton = () => {
   const { address, isConnected } = useAccount()
@@ -48,11 +49,15 @@ const CustomConnectButton = () => {
       }
 
       const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
+      console.log('%c [ res ]-52', 'font-size:13px; background:#605e08; color:#a4a24c;', res)
+
+      // const res = await UserService.ApiUserLogin_POST({ address })
 
       signIn({ accessToken: res.accessToken, address })
 
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
+        console.log('%c [ user ]-60', 'font-size:13px; background:#c0ecf2; color:#ffffff;', user)
 
         setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
       }
@@ -84,8 +89,14 @@ const CustomConnectButton = () => {
 
   useEffect(() => {
     if (isConnected) {
-      if (address && canLogin)
+      if (address && canLogin) {
+        const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+
+        if (havenUser)
+          switchActiveUser(havenUser)
+
         logInOrSwitching(address)
+      }
     }
     else {
       signOut()

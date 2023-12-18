@@ -3,6 +3,17 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_followManage",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
 			}
@@ -60,11 +71,21 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "userAddress",
+				"name": "_followRefundFactory",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_ERC3525",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_USDC",
 				"type": "address"
 			}
 		],
-		"name": "magicNewCapitalPool",
+		"name": "initFollowFactory",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -73,11 +94,11 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_refundFactory",
+				"name": "userAddress",
 				"type": "address"
 			}
 		],
-		"name": "setRefundFactory",
+		"name": "magicNewCapitalPool",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

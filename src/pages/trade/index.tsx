@@ -5,6 +5,7 @@ import { ethers } from 'ethers'
 import { MarketService } from '../../.generated/api/Market'
 import ScrollableList from '../components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
+import marketBanner from '@/assets/images/market/banner.png'
 
 const Trade = () => {
   const navigate = useNavigate()
@@ -14,34 +15,42 @@ const Trade = () => {
   const renderItem = (item: Models.MarketLoanVo) => {
     return (
       <div className='h125 w315 cursor-pointer s-container' onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
-     <div className='flex justify-between'>
-     <span> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
-        <span> Volume of business {item.totalTradingCompleted}</span>
-     </div>
+        <div className='flex justify-between'>
+          <span> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
+          <span> Volume of business {item.totalTradingCompleted}</span>
+        </div>
       </div>
     )
   }
 
-  return (<div>
-    <div className='h48 flex items-center justify-between'>
+  return (
+    <div className='m-auto'>
+      <img src={marketBanner} alt="" className='m-auto h280 w-full b-rd-20 object-cover' />
+      <div className='h80 w-full'></div>
       <div>
-        <h2 className='font-size-34'>
-          title
-        </h2>
+        <div className='h48 flex items-center justify-between'>
+          <div>
+            <h2 className='font-size-34'>
+              🔥 Hot
+            </h2>
+          </div>
+          <Radio.Group value='All' className='w453 flex'>
+            {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
+            <button className='m-a h48 w100 items-center b-rd-4 text-center text-18 font-500 lh-48 c-#fff primary-btn'>All</button>
+            <div className='ml-20 w333 flex justify-between b-2px b-#0980ed b-rd-4 b-solid'>
+              <Radio.Button value="LowRisk" className='h48 w167 items-center text-18 font-500 lh-48'>🌈 Low Risk</Radio.Button>
+              <div className='h45 w0 b-2px b-#0A80ED b-rd-0 b-solid'></div>
+              <Radio.Button value="HighRisk" className='h48 w206 items-center text-18 font-500 lh-48'>🎉 High Risk</Radio.Button>
+            </div>
+          </Radio.Group>
+        </div>
+
+        <div className='h23 w-full'></div>
+
+        <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
       </div>
-
-      <Radio.Group value='All' >
-        <Radio.Button value="All">All</Radio.Button>
-        <Radio.Button value="LowRisk">LowRisk</Radio.Button>
-        <Radio.Button value="HighRisk">HighRisk</Radio.Button>
-      </Radio.Group>
-
     </div>
-
-    <div className='h23 w-full'></div>
-
-     <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
-  </div>)
+  )
 }
 
 export default Trade

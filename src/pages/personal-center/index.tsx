@@ -58,12 +58,12 @@ const PersonalCenter = () => {
     },
   ]
 
-  useEffect(() => {
-    if (!activeUser.accessToken) {
-      navigate(-1)
-      message.warning('not logged in')
-    }
-  }, [activeUser])
+  // useEffect(() => {
+  //   if (!activeUser.accessToken) {
+  //     navigate(-1)
+  //     message.warning('not logged in')
+  //   }
+  // }, [activeUser])
 
   const checkLoanOrderAndUserState = async () => {
     try {

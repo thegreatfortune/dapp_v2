@@ -54,8 +54,8 @@ const Test = () => {
 
   async function followHandle_SwapERC20() {
     console.log('%c [ tradeId ]-54', 'font-size:13px; background:#558702; color:#99cb46;', tradeId)
-    const res = await browserContractService?.followHandle_swapERC20(tradeId, '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(0), ethers.parseEther(String(100)))
-    console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
+    // const res = await browserContractService?.followHandle_swapERC20(tradeId, '0x76a999d5F7EFDE0a300e710e6f52Fb0A4b61aD58', BigInt(0), ethers.parseEther(String(100)))
+    // console.log('%c [ res ]-45', 'font-size:13px; background:#9d6543; color:#e1a987;', res)
   }
 
   // async function followRefundPool_lenderWithdraw() {
@@ -69,7 +69,13 @@ const Test = () => {
   }
 
   async function USDC_mint() {
-    await browserContractService?.ERC20_mint(import.meta.env.VITE_USDC_TOKEN)
+    try {
+      debugger
+      await browserContractService?.ERC20_mint(import.meta.env.VITE_USDC_TOKEN)
+    }
+    catch (error) {
+      console.log('%c [ error ]-75', 'font-size:13px; background:#dceb80; color:#ffffc4;', error)
+    }
   }
 
   async function FToken_mint() {

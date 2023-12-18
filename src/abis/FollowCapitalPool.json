@@ -8,7 +8,22 @@
 			},
 			{
 				"internalType": "address",
+				"name": "followManage",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
 				"name": "_refundFactory",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_ERC3525",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_USDC",
 				"type": "address"
 			}
 		],
@@ -266,9 +281,9 @@
 		"name": "approveHandle",
 		"outputs": [
 			{
-				"internalType": "bool",
+				"internalType": "uint256",
 				"name": "",
-				"type": "bool"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -277,39 +292,61 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "timePeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "repaymentPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint16[4]",
-				"name": "rateAndGoalUsers",
-				"type": "uint16[4]"
-			},
-			{
-				"internalType": "uint56",
-				"name": "_collectEndTime",
-				"type": "uint56"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_goalMoney",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "uri",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
+				"components": [
+					{
+						"internalType": "uint8",
+						"name": "_timePeriod",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "_repayTimes",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_interestRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_shareRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_goalShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_minShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint56",
+						"name": "_collectEndTime",
+						"type": "uint56"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_goalMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "uri",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FollowLibrary.orderInput",
+				"name": "_orderInput",
+				"type": "tuple"
 			}
 		],
 		"name": "createOrder",
@@ -584,19 +621,6 @@
 			}
 		],
 		"name": "repay",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address[3]",
-				"name": "abc",
-				"type": "address[3]"
-			}
-		],
-		"name": "set",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

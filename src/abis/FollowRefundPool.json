@@ -17,52 +17,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "AlreadyCreate",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "AlreadyDoRefund",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "AlreadyDone",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "AlreadyWithdraw",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ApproveHandleError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "BalanceError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "BalanceZero",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "BlackList",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "CollectEndTimeError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "CreatePoolError",
 		"type": "error"
 	},
 	{
@@ -72,52 +27,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "GoalMoneyError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "GoalShareCountError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "InValidOrder",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "InitError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "InvalidTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "LendError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "LessMinShareCount",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "LiquidateError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "Locked",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "MinShareCountError",
 		"type": "error"
 	},
 	{
@@ -127,17 +37,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NonRepay",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "NotBorrower",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotCaller",
 		"type": "error"
 	},
 	{
@@ -147,27 +47,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotCurrentRepayTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotDoRefund",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "NotEndTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotFollowRouter",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotInitialize",
 		"type": "error"
 	},
 	{
@@ -177,17 +57,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "NotOrder",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "NotProfit",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotSingleRepayTimes",
 		"type": "error"
 	},
 	{
@@ -202,47 +72,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "OverMinShareCount",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "OverShareCount",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "RateError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ReachEndTime",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "RefundMoneyError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "SingleRepayTimes",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "TokenError",
-		"type": "error"
-	},
-	{
-		"inputs": [],
 		"name": "ValidOrder",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "ZeroAddress",
 		"type": "error"
 	},
 	{
