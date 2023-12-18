@@ -2,6 +2,7 @@ import path from 'node:path'
 import type { ConfigEnv, UserConfig } from 'vite'
 import { defineConfig, loadEnv } from 'vite'
 import UnoCSS from 'unocss/vite'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
@@ -19,9 +20,10 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
 
-    plugins: [UnoCSS(), react()],
+    plugins: [UnoCSS(), basicSsl(), react()],
 
     server: {
+      https: true,
       host: true,
       proxy: {
         '/api/': {

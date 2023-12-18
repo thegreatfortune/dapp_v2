@@ -381,25 +381,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_capitalPool",
-				"type": "address"
-			}
-		],
-		"name": "getCapitalPoolAllOradeId",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "getDividendFee",
 		"outputs": [
@@ -407,6 +388,19 @@
 				"internalType": "uint8",
 				"name": "",
 				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getExecutor",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -659,7 +653,7 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_followRouter",
+				"name": "_FollowRouter",
 				"type": "address"
 			}
 		],
@@ -746,6 +740,19 @@
 			}
 		],
 		"name": "setTokenIdIfWithdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newExecutor",
+				"type": "address"
+			}
+		],
+		"name": "transferExecutor",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

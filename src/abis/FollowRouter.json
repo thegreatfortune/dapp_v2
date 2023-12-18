@@ -13,7 +13,7 @@
 			},
 			{
 				"internalType": "address",
-				"name": "_usdc",
+				"name": "_USDC",
 				"type": "address"
 			}
 		],
@@ -334,39 +334,61 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "timePeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "repaymentPeriod",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint16[4]",
-				"name": "rateAndGoalUsers",
-				"type": "uint16[4]"
-			},
-			{
-				"internalType": "uint56",
-				"name": "_collectEndTime",
-				"type": "uint56"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_goalMoney",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "uri",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
+				"components": [
+					{
+						"internalType": "uint8",
+						"name": "_timePeriod",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "_repayTimes",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_interestRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_shareRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_goalShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "_minShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint56",
+						"name": "_collectEndTime",
+						"type": "uint56"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_goalMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "uri",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FollowLibrary.orderInput",
+				"name": "_orderInput",
+				"type": "tuple"
 			}
 		],
 		"name": "borrowerCreateOrder",
@@ -541,37 +563,6 @@
 			}
 		],
 		"name": "refundMoney",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "capitalPool",
-				"type": "address"
-			},
-			{
-				"internalType": "address[3]",
-				"name": "addressgroup",
-				"type": "address[3]"
-			}
-		],
-		"name": "setCapitalPool",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "refundPool",
-				"type": "address"
-			}
-		],
-		"name": "setRefundPool",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

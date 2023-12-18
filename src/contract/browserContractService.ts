@@ -11,7 +11,8 @@ import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import FollowMarket_ABI from '@/abis/FollowMarket.json'
 import FollowRouter_ABI from '@/abis/FollowRouter.json'
-import LocalERC20_ABI from '@/abis/LocalERC20.json'
+
+// import LocalERC20_ABI from '@/abis/LocalERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
@@ -195,17 +196,18 @@ export class BrowserContractService {
    * @return {*}
    * @memberof BrowserContractService
    */
+
   async getERC20Contract(token?: string) {
     // if (this._ERC20Contract && !token)
     //   return this._ERC20Contract
 
-    if (LocalEnv) {
-      return createContract<LocalContractType<typeof LocalEnv, LocalERC20>>(
-        token ?? import.meta.env.VITE_USDC_TOKEN,
-        LocalERC20_ABI,
-        this.signer,
-      )
-    }
+    // if (LocalEnv) {
+    //   return createContract<LocalContractType<typeof LocalEnv, LocalERC20>>(
+    //     token ?? import.meta.env.VITE_USDC_TOKEN,
+    //     LocalERC20_ABI,
+    //     this.signer,
+    //   )
+    // }
 
     return createContract<LocalContractType<typeof LocalEnv, ERC20>>(
       token ?? import.meta.env.VITE_USDC_TOKEN,
@@ -515,14 +517,22 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async checkOrderCanCreateAgain(): Promise<boolean> {
-    const followFactoryContract = await this.getFollowFactoryContract()
+    // const followFactoryContract = await this.getFollowFactoryContract()
+    // console.log('%c [ followFactoryContract ]-519', 'font-size:13px; background:#402a39; color:#846e7d;', followFactoryContract)
 
-    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    // console.log('%c [ as ]-520', 'font-size:13px; background:#982aba; color:#dc6efe;')
+    // const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+    // console.log('%c [ cp ]-523', 'font-size:13px; background:#00e3c3; color:#44ffff;', cp)
+
+    // if (cp === BLACK_HOLE_ADDRESS)
+    //   return true
+
+    const processCenterContract = await this.getProcessCenterContract()
+
+    const cp = await processCenterContract?._userToCatpitalPool(this.getSigner.address)
 
     if (cp === BLACK_HOLE_ADDRESS)
       return true
-
-    const processCenterContract = await this.getProcessCenterContract()
 
     return processCenterContract?.getIfAgainCreateOrder(this.getSigner.address)
   }
@@ -576,35 +586,35 @@ export class BrowserContractService {
    *
    * @memberof BrowserContractService
    */
-  async checkLatestOrderInProgress(): Promise<boolean> {
-    const followFactoryContract = await this.getFollowFactoryContract()
+  // async checkLatestOrderInProgress(): Promise<boolean> {
+  //   const followFactoryContract = await this.getFollowFactoryContract()
 
-    const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
-    if (cp === BLACK_HOLE_ADDRESS)
-      return true
+  //   const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
+  //   if (cp === BLACK_HOLE_ADDRESS)
+  //     return true
 
-    const followManageContract = await this.getFollowManageContract()
+  //   const followManageContract = await this.getFollowManageContract()
 
-    const tids = await followManageContract.getCapitalPoolAllOradeId(cp)
-    const currenTid = tids.at(-1)
+  //   const tids = await followManageContract.getCapitalPoolAllOradeId(cp)
+  //   const currenTid = tids.at(-1)
 
-    if (currenTid && currenTid >= BigInt(0)) {
-      const processCenterContract = await this.getProcessCenterContract()
+  //   if (currenTid && currenTid >= BigInt(0)) {
+  //     const processCenterContract = await this.getProcessCenterContract()
 
-      const status = await processCenterContract.getOrderState(currenTid)
+  //     const status = await processCenterContract.getOrderState(currenTid)
 
-      if (status === BigInt(7) || status === BigInt(8)) {
-        return true
-      }
-      else {
-        message.error(`Existing order, status is : ${status}`)
-        return false
-      }
-    }
-    else {
-      return true
-    }
-  }
+  //     if (status === BigInt(7) || status === BigInt(8)) {
+  //       return true
+  //     }
+  //     else {
+  //       message.error(`Existing order, status is : ${status}`)
+  //       return false
+  //     }
+  //   }
+  //   else {
+  //     return true
+  //   }
+  // }
 
   /**
    *swap quote
@@ -929,11 +939,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async ERC20_mint(token: string, amount: bigint = ethers.parseEther(String(10 ** 8))) {
-    console.log('%c [ amount ]-442', 'font-size:13px; background:#fd89f9; color:#ffcdff;', amount)
-    console.log('%c [ token ]-444', 'font-size:13px; background:#b56a27; color:#f9ae6b;', token)
     const contract = await this.getERC20Contract(token)
-    console.log('%c [ contract ]-445', 'font-size:13px; background:#3646cb; color:#7a8aff;', contract)
-    const res = await contract?._mint(this.getSigner.address, amount)
+    const res = await contract?.doMint(this.getSigner.address, amount)
     return handleTransaction(res)
   }
 
@@ -946,6 +953,7 @@ export class BrowserContractService {
   async followRouter_createPool() {
     const followRouterContract = await this.getFollowRouterContract()
     const res = await followRouterContract.createPool(this.getSigner.address)
+    res?.wait()
     return handleTransaction(res)
   }
 
@@ -961,31 +969,20 @@ export class BrowserContractService {
 
     const followRouterContract = await this.getFollowRouterContract()
 
-    const cp = await this.getCapitalPoolAddress()
-
-    if (LocalEnv) {
-      const res = await followRouterContract.setCapitalPool(cp, [import.meta.env.VITE_USDC_TOKEN, import.meta.env.VITE_ERC3525_ADDRESS, import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS])
-      const result = await handleTransaction(res)
-
-      if (result?.status !== 1) {
-        console.log('%c [ Authorization failed: ]-544', 'font-size:13px; background:#70a4ad; color:#b4e8f1;', result)
-        throw new Error('Authorization failed')
-      }
-    }
-
     const transaction = await followRouterContract?.borrowerCreateOrder(
-      BigInt(model.cycle),
-      BigInt(model.period!),
-      [
-        BigInt(BigNumber(model.interest!).times(100).toString()),
-        BigInt(BigNumber(model.dividend ?? 0).times(100).toString()),
-        BigInt(model.numberOfCopies),
-        BigInt(model.minimumRequiredCopies ?? 0),
-      ],
-      BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
-      BigInt(model.applyLoan!) * BigInt(10 ** 18), // TODO: decimals token标志位
-      model.imageUrl!,
-      model.itemTitle!,
+      {
+        _timePeriod: BigInt(model.cycle),
+        _repayTimes: BigInt(model.period!),
+        _interestRate: BigInt(BigNumber(model.interest!).times(100).toString()),
+        _shareRate: BigInt(BigNumber(model.dividend ?? 0).times(100).toString()),
+        _goalShareCount: BigInt(model.numberOfCopies),
+        _minShareCount: BigInt(model.minimumRequiredCopies ?? 0),
+        _collectEndTime: BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
+        _goalMoney: BigInt(model.applyLoan!) * BigInt(10 ** 18), // TODO: decimals token标志位
+        uri: model.imageUrl!,
+        name: model.itemTitle!,
+      },
+
     )
 
     const result = await handleTransaction(transaction)
@@ -1000,17 +997,6 @@ export class BrowserContractService {
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
       }
-
-      // const cp = await capitalPoolContract?.getAddress()
-
-      const followManageContract
-        = await this.getFollowManageContract()
-
-      const tids = await followManageContract?.getCapitalPoolAllOradeId(
-        cp ?? '',
-      )
-
-      loanConfirm.tradeId = Number(tids?.at(-1)) ?? 0
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }
