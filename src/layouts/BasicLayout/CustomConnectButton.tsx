@@ -37,9 +37,6 @@ const CustomConnectButton = () => {
 
       const signer = await newProvider.getSigner()
 
-      if (!signer)
-        return login(address)
-
       const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
       const signature = await signer?.signMessage(nonce)
 

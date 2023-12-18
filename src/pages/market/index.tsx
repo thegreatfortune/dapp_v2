@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { LoanService } from '../../.generated/api/Loan'
 import CardsContainer from '../components/CardsContainer'
+import useInviteCode from './hooks/useInviteCode'
 import { Models } from '@/.generated/api/models'
 import { MarketService } from '@/.generated/api'
 
@@ -17,17 +18,6 @@ const Market = () => {
   const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
 
   const { t } = useTranslation()
-
-  const [searchParams] = useSearchParams()
-  const inviteCode = searchParams.get('inviteCode')
-
-  // TODO 收到邀请码的后续操作
-  useEffect(() => {
-    // if (inviteCode?.length === 8)
-    //   login()
-    // else
-    //   message.warning('Illegal invitation code')
-  }, [inviteCode])
 
   useEffect(() => {
     async function fetchData() {
