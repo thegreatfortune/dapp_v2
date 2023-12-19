@@ -47,7 +47,7 @@ const useInviteCode = () => {
         return
       }
 
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode })
+      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
 
       signIn({ accessToken: res.accessToken, address })
 
