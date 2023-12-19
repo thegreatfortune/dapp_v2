@@ -1,16 +1,41 @@
 import { Radio } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { MarketService } from '../../.generated/api/Market'
 import ScrollableList from '../components/ScrollabletList'
-import { Models } from '@/.generated/api/models'
+import type { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
 
 const Trade = () => {
+  const [data, setData] = useState<any[]>([])
+  const params: {
+    limit: number
+    page: number
+    orderItemList?: string | undefined
+    borrowUserId?: string | undefined
+    state?: string | undefined
+  } = {
+    limit: 8,
+    page: 1,
+  }
+
+  useEffect(() => {
+  // .then((response) => {
+  //     setData(response.current)
+  //   })
+
+    async function fetchData() {
+      const res = await MarketService.ApiMarketPageTradingLoan_GET(params)
+      console.log('%c [ res ]-30', 'font-size:13px; background:pink; color:#bf2c9f;', res)
+    }
+
+    fetchData()
+  }, [])
+
   const navigate = useNavigate()
 
-  const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), ...{ limit: 8, page: 1 } })
+  // const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), ...{ limit: 8, page: 1 } })
 
   const renderItem = (item: Models.MarketLoanVo) => {
     return (
@@ -46,7 +71,6 @@ const Trade = () => {
         </div>
 
         <div className='h23 w-full'></div>
-        <div>{ScrollableList}</div>
 
         <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
       </div>
