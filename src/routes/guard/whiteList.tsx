@@ -77,4 +77,14 @@ export const whiteList: IRouter[] = [
       </React.Suspense>
     ),
   },
+  {
+    path: '/loan-details',
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <LoanDetails />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+  },
 ]
