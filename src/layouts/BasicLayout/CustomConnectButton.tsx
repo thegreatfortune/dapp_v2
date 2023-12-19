@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { ethers } from 'ethers'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import type { GetAccountResult } from 'wagmi/actions'
 import { watchAccount } from 'wagmi/actions'
 import { UserInfoService } from '../../.generated/api/UserInfo'
@@ -22,6 +22,8 @@ const CustomConnectButton = () => {
   const { signIn, signOut } = useUserStore()
 
   const [canLogin, setCanLogin] = useState(false)
+
+  const navigator = useNavigate()
 
   const [inviteCode, setInviteCode] = useState<string>()
 
@@ -42,6 +44,7 @@ const CustomConnectButton = () => {
       },
       onDisconnect() {
         signOut()
+        navigator('/market')
       },
     },
   )
@@ -68,7 +71,6 @@ const CustomConnectButton = () => {
       }
 
       const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode })
-      console.log('%c [ res ]-52', 'font-size:13px; background:#605e08; color:#a4a24c;', res)
 
       // const res = await UserService.ApiUserLogin_POST({ address })
 
@@ -76,7 +78,6 @@ const CustomConnectButton = () => {
 
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
-        console.log('%c [ user ]-60', 'font-size:13px; background:#c0ecf2; color:#ffffff;', user)
 
         setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
       }
@@ -86,7 +87,8 @@ const CustomConnectButton = () => {
       // await initializeProvider (newProvider)
     }
     catch (error) {
-      // signOut()
+      signOut()
+      navigator('/market')
       message.error('login failed')
       console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
       throw new Error('login failed')
@@ -105,7 +107,7 @@ const CustomConnectButton = () => {
   }
 
   const debouncedCallback = debounce((account: GetAccountResult<PublicClient>) => {
-    setCanLogin(false)
+    // setCanLogin(false)
     if (account)
       logInOrSwitching(account.address as string)
   }, 1000)
