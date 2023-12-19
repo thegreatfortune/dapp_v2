@@ -8,6 +8,7 @@ import PortalLayout from '@/layouts/PortalLayout'
 const Market = lazy(() => import('../../pages/market'))
 const Portal = lazy(() => import('../../pages/Portal'))
 const Trade = lazy(() => import('../../pages/trade'))
+const LoanDetails = lazy(() => import('../../pages/loan/loan-details'))
 const OrderViewAll = lazy(() => import('../../pages/market/order-view-all'))
 const NotFound = lazy(() => import('../../pages/NotFound'))
 
@@ -18,7 +19,6 @@ export const whiteList: IRouter[] = [
   },
   {
     path: '/portal',
-    // meta: { showInput: false },
     element: (
           <PortalLayout>
             <React.Suspense fallback={<div>Loading...</div>}>
@@ -47,6 +47,16 @@ export const whiteList: IRouter[] = [
               <Trade />
             </React.Suspense>
           </BasicLayout>
+    ),
+  },
+  {
+    path: '/loan-details',
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <LoanDetails />
+        </React.Suspense>
+      </BasicLayout>
     ),
   },
   {

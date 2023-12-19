@@ -6,7 +6,6 @@ import BasicLayout from '@/layouts/BasicLayout'
 
 import Test from '@/pages/Test'
 
-const LoanDetails = lazy(() => import('../pages/loan/loan-details'))
 const PersonalCenter = lazy(() => import('../pages/personal-center'))
 const ApplyLoan = lazy(() => import('../pages/loan/apply-loan'))
 const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
@@ -61,16 +60,7 @@ const routes: IRouter[] = [
       </BasicLayout>
     ),
   },
-  {
-    path: '/loan-details',
-    element: (
-      <BasicLayout>
-        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <LoanDetails />
-        </React.Suspense>
-      </BasicLayout>
-    ),
-  },
+
 ]
 
 if (import.meta.env.DEV) {
