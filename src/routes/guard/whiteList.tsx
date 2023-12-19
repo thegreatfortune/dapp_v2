@@ -2,7 +2,6 @@ import { Spin } from 'antd'
 import React, { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import type { IRouter } from '..'
-import NotFound from '@/pages/NotFound'
 import BasicLayout from '@/layouts/BasicLayout'
 import PortalLayout from '@/layouts/PortalLayout'
 
@@ -10,6 +9,7 @@ const Market = lazy(() => import('../../pages/market'))
 const Portal = lazy(() => import('../../pages/Portal'))
 const Trade = lazy(() => import('../../pages/trade'))
 const OrderViewAll = lazy(() => import('../../pages/market/order-view-all'))
+const NotFound = lazy(() => import('../../pages/NotFound'))
 
 export const whiteList: IRouter[] = [
   {

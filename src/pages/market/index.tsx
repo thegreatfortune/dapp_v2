@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useSearchParams } from 'react-router-dom'
 import { LoanService } from '../../.generated/api/Loan'
 import CardsContainer from '../components/CardsContainer'
-import useInviteCode from './hooks/useInviteCode'
 import { Models } from '@/.generated/api/models'
 import { MarketService } from '@/.generated/api'
 

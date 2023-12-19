@@ -144,7 +144,6 @@ const ApplyLoan = () => {
     },
   ])
 
-  // TODO 全局路由守卫
   useEffect(() => {
     if (!activeUser.accessToken) {
       message.warning('You must be logged in ')

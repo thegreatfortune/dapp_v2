@@ -11,7 +11,6 @@ const PersonalCenter = lazy(() => import('../pages/personal-center'))
 const ApplyLoan = lazy(() => import('../pages/loan/apply-loan'))
 const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
 const MyLend = lazy(() => import('../pages/personal-center/my-lend'))
-const NotFound = lazy(() => import('../pages/NotFound'))
 
 interface IRouterMeta {
   title?: string
