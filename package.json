@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --open & gen:abi",
+    "mumbai": "vite --open --mode=mumbai & gen:abi",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
     "gen:api": "ts-node --esm openapi.config.ts",
