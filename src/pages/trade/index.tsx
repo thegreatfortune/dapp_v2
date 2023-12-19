@@ -46,6 +46,7 @@ const Trade = () => {
         </div>
 
         <div className='h23 w-full'></div>
+        <div>{ScrollableList}</div>
 
         <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
       </div>
