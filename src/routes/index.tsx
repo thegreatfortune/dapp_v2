@@ -1,5 +1,5 @@
 import { Navigate, type RouteObject } from 'react-router-dom'
-import React, { lazy } from 'react'
+import React, { lazy, useEffect, useState } from 'react'
 import { Spin } from 'antd'
 import { whiteList } from './guard/whiteList'
 import BasicLayout from '@/layouts/BasicLayout'
@@ -56,7 +56,7 @@ const routes: IRouter[] = [
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <ApplyLoan />
-        </React.Suspense>
+s        </React.Suspense>
       </BasicLayout>
     ),
   },
