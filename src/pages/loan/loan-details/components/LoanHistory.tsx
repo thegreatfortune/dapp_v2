@@ -5,15 +5,18 @@ import BigNumber from 'bignumber.js'
 import { LoanService } from '@/.generated/api/Loan'
 import ScrollableList from '@/pages/components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
+import useUserStore from '@/store/userStore'
 
 interface IProps {
   tradeId: string
 }
 
 const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
+  const { activeUser } = useUserStore()
   const [params] = useState({
     ...new Models.ApiLoanPageLoanContractGETParams(),
     state: 'PaidOff,PaidButArrears,Blacklist',
+    borrowUserId: activeUser.userId,
     tradeId,
     limit: 10,
     page: 0,

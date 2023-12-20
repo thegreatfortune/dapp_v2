@@ -1209,7 +1209,6 @@ export class BrowserContractService {
   }
 
   /**
-   * @deprecated
    *
    * @param {bigint} tradeId
    * @param {string} token

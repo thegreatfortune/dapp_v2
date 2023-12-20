@@ -135,7 +135,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
-    const res = await browserContractService?.followHandle_swapERC20(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+    const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
   }
 
   return (
