@@ -1,4 +1,4 @@
-import { Radio } from 'antd'
+import { Button, Modal, Radio } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
@@ -8,6 +8,20 @@ import type { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
 
 const Trade = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleOk = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
   const [data, setData] = useState<any[]>([])
   const params: {
     limit: number
@@ -21,9 +35,9 @@ const Trade = () => {
   }
 
   useEffect(() => {
-  // .then((response) => {
-  //     setData(response.current)
-  //   })
+    // .then((response) => {
+    //     setData(response.current)
+    //   })
 
     async function fetchData() {
       const res = await MarketService.ApiMarketPageTradingLoan_GET(params)
@@ -71,6 +85,15 @@ const Trade = () => {
         </div>
 
         <div className='h23 w-full'></div>
+
+        <Button type="primary" onClick={showModal}>
+          Open Modal
+        </Button>
+        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
 
         <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
       </div>
