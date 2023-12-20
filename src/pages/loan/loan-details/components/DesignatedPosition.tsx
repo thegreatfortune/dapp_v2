@@ -89,10 +89,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       const proList: Promise<TokenInfo>[] = []
 
-      if (proList.length === 0) {
-        const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-        pro && proList.push(pro as Promise<TokenInfo>)
-      }
+      // if (proList.length === 0) {
+      //   const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+      //   pro && proList.push(pro as Promise<TokenInfo>)
+      // }
 
       for (let i = 0; i < transactionPair.length; i++) {
         const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
@@ -103,7 +103,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       }
 
       Promise.all(proList).then((res) => {
+        console.log('%c [ res ]-106', 'font-size:13px; background:#c02f2e; color:#ff7372;', res)
         setTokenInfos(preState => ([...preState, ...res]))
+      }).catch((err) => {
+        console.log('%c [ err ]-110', 'font-size:13px; background:#a79768; color:#ebdbac;', err)
       })
     }
     catch (error) {
@@ -145,7 +148,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       address,
       ratio: ratio ? String(ratio) : '0',
       dollars,
-      icon: tokenList.find(token => ethers.getAddress(token.address) === ethers.getAddress(address))?.icon,
+      icon: tokenList.find(token => token.address === address)?.icon,
     }
   }
 

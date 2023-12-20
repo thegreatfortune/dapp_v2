@@ -6,22 +6,7 @@ import { Models } from './models';
 export class MarketService {
   /** key交易信息在首页的展示 GET /api/market/homeInfo */
   static async ApiMarketHomeInfo_GET(options?: { [key: string]: any }) {
-    return request<
-      {
-        loanId?: string;
-        tradeId?: number;
-        user?: {
-          nickName?: string;
-          address?: string;
-          platformName?: string;
-          pictureUrl?: string;
-          inviteCode?: string;
-          userId?: string;
-        };
-        price?: string;
-        totalTradingCompleted?: string;
-      }[]
-    >({
+    return request<Models.MarketLoanVo[]>({
       url: '/api/market/homeInfo',
       method: 'GET',
       ...(options || {}),
@@ -34,23 +19,7 @@ export class MarketService {
     params: Models.ApiMarketPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<{
-      records?: {
-        loanId?: string;
-        userId?: string;
-        marketId?: number;
-        tokenId?: number;
-        state?: 'ToBeTraded' | 'Closed' | 'Canceled';
-        amount?: number;
-        remainingQuantity?: number;
-        depositeTime?: number;
-        price?: string;
-        solder?: string;
-      }[];
-      total?: number;
-      size?: number;
-      current?: number;
-    }>({
+    return request<Models.PageResult<Models.TokenMarketVo>>({
       url: '/api/market/pageInfo',
       method: 'GET',
       params: {
@@ -66,25 +35,7 @@ export class MarketService {
     params: Models.ApiMarketPageTradingLoanGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<{
-      records?: {
-        loanId?: string;
-        tradeId?: number;
-        user?: {
-          nickName?: string;
-          address?: string;
-          platformName?: string;
-          pictureUrl?: string;
-          inviteCode?: string;
-          userId?: string;
-        };
-        price?: string;
-        totalTradingCompleted?: string;
-      }[];
-      total?: number;
-      size?: number;
-      current?: number;
-    }>({
+    return request<Models.PageResult<Models.MarketLoanVo>>({
       url: '/api/market/pageTradingLoan',
       method: 'GET',
       params: {

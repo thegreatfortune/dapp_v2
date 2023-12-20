@@ -10,37 +10,7 @@ export class LendingService {
     params: Models.ApiLendingPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<{
-      records?: {
-        userId?: string;
-        borrowUserId?: string;
-        loanId?: string;
-        loan?: {
-          tradeId?: number;
-          state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist';
-          tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX';
-          tradingForm?: 'Empty' | 'SpotGoods' | 'Contract';
-          loanName?: string;
-          picUrl?: string;
-          loanMoney?: string;
-          interest?: number;
-          repayCount?: number;
-          periods?: number;
-          goalCopies?: number;
-          dividendRatio?: number;
-          collectCopies?: number;
-          endTime?: number;
-          minGoalQuantity?: number;
-          collectEndTime?: number;
-        };
-        lendTime?: number;
-        partAmount?: number;
-        marketBalance?: { tokenId?: number; amount?: number };
-      }[];
-      total?: number;
-      size?: number;
-      current?: number;
-    }>({
+    return request<Models.PageResult<Models.LendingLoanVo>>({
       url: '/api/lending/pageInfo',
       method: 'GET',
       params: {

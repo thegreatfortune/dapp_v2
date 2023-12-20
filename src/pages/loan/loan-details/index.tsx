@@ -56,12 +56,13 @@ const LoanDetails = () => {
   const [activeKey, setActiveKey] = useState('1')
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
-    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
-    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
-    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
-    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a' >Settled transaction</div>,
-    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
-    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
+    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow'>Invalid</div>,
+    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff'>Ongoing fundraising </div>,
+    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a'>Transaction ongoing</div>,
+    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a'>Settled transaction</div>,
+    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00'>Amount due</div>,
+    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b'>Blacklist</div>,
+    CloseByUncollected: <div></div>,
   }
 
   useEffect(() => {
@@ -361,13 +362,17 @@ const LoanDetails = () => {
           }
 
           {
+            (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+            && <Button loading={refundLoading} className='h60 w180 primary-btn' onClick={refund}>Liquidate</Button>
+          }
+
+          {
             prePage === 'lend'
             && <div className='flex'>
               {
-                loanInfo.state === 'PaidOff'
-                  ? (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'PaidOff'
-                  && <Button loading ={refundLoading} className='h60 w180 primary-btn' onClick={refund}>Liquidate</Button>
-                  : <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+                loanInfo.state !== 'CloseByUncollected'
+              && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+
               }
 
               <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>

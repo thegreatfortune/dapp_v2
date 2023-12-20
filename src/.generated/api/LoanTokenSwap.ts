@@ -10,19 +10,7 @@ export class LoanTokenSwapService {
     params: Models.ApiLoanTokenSwapPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<{
-      records?: {
-        tokenAddr?: string;
-        amount?: string;
-        swapTokenAmount?: string;
-        action?: 'Reduce' | 'Add';
-        timestamp?: number;
-        tokenInfo?: { symbol?: string; decimals?: number; chainType?: number; address?: string };
-      }[];
-      total?: number;
-      size?: number;
-      current?: number;
-    }>({
+    return request<Models.PageResult<Models.LoanTokenSwapVo>>({
       url: '/api/loan/tokenSwap/pageInfo',
       method: 'GET',
       params: {

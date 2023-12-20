@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { ColorType, createChart } from 'lightweight-charts'
 
 export function createKLine(data: { records: { userId?: number; uPrice?: number; createDate: string }[] }) {
@@ -46,8 +47,11 @@ export function createKLine(data: { records: { userId?: number; uPrice?: number;
     crossHairMarkerVisible: false,
   })
 
+  // const formattedDateTime = dayjs(data.records[0]).format('YYYY-MM-DD HH:mm:ss')
+  // console.log('%c [ formattedDateTime ]-51', 'font-size:13px; background:#195b52; color:#5d9f96;', formattedDateTime)
+
   series.setData(data.records.map(e => ({
-    time: e.createDate,
+    time: dayjs(e.createDate).format('yyyy-mm-dd'),
     value: e.uPrice,
   })))
 
