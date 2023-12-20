@@ -7,9 +7,11 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
+import { createKLine } from './createKLine'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
+import { PortfolioService } from '@/.generated/api'
 
 interface IProps {
   tradeId: bigint | null
@@ -49,6 +51,16 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   const [tokenTotals, setTokenTotals] = useState<string>('0')
 
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
+
+  useEffect(() => {
+    async function createKLineThis() {
+      const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
+
+      createKLine(res)
+    }
+
+    createKLineThis()
+  }, [])
 
   useEffect(() => {
     const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
@@ -210,13 +222,17 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       <div className="h560 w-full flex justify-between">
         <div className="box-border h560 w634 flex justify-between s-container p-x-30 p-y-16">
           <div>
-            <div className='flex text-center c-#D1D1D1'>
-              <span className='text-16'>address</span>
+            <div className='flex justify-between' >
+              <div className='flex text-center c-#D1D1D1'>
+                <span className='text-16'>address</span>
 
-              <div className="w6" />
+                <div className="w6" />
 
-              <Address address={capitalPoolAddress ?? ''} />
+                <Address address={capitalPoolAddress ?? ''} />
 
+              </div>
+
+              <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
             </div>
 
             <div>
@@ -227,9 +243,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                 ${BigNumber(tokenTotals).toFixed(2)}
               </span>
             </div>
-          </div>
 
-          <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+            <div id='KLineContainer' className='h340 w574'></div>
+
+          </div>
 
         </div>
 
