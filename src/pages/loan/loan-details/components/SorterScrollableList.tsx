@@ -15,10 +15,7 @@ interface IProps {
 }
 
 const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeId }) => {
-  const orderItem = new Models.OrderItem()
-  orderItem.column = 'price'
-
-  const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, state: 'ToBeTraded', orderItemList: encodeURIComponent(JSON.stringify([orderItem])), tradeId, loanId: undefined, marketId: undefined })
+  const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, orderItemList: 'price=asc', state: 'ToBeTraded', tradeId, loanId: undefined, marketId: undefined })
 
   const quantitySorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
     let sortDirection
@@ -37,7 +34,6 @@ const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeI
   }
 
   const totalPriceSorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
-    console.log('%c [ imageIndex ]-46', 'font-size:13px; background:#6280e8; color:#a6c4ff;', imageIndex)
     let sortDirection
 
     imageIndex === 0 && (sortDirection = 'asc')
