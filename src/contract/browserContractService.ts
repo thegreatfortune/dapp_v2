@@ -1036,6 +1036,17 @@ export class BrowserContractService {
   }
 
   /**
+   * 退款
+   */
+  async followRouter_refund(tradeId: bigint) {
+    const contract = await this.getFollowRouterContract()
+
+    const res = await contract.refundMoney(tradeId)
+
+    return handleTransaction(res)
+  }
+
+  /**
    * 贷款人退款
    * 未达成目标,贷款人取回token
    *

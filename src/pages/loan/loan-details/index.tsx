@@ -51,6 +51,8 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
+  const [refundLoading, setRefundLoading] = useState(false)
+
   const [activeKey, setActiveKey] = useState('1')
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
@@ -226,6 +228,22 @@ const LoanDetails = () => {
     setLendState(undefined)
   }
 
+  async function refund() {
+    if (!tradeId)
+      return
+
+    setRefundLoading(true)
+    try {
+      await browserContractService?.followRouter_refund(BigInt(tradeId))
+    }
+    catch (error) {
+      console.log('%c [ error ]-234', 'font-size:13px; background:#8fde62; color:#d3ffa6;', error)
+    }
+    finally {
+      setRefundLoading(false)
+    }
+  }
+
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
@@ -348,7 +366,7 @@ const LoanDetails = () => {
               {
                 loanInfo.state === 'PaidOff'
                   ? (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'PaidOff'
-                  && <Button className='h60 w180 primary-btn'>Liquidate</Button>
+                  && <Button loading ={refundLoading} className='h60 w180 primary-btn' onClick={refund}>Liquidate</Button>
                   : <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
               }
 
