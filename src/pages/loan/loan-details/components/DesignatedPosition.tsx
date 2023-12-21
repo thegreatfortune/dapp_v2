@@ -7,9 +7,11 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
+import { createKLine } from './createKLine'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
+import { PortfolioService } from '@/.generated/api'
 
 interface IProps {
   tradeId: bigint | null
@@ -51,6 +53,16 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
 
   useEffect(() => {
+    async function createKLineThis() {
+      const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
+
+      createKLine(res)
+    }
+
+    createKLineThis()
+  }, [])
+
+  useEffect(() => {
     const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
     setTokenTotals(a ?? '0')
   }, [tokenInfos])
@@ -77,10 +89,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       const proList: Promise<TokenInfo>[] = []
 
-      if (proList.length === 0) {
-        const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-        pro && proList.push(pro as Promise<TokenInfo>)
-      }
+      // if (proList.length === 0) {
+      //   const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+      //   pro && proList.push(pro as Promise<TokenInfo>)
+      // }
 
       for (let i = 0; i < transactionPair.length; i++) {
         const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
@@ -92,6 +104,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       Promise.all(proList).then((res) => {
         setTokenInfos(preState => ([...preState, ...res]))
+      }).catch((err) => {
+        console.log('%c [ err ]-110', 'font-size:13px; background:#a79768; color:#ebdbac;', err)
       })
     }
     catch (error) {
@@ -133,7 +147,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       address,
       ratio: ratio ? String(ratio) : '0',
       dollars,
-      icon: tokenList.find(token => ethers.getAddress(token.address) === ethers.getAddress(address))?.icon,
+      icon: tokenList.find(token => token.address === address)?.icon,
     }
   }
 
@@ -210,13 +224,17 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       <div className="h560 w-full flex justify-between">
         <div className="box-border h560 w634 flex justify-between s-container p-x-30 p-y-16">
           <div>
-            <div className='flex text-center c-#D1D1D1'>
-              <span className='text-16'>address</span>
+            <div className='flex justify-between' >
+              <div className='flex text-center c-#D1D1D1'>
+                <span className='text-16'>address</span>
 
-              <div className="w6" />
+                <div className="w6" />
 
-              <Address address={capitalPoolAddress ?? ''} />
+                <Address address={capitalPoolAddress ?? ''} />
 
+              </div>
+
+              <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
             </div>
 
             <div>
@@ -227,9 +245,10 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                 ${BigNumber(tokenTotals).toFixed(2)}
               </span>
             </div>
-          </div>
 
-          <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+            <div id='KLineContainer' className='h340 w574'></div>
+
+          </div>
 
         </div>
 

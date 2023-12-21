@@ -260,25 +260,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_tradeId",
-				"type": "uint256"
-			}
-		],
-		"name": "_getList",
-		"outputs": [
-			{
-				"internalType": "uint256[18]",
-				"name": "newList",
-				"type": "uint256[18]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint16",
 				"name": "_profitRate",
 				"type": "uint16"
@@ -308,27 +289,145 @@
 				"type": "uint256"
 			}
 		],
+		"name": "_getOrderDetail",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "tradeId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "ifLiquidate",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "timePeriod",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "repayTimes",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint8",
+						"name": "alreadyRepay",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint16",
+						"name": "interestRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "shareRate",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "goalShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "minShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint16",
+						"name": "actualShareCount",
+						"type": "uint16"
+					},
+					{
+						"internalType": "uint56",
+						"name": "collectEndTime",
+						"type": "uint56"
+					},
+					{
+						"internalType": "uint56",
+						"name": "endTime",
+						"type": "uint56"
+					},
+					{
+						"internalType": "uint256",
+						"name": "goalMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "alreadyCollectMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "surplusMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "alreadyRepayMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "endMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct FollowLibrary.orderDetail",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
 		"name": "_getOrderWithdrawMes",
 		"outputs": [
 			{
-				"internalType": "uint256",
-				"name": "_thisTradeId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_alreadyWithdrawAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_borrowerMoney",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_borrower",
-				"type": "address"
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "tradeId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "alreadyWithdrawAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "borrowerMoney",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "borrower",
+						"type": "address"
+					}
+				],
+				"internalType": "struct FollowLibrary.withdrawMes",
+				"name": "",
+				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",

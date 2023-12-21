@@ -308,8 +308,8 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getFollowFactoryContract(): Promise<FollowFactory> {
-    if (this._FollowFactoryContract)
-      return this._FollowFactoryContract
+    // if (this._FollowFactoryContract)
+    //   return this._FollowFactoryContract
 
     return this._FollowFactoryContract = createContract<FollowFactory>(
       import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,
@@ -329,7 +329,6 @@ export class BrowserContractService {
     const refundFactoryContract = await this.getRefundFactoryContract()
 
     const cp = await this.getCapitalPoolAddress(tradeId)
-    console.log('%c [refundPool cp ]-294', 'font-size:13px; background:#16228a; color:#5a66ce;', cp)
 
     const refundPoolAddress = await refundFactoryContract.getRefundPool(cp)
 
@@ -352,12 +351,12 @@ export class BrowserContractService {
       this.signer,
     )
 
-    if (LocalEnv) {
-      const followManageContract = await this.getFollowManageContract()
-      const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
-      console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
-      await res?.wait()
-    }
+    // if (LocalEnv) {
+    //   const followManageContract = await this.getFollowManageContract()
+    //   const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
+    //   console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
+    //   await res?.wait()
+    // }
 
     return this._refundPoolContract
   }
@@ -476,7 +475,7 @@ export class BrowserContractService {
       throw new Error(`ERC3525 is not owned: ${tokenId}`)
     }
 
-    return c['balanceOf(uint256)'](tokenId)
+    return c.tokenIdBalanceOf(tokenId)
   }
 
   /**
@@ -518,21 +517,28 @@ export class BrowserContractService {
    */
   async checkOrderCanCreateAgain(): Promise<boolean> {
     // const followFactoryContract = await this.getFollowFactoryContract()
-    // console.log('%c [ followFactoryContract ]-519', 'font-size:13px; background:#402a39; color:#846e7d;', followFactoryContract)
 
-    // console.log('%c [ as ]-520', 'font-size:13px; background:#982aba; color:#dc6efe;')
     // const cp = await followFactoryContract?.AddressGetCapitalPool(this.getSigner.address)
-    // console.log('%c [ cp ]-523', 'font-size:13px; background:#00e3c3; color:#44ffff;', cp)
 
     // if (cp === BLACK_HOLE_ADDRESS)
     //   return true
 
+    const followFactoryContract = await this.getFollowFactoryContract()
+    console.log('%c [ followFactoryContract ]-528', 'font-size:13px; background:#62793f; color:#a6bd83;', followFactoryContract)
+
+    const state = await followFactoryContract.getIfCreate(this.getSigner.address)
+
+    console.log('%c [ state ]-530', 'font-size:13px; background:#e42355; color:#ff6799;', state)
+
+    if (state === BigInt(0))
+      return true
+
     const processCenterContract = await this.getProcessCenterContract()
 
-    const cp = await processCenterContract?._userToCatpitalPool(this.getSigner.address)
+    // const cp = await processCenterContract?._userToCatpitalPool(this.getSigner.address)
 
-    if (cp === BLACK_HOLE_ADDRESS)
-      return true
+    // if (cp === BLACK_HOLE_ADDRESS)
+    //   return true
 
     return processCenterContract?.getIfAgainCreateOrder(this.getSigner.address)
   }
@@ -939,9 +945,14 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async ERC20_mint(token: string, amount: bigint = ethers.parseEther(String(10 ** 8))) {
-    const contract = await this.getERC20Contract(token)
-    const res = await contract?.doMint(this.getSigner.address, amount)
-    return handleTransaction(res)
+    try {
+      const contract = await this.getERC20Contract(token)
+      const res = await contract?.doMint(this.getSigner.address, amount)
+      return handleTransaction(res)
+    }
+    catch (error) {
+      console.log('%c [ error ]-951', 'font-size:13px; background:#0db197; color:#51f5db;', error)
+    }
   }
 
   /**
@@ -965,8 +976,6 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async capitalPool_createOrder(model: LoanRequisitionEditModel) {
-    console.log('%c [ model ]-963', 'font-size:13px; background:#d9e02b; color:#ffff6f;', model)
-
     const followRouterContract = await this.getFollowRouterContract()
 
     const transaction = await followRouterContract?.borrowerCreateOrder(
@@ -998,6 +1007,8 @@ export class BrowserContractService {
         tradingPlatformType: model.tradingPlatformType,
       }
 
+      console.log('%c [ ApiLoanConfirm_POST ]-989', 'font-size:13px; background:#bf58c2; color:#ff9cff;', new Date())
+
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }
   }
@@ -1022,6 +1033,17 @@ export class BrowserContractService {
     const transaction = await followRouterContract.lendMoney(tradeId, copies)
 
     return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
+  }
+
+  /**
+   * 退款
+   */
+  async followRouter_refund(tradeId: bigint) {
+    const contract = await this.getFollowRouterContract()
+
+    const res = await contract.refundMoney(tradeId)
+
+    return handleTransaction(res)
   }
 
   /**
@@ -1187,7 +1209,6 @@ export class BrowserContractService {
   }
 
   /**
-   * @deprecated
    *
    * @param {bigint} tradeId
    * @param {string} token

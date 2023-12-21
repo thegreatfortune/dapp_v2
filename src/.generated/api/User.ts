@@ -26,6 +26,21 @@ export class UserService {
     });
   }
 
+  /** 设置链网络id PUT /api/user/setChainNetwork/${param0} */
+  static async ApiUserSetChainNetworkById_PUT(
+    // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+    params: Models.ApiUserSetChainNetworkByIdPUTParams,
+    options?: { [key: string]: any },
+  ) {
+    const { id: param0, ...queryParams } = params;
+    return request<boolean>({
+      url: '/api/user/setChainNetwork/${param0}',
+      method: 'PUT',
+      params: { ...queryParams },
+      ...(options || {}),
+    });
+  }
+
   /** uploadFile POST /api/user/upload */
   static async ApiUserUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
     const formData = new FormData();

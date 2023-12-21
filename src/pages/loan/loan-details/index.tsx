@@ -51,15 +51,18 @@ const LoanDetails = () => {
 
   const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
+  const [refundLoading, setRefundLoading] = useState(false)
+
   const [activeKey, setActiveKey] = useState('1')
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
-    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow' >Invalid</div>,
-    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff' >Ongoing fundraising </div>,
-    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a' >Transaction ongoing</div>,
-    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a' >Settled transaction</div>,
-    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00' >Amount due</div>,
-    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b' >Blacklist</div>,
+    Invalid: <div className='box-border h33 min-w174 rounded-4 bg-yellow'>Invalid</div>,
+    Following: <div className='box-border h33 min-w174 rounded-4 bg-#165dff'>Ongoing fundraising </div>,
+    Trading: <div className='box-border h33 min-w174 rounded-4 bg-#00b42a'>Transaction ongoing</div>,
+    PaidOff: <div className='box-border h33 h33 min-w174 w174 rounded-4 bg-#2d5c9a'>Settled transaction</div>,
+    PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00'>Amount due</div>,
+    Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b'>Blacklist</div>,
+    CloseByUncollected: <div className='box-border h33 min-w174 rounded-4 bg-#a9e1d7'>Settled transaction</div>,
   }
 
   useEffect(() => {
@@ -226,6 +229,22 @@ const LoanDetails = () => {
     setLendState(undefined)
   }
 
+  async function refund() {
+    if (!tradeId)
+      return
+
+    setRefundLoading(true)
+    try {
+      await browserContractService?.followRouter_refund(BigInt(tradeId))
+    }
+    catch (error) {
+      console.log('%c [ error ]-234', 'font-size:13px; background:#8fde62; color:#d3ffa6;', error)
+    }
+    finally {
+      setRefundLoading(false)
+    }
+  }
+
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
@@ -343,13 +362,17 @@ const LoanDetails = () => {
           }
 
           {
+            (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+            && <Button loading={refundLoading} className='h60 w180 primary-btn' onClick={refund}>Liquidate</Button>
+          }
+
+          {
             prePage === 'lend'
             && <div className='flex'>
               {
-                loanInfo.state === 'PaidOff'
-                  ? (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'PaidOff'
-                  && <Button className='h60 w180 primary-btn'>Liquidate</Button>
-                  : <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+                loanInfo.state !== 'CloseByUncollected'
+              && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+
               }
 
               <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
@@ -417,7 +440,7 @@ const LoanDetails = () => {
           <ul className='m0 w230 list-none p0'>
             <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.collectCopies}</li>
+            <li className='text-28 font-bold'>{loanInfo.minGoalQuantity}</li>
           </ul>
 
         </div>

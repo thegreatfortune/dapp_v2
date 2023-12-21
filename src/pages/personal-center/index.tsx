@@ -1,6 +1,6 @@
 import type { TabsProps } from 'antd'
 import { Avatar, Button, Divider, Image, Tabs, message } from 'antd'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -30,11 +30,27 @@ const PersonalCenter = () => {
 
   const [activeKey, setActiveKey] = useState('1')
 
-  const { activeUser } = useUserStore()
+  const { activeUser, setUserInfo } = useUserStore()
 
   const [totalScoreVo, setTotalScoreVo] = useState(new Models.TotalScoreVo())
 
-  // TODO 绑定推特后更新信息
+  const location = useLocation()
+
+  useEffect(() => {
+    async function getUserInfo() {
+      const searchParams = new URLSearchParams(location.search)
+      const isBind = searchParams.get('bind') || undefined
+
+      if (isBind) {
+        const user = await UserInfoService.ApiUserInfo_GET()
+
+        setUserInfo({ ...activeUser, ...user, id: user.userId })
+      }
+    }
+
+    // location.pathname === '/personal-center' && getUserInfo()
+    getUserInfo()
+  }, [location])
 
   useEffect(() => {
     async function fetchData() {

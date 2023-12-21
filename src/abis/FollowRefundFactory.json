@@ -8,7 +8,17 @@
 			},
 			{
 				"internalType": "address",
-				"name": "_ERC3525Contract",
+				"name": "_ERC3525",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_USDC",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_followManage",
 				"type": "address"
 			}
 		],

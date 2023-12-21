@@ -74,6 +74,7 @@ Following :跟随中, 正在筹款
 Trading :交易中, 已筹完
 PaidOff :已还清, 借款订单结束
 PaidButArrears :支付部分, 但是还有欠款
+CloseByUncollected :筹集不成功
 Blacklist :黑名单 */
     state?: string = undefined;
     /** 逗号拼接, 见state选项 */
@@ -164,11 +165,15 @@ Canceled :订单取消 */
     /** 排序字段, 规则: price=false,id=true
 <p>true == asc, false == desc</p> */
     orderItemList?: string = undefined;
-    tradeId: number = 0;
+    tradeId?: number = 0;
   }
 
   export class ApiUserInviteInvitedOrNotGETParams {
     address?: string = undefined;
+  }
+
+  export class ApiUserSetChainNetworkByIdPUTParams {
+    id: string = '';
   }
 
   export class ApplicationContext {}
@@ -304,8 +309,14 @@ Canceled :订单取消 */
     /** 在合约中的订单id */
     tradeId?: number = 0;
     /** 生效状态 */
-    state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
-      undefined;
+    state?:
+      | 'Invalid'
+      | 'Following'
+      | 'Trading'
+      | 'PaidOff'
+      | 'PaidButArrears'
+      | 'CloseByUncollected'
+      | 'Blacklist' = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 交易形式, 或者不指定 */
@@ -360,7 +371,7 @@ Canceled :订单取消 */
   }
 
   export class Map<T> {
-    key?: key = undefined;
+    key?: { uPrice?: string; createDate?: number }[] = undefined;
   }
 
   export class MarketBalanceVo {
@@ -400,6 +411,18 @@ Canceled :订单取消 */
   export class MetaMaskVerifyParam {
     /** 钱包 */
     address?: string = undefined;
+  }
+
+  export class MyFollowVo {
+    /** 借方id */
+    borrowUserId?: string = undefined;
+    /** 借款订单id */
+    loanId?: string = undefined;
+    loan?: SimpleLoanVo = undefined;
+    /** 时间戳 */
+    lendTime?: number = 0;
+    /** 持有的key */
+    marketBalance?: MarketBalanceVo = undefined;
   }
 
   export class OauthCallbackTwitterGETParams {
@@ -496,8 +519,14 @@ Canceled :订单取消 */
     /** 在合约中的订单id */
     tradeId?: number = 0;
     /** 生效状态 */
-    state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist' =
-      undefined;
+    state?:
+      | 'Invalid'
+      | 'Following'
+      | 'Trading'
+      | 'PaidOff'
+      | 'PaidButArrears'
+      | 'CloseByUncollected'
+      | 'Blacklist' = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 交易形式, 或者不指定 */
@@ -594,5 +623,10 @@ Canceled :订单取消 */
     /** 邀请码 */
     inviteCode?: string = undefined;
     userId?: string = undefined;
+  }
+
+  export class UserPortfolioVo {
+    uPrice?: string = undefined;
+    createDate?: number = 0;
   }
 }

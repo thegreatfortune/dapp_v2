@@ -10,6 +10,11 @@
 				"internalType": "address",
 				"name": "_FollowManage",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_usdc",
+				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -388,19 +393,6 @@
 			}
 		],
 		"name": "saleERC3525",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_usdc",
-				"type": "address"
-			}
-		],
-		"name": "setUsdc",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

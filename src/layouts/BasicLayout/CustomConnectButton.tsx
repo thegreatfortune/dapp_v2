@@ -1,9 +1,13 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
+import type { PublicClient } from 'wagmi'
 import { useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { ethers } from 'ethers'
+import { useLocation, useNavigate } from 'react-router-dom'
+import type { GetAccountResult } from 'wagmi/actions'
+import { watchAccount } from 'wagmi/actions'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
@@ -12,22 +16,44 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import { UserService } from '@/.generated/api'
 
 const CustomConnectButton = () => {
-  const { address, isConnected } = useAccount()
-
   const { userList, switchActiveUser, setUserInfo } = useUserStore()
 
-  const { resetProvider, initializeProvider, setNewProvider } = useBrowserContract()
+  const { resetProvider, setNewProvider } = useBrowserContract()
 
   const { signIn, signOut } = useUserStore()
 
   const [canLogin, setCanLogin] = useState(false)
 
-  async function login(address: string) {
+  const navigator = useNavigate()
+
+  const [inviteCode, setInviteCode] = useState<string>()
+
+  const location = useLocation()
+
+  const { isConnected } = useAccount(
+    {
+      onConnect({ address, connector, isReconnected }) {
+        if (address && canLogin) {
+          const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+
+          if (havenUser)
+            switchActiveUser(havenUser)
+
+          logInOrSwitching(address)
+        }
+        console.log('%c [ address, connector, isReconnected ]-21', 'font-size:13px; background:#613f90; color:#a583d4;', address, connector, isReconnected)
+      },
+      onDisconnect() {
+        signOut()
+        navigator('/market')
+      },
+    },
+  )
+
+  async function login(address?: string) {
     try {
-      if (!address) {
-        message.error('address cannot be empty')
+      if (!address)
         return
-      }
 
       resetProvider()
 
@@ -45,8 +71,8 @@ const CustomConnectButton = () => {
         return
       }
 
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
-      console.log('%c [ res ]-52', 'font-size:13px; background:#605e08; color:#a4a24c;', res)
+      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode })
+      // const res = await UserService.ApiUserLogin_POST({ address })
 
       // const res = await UserService.ApiUserLogin_POST({ address })
 
@@ -54,7 +80,6 @@ const CustomConnectButton = () => {
 
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
-        console.log('%c [ user ]-60', 'font-size:13px; background:#c0ecf2; color:#ffffff;', user)
 
         setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
       }
@@ -64,7 +89,8 @@ const CustomConnectButton = () => {
       // await initializeProvider (newProvider)
     }
     catch (error) {
-      // signOut()
+      signOut()
+      navigator('/market')
       message.error('login failed')
       console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
       throw new Error('login failed')
@@ -79,42 +105,24 @@ const CustomConnectButton = () => {
         switchActiveUser(havenUser)
       else
         await login(address)
-
-      // window.location.reload()
     }
   }
+
+  const debouncedCallback = debounce((account: GetAccountResult<PublicClient>) => {
+    // setCanLogin(false)
+    if (account)
+      logInOrSwitching(account.address as string)
+  }, 1000)
 
   useEffect(() => {
-    if (isConnected) {
-      if (address && canLogin) {
-        const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+    const unwatch = watchAccount((account) => {
+      debouncedCallback(account)
+    })
 
-        if (havenUser)
-          switchActiveUser(havenUser)
-
-        logInOrSwitching(address)
-      }
+    return () => {
+      unwatch()
     }
-    else {
-      signOut()
-      // window.location.reload()
-    }
-  }, [isConnected, address, canLogin])
-
-  if (!window.ethereum._accountsChangedHandler) {
-    window.ethereum._accountsChangedHandler = debounce(async () => {
-      setCanLogin(false)
-
-      signOut()
-
-      window.location.reload()
-
-      // if (address)
-      //   logInOrSwitching(address)
-    }, 1000)
-  }
-
-  window.ethereum.on('accountsChanged', window.ethereum._accountsChangedHandler)
+  }, [])
 
   return <ConnectButton.Custom>
     {({
@@ -134,6 +142,17 @@ const CustomConnectButton = () => {
         && chain
         && (!authenticationStatus
           || authenticationStatus === 'authenticated')
+
+      useEffect(() => {
+        const searchParams = new URLSearchParams(location.search)
+        const inviteCode = searchParams.get('inviteCode') || undefined
+
+        if (inviteCode !== undefined)
+          setInviteCode(inviteCode)
+
+        if (location.pathname === '/market' && inviteCode)
+          onOpenConnectModal()
+      }, [location])
 
       async function onOpenConnectModal() {
         openConnectModal()
