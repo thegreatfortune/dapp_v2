@@ -12,6 +12,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import { PortfolioService } from '@/.generated/api'
+import './KLine.css'
 
 interface IProps {
   tradeId: bigint | null
@@ -38,6 +39,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
+  const [uniqueTokenInfos, setUniqueTokenInfos] = useState<TokenInfo[]>([])
+
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [isDepositModalOpen, setDepositIsModalOpen] = useState(false)
@@ -50,22 +53,35 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
   const [tokenTotals, setTokenTotals] = useState<string>('0')
 
+  const [loadTokenInfoLoading, setLoadTokenInfoLoading] = useState(false)
+
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
+
+  useEffect(() => {
+    if (tokenInfos.length <= 1)
+      return
+
+    const uniqueTokenInfos = Array.from(new Set(tokenInfos.map(token => token.address))).map((address) => {
+      const tokenInfo = tokenInfos.find(token => token.address === address)
+      if (tokenInfo)
+        return { ...tokenInfo }
+
+      return null
+    }).filter(Boolean) as TokenInfo[]
+
+    setUniqueTokenInfos(uniqueTokenInfos)
+    console.log('%c [ uniqueTokenInfos ]-72', 'font-size:13px; background:#dd0ae2; color:#ff4eff;', uniqueTokenInfos)
+  }, [tokenInfos])
 
   useEffect(() => {
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
 
-      createKLine(res)
+      createKLine()
     }
 
     createKLineThis()
   }, [])
-
-  useEffect(() => {
-    const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
-    setTokenTotals(a ?? '0')
-  }, [tokenInfos])
 
   useEffect(() => {
     if (browserContractService === undefined || tradeId === null)
@@ -84,15 +100,17 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   useEffect(() => {
     if (!browserContractService || !tradeId)
       return
+
+    setLoadTokenInfoLoading(true)
     try {
       setTokenInfos([])
 
       const proList: Promise<TokenInfo>[] = []
 
-      // if (proList.length === 0) {
-      //   const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-      //   pro && proList.push(pro as Promise<TokenInfo>)
-      // }
+      if (proList.length === 0 && tokenInfos.length === 0) {
+        const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+        pro && proList.push(pro as Promise<TokenInfo>)
+      }
 
       for (let i = 0; i < transactionPair.length; i++) {
         const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
@@ -103,6 +121,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       }
 
       Promise.all(proList).then((res) => {
+        console.log('%c [ res ]-110', 'font-size:13px; background:#b0a4b3; color:#f4e8f7;', res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
         console.log('%c [ err ]-110', 'font-size:13px; background:#a79768; color:#ebdbac;', err)
@@ -110,6 +129,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
     }
     catch (error) {
       console.log('%c [ error ]-65', 'font-size:13px; background:#abdc31; color:#efff75;', error)
+    }
+    finally {
+      setLoadTokenInfoLoading(false)
     }
   }, [browserContractService, transactionPair, tradeId])
 
@@ -256,41 +278,44 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
         <div className="grid grid-cols-2 w715 gap-x-36" >
 
-          {
-            tokenInfos.map(item => (
-              <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                <div>
-                  {item.name}({
-                    // 如果余额大于零，则计算比例并显示结果
-                    Number(item.balance) !== 0
-                      ? BigNumber(item.dollars ?? 0)
-                        .div((tokenTotals))
-                        .times(100)
-                        .toFixed(2)
-                      : <span>
-                        0
-                      </span>
-                  })
-                  %
-                  <span className='c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
-                </div>
-                <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
+      {
+        uniqueTokenInfos.length === 0
+          ? <Spin size="large" />
+          : uniqueTokenInfos.map(item => (
+          <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
+            <div>
+              {item.name}({
+                // 如果余额大于零，则计算比例并显示结果
+                Number(item.balance) !== 0
+                  ? BigNumber(item.dollars ?? 0)
+                    .div((tokenTotals))
+                    .times(100)
+                    .toFixed(2)
+                  : <span>
+                    0
+                  </span>
+              })
+              %
+              <span className='c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+            </div>
+            <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
 
-                {/* //用户创建的才能看 */}
-                {
-                  item.name !== 'USDC'
-                    ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                    : null
-                }
-                {/* // 下面这个才是要的 */}
-                {/* {
-                  item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                    ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                    : null
-                } */}
-              </div>
-            ))
-          }
+            {/* //用户创建的才能看 */}
+            {
+              item.name !== 'USDC'
+                ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                : null
+            }
+            {/* // 下面这个才是要的 */}
+            {/* {
+              item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                : null
+            } */}
+          </div>
+          ))
+      }
+
         </div>
       </div>
 
