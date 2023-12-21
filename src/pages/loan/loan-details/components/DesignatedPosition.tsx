@@ -12,6 +12,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import { PortfolioService } from '@/.generated/api'
+import './KLine.css'
 
 interface IProps {
   tradeId: bigint | null
@@ -76,7 +77,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
 
-      createKLine(res.records ?? [])
+      createKLine()
     }
 
     createKLineThis()

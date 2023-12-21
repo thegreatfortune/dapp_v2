@@ -32,6 +32,9 @@ dependencies:
   i18next:
     specifier: ^23.6.0
     version: 23.7.6
+  klinecharts:
+    specifier: ^9.7.1
+    version: 9.7.1
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -8566,6 +8569,11 @@ packages:
     optionalDependencies:
       graceful-fs: 4.2.11
     dev: true
+
+  /klinecharts@9.7.1:
+    resolution: {integrity: sha512-5S/+yxVIFZXR+c1IE3JHmZ7rgvKQdV5bC8OHRdijh+9T03Cm5a/9/zk0w/oY6lJGRJ+FR7xw8UADnFnB1jz3+A==}
+    engines: {node: '>=0.10.0'}
+    dev: false
 
   /known-css-properties@0.21.0:
     resolution: {integrity: sha512-sZLUnTqimCkvkgRS+kbPlYW5o8q5w1cu+uIisKpEWkj31I8mx8kNG162DwRav8Zirkva6N5uoFsm9kzK4mUXjw==}
