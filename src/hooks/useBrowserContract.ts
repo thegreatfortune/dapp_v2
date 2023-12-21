@@ -70,8 +70,6 @@ const useBrowserContract = () => {
     if (!activeUser.accessToken)
       return
 
-    console.log('%c [initializeProvider 执行  ]-72', 'font-size:13px; background:#43e3b5; color:#87fff9;')
-
     initializeProvider()
     initializeSigner()
   }, [provider, signer, activeUser])

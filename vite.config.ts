@@ -35,7 +35,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
 
     build: {
       assetsDir: 'assets',
-
+      // sourcemap: true,
     },
 
   })

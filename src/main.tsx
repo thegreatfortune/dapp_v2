@@ -39,7 +39,7 @@ const localhost = {
     ...{
       localhost: {
         http: [import.meta.env.VITE_ALCHEMY_ID],
-        webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2'],
+        webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2/ubn43XNUtUXvA2ScuHqBUwiMqIPCW6ET'],
       },
       default: {
         http: [import.meta.env.VITE_ALCHEMY_ID],

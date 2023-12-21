@@ -13,6 +13,7 @@ import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import { UserService } from '@/.generated/api'
 
 const CustomConnectButton = () => {
   const { userList, switchActiveUser, setUserInfo } = useUserStore()
@@ -71,6 +72,7 @@ const CustomConnectButton = () => {
       }
 
       const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode })
+      // const res = await UserService.ApiUserLogin_POST({ address })
 
       // const res = await UserService.ApiUserLogin_POST({ address })
 

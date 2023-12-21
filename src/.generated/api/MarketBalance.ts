@@ -10,35 +10,7 @@ export class MarketBalanceService {
     params: Models.ApiMarketBalancePageMyFollowGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<{
-      records?: {
-        borrowUserId?: string;
-        loanId?: string;
-        loan?: {
-          tradeId?: number;
-          state?: 'Invalid' | 'Following' | 'Trading' | 'PaidOff' | 'PaidButArrears' | 'Blacklist';
-          tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX';
-          tradingForm?: 'Empty' | 'SpotGoods' | 'Contract';
-          loanName?: string;
-          picUrl?: string;
-          loanMoney?: string;
-          interest?: number;
-          repayCount?: number;
-          periods?: number;
-          goalCopies?: number;
-          dividendRatio?: number;
-          collectCopies?: number;
-          endTime?: number;
-          minGoalQuantity?: number;
-          collectEndTime?: number;
-        };
-        lendTime?: number;
-        marketBalance?: { tokenId?: number; amount?: number };
-      }[];
-      total?: number;
-      size?: number;
-      current?: number;
-    }>({
+    return request<Models.PageResult<Models.MyFollowVo>>({
       url: '/api/market/balance/pageMyFollow',
       method: 'GET',
       params: {

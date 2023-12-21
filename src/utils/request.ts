@@ -6,6 +6,7 @@ import useUserStore from '../store/userStore'
 enum HttpCode {
   RETRY = 100404,
   RESET_CONTENT = 100205,
+  RE_LOGIN = 120401,
 }
 
 interface IResponse<T> {
@@ -25,6 +26,11 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
   if (responseData.code !== 200 && responseData.code !== HttpCode.RESET_CONTENT) {
     if (responseData.code === HttpCode.RETRY)
       return response
+
+    if (responseData.code === HttpCode.RE_LOGIN) {
+      useUserStore.getState().signOut()
+      localStorage.clear()
+    }
 
     message.error(`${responseData.code}: ${responseData.message}` || 'The request failed. Please try again')
     throw new Error(`${responseData.code}: ${responseData.message}`)

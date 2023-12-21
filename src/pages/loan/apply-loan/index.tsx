@@ -245,8 +245,6 @@ const ApplyLoan = () => {
   }
 
   async function createLoan(value: Models.LoanContractVO) {
-    console.log('%c [ 执行 ]-244', 'font-size:13px; background:#b15b1c; color:#f59f60;')
-
     console.log('%c [createLoan value ]-239', 'font-size:13px; background:#48c27c; color:#8cffc0;', value)
 
     setPublishBtnLoading(true)
@@ -258,11 +256,13 @@ const ApplyLoan = () => {
 
     const models = { ...value, ...loanRequisitionEditModel }
 
+    await form.validateFields()
+
+    setCreatedPoolLoading(true)
     let url
     if (!models.imageUrl)
       url = await uploadFile()
-
-    await form.validateFields()
+    setCreatedPoolLoading(false)
 
     setConfirmLoading(true)
 
