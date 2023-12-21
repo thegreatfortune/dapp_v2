@@ -351,12 +351,12 @@ export class BrowserContractService {
       this.signer,
     )
 
-    if (LocalEnv) {
-      const followManageContract = await this.getFollowManageContract()
-      const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
-      console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
-      await res?.wait()
-    }
+    // if (LocalEnv) {
+    //   const followManageContract = await this.getFollowManageContract()
+    //   const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
+    //   console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
+    //   await res?.wait()
+    // }
 
     return this._refundPoolContract
   }
@@ -475,7 +475,7 @@ export class BrowserContractService {
       throw new Error(`ERC3525 is not owned: ${tokenId}`)
     }
 
-    return c['balanceOf(uint256)'](tokenId)
+    return c.tokenIdBalanceOf(tokenId)
   }
 
   /**
