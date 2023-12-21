@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
 import { ColorType, createChart } from 'lightweight-charts'
+import type { Models } from '@/.generated/api/models'
 
-export function createKLine(data: { records: { userId?: number; uPrice?: number; createDate: string }[] }) {
+export function createKLine(data: Models.UserPortfolioVo[]) {
   // Lightweight Charts™ Example: Tracking Tooltip
 // https://tradingview.github.io/lightweight-charts/tutorials/how_to/tooltips
 
@@ -47,13 +48,22 @@ export function createKLine(data: { records: { userId?: number; uPrice?: number;
     crossHairMarkerVisible: false,
   })
 
-  // const formattedDateTime = dayjs(data.records[0]).format('YYYY-MM-DD HH:mm:ss')
-  // console.log('%c [ formattedDateTime ]-51', 'font-size:13px; background:#195b52; color:#5d9f96;', formattedDateTime)
+  const list = data.map(e => ({
+    time: e.createDate * 1000,
+    value: Number(e.uPrice),
+  })).sort((a, b) => a.time - b.time)
 
-  series.setData(data.records.map(e => ({
-    time: dayjs(e.createDate).format('yyyy-mm-dd'),
-    value: e.uPrice,
-  })))
+  const uniqueArray = list.filter(
+    (obj, index, self) =>
+      index
+      === self.findIndex(
+        o => o.time === obj.time,
+      ),
+  )
+
+  console.log('%c [ uniqueArray ]-63', 'font-size:13px; background:#23f5b5; color:#67fff9;', uniqueArray)
+
+  series.setData(uniqueArray)
 
   const container = document.getElementById('KLineContainer')
 
@@ -63,7 +73,7 @@ export function createKLine(data: { records: { userId?: number; uPrice?: number;
 
   // Create and style the tooltip html element
   const toolTip = document.createElement('div')
-  toolTip.style = 'width: 96px; height: 80px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, \'Trebuchet MS\', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;'
+  toolTip.style = 'width: 130px; height: 80px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, \'Trebuchet MS\', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;'
   toolTip.style.background = 'white'
   toolTip.style.color = 'black'
   toolTip.style.borderColor = 'rgba( 38, 166, 154, 1)'
@@ -84,13 +94,14 @@ export function createKLine(data: { records: { userId?: number; uPrice?: number;
     else {
       // time will be in the same format that we supplied to setData.
       // thus it will be YYYY-MM-DD
-      const dateStr = param.time
+      const dateStr = dayjs(param.time).format('YYYY-MM-DD HH:mm:ss')
+
       toolTip.style.display = 'block'
       const data = param.seriesData.get(series)
       const price = data.value !== undefined ? data.value : data.close
-      toolTip.innerHTML = `<div style="color: ${'rgba( 38, 166, 154, 1)'}">ABC Inc.</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
-			${Math.round(100 * price) / 100}
-			</div><div style="color: ${'black'}">
+      toolTip.innerHTML = `<div style="color: ${'rgba( 38, 166, 154, 1)'}">ABC Inc.</div><div style="font-size: 20px; color: ${'black'}">
+			${price}
+			</div><div style="color: ${'black'};">
 			${dateStr}
 			</div>`
 
