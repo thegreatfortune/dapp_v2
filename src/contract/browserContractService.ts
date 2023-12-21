@@ -1007,8 +1007,6 @@ export class BrowserContractService {
         tradingPlatformType: model.tradingPlatformType,
       }
 
-      console.log('%c [ ApiLoanConfirm_POST ]-989', 'font-size:13px; background:#bf58c2; color:#ff9cff;', new Date())
-
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }
   }

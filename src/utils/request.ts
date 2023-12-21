@@ -27,10 +27,12 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
     if (responseData.code === HttpCode.RETRY)
       return response
 
-    if (responseData.code === HttpCode.RE_LOGIN) {
-      useUserStore.getState().signOut()
-      localStorage.clear()
-    }
+    if (responseData.code === HttpCode.RE_LOGIN)
+      useUserStore.getState().clear()
+      // localStorage.removeItem('persist:userStore')
+
+    // localStorage.removeItem('userStore')
+    // localStorage.clear()
 
     message.error(`${responseData.code}: ${responseData.message}` || 'The request failed. Please try again')
     throw new Error(`${responseData.code}: ${responseData.message}`)

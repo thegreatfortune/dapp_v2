@@ -23,7 +23,7 @@ const PointsDetail = () => {
   //   }, [activeUser])
 
   const renderItem = (item: Models.IntegralVo) => {
-    return (<><ul className='grid grid-cols-3 list-none text-14'>
+    return (<><ul className='grid grid-cols-3 w-full list-none text-14'>
             <li>{item.createDate}</li>
             <li>{((item.points ?? 0) / 100).toFixed(2)}</li>
         </ul></>)

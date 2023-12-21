@@ -99,15 +99,28 @@ const SwapModal: React.FC<IProps> = (props) => {
     const tempYouPay = { ...youPay }
     const tempYouReceiver = { ...youReceiver }
 
-    setYouPay({
-      ...tempYouReceiver,
-      amount: tempYouReceiver.amount,
-    })
+    // const truly = tempYouPay.token === 'USDC' ? tempYouPay : tempYouReceiver
 
-    setYouReceiver({
-      ...tempYouPay,
-      amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
-    })
+    if (tempYouPay.token === 'USDC') {
+      setYouPay({
+        ...tempYouReceiver,
+        amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
+      })
+
+      setYouReceiver({
+        ...tempYouPay,
+      })
+    }
+    else {
+      setYouPay({
+        ...tempYouReceiver,
+      })
+
+      setYouReceiver({
+        ...tempYouPay,
+        amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
+      })
+    }
   }
 
   async function enterAnAmount() {
@@ -136,6 +149,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     }
 
     const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+    console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
   }
 
   return (
