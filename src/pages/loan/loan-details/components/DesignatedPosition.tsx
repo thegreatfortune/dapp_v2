@@ -38,6 +38,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
+  const [uniqueTokenInfos, setUniqueTokenInfos] = useState<TokenInfo[]>([])
+
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [isDepositModalOpen, setDepositIsModalOpen] = useState(false)
@@ -55,6 +57,22 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
 
   useEffect(() => {
+    if (tokenInfos.length <= 1)
+      return
+
+    const uniqueTokenInfos = Array.from(new Set(tokenInfos.map(token => token.address))).map((address) => {
+      const tokenInfo = tokenInfos.find(token => token.address === address)
+      if (tokenInfo)
+        return { ...tokenInfo }
+
+      return null
+    }).filter(Boolean) as TokenInfo[]
+
+    setUniqueTokenInfos(uniqueTokenInfos)
+    console.log('%c [ uniqueTokenInfos ]-72', 'font-size:13px; background:#dd0ae2; color:#ff4eff;', uniqueTokenInfos)
+  }, [tokenInfos])
+
+  useEffect(() => {
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
 
@@ -63,11 +81,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
     createKLineThis()
   }, [])
-
-  useEffect(() => {
-    const a = tokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
-    setTokenTotals(a ?? '0')
-  }, [tokenInfos])
 
   useEffect(() => {
     if (browserContractService === undefined || tradeId === null)
@@ -93,7 +106,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       const proList: Promise<TokenInfo>[] = []
 
-      if (proList.length === 0) {
+      if (proList.length === 0 && tokenInfos.length === 0) {
         const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
         pro && proList.push(pro as Promise<TokenInfo>)
       }
@@ -265,8 +278,9 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
         <div className="grid grid-cols-2 w715 gap-x-36" >
 
       {
-        tokenInfos.length === 0 ? <Spin size="large" />
-          : tokenInfos.map(item => (
+        uniqueTokenInfos.length === 0
+          ? <Spin size="large" />
+          : uniqueTokenInfos.map(item => (
           <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
             <div>
               {item.name}({
