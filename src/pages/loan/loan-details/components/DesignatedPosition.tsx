@@ -103,7 +103,6 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       }
 
       Promise.all(proList).then((res) => {
-        console.log('%c [ res ]-106', 'font-size:13px; background:#c02f2e; color:#ff7372;', res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
         console.log('%c [ err ]-110', 'font-size:13px; background:#a79768; color:#ebdbac;', err)
