@@ -1,8 +1,8 @@
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
+import TransparentCard from '../../../components/TransparentCard'
 import type { Models } from '@/.generated/api/models'
-import TransparentCard from '@/pages/components/TransparentCard'
 
 interface ICardsContainerProps {
   records: Models.LoanOrderVO[]
@@ -36,8 +36,9 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
             <Radio.Button value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
+            {/* // TODO records.length > 4 */}
             {
-              records.length > 0 && <Link to={to ?? ''}> view all {'>>'}</Link>
+              records.length > 0 && <Link to={to ?? ''} className='c-white'> view all {'>>'}</Link>
             }
 
           </div>
@@ -46,9 +47,11 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
 
       <div className='h30 w-full'></div>
 
+      {/* <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={()=><TransparentCard key={e.tradeId} item={e} />} /> */}
+
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
-        {
-          records.splice(0, 7).map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
+      {
+       records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
         }
       </div>
 

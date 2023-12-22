@@ -202,6 +202,11 @@
 	},
 	{
 		"inputs": [],
+		"name": "OrderValid",
+		"type": "error"
+	},
+	{
+		"inputs": [],
 		"name": "OverEndTime",
 		"type": "error"
 	},
@@ -392,7 +397,13 @@
 			}
 		],
 		"name": "borrowerCreateOrder",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

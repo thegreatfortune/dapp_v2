@@ -105,6 +105,16 @@ Twitter :推特 */
     loanId?: number = 0;
   }
 
+  export class ApiLoanTotalTradingSortGETParams {
+    /** 分页查询页码 */
+    page?: number = 0;
+    /** 分页查询每页数量 */
+    limit?: number = 0;
+    /** 排序字段, 规则: price=false,id=true
+<p>true == asc, false == desc</p> */
+    orderItemList?: string = undefined;
+  }
+
   export class ApiMarketBalancePageMyFollowGETParams {
     /** 分页查询页码 */
     page?: number = 0;

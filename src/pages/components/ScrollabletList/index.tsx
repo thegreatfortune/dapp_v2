@@ -40,19 +40,22 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState<number>(params.page)
 
-  const fetchData = async () => {
+  const fetchData = async (cPage: number = 1) => {
     try {
       setLoading(true)
-      const res = await api({ ...params, page })
+      const res = await api({ ...params, cPage })
+      console.log('%c [ cPage ]-47', 'font-size:13px; background:#2d86a7; color:#71caeb;', cPage)
 
       setResult(prevResult => ({
         ...prevResult,
-        ...res,
+        total: res.total,
+        records: [...prevResult?.records ?? [], ...res?.records ?? []],
       }))
 
       setOriginalData(prevResult => ({
         ...prevResult,
-        ...res,
+        total: res.total,
+        records: [...prevResult?.records ?? [], ...res?.records ?? []],
       }))
     }
     catch (error) {
@@ -76,7 +79,9 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   const handleLoadMore = async () => {
     setPage(prevPage => prevPage + 1)
-    await fetchData()
+
+    console.log('%c [ count ]-83', 'font-size:13px; background:#6232ff; color:#a676ff;', page + 1)
+    fetchData(page + 1)
   }
 
   function onSorter<T>(imgIndex: number, data: T[], callback: <T>(imageIndex: number, data: T[],) => T[]) {
@@ -121,10 +126,10 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   return (
     <div>
-      {columns && insideColumnRenderItem()}
+      {columns && insideColumnRenderItem()} {result.total}
       <div
         id={containerId}
-        className={`${className} h400 overflow-auto`}
+        className={`${className} h500 overflow-auto`}
       >
         <InfiniteScroll
           dataLength={result.total ?? 0}
@@ -135,10 +140,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           scrollableTarget={containerId}
         >
           <List
+           grid={{ gutter: 16, column: 4 }}
             split={false}
             dataSource={result.records}
             renderItem={(item, index) => (
-              <List.Item style={{ paddingTop: 3, paddingBottom: 3 }}>
+              <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
                 {renderItem(item, index)}
               </List.Item>
             )}

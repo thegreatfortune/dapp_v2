@@ -1,32 +1,34 @@
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import CardsContainer from '@/pages/components/CardsContainer'
+import { Image, Radio } from 'antd'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
+import TransparentCard from '@/pages/components/TransparentCard'
+import ScrollableList from '@/pages/components/ScrollabletList'
+import blacklist1 from '@/assets/images/market/blacklist1.png'
 
 const OrderViewAll = () => {
-  //   const { title } = useParams<{ title?: string }>()
   const [params] = useSearchParams()
 
   const [title] = params.getAll('title')
 
-  const [loanOrderVO, setLoanOrderVO] = useState<Models.LoanOrderVO[]>([])
+  const [category] = params.getAll('category')
 
   const { queryString } = useNavbarQueryStore()
 
-  async function fetchData(type?: string) {
-    const params = { ...new Models.ApiLoanPageLoanContractGETParams(), borrowUserId: undefined }
-    params.limit = 8
+  const navigate = useNavigate()
+
+  const [apiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined })
+
+  function fetchData(type?: string) {
+    if (title === 'Blacklist')
+      apiParams.state = 'Blacklist'
 
     if (type === 'LowRisk')
-      params.tradingFormTypeList = 'SpotGoods'
+      apiParams.tradingFormTypeList = 'SpotGoods'
     else if (type === 'HighRisk')
-      params.tradingFormTypeList = 'Contract,Empty'
-
-    const res = await LoanService.ApiLoanPageLoanContract_GET(params)
-
-    res?.records && setLoanOrderVO(res.records)
+      apiParams.tradingFormTypeList = 'Contract,Empty'
   }
 
   useEffect(() => {
@@ -35,7 +37,37 @@ const OrderViewAll = () => {
 
   return (
     <div className='flex flex-col bg-center bg-no-repeat bg-origin-border'>
-      <CardsContainer image='' key='sas' title={title} isViewAll={true} records={loanOrderVO} fetchData={fetchData} />
+      <div className='h48 min-h-full flex items-center justify-between'>
+        <div className='flex items-center justify-between'>
+          {title === 'Blacklist' && <Image src={blacklist1} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
+          <span className='ml-4 font-size-34'>
+            {title}
+          </span>
+        </div>
+
+        <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)}>
+          <Radio.Button value="All">All</Radio.Button>
+          <Radio.Button value="LowRisk">LowRisk</Radio.Button>
+          <Radio.Button value="HighRisk">HighRisk</Radio.Button>
+        </Radio.Group>
+      </div>
+      <div className='h30 w-full'></div>
+
+      {
+        category === 'HotStarter'
+      && <ScrollableList api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Following' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
+      }
+
+      {
+        category === 'PopularToFollow'
+      && <ScrollableList api={LoanService.ApiLoanTotalTradingSort_GET} params={{ ...apiParams }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} > <TransparentCard key={item.tradeId} item={item} /></div> } />
+      }
+
+      {
+        category === 'Blacklist'
+      && <ScrollableList api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
+      }
+
     </div>
   )
 }

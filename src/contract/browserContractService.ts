@@ -996,6 +996,8 @@ export class BrowserContractService {
 
     const result = await handleTransaction(transaction)
 
+    console.log('%c [ result ]-998', 'font-size:13px; background:#4d2cc4; color:#9170ff;', result)
+
     if (result?.status === 1) {
       const loanConfirm = {
         ...new Models.LoanConfirmParam(),
