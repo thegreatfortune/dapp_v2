@@ -57,6 +57,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const [currentDebt, setCurrentDebt] = useState<number | undefined>()
 
+  const [currentBtnType, setCurrentBtnType] = useState<'Liquidation' | 'Repayment'>()
+
   async function fetchData() {
     if (loading)
       return
@@ -127,7 +129,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       //   console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
       // }
       // else
-      if (currentItem.state === 'OVERDUE_ARREARS') {
+      if (currentBtnType === 'Liquidation') {
         console.log('%c [ capitalPool_repay ]-115', 'font-size:13px; background:#8da9a4; color:#d1ede8;')
         await browserContractService?.followRouter_doRepay(tradeId)
       }
@@ -150,7 +152,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     }
   }
 
-  async function onOpenModal(item: Models.RepayPlanVo, type: string) {
+  async function onOpenModal(item: Models.RepayPlanVo, type: 'Liquidation' | 'Repayment') {
+    setCurrentBtnType(type)
+
     if (!tradeId)
       return
 
@@ -189,7 +193,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
           </Button>
         </div>}>
         <div>
-          <h1> {currentItem.state === 'OVERDUE_ARREARS' ? 'Repayment' : 'Liquidation'} </h1>
+          <h1> {currentBtnType} </h1>
 
           <div className='flex items-center justify-between text-center'>
 

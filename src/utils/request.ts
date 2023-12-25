@@ -93,7 +93,6 @@ axios.interceptors.request.use((config) => {
   headers['Content-Type'] = headers['Content-Type'] || 'application/json'
   headers['Chain-Id'] = useUserStore.getState().activeUser.chainId
   headers.Authorization = headers.Authorization || useUserStore.getState().activeUser.accessToken
-  console.log('%c [ headers ]-96', 'font-size:13px; background:#dce554; color:#ffff98;', headers)
   config.headers = headers
   return config
 })

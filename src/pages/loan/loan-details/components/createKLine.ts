@@ -1,5 +1,6 @@
 import { init } from 'klinecharts'
 import { ethers } from 'ethers'
+import { sortBy, uniqBy } from 'lodash-es'
 import type { Models } from '@/.generated/api/models'
 
 export function createKLine(data: Models.UserPortfolioVo[]) {
@@ -14,8 +15,10 @@ export function createKLine(data: Models.UserPortfolioVo[]) {
     close: Number(ethers.formatUnits(e.uPrice ?? 0)),
   }))
 
-  console.log('%c [ list ]-18', 'font-size:13px; background:#cd64a2; color:#ffa8e6;', list)
-  chart?.applyNewData(list)
+  const uniqueAndSortedData = sortBy(uniqBy(list, 'timestamp'), 'timestamp')
+  console.log('%c [ uniqueAndSortedData ]-19', 'font-size:13px; background:#19f670; color:#5dffb4;', uniqueAndSortedData)
+
+  chart?.applyNewData(uniqueAndSortedData.splice(0, 10))
 
   function setTimezone(timezone: string) {
     chart?.setTimezone(timezone)

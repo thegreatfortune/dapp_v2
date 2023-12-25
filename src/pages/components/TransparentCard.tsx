@@ -2,8 +2,11 @@ import Avatar from 'antd/es/avatar'
 import Button from 'antd/es/button'
 import BigNumber, { } from 'bignumber.js'
 import { Image, Tooltip } from 'antd'
+import Address from '../loan/loan-details/components/Address'
 import type { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
+import { isContractAddress } from '@/utils/regex'
+import { maskWeb3Address } from '@/utils/maskWeb3Address'
 
 interface CardProps {
   item: Models.LoanOrderVO
@@ -25,7 +28,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
       {
         name && twitter
           ? <div className="ml-4">
-            <h2 className="m0 p0 text-14 font-semibold">{name}</h2>
+            <h2 className="m0 p0 text-14 font-semibold">{isContractAddress(name ?? '') ? maskWeb3Address(name) : name}</h2>
             <span className="text-12 text-gray-500">@{twitter}</span>
           </div>
           : 'Not bound'
