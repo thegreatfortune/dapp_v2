@@ -147,16 +147,16 @@ const Portal = () => {
                     {/* <div className="b-1 b-#FFF b-solid"></div> */}
                     <div className="h-64"></div>
                     <div className="h-664 w-793 overscroll-y-auto !overflow-scroll">
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges1')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges2')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges3')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges4')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges5')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges6')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges7')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges8')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges9')}`}</div>
-                        <div className="mb-50 h-72 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges10')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges1')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges2')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges3')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges4')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges5')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges6')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges7')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges8')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges9')}`}</div>
+                        <div className="mb-50 h-52 w-900 text-24 font-400 lh-36 c-#fff">{`${t('portal.pledges10')}`}</div>
 
                     </div>
                 </div>

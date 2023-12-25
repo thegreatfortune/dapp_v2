@@ -201,7 +201,7 @@ const PersonalCenter = () => {
           <div className="h30" />
 
           <div className='h-115 flex'>
-            <div className='h-full w-136 flex flex-col items-center justify-center gap-y-13 rounded-15 from-blue-500 to-blue-300 bg-gradient-to-b'>
+            <div className='h-full w-136 flex flex-col items-center justify-center gap-y-13 rounded-15 bg-#333341'>
               <span>Points</span>
               <span>{ ((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2) }</span>
             </div>
