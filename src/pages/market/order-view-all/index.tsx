@@ -48,10 +48,12 @@ const OrderViewAll = () => {
           </span>
         </div>
 
-        <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)}>
-          <Radio.Button value="All">All</Radio.Button>
-          <Radio.Button value="LowRisk">LowRisk</Radio.Button>
-          <Radio.Button value="HighRisk">HighRisk</Radio.Button>
+        <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)} className='w-453 flex'>
+          <Radio.Button value="All" className='m-auto mr-20 h48 w-100 border-1px b-rd-6 text-center lh-48'>All</Radio.Button>
+          <div className='border-3px b-transparent b-rd-0 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>
+          <Radio.Button value="LowRisk" className='m-auto h48 w146 b-rd-6 text-center lh-48'>🌈 LowRisk</Radio.Button>
+          <Radio.Button value="HighRisk" className='m-auto ml-1 h48 w185 b-rd-6 text-center lh-48'>🎉 HighRisk</Radio.Button>
+          </div>
         </Radio.Group>
       </div>
       <div className='h30 w-full'></div>
