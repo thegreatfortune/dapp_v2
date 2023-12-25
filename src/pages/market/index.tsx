@@ -18,7 +18,7 @@ const Market = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8 })
+      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'actual_share_count=false' })
       setHotStarterData(res)
     }
     fetchData()
@@ -26,7 +26,7 @@ const Market = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8 })
+      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'total_market_trading_price=false' })
 
       setPopularToFollowData(res)
     }
