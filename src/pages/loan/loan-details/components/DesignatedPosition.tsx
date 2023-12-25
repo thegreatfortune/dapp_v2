@@ -304,7 +304,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
               <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
               </div>
 
-            {/* //用户创建的才能看 */}
+            {/* //Test 用户创建的才能看 */}
             {
               item.name !== 'USDC'
                 ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 lh-30 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
