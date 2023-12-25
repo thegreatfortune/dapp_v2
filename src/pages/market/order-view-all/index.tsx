@@ -19,16 +19,19 @@ const OrderViewAll = () => {
 
   const navigate = useNavigate()
 
-  const [apiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined })
+  const [apiParams, setApiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined })
 
   function fetchData(type?: string) {
+    const params = { ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined }
     if (title === 'Blacklist')
-      apiParams.state = 'Blacklist'
+      params.state = 'Blacklist'
 
     if (type === 'LowRisk')
-      apiParams.tradingFormTypeList = 'SpotGoods'
+      params.tradingFormTypeList = 'SpotGoods'
     else if (type === 'HighRisk')
-      apiParams.tradingFormTypeList = 'Contract,Empty'
+      params.tradingFormTypeList = 'Contract,Empty'
+
+    setApiParams(params)
   }
 
   useEffect(() => {
@@ -55,17 +58,17 @@ const OrderViewAll = () => {
 
       {
         category === 'HotStarter'
-      && <ScrollableList api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Following' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
+      && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Following' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
       {
         category === 'PopularToFollow'
-      && <ScrollableList api={LoanService.ApiLoanTotalTradingSort_GET} params={{ ...apiParams }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} > <TransparentCard key={item.tradeId} item={item} /></div> } />
+      && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} > <TransparentCard key={item.tradeId} item={item} /></div> } />
       }
 
       {
         category === 'Blacklist'
-      && <ScrollableList api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
+      && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
     </div>

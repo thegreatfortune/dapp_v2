@@ -1,6 +1,7 @@
 import { Divider, List, Skeleton } from 'antd'
 import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import type { ListGridType } from 'antd/es/list'
 import Title from './Title'
 import type { Models } from '@/.generated/api/models'
 
@@ -24,9 +25,10 @@ export interface IScrollableListProps {
   containerId: string
   className?: string
   columns?: IColumn<any>[]
+  grid?: ListGridType
 }
 
-const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, params, renderItem, containerId = 'containerId' }) => {
+const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, params, renderItem, containerId = 'containerId', grid }) => {
   const [originalData, setOriginalData] = useState<Models.PageResult<any>>({
     total: 0,
     records: [],
@@ -139,16 +141,29 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
           scrollableTarget={containerId}
         >
-          <List
-           grid={{ gutter: 16, column: 4 }}
-            split={false}
-            dataSource={result.records}
-            renderItem={(item, index) => (
-              <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
-                {renderItem(item, index)}
-              </List.Item>
-            )}
-          />
+          {
+            grid
+              ? <List
+            grid={grid}
+             split={false}
+             dataSource={result.records}
+             renderItem={(item, index) => (
+               <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                 {renderItem(item, index)}
+               </List.Item>
+             )}
+           />
+              : <List
+               split={false}
+               dataSource={result.records}
+               renderItem={(item, index) => (
+                 <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                   {renderItem(item, index)}
+                 </List.Item>
+               )}
+             />
+          }
+
         </InfiniteScroll>
       </div>
     </div>

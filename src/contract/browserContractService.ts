@@ -996,29 +996,29 @@ export class BrowserContractService {
 
     const result = await handleTransaction(transaction)
 
-    let tradeId = null
-
-    try {
-      const transaction = await result?.getTransaction()
-
-      const transactionReceipt = await result?.provider.getTransactionReceipt(transaction?.hash ?? '')
-
-      transactionReceipt?.logs.forEach((log) => {
-        const parseLog = followRouterContract.interface.parseLog({ topics: log?.topics.concat([]) ?? [], data: log?.data ?? '' })
-
-        if (parseLog)
-          tradeId = parseLog.args[0]
-      })
-    }
-    catch (error) {
-      console.log('%c [ error ]-1004', 'font-size:13px; background:#6582d5; color:#a9c6ff;', error)
-    }
-
     if (result?.status === 1) {
-      if (!tradeId) {
-        const followManageContract = await this.getFollowManageContract()
-        tradeId = await followManageContract.getLastTradeId()
+      const getTrulyTradeId = async (): Promise<bigint> => {
+        let trulyTradeId = null
+
+        const transaction = await result?.getTransaction()
+
+        const transactionReceipt = await result?.provider.getTransactionReceipt(transaction?.hash ?? '')
+
+        transactionReceipt?.logs.forEach((log) => {
+          const parseLog = followRouterContract.interface.parseLog({ topics: log?.topics.concat([]) ?? [], data: log?.data ?? '' })
+
+          if (parseLog)
+            trulyTradeId = parseLog.args[0]
+        })
+
+        if (!trulyTradeId) {
+          const followManageContract = await this.getFollowManageContract()
+          trulyTradeId = await followManageContract.getLastTradeId()
+        }
+        return trulyTradeId
       }
+
+      const trulyTradeId = await getTrulyTradeId()
 
       const loanConfirm = {
         ...new Models.LoanConfirmParam(),
@@ -1028,7 +1028,7 @@ export class BrowserContractService {
         transactionPairs: model.transactionPairs,
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
-        tradeId: (Number(tradeId) === 0 ? Number(tradeId) : Number(tradeId) - 1),
+        tradeId: (Number(trulyTradeId) === 0 ? Number(trulyTradeId) : Number(trulyTradeId) - 1),
       }
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
