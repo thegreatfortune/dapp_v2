@@ -91,7 +91,9 @@
   "portal.layout.menu1": "Home",
   "portal.layout.menu2": "Market",
   "portal.layout.menu3": "Trade",
-  "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management."
+  "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management.",
+
+  "basicLayout.navBar.placeholder": "Search name, user, address"
 
 
 }

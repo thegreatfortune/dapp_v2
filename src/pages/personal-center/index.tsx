@@ -9,6 +9,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
 import Address from '../loan/loan-details/components/Address'
 import PointsDetail from './components/PointsDetail'
+import AddCoin from './components/AddCoin'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import Navbar from '@/layouts/BasicLayout/Navbar'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
@@ -183,8 +184,9 @@ const PersonalCenter = () => {
             <div className='text-12'>
 
               <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
-                  <div className='cursor-pointer'>
+                  <div className='flex cursor-pointer'>
                   <span className='c-#307DF5'> {`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}</span>
+                  {/* <AddCoin address={'./components/AddCoin'} /> */}
                   <Image preview={false} width={10} height={10} className='ml-6' src={copyImg} />
                   </div>
               </CopyToClipboard>

@@ -8,7 +8,7 @@
     "mumbai": "vite --open --mode=mumbai & gen:abi",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
-    "gen:api": "ts-node --esm openapi.config.ts",
+    "gen:api": "ts-node openapi.config.ts",
     "gen:abi": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",
     "lint:fix": "eslint . --fix",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
