@@ -10,6 +10,17 @@ import marketBanner from '@/assets/images/market/banner.png'
 const Trade = () => {
   const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
 
+  function fetchData(type?: string) {
+    const params = { ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 }
+
+    // if (type === 'LowRisk')
+    //   params.tradingFormTypeList = 'SpotGoods'
+    // else if (type === 'HighRisk')
+    //   params.tradingFormTypeList = 'Contract,Empty'
+
+    // setApiParams(params)
+  }
+
   const navigate = useNavigate()
 
   const renderItem = (item: Models.MarketLoanVo) => {
@@ -43,7 +54,7 @@ const Trade = () => {
               🔥 Hot
             </h2>
           </div>
-          <Radio.Group value='All' className='w453 flex'>
+          <Radio.Group value='All' className='w453 flex' onChange={e => fetchData(e.target.value)}>
             {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
             <button className='m-a h48 w100 items-center b-rd-4 text-center text-18 font-500 lh-48 c-#fff primary-btn'>All</button>
             <div className='ml-20 w333 flex justify-between b-2px b-#0980ed b-rd-4 b-solid'>
@@ -56,7 +67,7 @@ const Trade = () => {
 
         <div className='h23 w-full'></div>
 
-        <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='TradeScrollable' renderItem={renderItem} />
+        <ScrollableList grid={{ gutter: 16, column: 4 }} api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='TradeScrollable' renderItem={renderItem} />
       </div>
     </div>
   )
