@@ -997,6 +997,29 @@ export class BrowserContractService {
     const result = await handleTransaction(transaction)
 
     if (result?.status === 1) {
+      const getTrulyTradeId = async (): Promise<bigint> => {
+        let trulyTradeId = null
+
+        const transaction = await result?.getTransaction()
+
+        const transactionReceipt = await result?.provider.getTransactionReceipt(transaction?.hash ?? '')
+
+        transactionReceipt?.logs.forEach((log) => {
+          const parseLog = followRouterContract.interface.parseLog({ topics: log?.topics.concat([]) ?? [], data: log?.data ?? '' })
+
+          if (parseLog)
+            trulyTradeId = parseLog.args[0]
+        })
+
+        if (!trulyTradeId) {
+          const followManageContract = await this.getFollowManageContract()
+          trulyTradeId = await followManageContract.getLastTradeId()
+        }
+        return trulyTradeId
+      }
+
+      const trulyTradeId = await getTrulyTradeId()
+
       const loanConfirm = {
         ...new Models.LoanConfirmParam(),
         loanPicUrl: model.imageUrl,
@@ -1005,9 +1028,8 @@ export class BrowserContractService {
         transactionPairs: model.transactionPairs,
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
+        tradeId: Number(trulyTradeId),
       }
-
-      console.log('%c [ ApiLoanConfirm_POST ]-989', 'font-size:13px; background:#bf58c2; color:#ff9cff;', new Date())
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
     }

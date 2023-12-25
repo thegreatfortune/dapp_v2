@@ -1,6 +1,7 @@
 import { Divider, List, Skeleton } from 'antd'
 import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import type { ListGridType } from 'antd/es/list'
 import Title from './Title'
 import type { Models } from '@/.generated/api/models'
 
@@ -24,9 +25,10 @@ export interface IScrollableListProps {
   containerId: string
   className?: string
   columns?: IColumn<any>[]
+  grid?: ListGridType
 }
 
-const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, params, renderItem, containerId = 'containerId' }) => {
+const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, params, renderItem, containerId = 'containerId', grid }) => {
   const [originalData, setOriginalData] = useState<Models.PageResult<any>>({
     total: 0,
     records: [],
@@ -40,19 +42,22 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState<number>(params.page)
 
-  const fetchData = async () => {
+  const fetchData = async (cPage: number = 1) => {
     try {
       setLoading(true)
-      const res = await api({ ...params, page })
+      const res = await api({ ...params, cPage })
+      console.log('%c [ cPage ]-47', 'font-size:13px; background:#2d86a7; color:#71caeb;', cPage)
 
       setResult(prevResult => ({
         ...prevResult,
-        ...res,
+        total: res.total,
+        records: [...prevResult?.records ?? [], ...res?.records ?? []],
       }))
 
       setOriginalData(prevResult => ({
         ...prevResult,
-        ...res,
+        total: res.total,
+        records: [...prevResult?.records ?? [], ...res?.records ?? []],
       }))
     }
     catch (error) {
@@ -76,7 +81,9 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   const handleLoadMore = async () => {
     setPage(prevPage => prevPage + 1)
-    await fetchData()
+
+    console.log('%c [ count ]-83', 'font-size:13px; background:#6232ff; color:#a676ff;', page + 1)
+    fetchData(page + 1)
   }
 
   function onSorter<T>(imgIndex: number, data: T[], callback: <T>(imageIndex: number, data: T[],) => T[]) {
@@ -121,10 +128,10 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   return (
     <div>
-      {columns && insideColumnRenderItem()}
+      {columns && insideColumnRenderItem()} {result.total}
       <div
         id={containerId}
-        className={`${className} h400 overflow-auto`}
+        className={`${className} h500 overflow-auto`}
       >
         <InfiniteScroll
           dataLength={result.total ?? 0}
@@ -134,15 +141,29 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
           scrollableTarget={containerId}
         >
-          <List
-            split={false}
-            dataSource={result.records}
-            renderItem={(item, index) => (
-              <List.Item style={{ paddingTop: 3, paddingBottom: 3 }}>
-                {renderItem(item, index)}
-              </List.Item>
-            )}
-          />
+          {
+            grid
+              ? <List
+            grid={grid}
+             split={false}
+             dataSource={result.records}
+             renderItem={(item, index) => (
+               <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                 {renderItem(item, index)}
+               </List.Item>
+             )}
+           />
+              : <List
+               split={false}
+               dataSource={result.records}
+               renderItem={(item, index) => (
+                 <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                   {renderItem(item, index)}
+                 </List.Item>
+               )}
+             />
+          }
+
         </InfiniteScroll>
       </div>
     </div>

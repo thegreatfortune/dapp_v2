@@ -1,8 +1,8 @@
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
-import TransparentCard from './TransparentCard'
 import type { Models } from '@/.generated/api/models'
+import TransparentCard from '@/pages/components/TransparentCard'
 
 interface ICardsContainerProps {
   records: Models.LoanOrderVO[]
@@ -13,7 +13,7 @@ interface ICardsContainerProps {
   fetchData?(type?: string): Promise<void>
 }
 
-const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image, fetchData }) => {
+const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isViewAll, to, image, fetchData }) => {
   const navigate = useNavigate()
 
   return (
@@ -36,8 +36,9 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
             <Radio.Button value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
+            {/* // TODO records.length > 4 */}
             {
-              records.length > 0 && <Link to={to ?? ''}> view all {'>>'}</Link>
+              records.length > 0 && <Link to={to ?? ''} className='c-white'> view all {'>>'}</Link>
             }
 
           </div>
@@ -55,4 +56,4 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
     </div>)
 }
 
-export default CardsContainer
+export default MarketCardsContainer

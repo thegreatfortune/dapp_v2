@@ -1,6 +1,7 @@
 import { init } from 'klinecharts'
+import type { Models } from '@/.generated/api/models'
 
-export function createKLine() {
+export function createKLine(data: Models.UserPortfolioVo[]) {
   function genData(timestamp = new Date().getTime(), length = 800) {
     let basePrice = 5000
     timestamp = Math.floor(timestamp / 1000 / 60) * 60 * 1000 - length * 60 * 1000
@@ -25,9 +26,16 @@ export function createKLine() {
     return dataList
   }
 
+  // TODO 时区
   const chart = init('KLineContainer')
 
-  chart?.applyNewData(genData())
+  chart?.applyNewData(data.map(e => ({
+    timestamp: e.createDate! * 1000,
+    open: Number(e.uPrice),
+    high: Number(e.uPrice),
+    low: Number(e.uPrice),
+    close: Number(e.uPrice),
+  })))
 
   function setTimezone(timezone: string) {
     chart?.setTimezone(timezone)

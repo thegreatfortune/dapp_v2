@@ -16,6 +16,8 @@ interface IUserState {
 
   signOut(): void
 
+  clear(): void
+
   switchActiveUser(user: User): void
 
   getToken: string | undefined
@@ -63,6 +65,16 @@ const useUserStore = create<IUserState>()(
 
             return ({ activeUser: user })
           })
+        },
+
+        clear: () => {
+          set(state => ({ activeUser: new User() }))
+
+          set(state => ({ userList: [] }))
+
+          // localStorage.removeItem('persist:userStore')
+          // localStorage.removeItem('userStore')
+          // localStorage.clear()
         },
 
         signOut: async () => {

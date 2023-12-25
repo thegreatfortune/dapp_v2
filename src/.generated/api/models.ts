@@ -238,7 +238,7 @@ Canceled :订单取消 */
   }
 
   export class LoanConfirmParam {
-    wallet?: ISysWallet = undefined;
+    wallet?: IUserWallet = undefined;
     /** 借款订单id */
     tradeId?: number = 0;
     /** 名称 */

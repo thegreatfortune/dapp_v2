@@ -65,22 +65,22 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "marketId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "buyer",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint16",
+				"name": "amount",
+				"type": "uint16"
 			},
 			{
 				"indexed": false,
@@ -96,9 +96,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint16",
-				"name": "amount",
-				"type": "uint16"
+				"internalType": "uint8",
+				"name": "state",
+				"type": "uint8"
 			}
 		],
 		"name": "buyEvent",
@@ -108,22 +108,22 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "marketId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "solder",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint16",
+				"name": "amount",
+				"type": "uint16"
 			},
 			{
 				"indexed": false,
@@ -139,9 +139,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint16",
-				"name": "amount",
-				"type": "uint16"
+				"internalType": "uint8",
+				"name": "state",
+				"type": "uint8"
 			}
 		],
 		"name": "cancelEvent",
@@ -151,22 +151,22 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "marketId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "solder",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint16",
+				"name": "amount",
+				"type": "uint16"
 			},
 			{
 				"indexed": false,
@@ -182,9 +182,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint16",
-				"name": "amount",
-				"type": "uint16"
+				"internalType": "uint8",
+				"name": "state",
+				"type": "uint8"
 			},
 			{
 				"indexed": false,

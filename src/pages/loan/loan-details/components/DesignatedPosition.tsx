@@ -12,7 +12,6 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import { PortfolioService } from '@/.generated/api'
-import './KLine.css'
 
 interface IProps {
   tradeId: bigint | null
@@ -58,8 +57,8 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
 
   useEffect(() => {
-    if (tokenInfos.length <= 1)
-      return
+    // if (tokenInfos.length <= 1)
+    //   return
 
     const uniqueTokenInfos = Array.from(new Set(tokenInfos.map(token => token.address))).map((address) => {
       const tokenInfo = tokenInfos.find(token => token.address === address)
@@ -69,15 +68,17 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
       return null
     }).filter(Boolean) as TokenInfo[]
 
+    const a = uniqueTokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
+    setTokenTotals(a ?? '0')
+
     setUniqueTokenInfos(uniqueTokenInfos)
-    console.log('%c [ uniqueTokenInfos ]-72', 'font-size:13px; background:#dd0ae2; color:#ff4eff;', uniqueTokenInfos)
   }, [tokenInfos])
 
   useEffect(() => {
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
 
-      createKLine()
+      createKLine(res.records ?? [])
     }
 
     createKLineThis()
