@@ -6,19 +6,24 @@ import { MarketService } from '../../.generated/api/Market'
 import ScrollableList from '../components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
+import { isContractAddress } from '@/utils/regex'
+import { maskWeb3Address } from '@/utils/maskWeb3Address'
 
 const Trade = () => {
-  const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
+  const [params, setParams] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
+
+  const [activeKey, setActiveKey] = useState('All')
 
   function fetchData(type?: string) {
+    setActiveKey(type ?? 'All')
+
     const params = { ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 }
 
-    // if (type === 'LowRisk')
-    //   params.tradingFormTypeList = 'SpotGoods'
-    // else if (type === 'HighRisk')
-    //   params.tradingFormTypeList = 'Contract,Empty'
-
-    // setApiParams(params)
+    if (type === 'LowRisk')
+      params.tradingFormTypeStr = 'SpotGoods'
+    else if (type === 'HighRisk')
+      params.tradingFormTypeStr = 'Contract,Empty'
+    setParams(params)
   }
 
   const navigate = useNavigate()
@@ -31,8 +36,8 @@ const Trade = () => {
             <Avatar size={50} src={item.user?.pictureUrl}/>
           </div>
           <div className='grid'>
-            <span className='c-fff ml-20 mt-22 h25 w-full text-20 font-400 lh-20'>michasi007{item.user?.nickName}</span>
-            <span className='ml-20 h18 w-full text-14 font-400 lh-18 c-#999'>@Artist{item.user?.platformName}</span>
+            <span className='c-fff ml-20 mt-22 h25 w-full text-20 font-400 lh-20'>{isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'not bound')}</span>
+            <span className='ml-20 h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'not bound'}</span>
           </div>
         </div>
         <div className='flex justify-between'>
@@ -54,13 +59,13 @@ const Trade = () => {
               🔥 Hot
             </h2>
           </div>
-          <Radio.Group value='All' className='w453 flex' onChange={e => fetchData(e.target.value)}>
+          <Radio.Group defaultValue='All' className='w453 flex' onChange={e => fetchData(e.target.value)}>
             {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
-            <button className='m-a h48 w100 items-center b-rd-4 text-center text-18 font-500 lh-48 c-#fff primary-btn'>All</button>
+            <Radio.Button className={`m-a h48 w100 items-center b-rd-4 text-center text-18 font-500 lh-48 c-#fff ${activeKey === 'All' && 'primary-btn'}`}>All</Radio.Button>
             <div className='ml-20 w333 flex justify-between b-2px b-#0980ed b-rd-4 b-solid'>
-              <Radio.Button value="LowRisk" className='h48 w167 items-center text-18 font-500 lh-48'>🌈 Low Risk</Radio.Button>
+              <Radio.Button value="LowRisk" className={`h48 w167 items-center text-18 font-500 lh-48 ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🌈 Low Risk</Radio.Button>
               <div className='h45 w0 b-2px b-#0A80ED b-rd-0 b-solid'></div>
-              <Radio.Button value="HighRisk" className='h48 w206 items-center text-18 font-500 lh-48'>🎉 High Risk</Radio.Button>
+              <Radio.Button value="HighRisk" className={`h48 w206 items-center text-18 font-500 lh-48 ${activeKey === 'HighRisk' && 'primary-btn'}`}>🎉 High Risk</Radio.Button>
             </div>
           </Radio.Group>
         </div>
