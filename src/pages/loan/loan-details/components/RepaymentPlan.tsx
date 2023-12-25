@@ -129,7 +129,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       //   console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
       // }
       // else
-      if (currentBtnType === 'Liquidation') {
+      if (currentBtnType === 'Repayment') {
         console.log('%c [ capitalPool_repay ]-115', 'font-size:13px; background:#8da9a4; color:#d1ede8;')
         await browserContractService?.followRouter_doRepay(tradeId)
       }
