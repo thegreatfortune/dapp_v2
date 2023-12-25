@@ -128,7 +128,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   return (
     <div>
-      {columns && insideColumnRenderItem()} {result.total}
+      {columns && insideColumnRenderItem()}
       <div
         id={containerId}
         className={`${className} h500 overflow-auto`}

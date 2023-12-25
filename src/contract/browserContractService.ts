@@ -1014,6 +1014,8 @@ export class BrowserContractService {
         if (!trulyTradeId) {
           const followManageContract = await this.getFollowManageContract()
           trulyTradeId = await followManageContract.getLastTradeId()
+
+          return (trulyTradeId === BigInt(0) ? trulyTradeId : trulyTradeId - BigInt(1))
         }
         return trulyTradeId
       }

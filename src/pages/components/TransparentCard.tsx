@@ -56,7 +56,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
               ${BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(2)}
             </li>
             <li>
-              {children ?? <CustomAvatar src={'item.'} name={'Maske'} twitter={'Maske'} />}
+              {children ?? <CustomAvatar src={item.userInfo?.pictureUrl ?? ''} name={item.userInfo?.nickName ?? 'not bound'} twitter={item.userInfo?.platformName ?? 'not bound'} />}
             </li>
           </ul>
 
