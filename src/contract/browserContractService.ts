@@ -1028,7 +1028,7 @@ export class BrowserContractService {
         transactionPairs: model.transactionPairs,
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
-        tradeId: (Number(trulyTradeId) === 0 ? Number(trulyTradeId) : Number(trulyTradeId) - 1),
+        tradeId: Number(trulyTradeId),
       }
 
       return LoanService.ApiLoanConfirm_POST(loanConfirm)
