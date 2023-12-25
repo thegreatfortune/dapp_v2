@@ -46,18 +46,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
     try {
       setLoading(true)
       const res = await api({ ...params, cPage })
-      console.log('%c [ cPage ]-47', 'font-size:13px; background:#2d86a7; color:#71caeb;', cPage)
 
       setResult(prevResult => ({
         ...prevResult,
         total: res.total,
-        records: [...prevResult?.records ?? [], ...res?.records ?? []],
-      }))
-
-      setOriginalData(prevResult => ({
-        ...prevResult,
-        total: res.total,
-        records: [...prevResult?.records ?? [], ...res?.records ?? []],
+        records: res?.records ?? [],
       }))
     }
     catch (error) {
@@ -82,7 +75,6 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   const handleLoadMore = async () => {
     setPage(prevPage => prevPage + 1)
 
-    console.log('%c [ count ]-83', 'font-size:13px; background:#6232ff; color:#a676ff;', page + 1)
     fetchData(page + 1)
   }
 
