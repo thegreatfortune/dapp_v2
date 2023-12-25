@@ -67,7 +67,8 @@ const PortalLayout: React.FC<IProps> = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div></div>
+                    <div className='w115'></div>
+
                 </div>
             </footer>
         </div>

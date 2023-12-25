@@ -244,7 +244,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
       </SModal>
 
-      <div className="h560 w-full flex justify-between">
+      <div className="mt-20 h560 w-full flex justify-between">
         <div className="box-border h560 w634 flex justify-between s-container p-x-30 p-y-16">
           <div>
             <div className='flex justify-between' >
@@ -257,7 +257,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
 
               </div>
 
-              <Button className='h25 w72 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+              <Button className='h25 w72 b-rd-30 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
             </div>
 
             <div>
@@ -284,7 +284,7 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
           ? <Spin size="large" />
           : uniqueTokenInfos.map(item => (
           <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-            <div>
+            <div className='ml-59 mt-31 flex text-21 lh-25 c-#fff'>
               {item.name}({
                 // 如果余额大于零，则计算比例并显示结果
                 Number(item.balance) !== 0
@@ -297,14 +297,17 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
                   </span>
               })
               %
-              <span className='c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+              <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
             </div>
-            <div >$ {item.dollars ? BigNumber(item.dollars).toFixed(2) : 0} </div>
+            <div className='flex'>
+              <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
+              <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
+              </div>
 
             {/* //用户创建的才能看 */}
             {
               item.name !== 'USDC'
-                ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 lh-30 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                 : null
             }
             {/* // 下面这个才是要的 */}

@@ -1,5 +1,5 @@
-import { Radio } from 'antd'
-import { useState } from 'react'
+import { Button, Modal, Radio } from 'antd'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { MarketService } from '../../.generated/api/Market'
@@ -8,16 +8,56 @@ import { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
 
 const Trade = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const showModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleOk = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
+  const [params] = useState(new Models.ApiMarketPageTradingLoanGETParams())
+
+  useEffect(() => {
+    // .then((response) => {
+    //     setData(response.current)
+    //   })
+
+    async function fetchData(type?: string) {
+      if (type === 'LowRisk')
+        params.orderItemList = 'SpotGoods'
+      else if (type === 'HighRisk')
+        params.orderItemList = 'Contract,Empty'
+
+      const res = await MarketService.ApiMarketPageTradingLoan_GET(params)
+    }
+
+    fetchData()
+  }, [])
+
   const navigate = useNavigate()
 
-  const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), ...{ limit: 8, page: 1 } })
+  // const [params] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), ...{ limit: 8, page: 1 } })
 
   const renderItem = (item: Models.MarketLoanVo) => {
     return (
-      <div className='h125 w315 cursor-pointer s-container' onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
+      <div className='h125 w315 cursor-pointer s-container b-rd-6' onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
+        <div className='flex'>
+          <div className='ml-32 mt-20 h50 w50 b-rd-0'>{item.user?.pictureUrl}</div>
+          <div className='grid'>
+            <span className='c-fff ml-20 mt-22 h25 w-full text-20 font-400 lh-20'>michasi007{item.user?.nickName}</span>
+            <span className='ml-20 h18 w-full text-14 font-400 lh-18 c-#999'>@Artist{item.user?.platformName}</span>
+          </div>
+        </div>
         <div className='flex justify-between'>
-          <span> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
-          <span> Volume of business {item.totalTradingCompleted}</span>
+          <span className='ml-32 mt-20'> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
+          <span className='mr-29 mt-20'> Volume of business {item.totalTradingCompleted}</span>
         </div>
       </div>
     )
@@ -46,6 +86,15 @@ const Trade = () => {
         </div>
 
         <div className='h23 w-full'></div>
+
+        <Button type="primary" onClick={showModal}>
+          Open Modal
+        </Button>
+        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
 
         <ScrollableList api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
       </div>

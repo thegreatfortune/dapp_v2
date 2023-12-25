@@ -2,7 +2,6 @@ import Avatar from 'antd/es/avatar'
 import Button from 'antd/es/button'
 import BigNumber, { } from 'bignumber.js'
 import { Image, Tooltip } from 'antd'
-import Address from '../loan/loan-details/components/Address'
 import type { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
@@ -82,10 +81,11 @@ requiring the borrower to actively recharge for repayment.">
             <li>
               {
                 btnText
-                  ? <Button className='h30 w-110 text-12 primary-btn'>{btnText }</Button>
+                  ? <Button className='h30 w-110 text-12 primary-btn'>{btnText}</Button>
                   : <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
               }
 
+              {/* <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button> */}
             </li>
           </ul>
 

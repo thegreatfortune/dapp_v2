@@ -259,7 +259,9 @@ const LoanDetails = () => {
 
     <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
 
-    <SModal open={extractIsModalOpen}
+    <SModal
+      className='h238 w464 b-rd-8'
+      open={extractIsModalOpen}
       maskClosable={false}
       onCancel={() => setExtractIsModalOpen(false)}
       footer={[<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
@@ -280,23 +282,22 @@ const LoanDetails = () => {
     <SModal open={isModalOpen}
       maskClosable={false}
       onCancel={() => setIsModalOpen(false)}
-      footer={lendState === 'Processing'
-        ? null
-        : [
-          <Button key="submit" type="primary" onClick={() => handleOk()}>
-            Follow
-          </Button>,
-          lendState === 'Success'
-            ? null
-            : <Button key="Cancel" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>,
-          ]}
+      footer=
+      {
+        lendState === 'Processing'
+          ? null
+          : [
+            <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
+            lendState === 'Success'
+              ? null
+              : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
+            ]
+      }
     >
       {
         !lendState
           ? <div>
-            <h1>Share</h1>
+            <h1 className='font-b h21 w34 text-12 lh-21 c-#fff'>Share</h1>
             <div className='flex items-center justify-between'>
               <InputNumber
                 value={copies}

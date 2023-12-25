@@ -88,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
                         onSelect={onSelect}
                         className="h48 w310"
                     >
-                        <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder="Search item,collector,and more" type="text" />
+                        <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
                     </AutoComplete>
                     <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
 
