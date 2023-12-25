@@ -18,7 +18,7 @@ const MyLend = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const [lendOrderVOList, setLendOrderVO] = useState<Models.LendingLoanVo[]>([])
+  const [lendOrderVOList, setLendOrderVO] = useState<Models.MyFollowVo[]>([])
 
   const [total, setTotal] = useState<number | undefined>()
 
@@ -92,8 +92,8 @@ const MyLend = () => {
             dataSource={lendOrderVOList}
             renderItem={item => (
               <List.Item key={item.loanId} onClick={() =>
-                navigate(`/loan-details/?prePage=lend&userId=${item.userId}&tradeId=${item.loan?.tradeId}`)}>
-                <LendTransparentCard copies={Number(item.partAmount)} item={item.loan ?? new Models.SimpleLoanVo()} >
+                navigate(`/loan-details/?prePage=lend&userId=${item.borrowUserId}&tradeId=${item.loan?.tradeId}`)}>
+                <LendTransparentCard item={item ?? new Models.MyFollowVo()} >
               </LendTransparentCard>
               </List.Item>
             )}

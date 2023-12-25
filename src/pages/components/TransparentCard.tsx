@@ -80,7 +80,12 @@ requiring the borrower to actively recharge for repayment.">
               </Tooltip>
             </li>
             <li>
-              <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
+              {
+                btnText
+                  ? <Button className='h30 w-110 text-12 primary-btn'>{btnText }</Button>
+                  : <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
+              }
+
             </li>
           </ul>
 

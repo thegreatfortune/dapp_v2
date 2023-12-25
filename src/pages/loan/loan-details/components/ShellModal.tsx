@@ -21,6 +21,21 @@ const ShellModal: React.FC<IProps> = (props) => {
   const [total, setTotal] = useState<bigint | undefined>()
   const [loadingState, setLoadingState] = useState<LoadingState>(LoadingState.Initial)
 
+  /**
+   * reset
+   *
+   * @param {*} props
+   * @return {*}
+   */
+  useEffect(() => {
+    if (props.open === false) {
+      setPrice(undefined)
+      setAmount(undefined)
+      setTotal(BigInt(0))
+      setLoadingState(LoadingState.Initial)
+    }
+  }, [props.open])
+
   const handleNumericInputChange = (value: string | undefined, setter: React.Dispatch<React.SetStateAction<string | undefined>>) => {
     const numericValue = value?.replace(/[^0-9]/g, '')
     setter(numericValue)
@@ -59,7 +74,7 @@ const ShellModal: React.FC<IProps> = (props) => {
       case LoadingState.Initial:
         return (
           <div>
-          loadingState:  {loadingState}
+            loadingState:  {loadingState}
             <div>
               Sell Quantity
               <Input
@@ -83,7 +98,7 @@ const ShellModal: React.FC<IProps> = (props) => {
             <div className='h30' />
 
             <div>
-              Total Price: {String(total) }
+              Total Price: {String(total)}
             </div>
           </div>
         )
