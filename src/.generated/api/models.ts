@@ -155,6 +155,10 @@ ToBeTraded :等待交易
 Closed :订单完成
 Canceled :订单取消 */
     state?: string = undefined;
+    /** 交易形式 */
+    tradingFormTypeStr?: string = undefined;
+    /** 交易平台 */
+    tradingPlatformTypeStr?: string = undefined;
   }
 
   export class ApiRepayPlanPageInfoGETParams {
@@ -383,6 +387,7 @@ Canceled :订单取消 */
 
   export class MarketLoanVo {
     loanId?: string = undefined;
+    loan?: LoanOrderVO = undefined;
     tradeId?: number = 0;
     /** 借款单的用户信息 */
     user?: UserInfoVo1 = undefined;
