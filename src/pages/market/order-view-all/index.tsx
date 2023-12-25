@@ -19,7 +19,7 @@ const OrderViewAll = () => {
 
   const navigate = useNavigate()
 
-  const [apiParams, setApiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined })
+  const [apiParams, setApiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 10, borrowUserId: undefined })
 
   function fetchData(type?: string) {
     const params = { ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined }

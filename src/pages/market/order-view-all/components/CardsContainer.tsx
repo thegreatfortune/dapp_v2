@@ -38,7 +38,7 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
           : <div className='font-size-14 c-[#D2D2D2]'>
             {/* // TODO records.length > 4 */}
             {
-              records.length > 0 && <Link to={to ?? ''} className='c-white'> view all {'>>'}</Link>
+              records.length > 4 && <Link to={to ?? ''} className='c-white'> view all {'>>'}</Link>
             }
 
           </div>

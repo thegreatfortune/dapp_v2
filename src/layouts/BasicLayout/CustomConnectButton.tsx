@@ -1,7 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
 import type { PublicClient } from 'wagmi'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import { ethers } from 'ethers'
@@ -13,7 +13,6 @@ import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import { UserService } from '@/.generated/api'
 
 const CustomConnectButton = () => {
   const { userList, switchActiveUser, setUserInfo } = useUserStore()
@@ -30,9 +29,12 @@ const CustomConnectButton = () => {
 
   const location = useLocation()
 
+  const { chain } = useNetwork()
+
   const { isConnected } = useAccount(
     {
-      onConnect({ address, connector, isReconnected }) {
+      async onConnect({ address, connector, isReconnected }) {
+        // const getChainId = await connector?.getChainId()
         if (address && canLogin) {
           const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
 
@@ -41,7 +43,6 @@ const CustomConnectButton = () => {
 
           logInOrSwitching(address)
         }
-        console.log('%c [ address, connector, isReconnected ]-21', 'font-size:13px; background:#613f90; color:#a583d4;', address, connector, isReconnected)
       },
       onDisconnect() {
         signOut()
@@ -76,12 +77,12 @@ const CustomConnectButton = () => {
 
       // const res = await UserService.ApiUserLogin_POST({ address })
 
-      signIn({ accessToken: res.accessToken, address })
+      signIn({ accessToken: res.accessToken, address, chainId: chain?.id })
 
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
 
-        setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
+        setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
       }
 
       setNewProvider(newProvider)
