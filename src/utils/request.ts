@@ -5,6 +5,7 @@ import useUserStore from '../store/userStore'
 
 enum HttpCode {
   RETRY = 100404,
+  TIMEOUT = 100202,
   RESET_CONTENT = 100205,
   RE_LOGIN = 120401,
 }
@@ -24,15 +25,11 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
   }
 
   if (responseData.code !== 200 && responseData.code !== HttpCode.RESET_CONTENT) {
-    if (responseData.code === HttpCode.RETRY)
+    if (responseData.code === HttpCode.RETRY || responseData.code === HttpCode.TIMEOUT)
       return response
 
     if (responseData.code === HttpCode.RE_LOGIN)
       useUserStore.getState().clear()
-      // localStorage.removeItem('persist:userStore')
-
-    // localStorage.removeItem('userStore')
-    // localStorage.clear()
 
     message.error(`${responseData.code}: ${responseData.message}` || 'The request failed. Please try again')
     throw new Error(`${responseData.code}: ${responseData.message}`)
@@ -49,10 +46,9 @@ async function request<T>(config: AxiosRequestConfig): Promise<T> {
 
     // const responseData = result.data as IResponse<T>
 
-    if (responseData.code === HttpCode.RETRY) {
+    if (responseData.code === HttpCode.RETRY)
       await handleRetry(config)
-      throw new Error(`${responseData.code}: ${responseData.message}`)
-    }
+      // throw new Error(`${responseData.code}: ${responseData.message}`)
 
     return responseData.data as T
   }

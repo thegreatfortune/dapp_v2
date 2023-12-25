@@ -1195,6 +1195,8 @@ export class BrowserContractService {
   async followRouter_doRepay(tradeId: bigint) {
     const approve = await this.ERC20_capitalPool_approve(tradeId)
 
+    console.log('%c [ approve ]-1197', 'font-size:13px; background:#751462; color:#b958a6;', approve)
+
     if (!approve) {
       message.error('approve is error')
       throw new Error('approve is error')
