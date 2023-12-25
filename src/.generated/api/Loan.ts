@@ -20,6 +20,15 @@ export class LoanService {
     });
   }
 
+  /** 查询跟随中状态的订单信息 GET /api/loan/homeInfo */
+  static async ApiLoanHomeInfo_GET(options?: { [key: string]: any }) {
+    return request<Models.LoanOrderVO[]>({
+      url: '/api/loan/homeInfo',
+      method: 'GET',
+      ...(options || {}),
+    });
+  }
+
   /** 获取订单的详情信息 GET /api/loan/loanInfo */
   static async ApiLoanLoanInfo_GET(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
