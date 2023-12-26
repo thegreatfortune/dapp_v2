@@ -7,8 +7,8 @@ import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
-import DesignatedPosition from './components/DesignatedPosition'
-import RoomTrade from './components/RoomTrade'
+import Pool from './components/Pool'
+import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
 import { LoanService } from '@/.generated/api/Loan'
@@ -154,7 +154,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Designated Position',
-      children: <DesignatedPosition loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -164,7 +164,7 @@ const LoanDetails = () => {
     {
       key: '3',
       label: 'Room trade',
-      children: <RoomTrade />,
+      children: <SharesMarket />,
     },
   ]
 

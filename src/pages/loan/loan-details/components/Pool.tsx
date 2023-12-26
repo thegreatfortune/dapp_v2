@@ -33,7 +33,7 @@ export class TokenInfo {
   icon: string | undefined
 }
 
-const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
+const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
 
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
@@ -334,4 +334,4 @@ const DesignatedPosition: React.FC<IProps> = ({ transactionPair, tradeId, loanIn
   )
 }
 
-export default DesignatedPosition
+export default Pool

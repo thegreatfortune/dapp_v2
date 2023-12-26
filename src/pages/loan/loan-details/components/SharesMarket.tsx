@@ -10,7 +10,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import SModal from '@/pages/components/SModal'
 
-const RoomTrade = () => {
+const SharesMarket = () => {
   const [searchParams] = useSearchParams()
 
   const [tradeId] = searchParams.getAll('tradeId')
@@ -135,4 +135,4 @@ const RoomTrade = () => {
   )
 }
 
-export default RoomTrade
+export default SharesMarket
