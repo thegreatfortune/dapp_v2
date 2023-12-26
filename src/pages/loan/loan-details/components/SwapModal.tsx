@@ -1,11 +1,15 @@
 import type { ModalProps } from 'antd'
-import { Button, Input, Modal, message } from 'antd'
+import { Button, Image, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { RetweetOutlined } from '@ant-design/icons'
 import { tokenList } from '../../../../contract/tradingPairTokenMap'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
+
+// import exChange from '@/assets/images/loan-details/exchange.png'
+import FolCoin from '@/assets/images/loan-details/FolCoin.png'
 
 interface IProps extends ModalProps {
   currentTokenInfo: TokenInfo
@@ -174,22 +178,34 @@ const SwapModal: React.FC<IProps> = (props) => {
         Enter an amount
       </Button>
     }>
-      <div>
-        <h2>swap</h2>
-        <div className='flex'>
-          <span>you pay</span>
-          <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='w-full' onChange={onSetYouPay} />
-          <span>{youPay.token}</span>
+      <div className='relative h-360'>
+        <div className='flex justify-between'>
+          <h2 className='c-#fff'>SWAP</h2>
+          <div className='flex'>
+            <h2 className='ml-15 c-#373749'>Follow</h2>
+            <img src={FolCoin} alt="" className='mt-23 h25 w25 opacity-50' />
+          </div>
         </div>
-        <div className='h50'>
-          <Button type='primary' onClick={onSwap}>
-            箭头
-          </Button>
+        <div className='z-1 h125 w-full b-rd-6 bg-gray'>
+          <span className='ml-5 text-14'>you pay</span>
+          <div className='flex'>
+            <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='ml-2 mt-20 h50 w-431 text-15' onChange={onSetYouPay} />
+            <span className='m-auto ml-5 mt-32 text-center'>{youPay.token}</span>
+          </div>
         </div>
-        <div className='flex'>
-          <span>you receiver</span>
-          <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
-          <span>{youReceiver.token}</span>
+        <div className='absolute left-206 right-50% top-50% z-2 h40 w-full'>
+          <div className='z-3 h40 w40 transform border-1 b-#000 b-rd-6 b-solid bg-gray c-#fff'>
+            <RetweetOutlined onClick={onSwap} twoToneColor="#eb2f96" style={{ fontSize: '40px', margin: 'auto', color: '#08c', width: '40px', position: 'absolute' }} className='absolute z-2 m-auto transform transition-transform active:scale-95 hover:scale-105 !hover:c-pink' />
+          </div>
+        </div>
+        {/* <div className='m-auto h40 w-472 transform b-rd-6 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r text-center text-20 font-700 transition-transform active:scale-99 hover:scale-101 !hover:c-pink' onClick={onSwap}>↑↓Exchange</div> */}
+        <div className='relative z-1 h10 w-full'></div>
+        <div className='z-1 h125 w-full b-rd-6 bg-gray'>
+          <span className='ml-5 text-14'>you receiver</span>
+          <div className='flex'>
+            <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='ml-2 mt-20 h50 w-431 text-15' onChange={onSetYouReceiver} />
+            <span className='m-auto ml-5 mt-32 text-center'>{youReceiver.token}</span>
+          </div>
         </div>
       </div>
     </Modal>
