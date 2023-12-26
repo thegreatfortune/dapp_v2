@@ -814,6 +814,7 @@ export class BrowserContractService {
     const followManageContract = await this?.getFollowManageContract()
 
     const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
+    console.log('%c [approve cp ]-817', 'font-size:13px; background:#c57017; color:#ffb45b;', cp)
 
     if (!cp)
       return false

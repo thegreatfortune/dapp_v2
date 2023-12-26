@@ -79,14 +79,19 @@ const LoanDetails = () => {
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
+          console.log('%c [ getBorrowerToProfit ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
 
           setExtractMoney(ethers.formatUnits(res ?? 0))
         }
         else if (prePage === 'lend') {
           const pcc = await browserContractService?.getProcessCenterContract()
+          const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
 
-          const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
-          setExtractMoney(ethers.formatUnits(res ?? 0))
+          if (tokenId) {
+            const res = await pcc?.getUserTotalMoney(BigInt(tokenId))
+            console.log('%c [ getUserTotalMoney ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
+            setExtractMoney(ethers.formatUnits(res ?? 0))
+          }
         }
 
         setExtraBtnLoading(false)
