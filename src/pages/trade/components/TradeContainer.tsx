@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Radio from 'antd/es/radio'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 interface ICardsContainerProps {
 //   records: Models.LoanOrderVO[]
@@ -12,8 +12,6 @@ interface ICardsContainerProps {
 }
 
 const TradeContainer: React.FC<ICardsContainerProps> = ({ title, isViewAll, to }) => {
-  const navigate = useNavigate()
-
   const [risk, setRisk] = useState<'All' | 'LowRisk' | 'HighRisk'>('All')
 
   return (<div>

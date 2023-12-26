@@ -1,5 +1,5 @@
-import { Navigate, type RouteObject } from 'react-router-dom'
-import React, { lazy, useEffect, useState } from 'react'
+import { type RouteObject } from 'react-router-dom'
+import React, { lazy } from 'react'
 import { Spin } from 'antd'
 import { whiteList } from './guard/whiteList'
 import BasicLayout from '@/layouts/BasicLayout'

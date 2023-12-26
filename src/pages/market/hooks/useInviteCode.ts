@@ -1,7 +1,7 @@
 import { message } from 'antd'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { MetamaskService, UserInfoService, UserInviteService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'

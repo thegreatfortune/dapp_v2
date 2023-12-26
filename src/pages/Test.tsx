@@ -1,6 +1,5 @@
 import { Button, InputNumber } from 'antd'
 import { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 const Test = () => {
