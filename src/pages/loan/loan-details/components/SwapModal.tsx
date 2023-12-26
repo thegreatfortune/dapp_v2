@@ -15,7 +15,7 @@ interface IProps extends ModalProps {
 class SwapInfo {
   token: string | undefined
   address: string | undefined
-  amount: string = '0'
+  amount: string = ''
 }
 
 const SwapModal: React.FC<IProps> = (props) => {
@@ -24,16 +24,18 @@ const SwapModal: React.FC<IProps> = (props) => {
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
     address: import.meta.env.VITE_USDC_TOKEN,
-    amount: '0',
+    amount: '',
   })
 
   const [youReceiver, setYouReceiver] = useState<SwapInfo>({
     token: props.currentTokenInfo.name,
     address: props.currentTokenInfo.address,
-    amount: '0',
+    amount: '',
   })
 
   const [ratio, setRatio] = useState<string>('0')
+
+  const [activeInput, setActiveInput] = useState<'youPay' | 'youReceiver'>('youPay')
 
   useEffect(() => {
     async function fetchData() {
@@ -43,7 +45,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       setYouPay(() => ({
         token: 'USDC',
         address: import.meta.env.VITE_USDC_TOKEN,
-        amount: '0',
+        amount: '',
       }))
 
       const newRatio = await browserContractService.testLiquidity_calculateSwapRatio(props.currentTokenInfo.address)
@@ -53,7 +55,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       setYouReceiver(() => ({
         token: props.currentTokenInfo.name,
         address: props.currentTokenInfo.address,
-        amount: BigNumber(youPay.amount).multipliedBy(newRatio).toString(),
+        amount: BigNumber((youPay.amount || 0)).multipliedBy(newRatio).toString(),
       }))
       // }
     }
@@ -64,24 +66,30 @@ const SwapModal: React.FC<IProps> = (props) => {
   const onSetYouPay = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
 
-    const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
+    const isValidNumber
+      = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
     setYouPay({
       ...youPay,
-      amount: isValidNumber ? newAmount : '0',
+      amount: isValidNumber ? newAmount : '',
     })
 
     const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4)
+
+    const swapCalculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4)
+
+    // Update the corresponding field based on the activeInput flag
     setYouReceiver({
       ...youReceiver,
-      amount: calculatedAmount,
+      amount: activeInput === 'youPay' ? calculatedAmount : swapCalculatedAmount,
     })
   }
 
   const onSetYouReceiver = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
 
-    const isValidNumber = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
+    const isValidNumber
+      = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
     setYouReceiver({
       ...youReceiver,
@@ -89,13 +97,18 @@ const SwapModal: React.FC<IProps> = (props) => {
     })
 
     const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4)
+    const swapCalculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4)
+
+    // Update the corresponding field based on the activeInput flag
     setYouPay({
       ...youPay,
-      amount: calculatedAmount,
+      amount: activeInput === 'youReceiver' ? swapCalculatedAmount : calculatedAmount,
     })
   }
 
   const onSwap = () => {
+    setActiveInput(prevInput => (prevInput === 'youPay' ? 'youReceiver' : 'youPay'))
+
     const tempYouPay = { ...youPay }
     const tempYouReceiver = { ...youReceiver }
 
@@ -106,28 +119,6 @@ const SwapModal: React.FC<IProps> = (props) => {
     setYouReceiver({
       ...tempYouPay,
     })
-
-    // if (tempYouPay.token === 'USDC') {
-    //   setYouPay({
-    //     ...tempYouReceiver,
-    //     amount: tempYouPay.amount,
-    //   })
-
-    //   setYouReceiver({
-    //     ...tempYouPay,
-    //     amount: BigNumber(tempYouReceiver.amount).multipliedBy(ratio).toFixed(4),
-    //   })
-    // }
-    // else {
-    //   setYouPay({
-    //     ...tempYouReceiver,
-    //     amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
-    //   })
-
-    //   setYouReceiver({
-    //     ...tempYouPay,
-    //   })
-    // }
   }
 
   async function enterAnAmount() {
@@ -159,8 +150,26 @@ const SwapModal: React.FC<IProps> = (props) => {
     console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
   }
 
+  function afterClose() {
+    setActiveInput('youPay')
+
+    setYouPay(
+      {
+        token: 'USDC',
+        address: import.meta.env.VITE_USDC_TOKEN,
+        amount: '',
+      },
+    )
+
+    setYouReceiver({
+      token: props.currentTokenInfo.name,
+      address: props.currentTokenInfo.address,
+      amount: '',
+    })
+  }
+
   return (
-    <Modal {...props} footer={
+    <Modal afterClose={afterClose} {...props} footer={
       <Button type='primary' onClick={enterAnAmount}>
         Enter an amount
       </Button>
@@ -169,7 +178,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         <h2>swap</h2>
         <div className='flex'>
           <span>you pay</span>
-          <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
+          <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='w-full' onChange={onSetYouPay} />
           <span>{youPay.token}</span>
         </div>
         <div className='h50'>
@@ -179,7 +188,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         </div>
         <div className='flex'>
           <span>you receiver</span>
-          <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
+          <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
           <span>{youReceiver.token}</span>
         </div>
       </div>
