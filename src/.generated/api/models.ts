@@ -590,6 +590,8 @@ Canceled :订单取消 */
     price?: string = undefined;
     /** 出售者地址 */
     solder?: string = undefined;
+    /** 借款单的用户信息 */
+    userInfo?: UserInfoVo1 = undefined;
   }
 
   export class TotalScoreVo {

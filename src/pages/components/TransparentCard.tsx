@@ -48,11 +48,12 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
       <div className='text-left'>
         <div className='h11 w-full'></div>
         <h2 className="m0 h35 p0 text-24 font-semibold c-#37A4F8">{item.loanName}</h2>
+        <div className='h8 w-full'></div>
 
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>
-              Apply for loan
+              Loan amount
             </li>
             <li className='h29 text-16 c-#FFFFFF'>
               ${BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(2)}

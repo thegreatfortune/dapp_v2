@@ -31,10 +31,10 @@ const SharesMarket = () => {
         {/* <li>{index + 1} */}
         <li>
         <div className='flex'>
-          <span className='h40 w40' ><Avatar size={40} /></span>
+          <span className='h40 w40' ><Avatar size={40} src={item.userInfo?.pictureUrl}/></span>
           <span className=''>
-            <div className='ml-15'>michasi007</div>
-            <span className='ml-15'>@Artist</span>
+            <div className='ml-15'>{item.userInfo?.nickName}</div>
+            <span className='ml-15'>{item.userInfo?.platformName}</span>
           </span>
           </div>
         </li>
@@ -51,17 +51,17 @@ const SharesMarket = () => {
                 {
                   activeUser.id === item.userId
                     ? (
-                      <Button className='h25 w72 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+                      <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
                       )
                     : (
-                      <Button className='h25 w72 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                      <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
                       )
                 }
               </>
               )
             : (
               // 用户未连接钱包
-              <Button className='h25 w72 primary-btn'>Buy</Button>
+              <Button className='h25 w72 b-rd-30 primary-btn'>Buy</Button>
               )}
         </li>
       </ul>
