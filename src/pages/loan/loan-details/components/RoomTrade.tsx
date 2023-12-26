@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
-import { Button, message } from 'antd'
+import { Avatar, Button, message } from 'antd'
 import { useSearchParams } from 'react-router-dom'
 import { ethers } from 'ethers'
 import dayjs from 'dayjs'
@@ -28,12 +28,13 @@ const RoomTrade = () => {
   const renderItem = (item: Models.TokenMarketVo, index: number) => {
     return (
       <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822' key={item.loanId}>
-        <li>{index + 1}
+        {/* <li>{index + 1} */}
+        <li>
         <div className='flex'>
-          <span className='h40 w40' >头像</span>
+          <span className='h40 w40' ><Avatar size={40} /></span>
           <span className=''>
-            <div>michasi007</div>
-            <span>@Artist</span>
+            <div className='ml-15'>michasi007</div>
+            <span className='ml-15'>@Artist</span>
           </span>
           </div>
         </li>
@@ -60,7 +61,7 @@ const RoomTrade = () => {
               )
             : (
               // 用户未连接钱包
-              <Button className='primary-btn'>Buy</Button>
+              <Button className='h25 w72 primary-btn'>Buy</Button>
               )}
         </li>
       </ul>
