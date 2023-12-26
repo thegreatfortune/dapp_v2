@@ -110,21 +110,22 @@ const SwapModal: React.FC<IProps> = (props) => {
     // if (tempYouPay.token === 'USDC') {
     //   setYouPay({
     //     ...tempYouReceiver,
-    //     amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
-    //   })
-
-    //   setYouReceiver({
-    //     ...tempYouPay,
-    //   })
-    // }
-    // else {
-    //   setYouPay({
-    //     ...tempYouReceiver,
+    //     amount: tempYouPay.amount,
     //   })
 
     //   setYouReceiver({
     //     ...tempYouPay,
     //     amount: BigNumber(tempYouReceiver.amount).multipliedBy(ratio).toFixed(4),
+    //   })
+    // }
+    // else {
+    //   setYouPay({
+    //     ...tempYouReceiver,
+    //     amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
+    //   })
+
+    //   setYouReceiver({
+    //     ...tempYouPay,
     //   })
     // }
   }
