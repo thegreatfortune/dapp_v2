@@ -9,7 +9,6 @@ import LINK_Icon from '@/assets/images/loan-details/LINK.png'
 import LDO_Icon from '@/assets/images/loan-details/LDO.png'
 import AAVE_Icon from '@/assets/images/loan-details/AAVE.png'
 
-console.log('%c [ import.meta.env ]-8', 'font-size:13px; background:#b0f6ae; color:#f4fff2;', import.meta.env)
 const tradingPairTokenMap = {
   USDC: import.meta.env.VITE_USDC_TOKEN,
   // FollowToken: import.meta.env.VITE_FOLLOW_TOKEN,

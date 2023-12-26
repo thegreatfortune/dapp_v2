@@ -1224,7 +1224,7 @@ export class BrowserContractService {
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(
-      import.meta.env.VITE_BTC_TOKEN,
+      import.meta.env.VITE_USDC_TOKEN,
       swapToken,
       fee,
       ethers.parseEther(String(1)),
@@ -1232,6 +1232,7 @@ export class BrowserContractService {
     console.log('%c [ price ]-1227', 'font-size:13px; background:#f1ca51; color:#ffff95;', price)
 
     const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
+    console.log('%c [ ratio ]-1235', 'font-size:13px; background:#cea8a4; color:#ffece8;', ratio)
 
     return ratio
   }

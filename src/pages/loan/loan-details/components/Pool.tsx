@@ -137,8 +137,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }, [browserContractService, transactionPair, tradeId])
 
   async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
-    console.log('%c [ name ]-140', 'font-size:13px; background:#598bbb; color:#9dcfff;', name)
-    console.log('%c [ token ]-140', 'font-size:13px; background:#b185f3; color:#f5c9ff;', token)
     const ERC20Contract = await browserContractService?.getERC20Contract(token)
 
     const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
@@ -147,7 +145,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       return
 
     const balance = await ERC20Contract?.balanceOf(cp)
-    console.log('%c [ balance ]-150', 'font-size:13px; background:#f92c8c; color:#ff70d0;', balance)
 
     // 查询代币的符号和小数位数
     const symbol = await ERC20Contract?.symbol()

@@ -81,7 +81,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     // Update the corresponding field based on the activeInput flag
     setYouReceiver({
       ...youReceiver,
-      amount: activeInput === 'youPay' ? swapCalculatedAmount : calculatedAmount,
+      amount: activeInput === 'youPay' ? calculatedAmount : swapCalculatedAmount,
     })
   }
 
@@ -151,6 +151,8 @@ const SwapModal: React.FC<IProps> = (props) => {
   }
 
   function afterClose() {
+    setActiveInput('youPay')
+
     setYouPay(
       {
         token: 'USDC',
