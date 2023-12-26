@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { tokenList } from '../../../../contract/tradingPairTokenMap'
-import type { TokenInfo } from './DesignatedPosition'
+import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps extends ModalProps {
@@ -99,28 +99,35 @@ const SwapModal: React.FC<IProps> = (props) => {
     const tempYouPay = { ...youPay }
     const tempYouReceiver = { ...youReceiver }
 
-    // const truly = tempYouPay.token === 'USDC' ? tempYouPay : tempYouReceiver
+    setYouPay({
+      ...tempYouReceiver,
+    })
 
-    if (tempYouPay.token === 'USDC') {
-      setYouPay({
-        ...tempYouReceiver,
-        amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
-      })
+    setYouReceiver({
+      ...tempYouPay,
+    })
 
-      setYouReceiver({
-        ...tempYouPay,
-      })
-    }
-    else {
-      setYouPay({
-        ...tempYouReceiver,
-      })
+    // if (tempYouPay.token === 'USDC') {
+    //   setYouPay({
+    //     ...tempYouReceiver,
+    //     amount: tempYouPay.amount,
+    //   })
 
-      setYouReceiver({
-        ...tempYouPay,
-        amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
-      })
-    }
+    //   setYouReceiver({
+    //     ...tempYouPay,
+    //     amount: BigNumber(tempYouReceiver.amount).multipliedBy(ratio).toFixed(4),
+    //   })
+    // }
+    // else {
+    //   setYouPay({
+    //     ...tempYouReceiver,
+    //     amount: BigNumber(tempYouReceiver.amount).dividedBy(ratio).toFixed(4),
+    //   })
+
+    //   setYouReceiver({
+    //     ...tempYouPay,
+    //   })
+    // }
   }
 
   async function enterAnAmount() {

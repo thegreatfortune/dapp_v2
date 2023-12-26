@@ -10,7 +10,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import SModal from '@/pages/components/SModal'
 
-const RoomTrade = () => {
+const SharesMarket = () => {
   const [searchParams] = useSearchParams()
 
   const [tradeId] = searchParams.getAll('tradeId')
@@ -96,6 +96,7 @@ const RoomTrade = () => {
 
       setBuyState('Processing')
       setIsModalOpen(true)
+      console.log('%c [ item.marketId ]-99', 'font-size:13px; background:#dedc23; color:#ffff67;', item.marketId)
       await browserContractService?.followMarketContract_cancelOrder(BigInt(item.marketId))
       setBuyState('Succeed')
     }
@@ -135,4 +136,4 @@ const RoomTrade = () => {
   )
 }
 
-export default RoomTrade
+export default SharesMarket

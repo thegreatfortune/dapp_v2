@@ -7,8 +7,8 @@ import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
-import DesignatedPosition from './components/DesignatedPosition'
-import RoomTrade from './components/RoomTrade'
+import Pool from './components/Pool'
+import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
 import { LoanService } from '@/.generated/api/Loan'
@@ -79,14 +79,19 @@ const LoanDetails = () => {
           const pcc = await browserContractService?.getProcessCenterContract()
 
           const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
+          console.log('%c [ getBorrowerToProfit ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
 
           setExtractMoney(ethers.formatUnits(res ?? 0))
         }
         else if (prePage === 'lend') {
           const pcc = await browserContractService?.getProcessCenterContract()
+          const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
 
-          const res = await pcc?.getUserTotalMoney(BigInt(tradeId))
-          setExtractMoney(ethers.formatUnits(res ?? 0))
+          if (tokenId) {
+            const res = await pcc?.getUserTotalMoney(BigInt(tokenId))
+            console.log('%c [ getUserTotalMoney ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
+            setExtractMoney(ethers.formatUnits(res ?? 0))
+          }
         }
 
         setExtraBtnLoading(false)
@@ -149,7 +154,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Designated Position',
-      children: <DesignatedPosition loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -159,7 +164,7 @@ const LoanDetails = () => {
     {
       key: '3',
       label: 'Room trade',
-      children: <RoomTrade />,
+      children: <SharesMarket />,
     },
   ]
 
