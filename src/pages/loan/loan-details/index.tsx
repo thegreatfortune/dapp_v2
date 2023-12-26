@@ -153,7 +153,7 @@ const LoanDetails = () => {
   const items: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Designated Position',
+      label: 'Pool',
       children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
@@ -163,7 +163,7 @@ const LoanDetails = () => {
     },
     {
       key: '3',
-      label: 'Room trade',
+      label: 'Shares market',
       children: <SharesMarket />,
     },
   ]
@@ -255,7 +255,7 @@ const LoanDetails = () => {
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Poll</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Room trade</div>
+        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Shares market</div>
       </div>
     </div>)
   }

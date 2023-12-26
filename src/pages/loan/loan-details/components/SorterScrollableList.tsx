@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const SorterScrollableList: React.FC<IProps> = ({ activeUser, renderItem, tradeId }) => {
-  const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, orderItemList: 'price=asc', state: 'ToBeTraded', tradeId, loanId: undefined, marketId: undefined })
+  const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, orderItemList: 'price=false', state: 'ToBeTraded', tradeId, loanId: undefined, marketId: undefined })
 
   const quantitySorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
     let sortDirection
