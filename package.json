@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --open & gen:abi",
-    "mumbai": "vite --open --mode=mumbai & gen:abi",
+    "dev": "pnpm gen:abi & vite --open",
+    "mumbai": "pnpm gen:abi & vite --open --mode=mumbai",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
     "gen:api": "ts-node --esm openapi.config.ts",
