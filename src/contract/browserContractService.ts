@@ -1278,6 +1278,7 @@ export class BrowserContractService {
     const hIndex = await this.getHIndex()
 
     const res = await followRouterContract.doV3Swap(tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
+    console.log('%c [ tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee ]-1281', 'font-size:13px; background:#b5288d; color:#f96cd1;', tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
     return handleTransaction(res)
   }
 

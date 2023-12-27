@@ -127,7 +127,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
     let tokenInformation = new SwapInfo()
 
-    let buyOrSell = 0
+    let buyOrSell = 0 //  1为_token买入USDC操作,非1为卖出USDC换成_token
 
     if (youPay.token === 'USDC') {
       buyOrSell = 0
@@ -135,9 +135,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       tokenInformation.amount = youPay.amount
     }
     else {
-      const index = tokenList.findIndex(e => e.address === youPay.address)
+      // const index = tokenList.findIndex(e => e.address === youPay.address)
 
-      buyOrSell = index
+      buyOrSell = 1
+      // buyOrSell = index
       tokenInformation = youPay
     }
 
