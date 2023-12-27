@@ -3,8 +3,6 @@ import { Button, Image, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { RetweetOutlined } from '@ant-design/icons'
-import { tokenList } from '../../../../contract/tradingPairTokenMap'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
@@ -14,6 +12,7 @@ import FolCoin from '@/assets/images/loan-details/FolCoin.png'
 interface IProps extends ModalProps {
   currentTokenInfo: TokenInfo
   tradeId: bigint | null
+  resetSwapTokenInfo: () => Promise<void>
 }
 
 class SwapInfo {
@@ -24,6 +23,8 @@ class SwapInfo {
 
 const SwapModal: React.FC<IProps> = (props) => {
   const { browserContractService } = useBrowserContract()
+
+  const [loading, setLoading] = useState(false)
 
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
@@ -129,9 +130,11 @@ const SwapModal: React.FC<IProps> = (props) => {
     if (!props.tradeId)
       return
 
+    setLoading(true)
+
     let tokenInformation = new SwapInfo()
 
-    let buyOrSell = 0
+    let buyOrSell = 0 //  1为_token买入USDC操作,非1为卖出USDC换成_token
 
     if (youPay.token === 'USDC') {
       buyOrSell = 0
@@ -139,9 +142,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       tokenInformation.amount = youPay.amount
     }
     else {
-      const index = tokenList.findIndex(e => e.address === youPay.address)
+      // const index = tokenList.findIndex(e => e.address === youPay.address)
 
-      buyOrSell = index
+      buyOrSell = 1
+      // buyOrSell = index
       tokenInformation = youPay
     }
 
@@ -150,13 +154,18 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
-    console.log('%c [ tokenInformation ]-145', 'font-size:13px; background:#f054ad; color:#ff98f1;', tokenInformation)
-    console.log('%c [ buyOrSell ]-154', 'font-size:13px; background:#0d14fd; color:#5158ff;', buyOrSell)
+    try {
+      const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+      if (res?.status === 1)
+        await props.resetSwapTokenInfo()
+    }
+    catch (error) {
+      console.log('%c [ error ]-152', 'font-size:13px; background:#857ff5; color:#c9c3ff;', error)
+    }
 
-    // return
-
-    const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
-    console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
+    finally {
+      setLoading(true)
+    }
   }
 
   function afterClose() {
@@ -173,7 +182,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     setYouReceiver({
       token: props.currentTokenInfo.name,
       address: props.currentTokenInfo.address,
-      amount: '',
+      amount: '0',
     })
   }
 
@@ -183,50 +192,24 @@ const SwapModal: React.FC<IProps> = (props) => {
         Enter an amount
       </Button>
     }>
-<<<<<<< HEAD
-      <div className='relative h-360'>
-        <div className='flex justify-between'>
-          <h2 className='c-#fff'>SWAP</h2>
-          <div className='flex'>
-            <h2 className='ml-15 c-#373749'>Follow</h2>
-            <img src={FolCoin} alt="" className='mt-23 h25 w25 opacity-50' />
-          </div>
-=======
       <div>
         <h2>swap</h2>
         <div className='flex'>
           <span>you pay</span>
           <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
           <span>{youPay.token}</span>
->>>>>>> 0373bd948046bcf5f4acbf2082829a05d46babc9
         </div>
-        <div className='z-1 h125 w-full b-rd-6'>
+        {/* <div className='z-1 h125 w-full b-rd-6'>
           <span className='ml-5 mt-20 text-14'>you pay</span>
           <div className='flex'>
             <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='ml-2 mt-20 h50 w-431 text-15 text-#fff' onChange={onSetYouPay} />
             <span className='m-auto ml-5 mt-32 text-center'>{youPay.token}</span>
           </div>
-        </div>
-<<<<<<< HEAD
-        <div className='absolute left-206 right-50% top-50% z-2 h40 w-full'>
-          <div className='z-3 h40 w40 transform border-1 b-gray b-rd-6 b-solid c-#fff'>
-            <RetweetOutlined onClick={onSwap} twoToneColor="#eb2f96" style={{ fontSize: '40px', margin: 'auto', color: '#08c', width: '40px', position: 'absolute' }} className='absolute z-2 m-auto transform transition-transform active:scale-95 hover:scale-105 !hover:c-pink' />
-          </div>
-        </div>
-        {/* <div className='m-auto h40 w-472 transform b-rd-6 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r text-center text-20 font-700 transition-transform active:scale-99 hover:scale-101 !hover:c-pink' onClick={onSwap}>↑↓Exchange</div> */}
-        <div className='relative z-1 h10 w-full'></div>
-        <div className='z-1 h125 w-full b-rd-6'>
-          <span className='ml-5 text-14'>you receiver</span>
-          <div className='flex'>
-            <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='ml-2 mt-20 h50 w-431 text-15 text-#fff' onChange={onSetYouReceiver} />
-            <span className='m-auto ml-5 mt-32 text-center'>{youReceiver.token}</span>
-          </div>
-=======
+        </div> */}
         <div className='flex'>
           <span>you receiver</span>
           <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
           <span>{youReceiver.token}</span>
->>>>>>> 0373bd948046bcf5f4acbf2082829a05d46babc9
         </div>
       </div>
     </Modal>

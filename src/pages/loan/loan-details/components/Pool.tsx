@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Input, Spin, message } from 'antd'
+import { Button, Input, Spin, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
@@ -40,7 +40,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const [uniqueTokenInfos, setUniqueTokenInfos] = useState<TokenInfo[]>([])
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSwapModalOpen, setSetIsModalOpen] = useState(false)
 
   const [isDepositModalOpen, setDepositIsModalOpen] = useState(false)
 
@@ -99,9 +99,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }, [tradeId, browserContractService])
 
   useEffect(() => {
+    getBalanceByTokens()
+  }, [browserContractService, transactionPair, tradeId])
+
+  function getBalanceByTokens() {
     if (!browserContractService || !tradeId)
       return
-
     setLoadTokenInfoLoading(true)
     try {
       setTokenInfos([])
@@ -122,10 +125,9 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       }
 
       Promise.all(proList).then((res) => {
-        console.log('%c [ res ]-110', 'font-size:13px; background:#b0a4b3; color:#f4e8f7;', res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
-        console.log('%c [ err ]-110', 'font-size:13px; background:#a79768; color:#ebdbac;', err)
+        throw new Error(err)
       })
     }
     catch (error) {
@@ -134,7 +136,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     finally {
       setLoadTokenInfoLoading(false)
     }
-  }, [browserContractService, transactionPair, tradeId])
+  }
 
   async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
     const ERC20Contract = await browserContractService?.getERC20Contract(token)
@@ -174,9 +176,15 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     }
   }
 
+  async function resetSwapTokenInfo() {
+    await getBalanceByTokens()
+
+    setSetIsModalOpen(false)
+  }
+
   function onOpenModal(item: TokenInfo) {
     setCurrentTokenInfo(item)
-    setIsModalOpen(true)
+    setSetIsModalOpen(true)
   }
 
   function onDeposit() {
@@ -209,11 +217,11 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   return (
     <div className='w-full'>
-      <SwapModal tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isModalOpen} onCancel={() => setIsModalOpen(false)} />
+      <SwapModal resetSwapTokenInfo={resetSwapTokenInfo} tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isSwapModalOpen} onCancel={() => setSetIsModalOpen(false)} />
 
       <SModal open={isDepositModalOpen} onCancel={() => setDepositIsModalOpen(false)} footer={
         <div>
-          <Button onClick={() => setIsModalOpen(false)}>
+          <Button onClick={() => setSetIsModalOpen(false)}>
             Cancel
           </Button>
           <Button type='primary' onClick={onDepositModalConfirm} >
@@ -276,51 +284,62 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         </div>
 
         {/* <div className="w48" /> */}
+        {/* rootClassName='grid grid-cols-2 w715 gap-x-36' */}
 
-        <div className="grid grid-cols-2 w715 gap-x-36" >
+        <Tabs
+          centered
+          rootClassName='w-715'
+          tabPosition="bottom"
+          items={Array.from({ length: Math.ceil(uniqueTokenInfos.length / 6) }, (_, index) =>
+            uniqueTokenInfos.slice(index * 6, (index + 1) * 6),
+          ).map((chunk, index) => ({
+            label: `Tab ${index + 1}`,
+            key: index + 1,
+            children: (
+              <div className='grid grid-cols-2 w715 gap-x-36'>
+                {chunk.map((item, itemIndex) => (
+                  <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
+                    <div className='ml-59 mt-31 flex text-21 lh-25 c-#fff'>
+                      {item.name}({
+                        // 如果余额大于零，则计算比例并显示结果
+                        Number(item.balance) !== 0
+                          ? BigNumber(item.dollars ?? 0)
+                            .div((tokenTotals))
+                            .times(100)
+                            .toFixed(2)
+                          : <span>
+                            0
+                          </span>
+                      })
+                      %
+                      <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                    </div>
+                    <div className='flex'>
+                      <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
+                      <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
+                    </div>
 
-      {
-        uniqueTokenInfos.length === 0
-          ? <Spin size="large" />
-          : uniqueTokenInfos.map(item => (
-          <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-            <div className='ml-59 mt-31 flex text-21 lh-25 c-#fff'>
-              {item.name}({
-                // 如果余额大于零，则计算比例并显示结果
-                Number(item.balance) !== 0
-                  ? BigNumber(item.dollars ?? 0)
-                    .div((tokenTotals))
-                    .times(100)
-                    .toFixed(2)
-                  : <span>
-                    0
-                  </span>
-              })
-              %
-              <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
-            </div>
-            <div className='flex'>
-              <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
-              <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
-              </div>
-
-            {/* //Test 用户创建的才能看 */}
-            {
-              item.name !== 'USDC'
-                ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 lh-30 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                : null
-            }
-            {/* // 下面这个才是要的 */}
-            {/* {
+                    {/* //Test 用户创建的才能看 */}
+                    {
+                      item.name !== 'USDC'
+                        ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 lh-30 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                        : null
+                    }
+                    {/* // 下面这个才是要的 */}
+                    {/* {
               item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
                 ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                 : null
             } */}
-          </div>
-          ))
-      }
+                  </div>
+                ))}
+              </div>
+            ),
+          }))
+          }>
+          {/* 其他 Tabs 相关的配置和渲染 */}
+        </Tabs>
 
-        </div>
       </div>
 
       <div className="h58" />
@@ -330,7 +349,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       <LoanHistory tradeId={String(tradeId ?? '')} />
 
       <div className="40" />
-    </div>
+    </div >
   )
 }
 
