@@ -255,12 +255,13 @@ const ApplyLoan = () => {
       return
 
     const models = { ...value, ...loanRequisitionEditModel }
+    console.log('%c [ models ]-258', 'font-size:13px; background:#a58a88; color:#e9cecc;', models)
 
     await form.validateFields()
 
     setCreatedPoolLoading(true)
     let url
-    if (!models.imageUrl)
+    if (useDiagram === true)
       url = await uploadFile()
     setCreatedPoolLoading(false)
 

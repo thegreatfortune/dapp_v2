@@ -146,6 +146,11 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
+    console.log('%c [ tokenInformation ]-145', 'font-size:13px; background:#f054ad; color:#ff98f1;', tokenInformation)
+    console.log('%c [ buyOrSell ]-154', 'font-size:13px; background:#0d14fd; color:#5158ff;', buyOrSell)
+
+    // return
+
     const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
     console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
   }
@@ -178,7 +183,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         <h2>swap</h2>
         <div className='flex'>
           <span>you pay</span>
-          <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='w-full' onChange={onSetYouPay} />
+          <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
           <span>{youPay.token}</span>
         </div>
         <div className='h50'>
@@ -188,7 +193,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         </div>
         <div className='flex'>
           <span>you receiver</span>
-          <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
+          <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
           <span>{youReceiver.token}</span>
         </div>
       </div>
