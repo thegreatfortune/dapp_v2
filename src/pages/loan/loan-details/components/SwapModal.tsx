@@ -3,7 +3,6 @@ import { Button, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { tokenList } from '../../../../contract/tradingPairTokenMap'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
@@ -147,13 +146,14 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
-    console.log('%c [ tokenInformation ]-145', 'font-size:13px; background:#f054ad; color:#ff98f1;', tokenInformation)
-    console.log('%c [ buyOrSell ]-154', 'font-size:13px; background:#0d14fd; color:#5158ff;', buyOrSell)
-
-    // return
-
-    const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
-    console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
+    try {
+      const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+      if (res?.status === 1)
+        window.location.reload()
+    }
+    catch (error) {
+      console.log('%c [ error ]-152', 'font-size:13px; background:#857ff5; color:#c9c3ff;', error)
+    }
   }
 
   function afterClose() {
