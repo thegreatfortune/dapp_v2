@@ -113,7 +113,7 @@ const SharesMarket = () => {
   }
 
   return (
-    <div>
+    <div className='h241 w464'>
 
       <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
 

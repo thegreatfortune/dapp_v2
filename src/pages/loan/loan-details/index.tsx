@@ -301,12 +301,13 @@ const LoanDetails = () => {
     >
       {
         !lendState
-          ? <div>
-            <h1 className='font-b h21 w34 text-12 lh-21 c-#fff'>Share</h1>
-            <div className='flex items-center justify-between'>
+          ? <div className='h241 w464'>
+            <h1 className='font-b ml-110 mt-24 h21 w34 text-12 lh-21 c-#fff'>Share</h1>
+            <div className='h32 w-full flex items-center'>
               <InputNumber
+                size='large'
                 value={copies}
-                className='w-full'
+                className='m-a h32 w-full w130 b-1px b-#808080 b-rd-4 b-solid text-center'
                 min={1}
                 onChange={v => setCopies(v)}
               />

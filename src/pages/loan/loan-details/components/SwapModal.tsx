@@ -150,6 +150,11 @@ const SwapModal: React.FC<IProps> = (props) => {
       return
     }
 
+    console.log('%c [ tokenInformation ]-145', 'font-size:13px; background:#f054ad; color:#ff98f1;', tokenInformation)
+    console.log('%c [ buyOrSell ]-154', 'font-size:13px; background:#0d14fd; color:#5158ff;', buyOrSell)
+
+    // return
+
     const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
     console.log('%c [ doV3Swa ]-139', 'font-size:13px; background:#06b06f; color:#4af4b3;', res)
   }
@@ -178,6 +183,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         Enter an amount
       </Button>
     }>
+<<<<<<< HEAD
       <div className='relative h-360'>
         <div className='flex justify-between'>
           <h2 className='c-#fff'>SWAP</h2>
@@ -185,6 +191,14 @@ const SwapModal: React.FC<IProps> = (props) => {
             <h2 className='ml-15 c-#373749'>Follow</h2>
             <img src={FolCoin} alt="" className='mt-23 h25 w25 opacity-50' />
           </div>
+=======
+      <div>
+        <h2>swap</h2>
+        <div className='flex'>
+          <span>you pay</span>
+          <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
+          <span>{youPay.token}</span>
+>>>>>>> 0373bd948046bcf5f4acbf2082829a05d46babc9
         </div>
         <div className='z-1 h125 w-full b-rd-6'>
           <span className='ml-5 mt-20 text-14'>you pay</span>
@@ -193,6 +207,7 @@ const SwapModal: React.FC<IProps> = (props) => {
             <span className='m-auto ml-5 mt-32 text-center'>{youPay.token}</span>
           </div>
         </div>
+<<<<<<< HEAD
         <div className='absolute left-206 right-50% top-50% z-2 h40 w-full'>
           <div className='z-3 h40 w40 transform border-1 b-gray b-rd-6 b-solid c-#fff'>
             <RetweetOutlined onClick={onSwap} twoToneColor="#eb2f96" style={{ fontSize: '40px', margin: 'auto', color: '#08c', width: '40px', position: 'absolute' }} className='absolute z-2 m-auto transform transition-transform active:scale-95 hover:scale-105 !hover:c-pink' />
@@ -206,6 +221,12 @@ const SwapModal: React.FC<IProps> = (props) => {
             <Input disabled={youReceiver.token !== 'USDC'} value={youReceiver.amount} className='ml-2 mt-20 h50 w-431 text-15 text-#fff' onChange={onSetYouReceiver} />
             <span className='m-auto ml-5 mt-32 text-center'>{youReceiver.token}</span>
           </div>
+=======
+        <div className='flex'>
+          <span>you receiver</span>
+          <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
+          <span>{youReceiver.token}</span>
+>>>>>>> 0373bd948046bcf5f4acbf2082829a05d46babc9
         </div>
       </div>
     </Modal>
