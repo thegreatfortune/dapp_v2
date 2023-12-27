@@ -9,6 +9,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 interface IProps extends ModalProps {
   currentTokenInfo: TokenInfo
   tradeId: bigint | null
+  resetSwapTokenInfo: () => Promise<void>
 }
 
 class SwapInfo {
@@ -19,6 +20,8 @@ class SwapInfo {
 
 const SwapModal: React.FC<IProps> = (props) => {
   const { browserContractService } = useBrowserContract()
+
+  const [loading, setLoading] = useState(false)
 
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
@@ -124,6 +127,8 @@ const SwapModal: React.FC<IProps> = (props) => {
     if (!props.tradeId)
       return
 
+    setLoading(true)
+
     let tokenInformation = new SwapInfo()
 
     let buyOrSell = 0 //  1为_token买入USDC操作,非1为卖出USDC换成_token
@@ -149,10 +154,14 @@ const SwapModal: React.FC<IProps> = (props) => {
     try {
       const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
       if (res?.status === 1)
-        window.location.reload()
+        await props.resetSwapTokenInfo()
     }
     catch (error) {
       console.log('%c [ error ]-152', 'font-size:13px; background:#857ff5; color:#c9c3ff;', error)
+    }
+
+    finally {
+      setLoading(true)
     }
   }
 
@@ -170,7 +179,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     setYouReceiver({
       token: props.currentTokenInfo.name,
       address: props.currentTokenInfo.address,
-      amount: '',
+      amount: '0',
     })
   }
 
