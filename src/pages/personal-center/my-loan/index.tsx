@@ -79,7 +79,7 @@ const MyLoan = () => {
         }}
       >
         <InfiniteScroll
-          dataLength={total ?? 0}
+          dataLength={loanOrderVOList.length ?? 0}
           next={loadMoreData}
           hasMore={(total !== undefined) && (loanOrderVOList.length < total) }
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}

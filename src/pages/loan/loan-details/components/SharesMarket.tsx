@@ -113,7 +113,7 @@ const SharesMarket = () => {
   }
 
   return (
-    <div className='h241 w464'>
+    <div >
 
       <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
 
@@ -130,7 +130,7 @@ const SharesMarket = () => {
 
       {/* // TODO 默认Unit Price 升序排序 */}
 
-      <SorterScrollableList activeUser={activeUser} renderItem={renderItem} tradeId={Number(tradeId)} />
+      <SorterScrollableList grid={{ gutter: 16, column: 6 }} containerId={'SharesMarketContainerId'} activeUser={activeUser} renderItem={renderItem} tradeId={Number(tradeId)} />
 
     </div>
   )

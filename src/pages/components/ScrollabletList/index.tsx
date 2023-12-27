@@ -45,12 +45,12 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   const fetchData = async (cPage: number = 1) => {
     try {
       setLoading(true)
-      const res = await api({ ...params, cPage })
+      const res = await api({ ...params, page: cPage })
 
       setResult(prevResult => ({
         ...prevResult,
         total: res.total,
-        records: res?.records ?? [],
+        records: cPage > 1 ? [...(prevResult.records ?? []), ...(res?.records ?? [])] : res?.records ?? [],
       }))
     }
     catch (error) {
@@ -107,8 +107,8 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
 
   const insideColumnRenderItem = () => {
     return (
-      <ul className='flex list-none gap-x-168'>
-        {columns?.map((e, i) => <li key={e.key}>{e.render
+      <ul className='grid grid-cols-6 list-none gap-x-168'>
+        {columns?.map((e, i) => <li className='w-168' key={e.key}>{e.render
           ? <span key={e.key}>{e.render(e, result.records!, columnRenderCallback)}</span>
           : <span key={e.key}>{e.sorter && e.onSorter
             ? <Title onSorter={imgIndex => onSorter(imgIndex, result.records!, e.onSorter!)} title={e.title} />
@@ -123,10 +123,10 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
       {columns && insideColumnRenderItem()}
       <div
         id={containerId}
-        className={`${className} h500 overflow-auto`}
+        className={`${className} h500 overflow-auto relative`}
       >
         <InfiniteScroll
-          dataLength={result.total ?? 0}
+          dataLength={result?.records?.length ?? 0}
           next={handleLoadMore}
           hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
@@ -136,24 +136,23 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           {
             grid
               ? <List
-            grid={grid}
-             split={false}
-             dataSource={result.records}
-             renderItem={(item, index) => (
-               <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
-                 {renderItem(item, index)}
-               </List.Item>
-             )}
-           />
+                split={false}
+                dataSource={result.records}
+                renderItem={(item, index) => (
+                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                    {renderItem(item, index)}
+                  </List.Item>
+                )}
+              />
               : <List
-               split={false}
-               dataSource={result.records}
-               renderItem={(item, index) => (
-                 <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
-                   {renderItem(item, index)}
-                 </List.Item>
-               )}
-             />
+                split={false}
+                dataSource={result.records}
+                renderItem={(item, index) => (
+                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
+                    {renderItem(item, index)}
+                  </List.Item>
+                )}
+              />
           }
 
         </InfiniteScroll>

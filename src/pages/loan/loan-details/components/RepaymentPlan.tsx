@@ -246,7 +246,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         }}
       >
         <InfiniteScroll
-          dataLength={result.total ?? 0}
+          dataLength={result?.records?.length ?? 0 }
           next={fetchData}
           hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
