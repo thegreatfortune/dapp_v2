@@ -3,11 +3,12 @@ import { Button, Image, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { SyncOutlined } from '@ant-design/icons'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 // import exChange from '@/assets/images/loan-details/exchange.png'
-import FolCoin from '@/assets/images/loan-details/FolCoin.png'
+// import FolCoin from '@/assets/images/loan-details/FolCoin.png'
 
 interface IProps extends ModalProps {
   currentTokenInfo: TokenInfo
@@ -188,28 +189,32 @@ const SwapModal: React.FC<IProps> = (props) => {
 
   return (
     <Modal afterClose={afterClose} {...props} footer={
-      <Button type='primary' onClick={enterAnAmount}>
+      <Button
+        type='primary'
+        onClick={enterAnAmount}
+        className='mt-5 h45 w-full'
+      >
         Enter an amount
       </Button>
     }>
-      <div>
-        <h2>swap</h2>
-        <div className='flex'>
+      <div className='relative'>
+        <h2>Swap</h2>
+        <div className='h95 w-full b-rd-6 bg-#141414'>
           <span>you pay</span>
-          <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} />
-          <span>{youPay.token}</span>
-        </div>
-        {/* <div className='z-1 h125 w-full b-rd-6'>
-          <span className='ml-5 mt-20 text-14'>you pay</span>
-          <div className='flex'>
-            <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='ml-2 mt-20 h50 w-431 text-15 text-#fff' onChange={onSetYouPay} />
-            <span className='m-auto ml-5 mt-32 text-center'>{youPay.token}</span>
+          <div className='mt-10 flex'>
+            <Input disabled={youPay.token !== 'USDC'} value={youPay.amount} className='w-full' onChange={onSetYouPay} size='large' />
+            <span className='m-auto text-center'>{youPay.token}</span>
           </div>
-        </div> */}
-        <div className='flex'>
-          <span>you receiver</span>
-          <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} />
-          <span>{youReceiver.token}</span>
+        </div>
+        <button className='absolute left-201 top-46% z-2 mt-14 h47 w52 transform b-1px b-#424242 b-rd-6 b-solid bg-#141414 text-#fff transition-transform active:scale-98 hover:scale-102 !hover:c-pink'
+          onClick={onSwap} font-size-34><SyncOutlined style={{ fontSize: '29px', cursor: 'pointer' }} /></button>
+        <div className='h15'></div>
+        <div className='h95 w-full b-rd-6 bg-#141414'>
+          <span className='z-1'>you receiver</span>
+          <div className='mt-10 flex'>
+            <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} size='large' />
+            <span className='m-auto text-center'>{youReceiver.token}</span>
+          </div>
         </div>
       </div>
     </Modal>
