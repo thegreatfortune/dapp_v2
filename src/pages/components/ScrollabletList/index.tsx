@@ -137,6 +137,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
             grid
               ? <List
                 split={false}
+                grid={grid}
                 dataSource={result.records}
                 renderItem={(item, index) => (
                   <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>

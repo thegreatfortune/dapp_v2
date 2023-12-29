@@ -8,6 +8,7 @@
     "mumbai": "pnpm gen:abi & vite --open --mode=mumbai",
     "build": "vite build",
     "build:tsc": "tsc && vite build",
+    "commit": "wave commit",
     "gen:api": "ts-node --esm openapi.config.ts",
     "gen:abi": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",
     "lint:fix": "eslint . --fix",

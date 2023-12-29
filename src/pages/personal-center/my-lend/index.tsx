@@ -80,7 +80,7 @@ const MyLend = () => {
         }}
       >
         <InfiniteScroll
-           dataLength={result?.records?.length ?? 0 }
+           dataLength={lendOrderVOList?.length ?? 0 }
           next={loadMoreData}
           hasMore={(total !== undefined) && (lendOrderVOList.length < total) }
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
