@@ -34,6 +34,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
 
+    esbuild: {
+      pure: ['console.log'],
+      drop: ['debugger'],
+    },
+
     build: {
       assetsDir: 'assets',
       // sourcemap: true,

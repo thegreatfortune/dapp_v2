@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/images/logo.png'
 import searchImg from '@/assets/images/search.png'
-import './navBar.css'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
 import { isContractAddress, isTwitterHandle } from '@/utils/regex'
@@ -53,25 +52,25 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
-        <nav className="h140 w-full flex items-center justify-between text-white" id='navBar'>
+        <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
             <div className="flex items-center text-center">
                 <Avatar src={logo} className="mx6 h34 w34"></Avatar>
                 <div className="text-30 font-900"><i>{title}</i></div>
             </div>
 
-            <ul className="flex list-none justify-around p0 font-size-20 text-[#D2D2D2]">
-                <li className="inline-block scale-100 transform transition-transform hover:scale-110 hover:font-bold hover:text-white">
-                    <NavLink to="/" target='_blank' className='text-[#D2D2D2]'>
+            <ul className="flex list-none justify-around p0 text-center font-size-16 c-white">
+                <li className="inline-block">
+                    <NavLink to="/portal" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
                         {t('nav.home')}
                     </NavLink>
                 </li>
-                <li className="ml-30 inline-block scale-100 transform transition-transform hover:scale-110 hover:font-bold hover:text-white">
-                    <NavLink to="/market" target='_blank' className='text-[#D2D2D2]'>
+                <li className="ml-30 inline-block">
+                    <NavLink to="/market" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0' >
                         {t('nav.market')}
                     </NavLink>
                 </li>
-                <li className="ml-30 inline-block scale-100 transform transition-transform hover:scale-110 hover:font-bold hover:text-white">
-                    <NavLink to="/trade" target='_blank' className='text-[#D2D2D2]'>
+                <li className="ml-30 inline-block">
+                    <NavLink to="/trade" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
                         {t('nav.trade')}
                     </NavLink>
                 </li>

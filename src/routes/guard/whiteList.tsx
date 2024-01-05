@@ -15,18 +15,18 @@ const NotFound = lazy(() => import('../../pages/NotFound'))
 export const whiteList: IRouter[] = [
   {
     path: '/',
-    element: <Navigate to="/portal" replace={true} />,
+    element: <Navigate to="/market" replace={true} />,
   },
-  {
-    path: '/portal',
-    element: (
-          <PortalLayout>
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <Portal />
-            </React.Suspense>
-          </PortalLayout>
-    ),
-  },
+  // {
+  //   path: '/portal',
+  //   element: (
+  //         <PortalLayout>
+  //           <React.Suspense fallback={<div>Loading...</div>}>
+  //             <Portal />
+  //           </React.Suspense>
+  //         </PortalLayout>
+  //   ),
+  // },
   {
     path: '/market',
     index: true,

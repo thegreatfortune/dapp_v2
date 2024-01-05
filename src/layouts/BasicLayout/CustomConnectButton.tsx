@@ -178,7 +178,7 @@ const CustomConnectButton = () => {
               return (
 
                 <div>
-                  <button onClick={onOpenConnectModal} type="button" className='h60 w181 rounded-30 font-size-18 primary-btn' >
+                  <button onClick={onOpenConnectModal} type="button" className='h48 w170 rounded-30 font-size-18 primary-btn' >
                     Connect Wallet
                   </button>
                 </div>
