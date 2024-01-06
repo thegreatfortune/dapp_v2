@@ -59,9 +59,6 @@ if (import.meta.env.DEV)
 const { chains, publicClient } = configureChains(
   chainList,
   [
-    alchemyProvider({
-      apiKey: import.meta.env.VITE_ALCHEMY_ID,
-    }),
     publicProvider(),
   ],
 )

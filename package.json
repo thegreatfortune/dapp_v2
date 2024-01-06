@@ -7,6 +7,7 @@
     "dev": "pnpm gen:abi & vite --open",
     "mumbai": "pnpm gen:abi & vite --open --mode=mumbai",
     "build": "vite build",
+    "build:test": "vite build --mode=mumbai",
     "build:tsc": "tsc && vite build",
     "commit": "wave commit",
     "gen:api": "ts-node --esm openapi.config.ts",
