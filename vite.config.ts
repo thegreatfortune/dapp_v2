@@ -3,6 +3,8 @@ import type { ConfigEnv, UserConfig } from 'vite'
 import { defineConfig, loadEnv } from 'vite'
 import UnoCSS from 'unocss/vite'
 import react from '@vitejs/plugin-react-swc'
+import configCompressPlugin from './config/plugin/compress'
+import configVisualizerPlugin from './config/plugin/visualizer'
 
 // import basicSsl from '@vitejs/plugin-basic-ssl'
 
@@ -21,7 +23,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
 
-    plugins: [UnoCSS(), react()],
+    plugins: [UnoCSS(), react(), configCompressPlugin('gzip'), configVisualizerPlugin(mode)],
 
     server: {
       // https: true,
@@ -41,7 +43,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
 
     build: {
       assetsDir: 'assets',
-      // sourcemap: true,
+      sourcemap: mode !== 'production',
     },
 
   })

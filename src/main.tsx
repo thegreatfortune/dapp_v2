@@ -4,9 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-
 import '@/utils/request.ts'
-
 import '@rainbow-me/rainbowkit/styles.css'
 import type { Locale } from '@rainbow-me/rainbowkit'
 import {
@@ -19,7 +17,6 @@ import {
   arbitrum,
   polygonMumbai,
 } from 'wagmi/chains'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
 import './index.css'
@@ -64,7 +61,7 @@ const { chains, publicClient } = configureChains(
 )
 
 const { connectors } = getDefaultWallets({
-  appName: 'Follow',
+  appName: import.meta.env.VITE_DAPP_TITLE,
   projectId: import.meta.env.VITE_PROJECT_ID_FOR_WALLETS,
   chains,
 })
