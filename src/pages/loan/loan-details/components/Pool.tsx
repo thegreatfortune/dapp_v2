@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import type { TabsProps } from 'antd'
 import { Button, Input, Spin, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
@@ -215,6 +216,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     }
   }
 
+  const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
+      <DefaultTabBar {...props} className='h2' />
+  )
+
   return (
     <div className='w-full'>
       <SwapModal resetSwapTokenInfo={resetSwapTokenInfo} tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isSwapModalOpen} onCancel={() => setSetIsModalOpen(false)} />
@@ -252,8 +257,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       </SModal>
 
-      <div className="mt-20 h560 w-full flex justify-between">
-        <div className="box-border h560 w634 flex justify-between s-container p-x-30 p-y-16">
+      <div className="h560 w-full flex justify-between">
+        <div className="s-container box-border h560 w634 flex justify-between p-x-30 p-y-16">
           <div>
             <div className='flex justify-between' >
               <div className='flex text-center c-#D1D1D1'>
@@ -265,7 +270,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
               </div>
 
-              <Button className='h25 w72 b-rd-30 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+              <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
             </div>
 
             <div>
@@ -290,16 +295,17 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
           centered
           rootClassName='w-715'
           tabPosition="bottom"
+          renderTabBar={renderTabBar}
           items={Array.from({ length: Math.ceil(uniqueTokenInfos.length / 6) }, (_, index) =>
             uniqueTokenInfos.slice(index * 6, (index + 1) * 6),
           ).map((chunk, index) => ({
             label: `Tab ${index + 1}`,
             key: index + 1,
             children: (
-              <div className='grid grid-cols-2 w715 gap-x-36'>
+              <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
                 {chunk.map((item, itemIndex) => (
-                  <div key={item.name} className="h160 w321 s-container bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                    <div className='ml-59 mt-31 flex text-21 lh-25 c-#fff'>
+                  <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
+                    <div className='ml-59 mt-31 flex text-21 c-#fff'>
                       {item.name}({
                         // 如果余额大于零，则计算比例并显示结果
                         Number(item.balance) !== 0
@@ -310,8 +316,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                           : <span>
                             0
                           </span>
-                      })
-                      %
+                      }%)
+
                       <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
                     </div>
                     <div className='flex'>
@@ -322,7 +328,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                     {/* //Test 用户创建的才能看 */}
                     {
                       item.name !== 'USDC'
-                        ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 lh-30 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                        ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                         : null
                     }
                     {/* // 下面这个才是要的 */}

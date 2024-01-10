@@ -28,8 +28,10 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
     if (responseData.code === HttpCode.RETRY || responseData.code === HttpCode.TIMEOUT)
       return response
 
-    if (responseData.code === HttpCode.RE_LOGIN)
+    if (responseData.code === HttpCode.RE_LOGIN) {
       useUserStore.getState().clear()
+      window.location.href = '/'
+    }
 
     message.error(`${responseData.code}: ${responseData.message}` || 'The request failed. Please try again')
     throw new Error(`${responseData.code}: ${responseData.message}`)
