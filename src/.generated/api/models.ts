@@ -75,7 +75,9 @@ Trading :交易中, 已筹完
 PaidOff :已还清, 借款订单结束
 PaidButArrears :支付部分, 但是还有欠款
 CloseByUncollected :筹集不成功
-Blacklist :黑名单 */
+Blacklist :黑名单
+Fail :Fail
+ClearingFail :清算失败 */
     state?: string = undefined;
     /** 逗号拼接, 见state选项 */
     stateList?: string = undefined;
@@ -320,7 +322,9 @@ Canceled :订单取消 */
       | 'PaidOff'
       | 'PaidButArrears'
       | 'CloseByUncollected'
-      | 'Blacklist' = undefined;
+      | 'Blacklist'
+      | 'Fail'
+      | 'ClearingFail' = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 交易形式, 或者不指定 */
@@ -531,7 +535,9 @@ Canceled :订单取消 */
       | 'PaidOff'
       | 'PaidButArrears'
       | 'CloseByUncollected'
-      | 'Blacklist' = undefined;
+      | 'Blacklist'
+      | 'Fail'
+      | 'ClearingFail' = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
     /** 交易形式, 或者不指定 */
@@ -630,6 +636,8 @@ Canceled :订单取消 */
     /** 邀请码 */
     inviteCode?: string = undefined;
     userId?: string = undefined;
+    /** 信用分 */
+    creditScore?: number = 0;
   }
 
   export class UserPortfolioVo {

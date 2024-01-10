@@ -28,7 +28,7 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
             <li className='mt16'>
               <div>
                 <span className='text-20 c-#999999'>Credit score</span>
-                <span className='ml-10 text-24'>10000</span>
+                <span className='ml-10 text-24'>{item.userInfo?.creditScore}</span>
               </div>
             </li>
           </ul>
