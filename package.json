@@ -10,6 +10,7 @@
     "build": "vite build",
     "build:test": "vite build --mode=mumbai",
     "build:tsc": "tsc && vite build",
+    "report": "vite build --mode=REPORT",
     "commit": "wave commit",
     "gen:api": "ts-node --esm openapi.config.ts",
     "gen:abi": "typechain --target ethers-v6 --out-dir src/abis/types 'src/abis/*.json'",

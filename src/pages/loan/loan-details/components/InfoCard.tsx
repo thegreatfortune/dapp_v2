@@ -18,7 +18,7 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-x-6 p0'>
             <li className='text-21'>
-              {isContractAddress(item.userInfo?.nickName ?? '') ? maskWeb3Address(item.userInfo?.nickName ?? '') : (item.userInfo?.nickName ?? 'not bound')}
+              {isContractAddress(item.userInfo?.address ?? '') ? maskWeb3Address(item.userInfo?.address ?? '') : (item.userInfo?.nickName ?? 'not bound')}
             </li>
             <li className='h29 text-16 c-#43465C'>
               {

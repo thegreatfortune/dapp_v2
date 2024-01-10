@@ -486,7 +486,7 @@ const ApplyLoan = () => {
 
         <div className="flex justify-center gap-x-8">
           <Button
-            className='h32 w84 rounded-2 primary-btn'
+            className='h32 w84 rounded-2 p0 primary-btn'
             onClick={() => handleConfirm()}
             loading={confirmLoading}
             disabled={createdPoolLoading}
@@ -639,7 +639,7 @@ const ApplyLoan = () => {
             <InputNumber
               min={100}
               max={1000000}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">USDC</div>}
             />
           </Form.Item>
@@ -660,7 +660,7 @@ const ApplyLoan = () => {
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h50 s-container text-24 !w412"
+              className="s-container box-border h50 text-24 !w412"
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -677,6 +677,7 @@ const ApplyLoan = () => {
 
           <Form.Item
             name="period"
+
             rules={[
               {
                 required: true,
@@ -691,7 +692,8 @@ const ApplyLoan = () => {
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h50 s-container text-14 !w412"
+              className="s-container box-border h50 text-14 !w412"
+              disabled={loanRequisitionEditModel.cycle <= 3}
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -723,7 +725,7 @@ const ApplyLoan = () => {
               max={100}
               precision={2}
               step={0.01}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">%</div>}
             />
           </Form.Item>
@@ -751,7 +753,7 @@ const ApplyLoan = () => {
               max={80}
               precision={2}
               step={0.01}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">%</div>}
             />
           </Form.Item>
@@ -772,7 +774,7 @@ const ApplyLoan = () => {
           >
             <Select
               popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="box-border h50 s-container text-14 !w412"
+              className="s-container box-border h50 text-14 !w412"
               suffixIcon={
                 <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
@@ -799,7 +801,7 @@ const ApplyLoan = () => {
             <InputNumber
               min={1}
               max={10000}
-              className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
               suffix={<div className="px-20 text-14">share</div>}
             />
           </Form.Item>
@@ -817,7 +819,7 @@ const ApplyLoan = () => {
               <InputNumber
                 min={1}
                 max={loanRequisitionEditModel.numberOfCopies}
-                className="box-border h50 w412 items-center s-container px-30 pr-106 text-14"
+                className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
                 suffix={<div className="px-20 text-14">share</div>}
               />
             </Form.Item>
@@ -847,7 +849,7 @@ const ApplyLoan = () => {
               >
                 <Select
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="box-border h50 s-container text-14 !w306"
+                  className="s-container box-border h50 text-14 !w306"
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
@@ -873,7 +875,7 @@ const ApplyLoan = () => {
                 <Select
                   mode="multiple"
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="box-border h50 s-container text-14 !w306"
+                  className="s-container box-border h50 text-14 !w306"
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
@@ -906,7 +908,7 @@ const ApplyLoan = () => {
                   >
                     <Select
                       popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="box-border h50 s-container text-14 !w306"
+                      className="s-container box-border h50 text-14 !w306"
                       suffixIcon={
                         <img src={jmtzDown} alt="jmtzDown" className="px30" />
                       }
@@ -943,7 +945,7 @@ const ApplyLoan = () => {
                     {/* END */}
                     <Select
                       popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="box-border h50 s-container !w306 !text-14"
+                      className="s-container box-border h50 !w306 !text-14"
                       suffixIcon={
                         <img src={jmtzDown} alt="jmtzDown" className="px30" />
                       }
@@ -979,7 +981,7 @@ const ApplyLoan = () => {
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
-                  className="box-border h50 w180 flex items-center justify-center gap-x-27 s-container text-14"
+                  className="s-container box-border h50 w180 flex items-center justify-center gap-x-27 text-14"
                 >
                   <div>
                     <Image

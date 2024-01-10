@@ -401,7 +401,7 @@ const LoanDetails = () => {
 
         <div className="h20" />
 
-        <div className='box-border h166 w1047 flex items-center gap-x-19 border-5 border-#0570f5 border-solid p-x-38 text-center'>
+        <div className='h166 w1047 flex items-center gap-x-19 p-x-38 text-center'>
 
           {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>

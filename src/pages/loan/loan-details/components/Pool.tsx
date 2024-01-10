@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import type { TabsProps } from 'antd'
-import { Button, Input, Spin, Tabs, message } from 'antd'
+import { Button, Image, Input, Spin, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
@@ -217,7 +217,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
-      <DefaultTabBar {...props} className='h2' />
+    <DefaultTabBar {...props} className='h2' />
   )
 
   return (
@@ -305,20 +305,23 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
                 {chunk.map((item, itemIndex) => (
                   <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                    <div className='ml-59 mt-31 flex text-21 c-#fff'>
-                      {item.name}({
-                        // 如果余额大于零，则计算比例并显示结果
-                        Number(item.balance) !== 0
-                          ? BigNumber(item.dollars ?? 0)
-                            .div((tokenTotals))
-                            .times(100)
-                            .toFixed(2)
-                          : <span>
-                            0
-                          </span>
-                      }%)
+                    <div className="flex items-center gap-x-6 px-20 pt-31 text-center">
+                      <Image preview={false} width={18} height={18} src={tokenList.find(e => e.address === item.address)?.icon} />
+                      <div className='flex text-21 c-#fff'>
+                        {item.name}({
+                          // 如果余额大于零，则计算比例并显示结果
+                          Number(item.balance) !== 0
+                            ? BigNumber(item.dollars ?? 0)
+                              .div((tokenTotals))
+                              .times(100)
+                              .toFixed(2)
+                            : <span>
+                              0
+                            </span>
+                        }%)
 
-                      <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                        <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                      </div>
                     </div>
                     <div className='flex'>
                       <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
@@ -326,17 +329,17 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                     </div>
 
                     {/* //Test 用户创建的才能看 */}
-                    {
+                    {/* {
                       item.name !== 'USDC'
                         ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                         : null
-                    }
+                    } */}
                     {/* // 下面这个才是要的 */}
-                    {/* {
-              item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                : null
-            } */}
+                    {
+                      item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                        ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                        : null
+                    }
                   </div>
                 ))}
               </div>

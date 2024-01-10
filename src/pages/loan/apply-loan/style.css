@@ -15,7 +15,7 @@
     padding-right: 20px !important;
   }
 
-.ant-select-selector {
+.ant-select-selector , .ant-input-number-affix-wrapper {
     background-color: #171822 !important; 
   }
 
