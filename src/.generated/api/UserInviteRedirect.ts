@@ -12,7 +12,7 @@ export class UserInviteRedirectService {
   ) {
     const { inviteCode: param0, ...queryParams } = params;
     return request<Models.RedirectView>({
-      url: '/invite/${param0}',
+      url: 'https://api.followfi.io/core/invite/${param0}',
       method: 'GET',
       params: { ...queryParams },
       ...(options || {}),

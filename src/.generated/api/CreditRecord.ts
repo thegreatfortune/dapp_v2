@@ -11,7 +11,7 @@ export class CreditRecordService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.CreditRecordVo>>({
-      url: '/api/creditRecord/page',
+      url: 'https://api.followfi.io/core/api/creditRecord/page',
       method: 'GET',
       params: {
         ...params,

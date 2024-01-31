@@ -11,7 +11,7 @@ export class TwitterNotifyControllerService {
     options?: { [key: string]: any },
   ) {
     return request<Models.RedirectView>({
-      url: '/oauth/callback/twitter',
+      url: 'https://api.followfi.io/core/oauth/callback/twitter',
       method: 'GET',
       params: {
         ...params,

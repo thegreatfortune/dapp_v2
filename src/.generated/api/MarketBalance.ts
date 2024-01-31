@@ -11,7 +11,7 @@ export class MarketBalanceService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.MyFollowVo>>({
-      url: '/api/market/balance/pageMyFollow',
+      url: 'https://api.followfi.io/core/api/market/balance/pageMyFollow',
       method: 'GET',
       params: {
         ...params,

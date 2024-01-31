@@ -23,7 +23,7 @@ export class LoanService {
   /** 查询跟随中状态的订单信息 GET /api/loan/homeInfo */
   static async ApiLoanHomeInfo_GET(options?: { [key: string]: any }) {
     return request<Models.LoanOrderVO[]>({
-      url: '/api/loan/homeInfo',
+      url: 'https://api.followfi.io/core/api/loan/homeInfo',
       method: 'GET',
       ...(options || {}),
     });
@@ -36,7 +36,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.LoanOrderVO>({
-      url: '/api/loan/loanInfo',
+      url: 'https://api.followfi.io/core/api/loan/loanInfo',
       method: 'GET',
       params: {
         ...params,

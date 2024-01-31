@@ -11,7 +11,7 @@ export class UserInviteService {
     options?: { [key: string]: any },
   ) {
     return request<boolean>({
-      url: '/api/user/invite/invitedOrNot',
+      url: 'https://api.followfi.io/core/api/user/invite/invitedOrNot',
       method: 'GET',
       params: {
         ...params,

@@ -11,7 +11,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.TokenMarketVo>>({
-      url: '/api/market/pageInfo',
+      url: 'https://api.followfi.io/core/api/market/pageInfo',
       method: 'GET',
       params: {
         ...params,
@@ -27,7 +27,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.MarketLoanVo>>({
-      url: '/api/market/pageTradingLoan',
+      url: 'https://api.followfi.io/core/api/market/pageTradingLoan',
       method: 'GET',
       params: {
         ...params,

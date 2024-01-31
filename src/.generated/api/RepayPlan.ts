@@ -11,7 +11,7 @@ export class RepayPlanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.RepayPlanVo>>({
-      url: '/api/repayPlan/pageInfo',
+      url: 'https://api.followfi.io/core/api/repayPlan/pageInfo',
       method: 'GET',
       params: {
         ...params,

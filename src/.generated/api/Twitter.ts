@@ -7,7 +7,7 @@ export class TwitterService {
   /** 发起推特授权, 强制登陆 GET /api/twitter/bindTwitterRequiredLogin */
   static async ApiTwitterBindTwitterRequiredLogin_GET(options?: { [key: string]: any }) {
     return request<Models.TwitterVo>({
-      url: '/api/twitter/bindTwitterRequiredLogin',
+      url: 'https://api.followfi.io/core/api/twitter/bindTwitterRequiredLogin',
       method: 'GET',
       ...(options || {}),
     });

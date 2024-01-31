@@ -11,7 +11,7 @@ export class BlacklistService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.BlacklistVo>>({
-      url: '/api/blacklist/pageInfo',
+      url: 'https://api.followfi.io/core/api/blacklist/pageInfo',
       method: 'GET',
       params: {
         ...params,

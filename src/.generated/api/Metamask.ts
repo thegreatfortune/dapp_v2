@@ -10,7 +10,7 @@ export class MetamaskService {
     options?: { [key: string]: any },
   ) {
     return request<string>({
-      url: '/api/metamask/getVerifyNonce',
+      url: 'https://api.followfi.io/core/api/metamask/getVerifyNonce',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export class MetamaskService {
     options?: { [key: string]: any },
   ) {
     return request<Models.AuthResult>({
-      url: '/api/metamask/login',
+      url: 'https://api.followfi.io/core/api/metamask/login',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

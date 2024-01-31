@@ -11,7 +11,7 @@ export class IntegralRecordService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.IntegralVo>>({
-      url: '/api/integralRecord/page',
+      url: 'https://api.followfi.io/core/api/integralRecord/page',
       method: 'GET',
       params: {
         ...params,
