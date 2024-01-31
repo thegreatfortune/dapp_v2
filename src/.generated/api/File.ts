@@ -29,7 +29,7 @@ export class FileService {
     });
 
     return request<string>({
-      url: '/api/file/upload',
+      url: 'https://api.followfi.io/core/api/file/upload',
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },
