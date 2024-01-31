@@ -52,7 +52,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.LoanOrderVO>>({
-      url: '/api/loan/pageLoanContract',
+      url: 'https://api.followfi.io/core/api/loan/pageLoanContract',
       method: 'GET',
       params: {
         ...params,
