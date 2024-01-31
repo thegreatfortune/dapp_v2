@@ -10,7 +10,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<boolean>({
-      url: '/api/loan/confirm',
+      url: 'https://api.followfi.io/core/api/loan/confirm',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
