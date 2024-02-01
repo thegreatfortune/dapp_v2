@@ -462,20 +462,20 @@ const ApplyLoan = () => {
         <div className="box-border flex flex-col items-center text-center text-16">
 
           <div className="flex flex-col items-start">
-            <div>
+            <div className='m-8'>
               {createdPoolLoading
                 ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
                 : <Checkbox disabled checked={createdPoolChecked}>
                 </Checkbox>}
-              <span className='p-x-8 c-#3CA9F8'>Pool contract</span>
+              <span className='m-8 p-x-8 c-#3CA9F8'>Pool contract</span>
             </div>
 
-            <div>
+            <div className='m-8'>
               {confirmLoading
                 ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
                 : <Checkbox disabled checked={documentChecked}>
                 </Checkbox>}
-              <span className='p-x-8 c-#3CA9F8'> Create document</span>
+              <span className='m-8 p-x-8 c-#3CA9F8'> Create document</span>
 
             </div>
           </div>
@@ -486,14 +486,14 @@ const ApplyLoan = () => {
 
         <div className="flex justify-center gap-x-8">
           <Button
-            className='h32 w84 rounded-2 p0 primary-btn'
+            className='m-8 h32 w84 rounded-2 p0 primary-btn'
             onClick={() => handleConfirm()}
             loading={confirmLoading}
             disabled={createdPoolLoading}
           >
             Confirm
           </Button>
-          <Button className='h32 w77 rounded-2 bg-#F2F3F5 text-14 c-#1F1F1F' onClick={handleCancel}>
+          <Button className='m-8 h32 w77 rounded-2 bg-#F2F3F5 text-14 c-#1F1F1F' onClick={handleCancel}>
             Cancel
           </Button>
         </div>
@@ -1025,6 +1025,7 @@ const ApplyLoan = () => {
           </Button>
         </Form.Item>
       </Form>
+
     </div>
   )
 }
