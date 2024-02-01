@@ -269,7 +269,11 @@ const LoanDetails = () => {
       open={extractIsModalOpen}
       maskClosable={false}
       content={
-        ''
+        <div>
+          <h2>
+            extract: {extractMoney}
+          </h2>
+        </div>
         // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
         //   confirm
         // </Button>,
@@ -283,31 +287,12 @@ const LoanDetails = () => {
       onCancel={() => setExtractIsModalOpen(false)}
       okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
     >
-      <div>
-        <h2>
-          extract: {extractMoney}
-        </h2>
-      </div>
+
     </SModal>
 
     <SModal open={isModalOpen}
       maskClosable={false}
       content=
-      {''
-        // lendState === 'Processing'
-        //   ? null
-        //   : [
-        //     <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
-        //     lendState === 'Success'
-        //       ? null
-        //       : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
-        //   ]
-      }
-      okText="Confirm"
-      onOk={() => handleOk()}
-      onCancel={() => setIsModalOpen(false)}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: false }}
-    >
       {
         !lendState
           ? <div className='h241 w464'>
@@ -332,6 +317,22 @@ const LoanDetails = () => {
               {copies}Share
               <Button className='primary-btn' onClick={confirmLend}>Confirm</Button>
             </div>
+        // lendState === 'Processing'
+        //   ? null
+        //   : [
+        //     <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
+        //     lendState === 'Success'
+        //       ? null
+        //       : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
+        //   ]
+      }
+      okText="Confirm"
+      onOk={() => handleOk()}
+      onCancel={() => setIsModalOpen(false)}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: false }}
+    >
+      {
+
       }
     </SModal>
 
