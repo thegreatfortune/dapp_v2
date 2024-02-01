@@ -28,7 +28,7 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
             <li className='mt16'>
               <div>
                 <span className='text-20 c-#999999'>Credit score</span>
-                <span className='ml-10 text-24'>{item.userInfo?.creditScore}</span>
+                <span className='ml-10 text-24'>{item.userInfo?.creditScore ? (item.userInfo?.creditScore / 100).toLocaleString() : 0}</span>
               </div>
             </li>
           </ul>
