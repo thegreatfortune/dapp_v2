@@ -1,5 +1,5 @@
 import type { ModalProps } from 'antd'
-import { Button, Image, Input, Modal, message } from 'antd'
+import { Button, Input, Modal, message } from 'antd'
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
@@ -26,6 +26,10 @@ const SwapModal: React.FC<IProps> = (props) => {
   const { browserContractService } = useBrowserContract()
 
   const [loading, setLoading] = useState(false)
+
+  const [swaping, setSwaping] = useState<boolean>(false)
+
+  const [swapBnText, setSwapBnText] = useState('Enter an amount')
 
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
@@ -130,7 +134,8 @@ const SwapModal: React.FC<IProps> = (props) => {
   async function enterAnAmount() {
     if (!props.tradeId)
       return
-
+    setSwaping(true)
+    setSwapBnText('swaping')
     setLoading(true)
 
     let tokenInformation = new SwapInfo()
@@ -139,8 +144,9 @@ const SwapModal: React.FC<IProps> = (props) => {
 
     if (youPay.token === 'USDC') {
       buyOrSell = 0
-      tokenInformation = youReceiver
-      tokenInformation.amount = youReceiver.amount
+      tokenInformation.token = youReceiver.token
+      tokenInformation.address = youReceiver.address
+      tokenInformation.amount = youPay.amount
     }
     else {
       // const index = tokenList.findIndex(e => e.address === youPay.address)
@@ -148,7 +154,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       buyOrSell = 1
       // buyOrSell = index
       tokenInformation = youPay
+      // tokenInformation.amount = youPay.amount
     }
+
+    console.log(buyOrSell, tokenInformation, youReceiver)
 
     if (!tokenInformation?.address) {
       message.error('address is undefined')
@@ -165,6 +174,8 @@ const SwapModal: React.FC<IProps> = (props) => {
     }
 
     finally {
+      setSwaping(false)
+      setSwapBnText('Enter an amount')
       setLoading(true)
     }
   }
@@ -192,9 +203,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       <Button
         type='primary'
         onClick={enterAnAmount}
+        disabled={swaping}
         className='mt-5 h45 w-full'
       >
-        Enter an amount
+        {swapBnText}
       </Button>
     }>
       <div className='relative'>
