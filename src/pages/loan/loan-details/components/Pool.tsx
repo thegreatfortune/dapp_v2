@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import type { TabsProps } from 'antd'
 import { Button, Image, Input, Spin, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
@@ -57,6 +56,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
 
+
+  const [kLineCreated, setKLineCreated] = useState(false)
+
+
   useEffect(() => {
     // if (tokenInfos.length <= 1)
     //   return
@@ -78,11 +81,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   useEffect(() => {
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
-
       createKLine(res.records ?? [])
     }
-
-    createKLineThis()
+    if (!kLineCreated) {
+      createKLineThis()
+      setKLineCreated(true)
+    }
   }, [])
 
   useEffect(() => {
@@ -111,12 +115,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       setTokenInfos([])
 
       const proList: Promise<TokenInfo>[] = []
-
-      if (proList.length === 0 && tokenInfos.length === 0) {
-        const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-        pro && proList.push(pro as Promise<TokenInfo>)
-      }
-
+      // if (proList.length === 0 && tokenInfos.length === 0) {
+      const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+      pro && proList.push(pro as Promise<TokenInfo>)
+      // }
       for (let i = 0; i < transactionPair.length; i++) {
         const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
         if (coin in tradingPairTokenMap) {
@@ -127,10 +129,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       }
 
       Promise.all(proList).then((res) => {
+        console.log(res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
         throw new Error(err)
       })
+      console.log(tokenInfos.length)
     }
     catch (error) {
       console.log('%c [ error ]-65', 'font-size:13px; background:#abdc31; color:#efff75;', error)
@@ -216,9 +220,9 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     }
   }
 
-  const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
-    <DefaultTabBar {...props} className='h2' />
-  )
+  // const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
+  //   <DefaultTabBar {...props} className='h1 text-white' />
+  // )
 
   return (
     <div className='w-full'>
@@ -290,64 +294,66 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
         {/* <div className="w48" /> */}
         {/* rootClassName='grid grid-cols-2 w715 gap-x-36' */}
-
         <Tabs
           centered
+          size="large"
           rootClassName='w-715'
-          tabPosition="bottom"
-          renderTabBar={renderTabBar}
-          items={Array.from({ length: Math.ceil(uniqueTokenInfos.length / 6) }, (_, index) =>
-            uniqueTokenInfos.slice(index * 6, (index + 1) * 6),
-          ).map((chunk, index) => ({
-            label: `Tab ${index + 1}`,
-            key: index + 1,
-            children: (
-              <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
-                {chunk.map((item, itemIndex) => (
-                  <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                    <div className="flex items-center gap-x-6 px-20 pt-31 text-center">
-                      <Image preview={false} width={18} height={18} src={tokenList.find(e => e.address === item.address)?.icon} />
-                      <div className='flex text-21 c-#fff'>
-                        {item.name}({
-                          // 如果余额大于零，则计算比例并显示结果
-                          Number(item.balance) !== 0
-                            ? BigNumber(item.dollars ?? 0)
-                              .div((tokenTotals))
-                              .times(100)
-                              .toFixed(2)
-                            : <span>
-                              0
-                            </span>
-                        }%)
+          tabPosition="top"
+          // renderTabBar={renderTabBar}
+          items={
+            Array.from({ length: Math.ceil(uniqueTokenInfos.length / 6) }, (_, index) =>
+              uniqueTokenInfos.slice(index * 6, (index + 1) * 6),
+            ).map((chunk, index) => ({
+              label: `${index + 1}`.toString(),
+              key: (index + 1).toString(),
+              children: (
+                <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
+                  {chunk.map((item, _index) => (
+                    <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
+                      <div className="flex items-center gap-x-6 px-20 pt-31 text-center">
+                        <Image preview={false} width={18} height={18} src={tokenList.find(e => e.address === item.address)?.icon} />
+                        <div className='flex text-21 c-#fff'>
+                          {item.name}({
+                            // 如果余额大于零，则计算比例并显示结果
+                            Number(item.balance) !== 0
+                              ? BigNumber(item.dollars ?? 0)
+                                .div((tokenTotals))
+                                .times(100)
+                                .toFixed(2)
+                              : <span>
+                                0
+                              </span>
+                          }%)
 
-                        <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                          <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className='flex'>
-                      <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
-                      <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
-                    </div>
+                      <div className='flex'>
+                        <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
+                        <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
+                      </div>
 
-                    <div className='mb-16 mr-16 flex justify-end'>
+                      <div className='mb-16 mr-16 flex justify-end'>
 
-                      {/* //Test 用户创建的才能看 */}
-                      {/* {
+                        {/* //Test 用户创建的才能看 */}
+                        {/* {
                       item.name !== 'USDC'
                       ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                       : null
                     } */}
-                      {/* // 下面这个才是要的 */}
-                      {
-                        item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                          ? <Button className='h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                          : null
-                      }
+                        {/* // 下面这个才是要的 */}
+                        {
+                          item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                            ? <Button className='h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                            : null
+                        }
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ),
-          }))
+                  ))}
+                </div>
+              )
+              ,
+            }))
           }>
           {/* 其他 Tabs 相关的配置和渲染 */}
         </Tabs>
