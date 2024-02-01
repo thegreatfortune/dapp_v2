@@ -43,7 +43,7 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
                 ${ethers.formatUnits(item.loan?.loanMoney ?? 0)}
               </li>
               <li>
-              <Button className='h30 w-110 primary-btn' >Shell</Button>
+              <Button className='h30 w-110 primary-btn' >Sell</Button>
               </li>
             </ul>
 

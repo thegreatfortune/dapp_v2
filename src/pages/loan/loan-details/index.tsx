@@ -8,6 +8,7 @@ import { ethers } from 'ethers'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
+import ShellModal from './components/ShellModal'
 import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
@@ -16,7 +17,6 @@ import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
-import ShellModal from '@/pages/loan/loan-details/components/ShellModal'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -41,7 +41,9 @@ const LoanDetails = () => {
 
   const [copies, setCopies] = useState<number | null>(1)
 
-  const [lendState, setLendState] = useState<'Processing' | 'Success'>()
+  const [lendingState, setLendingState] = useState(false)
+
+  const [lentState, setLentState] = useState(false)
 
   const [checkMaxLoading, setCheckMaxLoading] = useState(false)
 
@@ -154,7 +156,7 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Pool',
-      children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lendState} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lentState ? 'Success' : 'Processing'} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
     },
     {
       key: '2',
@@ -203,7 +205,7 @@ const LoanDetails = () => {
     if (!tradeId || !copies)
       return
 
-    setLendState('Processing')
+    setLendingState(true)
 
     try {
       if (!browserContractService?.getSigner.address)
@@ -212,15 +214,20 @@ const LoanDetails = () => {
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
-      if (result?.status === 1)
-        setLendState('Success')
-      else
-        message.error('operation failure')
+      if (result?.status !== 1)
+        message.error('Transaction failed!')
+
+      setLentState(true)
     }
     catch (error) {
-      message.error('operation failure')
-      setLendState(undefined)
+      message.error('Operation failed!')
+
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
+    }
+    finally {
+      setLendingState(false)
+      navigate('/my-lend')
+      setIsModalOpen(false)
     }
   }
 
@@ -231,7 +238,7 @@ const LoanDetails = () => {
   function confirmLend() {
     navigate('/my-lend')
     setIsModalOpen(false)
-    setLendState(undefined)
+    setLendingState(false)
   }
 
   async function refund() {
@@ -271,7 +278,7 @@ const LoanDetails = () => {
       content={
         <div>
           <h2>
-            extract: {extractMoney}
+            Extract: {extractMoney}
           </h2>
         </div>
         // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
@@ -294,29 +301,31 @@ const LoanDetails = () => {
       maskClosable={false}
       content=
       {
-        !lendState
-          ? <div className='h241 w464'>
-            <h1 className='font-b ml-110 mt-24 h21 w34 text-12 lh-21 c-#fff'>Share</h1>
-            <div className='h32 w-full flex items-center'>
-              <InputNumber
-                size='large'
-                value={copies}
-                className='m-a h32 w-full w130 b-1px b-#808080 b-rd-4 b-solid text-center'
-                min={1}
-                onChange={v => setCopies(v)}
-              />
-              <Button type='primary' loading={checkMaxLoading} onClick={onSetMax}>
-                MAX
-              </Button>
-            </div>
+        <div className='h100 w464 flex'>
+          <h1 className='font-b m-10 w40 flex items-center text-20 lh-21 c-#fff'>
+            {lendingState ? 'Processing' : 'Share'}
+          </h1>
+          <div className='w-full flex content-center items-center justify-end'>
+            <InputNumber
+              size='large'
+              value={copies}
+              className='m-10 w-full w150 b-#808080 text-center'
+              min={1}
+              onChange={v => setCopies(v)}
+              disabled={lendingState}
+            />
+            <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={lendingState}>
+              Max
+            </Button>
           </div>
-          : lendState === 'Processing'
-            ? <h2>Processing.....</h2>
-            : <div>
-              <h2>Success</h2>
-              {copies}Share
-              <Button className='primary-btn' onClick={confirmLend}>Confirm</Button>
-            </div>
+        </div>
+        // : lendState === 'Processing'
+        //   ? <h2>Processing.....</h2>
+        //   : <div>
+        //     <h2>Success</h2>
+        //     {copies}Share
+        //     <Button className='primary-btn' onClick={confirmLend}>Confirm</Button>
+        //   </div>
         // lendState === 'Processing'
         //   ? null
         //   : [
@@ -329,7 +338,7 @@ const LoanDetails = () => {
       okText="Confirm"
       onOk={() => handleOk()}
       onCancel={() => setIsModalOpen(false)}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: false }}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: lendingState }}
     >
       {
 
@@ -388,7 +397,7 @@ const LoanDetails = () => {
             && <div className='flex'>
               {
                 loanInfo.state !== 'CloseByUncollected'
-                && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+                && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Sell</Button>
 
               }
 
