@@ -268,8 +268,10 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                   <li>{item.state}</li>
                   <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
                   <li>
-                    <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='h30 w134 b-rd-30 primary-btn'>Liquidation</Button>
-                    {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repayment')} className='h30 w134 b-rd-30 primary-btn'>Repayment</Button>}
+                    <div className='flex'>
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='m-8 h30 w134 b-rd-30 primary-btn'>Liquidate</Button>
+                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repayment')} className='m-8 h30 w134 b-rd-30 primary-btn'>Repay</Button>}
+                    </div>
                   </li>
                 </ul>
               </List.Item>
