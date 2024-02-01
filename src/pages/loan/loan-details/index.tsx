@@ -51,7 +51,7 @@ const LoanDetails = () => {
 
   const [extractMoney, setExtractMoney] = useState<string>('0')
 
-  const [extraBtnLoading, setExtraBtnLoading] = useState(false)
+  // const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [refundLoading, setRefundLoading] = useState(false)
 
@@ -65,6 +65,8 @@ const LoanDetails = () => {
     PaidButArrears: <div className='box-border h33 min-w174 rounded-4 bg-#ff7d00'>Amount due</div>,
     Blacklist: <div className='box-border h33 min-w174 rounded-4 bg-#2b2b2b'>Blacklist</div>,
     CloseByUncollected: <div className='box-border h33 min-w174 rounded-4 bg-#a9e1d7'>Settled transaction</div>,
+    Fail: <div></div>,
+    ClearingFail: <div></div>,
   }
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const LoanDetails = () => {
   useEffect(() => {
     async function fetchData() {
       if (tradeId && extractIsModalOpen && prePage) {
-        setExtraBtnLoading(true)
+        // setExtraBtnLoading(true)
 
         if (prePage === 'loan') {
           const pcc = await browserContractService?.getProcessCenterContract()
@@ -96,7 +98,7 @@ const LoanDetails = () => {
           }
         }
 
-        setExtraBtnLoading(false)
+        // setExtraBtnLoading(false)
       }
     }
 
@@ -235,11 +237,11 @@ const LoanDetails = () => {
     setCheckMaxLoading(true)
   }
 
-  function confirmLend() {
-    navigate('/my-lend')
-    setIsModalOpen(false)
-    setLendingState(false)
-  }
+  // function confirmLend() {
+  //   navigate('/my-lend')
+  //   setIsModalOpen(false)
+  //   setLendingState(false)
+  // }
 
   async function refund() {
     if (!tradeId)

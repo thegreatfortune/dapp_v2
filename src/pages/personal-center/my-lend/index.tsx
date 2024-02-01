@@ -75,26 +75,25 @@ const MyLend = () => {
       <div
         id="scrollableDiv"
         style={{
-          height: 500,
           overflow: 'auto',
         }}
       >
         <InfiniteScroll
-           dataLength={lendOrderVOList?.length ?? 0 }
+          dataLength={lendOrderVOList?.length ?? 0}
           next={loadMoreData}
-          hasMore={(total !== undefined) && (lendOrderVOList.length < total) }
+          hasMore={(total !== undefined) && (lendOrderVOList.length < total)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
           endMessage={<Divider plain>{`${t('personal.myLend.endMessage')}`}</Divider>}
           scrollableTarget="scrollableDiv"
         >
           <List
-          grid={{ gutter: 16, column: 4 }}
+            grid={{ gutter: 16, column: 4 }}
             dataSource={lendOrderVOList}
             renderItem={item => (
               <List.Item key={item.loanId} onClick={() =>
                 navigate(`/loan-details/?prePage=lend&userId=${item.borrowUserId}&tradeId=${item.loan?.tradeId}`)}>
                 <LendTransparentCard item={item ?? new Models.MyFollowVo()} >
-              </LendTransparentCard>
+                </LendTransparentCard>
               </List.Item>
             )}
           />

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import { Select } from 'antd'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 interface IProps {
@@ -57,8 +58,22 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
     {
       // TODO 取消注释
       Number(incomeInfo.extractable ?? 0) > 0
-      && <div>
-        <span>
+      && <div className='ml-16'>
+        <Select
+          className='w200'
+          defaultValue={`Extractable: ${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()} U`}
+          options={[
+            { label: `Extractable: ${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.extractable ?? 0)} + U` },
+            { label: `Liquidation: ${Number.parseFloat(ethers.formatUnits(incomeInfo.liquidation ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.liquidation ?? 0)} U` },
+            { label: `Repayment: ${Number.parseFloat(ethers.formatUnits(incomeInfo.repayment ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.repayment ?? 0)} U` },
+            { label: `Dividend: ${Number.parseFloat(ethers.formatUnits(incomeInfo.dividend ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.dividend ?? 0)} U` },
+          ]}
+          size='middle'
+        // listHeight={20}
+        >
+
+        </Select>
+        {/* <span>
           extractable({ethers.formatUnits(incomeInfo.extractable ?? 0)}U)
         </span>
         {
@@ -71,12 +86,12 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
 
             <span>dividend({ethers.formatUnits(incomeInfo.dividend ?? 0)}U)</span>
           </span>
-        }
+        } */}
 
       </div>
     }
 
-  </div>)
+  </div >)
 }
 
 export default IncomeCalculation
