@@ -193,21 +193,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         //   </Button>
         // </div>
         <div>
-          <h2>
-            {currentBtnType}
-          </h2>
-        </div>
-      }
-        okText="Confirm"
-        onOk={onConfirm}
-        onCancel={() => setIsModalOpen(false)}
-        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: confirmLoading }}
-      >
-        <div>
-          <h1> {currentBtnType} </h1>
-
+          <h2> {currentBtnType} </h2>
           <div className='flex items-center justify-between text-center'>
-
             {currentItem.state === 'REPAID'
               ? <div>
                 <InputNumber
@@ -223,6 +210,12 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
               </h2>}
           </div>
         </div>
+      }
+        okText="Confirm"
+        onOk={onConfirm}
+        onCancel={() => setIsModalOpen(false)}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: confirmLoading }}
+      >
       </SModal>
 
       <div className='flex items-center gap-4'>
