@@ -60,13 +60,13 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
       Number(incomeInfo.extractable ?? 0) > 0
       && <div className='ml-16'>
         <Select
-          className='w200'
-          defaultValue={`Extractable: ${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()} U`}
+          className='w180'
+          defaultValue={`Extractable: $${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()}`}
           options={[
-            { label: `Extractable: ${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.extractable ?? 0)} + U` },
-            { label: `Liquidation: ${Number.parseFloat(ethers.formatUnits(incomeInfo.liquidation ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.liquidation ?? 0)} U` },
-            { label: `Repayment: ${Number.parseFloat(ethers.formatUnits(incomeInfo.repayment ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.repayment ?? 0)} U` },
-            { label: `Dividend: ${Number.parseFloat(ethers.formatUnits(incomeInfo.dividend ?? 0)).toLocaleString()} U`, value: `${ethers.formatUnits(incomeInfo.dividend ?? 0)} U` },
+            { label: `Extractable: $${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.extractable ?? 0)} + U` },
+            { label: `Liquidation: $${Number.parseFloat(ethers.formatUnits(incomeInfo.liquidation ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.liquidation ?? 0)} U` },
+            { label: `Repayment: $${Number.parseFloat(ethers.formatUnits(incomeInfo.repayment ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.repayment ?? 0)} U` },
+            { label: `Dividend: $${Number.parseFloat(ethers.formatUnits(incomeInfo.dividend ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.dividend ?? 0)} U` },
           ]}
           size='middle'
         // listHeight={20}
