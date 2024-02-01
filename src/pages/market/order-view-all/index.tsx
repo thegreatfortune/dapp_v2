@@ -21,7 +21,7 @@ const OrderViewAll = () => {
 
   const navigate = useNavigate()
 
-  const [apiParams, setApiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined })
+  const [apiParams, setApiParams] = useState({ ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 16, borrowUserId: undefined })
 
   function fetchData(type?: string) {
     const params = { ...new Models.ApiLoanPageLoanContractGETParams(), page: 1, limit: 8, borrowUserId: undefined }
@@ -54,8 +54,8 @@ const OrderViewAll = () => {
           <Radio.Button value="All" className='m-auto mr-20 h48 w-100 border-1px b-rd-6 text-center lh-48'>All</Radio.Button>
           {/* <Radio.Button value="All" className={`m-auto mr-20 h48 w-100 border-1px b-rd-6 text-center lh-48 ${activeKey === 'All' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>All</Radio.Button> */}
 
-            <Radio.Button value="LowRisk" className={`h48 w146 items-center text-18 font-500 lh-48  ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🌈 Low Risk</Radio.Button>
-            <Radio.Button value="HighRisk" className={`h48 w185 items-center text-18 font-500 lh-48 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🎉 High Risk</Radio.Button>
+          <Radio.Button value="LowRisk" className={`h48 w146 items-center text-18 font-500 lh-48  ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🌈 Low Risk</Radio.Button>
+          <Radio.Button value="HighRisk" className={`h48 w185 items-center text-18 font-500 lh-48 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🎉 High Risk</Radio.Button>
 
         </Radio.Group>
       </div>
@@ -63,7 +63,12 @@ const OrderViewAll = () => {
 
       {
         category === 'HotStarter'
-        && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
+        && <ScrollableList
+          grid={{ gutter: 16, column: 4 }}
+          api={LoanService.ApiLoanPageLoanContract_GET}
+          params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }}
+          containerId='HotStarterContainer'
+          renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
       {

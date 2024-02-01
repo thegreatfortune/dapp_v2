@@ -74,7 +74,7 @@ const MyLoan = () => {
       <div
         id="scrollableDiv"
         style={{
-          height: 500,
+          // height: 500,
           overflow: 'auto',
         }}
       >

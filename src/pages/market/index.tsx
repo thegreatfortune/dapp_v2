@@ -49,7 +49,7 @@ const Market = () => {
       <div >
 
         <img
-          src={ bannerImage }
+          src={bannerImage}
           alt='Image 2'
           className='h-280 w-full b-rd-20 object-cover'
         />
@@ -63,16 +63,16 @@ const Market = () => {
       }
       <div className='h-44 w-full' />
       {
-       (popularToFollowData.records && popularToFollowData.records.length > 0)
+        (popularToFollowData.records && popularToFollowData.records.length > 0)
         && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData.records} to='/view-all?title=💥Popular to follow&category=PopularToFollow' />
       }
 
       <div className='h-44 w-full' />
 
       {
-      (blacklist.total && blacklist.total > 0)
-        ? <MarketCardsContainer image={blacklist1} key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist&category=Blacklist' />
-        : null
+        (blacklist.total && blacklist.total > 0)
+          ? <MarketCardsContainer image={blacklist1} key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist&category=Blacklist' />
+          : null
       }
 
     </div>

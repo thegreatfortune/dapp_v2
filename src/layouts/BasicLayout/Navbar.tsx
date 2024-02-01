@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useNavigate } from 'react-router-dom'
-import Avatar from 'antd/es/avatar'
 import Image from 'antd/es/image'
 import { AutoComplete } from 'antd'
 import BigNumber from 'bignumber.js'
 import CustomConnectButton from './CustomConnectButton'
-import logo from '@/assets/images/logo.png'
+import logo from '@/assets/images/LOGO.svg'
 import searchImg from '@/assets/images/search.png'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
@@ -17,7 +16,7 @@ interface NavbarProps {
   showInput?: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
+const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -52,51 +51,50 @@ const Navbar: React.FC<NavbarProps> = ({ title, showInput }) => {
   }
 
   return (
-        <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
-            <div className="flex items-center text-center">
-                <Avatar src={logo} className="mx6 h34 w34"></Avatar>
-                <div className="text-30 font-900"><i>{title}</i></div>
-            </div>
+    <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
+      <div className="flex items-center text-center">
+        <Image src={logo} width={120} height={40}></Image>
+      </div>
 
-            <ul className="flex list-none justify-around p0 text-center font-size-16 c-white">
-                <li className="inline-block">
-                    <NavLink to="/portal" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
-                        {t('nav.home')}
-                    </NavLink>
-                </li>
-                <li className="ml-30 inline-block">
-                    <NavLink to="/market" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0' >
-                        {t('nav.market')}
-                    </NavLink>
-                </li>
-                <li className="ml-30 inline-block">
-                    <NavLink to="/trade" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
-                        {t('nav.trade')}
-                    </NavLink>
-                </li>
-            </ul>
+      <ul className="flex list-none justify-around p0 text-center font-size-16 c-white">
+        <li className="inline-block">
+          <NavLink to="/portal" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
+            {t('nav.home')}
+          </NavLink>
+        </li>
+        <li className="ml-30 inline-block">
+          <NavLink to="/market" target='_self' className='c-white hover:font-bold hover:c-#5ec1d0' >
+            {t('nav.market')}
+          </NavLink>
+        </li>
+        <li className="ml-30 inline-block">
+          <NavLink to="/trade" target='_self' className='c-white hover:font-bold hover:c-#5ec1d0'>
+            {t('nav.trade')}
+          </NavLink>
+        </li>
+      </ul>
 
-            {
-                showInput
-                && <div className='relative box-border h48 w310'>
+      {
+        showInput
+        && <div className='relative box-border h48 w310'>
 
-                    <AutoComplete
-                        popupClassName="certain-category-search-dropdown"
-                        options={options}
-                        onSearch={handleSearch}
-                        onSelect={onSelect}
-                        className="h48 w310"
-                    >
-                        <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
-                    </AutoComplete>
-                    <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
+          <AutoComplete
+            popupClassName="certain-category-search-dropdown"
+            options={options}
+            onSearch={handleSearch}
+            onSelect={onSelect}
+            className="h48 w310"
+          >
+            <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
+          </AutoComplete>
+          <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
 
-                </div>
-            }
+        </div>
+      }
 
-            <CustomConnectButton />
+      <CustomConnectButton />
 
-        </nav>
+    </nav>
   )
 }
 
