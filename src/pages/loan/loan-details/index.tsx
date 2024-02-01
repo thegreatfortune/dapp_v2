@@ -268,7 +268,8 @@ const LoanDetails = () => {
       className='h238 w464 b-rd-8'
       open={extractIsModalOpen}
       maskClosable={false}
-      content={''
+      content={
+        ''
         // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
         //   confirm
         // </Button>,

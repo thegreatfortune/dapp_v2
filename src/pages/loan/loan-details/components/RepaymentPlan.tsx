@@ -183,15 +183,26 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   return (
     <div>
-      <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={
+      <SModal open={isModalOpen} content={
+        // <div>
+        //   <Button onClick={() => setIsModalOpen(false)}>
+        //     Cancel
+        //   </Button>
+        //   <Button type='primary' onClick={onConfirm} loading={confirmLoading}>
+        //     Confirm
+        //   </Button>
+        // </div>
         <div>
-          <Button onClick={() => setIsModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button type='primary' onClick={onConfirm} loading={confirmLoading}>
-            Confirm
-          </Button>
-        </div>}>
+          <h2>
+            {currentBtnType}
+          </h2>
+        </div>
+      }
+        okText="Confirm"
+        onOk={onConfirm}
+        onCancel={() => setIsModalOpen(false)}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: confirmLoading }}
+      >
         <div>
           <h1> {currentBtnType} </h1>
 
@@ -246,7 +257,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         }}
       >
         <InfiniteScroll
-          dataLength={result?.records?.length ?? 0 }
+          dataLength={result?.records?.length ?? 0}
           next={fetchData}
           hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
