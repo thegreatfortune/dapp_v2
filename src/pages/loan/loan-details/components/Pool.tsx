@@ -328,18 +328,21 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                       <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
                     </div>
 
-                    {/* //Test 用户创建的才能看 */}
-                    {/* {
+                    <div className='mb-16 mr-16 flex justify-end'>
+
+                      {/* //Test 用户创建的才能看 */}
+                      {/* {
                       item.name !== 'USDC'
-                        ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                        : null
+                      ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                      : null
                     } */}
-                    {/* // 下面这个才是要的 */}
-                    {
-                      item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                        ? <Button className='h30 w50 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                        : null
-                    }
+                      {/* // 下面这个才是要的 */}
+                      {
+                        item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                          ? <Button className='h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                          : null
+                      }
+                    </div>
                   </div>
                 ))}
               </div>

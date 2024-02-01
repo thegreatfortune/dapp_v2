@@ -140,7 +140,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     if (youPay.token === 'USDC') {
       buyOrSell = 0
       tokenInformation = youReceiver
-      tokenInformation.amount = youPay.amount
+      tokenInformation.amount = youReceiver.amount
     }
     else {
       // const index = tokenList.findIndex(e => e.address === youPay.address)
@@ -198,22 +198,29 @@ const SwapModal: React.FC<IProps> = (props) => {
       </Button>
     }>
       <div className='relative'>
+        {/* 弹出swap界面 */}
         <h2>Swap</h2>
-        <div className='h95 w-full b-rd-6 bg-#141414'>
-          <span>You pay</span>
-          <div className='mt-10 flex'>
+        <div className='h60 w-full flex items-center justify-between b-rd-6'>
+
+          <span className='w120 flex items-center'>You will pay</span>
+          <div className='w-auto flex items-center'>
             <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} size='large' />
-            <span className='m-auto text-center'>{youPay.token}</span>
+            <span className='mx-16 w50 flex items-center text-center'>{youPay.token}</span>
           </div>
+
         </div>
-        <button className='absolute left-201 top-46% z-2 mt-14 h47 w52 transform b-1px b-#424242 b-rd-6 b-solid bg-#141414 text-34 text-#fff transition-transform active:scale-98 hover:scale-102 !hover:c-pink'
-          onClick={onSwap} ><SyncOutlined style={{ fontSize: '29px', cursor: 'pointer' }} /></button>
-        <div className='h15'></div>
-        <div className='h95 w-full b-rd-6 bg-#141414'>
-          <span className='z-1'>You receiver</span>
-          <div className='mt-10 flex'>
+        <div className='mr-70 flex justify-end'>
+          <button className='z-2 h47 w52 transform b-1px b-#424242 b-rd-6 b-solid bg-#141414 text-34 text-#fff transition-transform active:scale-98 hover:scale-102 !hover:c-pink'
+            onClick={onSwap} >
+            <SyncOutlined style={{ fontSize: '29px', cursor: 'pointer' }} />
+          </button>
+        </div>
+        {/* <div className='h15'></div> */}
+        <div className='h60 w-full flex items-center justify-between b-rd-6'>
+          <span className='z-1 w120 flex items-center'>You will receive</span>
+          <div className='flex items-center'>
             <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} size='large' />
-            <span className='m-auto text-center'>{youReceiver.token}</span>
+            <span className='mx-16 w50 flex items-center text-center'>{youReceiver.token}</span>
           </div>
         </div>
       </div>
