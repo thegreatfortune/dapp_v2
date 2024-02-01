@@ -268,14 +268,19 @@ const LoanDetails = () => {
       className='h238 w464 b-rd-8'
       open={extractIsModalOpen}
       maskClosable={false}
+      content={''
+        // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
+        //   confirm
+        // </Button>,
+        // <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
+        //   Cancel
+        // </Button>,
+        // ]
+      }
+      okText="Confirm"
+      onOk={() => extractConfirm()}
       onCancel={() => setExtractIsModalOpen(false)}
-      footer={[<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
-        confirm
-      </Button>,
-      <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
-        Cancel
-      </Button>,
-      ]}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
     >
       <div>
         <h2>
@@ -286,18 +291,21 @@ const LoanDetails = () => {
 
     <SModal open={isModalOpen}
       maskClosable={false}
-      onCancel={() => setIsModalOpen(false)}
-      footer=
-      {
-        lendState === 'Processing'
-          ? null
-          : [
-            <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
-            lendState === 'Success'
-              ? null
-              : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
-            ]
+      content=
+      {''
+        // lendState === 'Processing'
+        //   ? null
+        //   : [
+        //     <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
+        //     lendState === 'Success'
+        //       ? null
+        //       : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
+        //   ]
       }
+      okText="Confirm"
+      onOk={() => handleOk()}
+      onCancel={() => setIsModalOpen(false)}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: false }}
     >
       {
         !lendState
@@ -378,7 +386,7 @@ const LoanDetails = () => {
             && <div className='flex'>
               {
                 loanInfo.state !== 'CloseByUncollected'
-              && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
+                && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Shell</Button>
 
               }
 

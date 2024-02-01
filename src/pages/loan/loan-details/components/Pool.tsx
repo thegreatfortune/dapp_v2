@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Image, Input, Spin, Tabs, message } from 'antd'
+import { Button, Image, Input, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
@@ -54,11 +54,9 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const [loadTokenInfoLoading, setLoadTokenInfoLoading] = useState(false)
 
-  const [supplyState, setSupplyState] = useState<'Succeed' | 'Processing'>()
-
-
   const [kLineCreated, setKLineCreated] = useState(false)
 
+  const [topUpTitle, setTopUpTitle] = useState('Top-up')
 
   useEffect(() => {
     // if (tokenInfos.length <= 1)
@@ -205,18 +203,20 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     if (!depositValue || !tradeId)
       return 0
 
-    setSupplyState('Processing')
+    setTopUpTitle('Processing')
+    // setSupplyState('Processing')
     try {
-      const res = await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
-      setSupplyState('Succeed')
+      await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
+      setTopUpTitle('Succeed')
     }
     catch (error) {
-      message.error('Fail supply')
+      message.error('Transaction Failed')
       console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error)
     }
     finally {
       setDepositIsModalOpen(false)
-      setSupplyState(undefined)
+      setTopUpTitle('Top-up')
+      // setSupplyState(undefined)
     }
   }
 
@@ -226,24 +226,40 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   return (
     <div className='w-full'>
+
       <SwapModal resetSwapTokenInfo={resetSwapTokenInfo} tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isSwapModalOpen} onCancel={() => setSetIsModalOpen(false)} />
 
-      <SModal open={isDepositModalOpen} onCancel={() => setDepositIsModalOpen(false)} footer={
-        <div>
-          <Button onClick={() => setSetIsModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button type='primary' onClick={onDepositModalConfirm} >
+      <SModal
+        open={isDepositModalOpen}
+        content={
+          (<div>
+            <h2>
+              {topUpTitle}
+            </h2>
+            {/* <Button type='primary' onClick={onDepositModalConfirm} >
             Confirm
           </Button>
-        </div>}>
+          <Button onClick={() => setSetIsModalOpen(false)}>
+            Cancel
+          </Button> */}
+            <div>
+              <Input onChange={onDepositValueChange} disabled={!((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed'))} />
+            </div>
+          </div>
+          )
+        }
+        onCancel={() => setDepositIsModalOpen(false)}
+        okText="Confirm"
+        onOk={onDepositModalConfirm}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
+      >
 
-        {
+        {/* {
           supplyState === undefined && <div>
             <Input onChange={onDepositValueChange} />
           </div>
-        }
-        {
+        } */}
+        {/* {
           supplyState === 'Processing' && (
             <div >
               <h2>
@@ -252,12 +268,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               <Spin />
             </div>
           )
-        }
-        {
+        } */}
+        {/* {
           supplyState === 'Succeed' && <div>
             Succeed
           </div>
-        }
+        } */}
 
       </SModal>
 
