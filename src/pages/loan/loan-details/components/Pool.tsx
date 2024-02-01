@@ -164,7 +164,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
     const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
-    const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) * (Number(ratio)))
+    const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) / (Number(ratio)))
 
     return {
       name: tokenName,
