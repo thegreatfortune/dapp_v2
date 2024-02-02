@@ -47,7 +47,6 @@ const Market = () => {
   return (
     <div className="relative m-auto h-full min-h-full">
       <div >
-
         <img
           src={bannerImage}
           alt='Image 2'

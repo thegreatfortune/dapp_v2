@@ -9,6 +9,7 @@ import myLoanImg from '@/assets/images/personal-center/myLoan.png'
 import myFollowImg from '@/assets/images/personal-center/myFollow.png'
 import personalImg from '@/assets/images/personal-center/Personal.png'
 import disconnectImg from '@/assets/images/personal-center/Disconnect.png'
+import logo from '@/assets/images/portalImages/logo.png'
 
 const UserDropdown = () => {
   const { t } = useTranslation()
@@ -22,7 +23,7 @@ const UserDropdown = () => {
       key: '1',
       label: (
         <Link className='flex items-center c-#fff' to={'/my-loan'} key='myLoan'>
-        <img src={myLoanImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.loan')}
+          <img src={myLoanImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.loan')}
         </Link>
 
       ),
@@ -31,7 +32,7 @@ const UserDropdown = () => {
       key: '2',
       label: (
         <Link className='flex items-center c-#fff' to='/my-lend'>
-          <img src={myFollowImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.follow')}
+          <img src={myFollowImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.follow')}
         </Link>
 
       ),
@@ -40,7 +41,7 @@ const UserDropdown = () => {
       key: 'personalCenter',
       label: (
         <Link className='flex items-center c-#fff' to='/personal-center'>
-          <img src={personalImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.personalCenter')}
+          <img src={personalImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.personalCenter')}
         </Link>
 
       ),
@@ -52,7 +53,7 @@ const UserDropdown = () => {
       key: 'signOut',
       label: (
         <a className='flex items-center c-#fff' onClick={openAccountModal}>
-          <img src={disconnectImg} alt="" className='mr-9 h15 w15'/> {t('nav.menu.signOut')}
+          <img src={disconnectImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.signOut')}
         </a>
       ),
     },
@@ -60,7 +61,7 @@ const UserDropdown = () => {
   return (
     <Dropdown menu={{ items }} placement="bottomRight" overlayClassName='pt-12 text-12 box-border h18'>
       <a onClick={e => e.preventDefault()}>
-      <Avatar src={activeUser.pictureUrl} className="mx6 h34 w34"/>
+        <Avatar src={activeUser.pictureUrl ? activeUser.pictureUrl : logo} className="mx6 h34 w34 bg-slate-200" />
       </a>
     </Dropdown>
   )

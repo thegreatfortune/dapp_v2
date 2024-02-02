@@ -6,6 +6,8 @@ import type { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import logo from '@/assets/images/portalImages/logo.png'
+import cardPic from '@/assets/images/portalImages/loanNote1.jpg'
 
 interface CardProps {
   item: Models.LoanOrderVO
@@ -23,7 +25,7 @@ interface CustomAvatarProps {
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
   return (
     <div className="flex items-center">
-      <Avatar src={src} className='h40 w40' />
+      <Avatar src={src} className='h40 w40 bg-slate-200' />
       {
         name && twitter
           ? <div className="ml-4">
@@ -40,10 +42,34 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
   return (
     <div className="box-border h-429 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
-      <img
+      {/* <img
         src={item?.picUrl}
         alt={item.loanName}
         className="h-232 w-266 rounded-16 object-cover"
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null
+          currentTarget.src = cardPic
+        }}
+      /> */}
+      <Image
+        preview={false}
+        src={item?.picUrl}
+        alt={item.loanName}
+        className="rounded-16 object-cover"
+        width={266}
+        height={232}
+        // onError={({ currentTarget }) => {
+        //   currentTarget.onerror = null
+        //   currentTarget.src = cardPic
+        // }}
+        placeholder={
+          <Image
+            src={cardPic}
+            width={266}
+            height={232}
+          />
+        }
+        fallback={cardPic}
       />
       <div className='text-left'>
         <div className='h11 w-full'></div>
@@ -53,23 +79,26 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>
-              Loan amount
+              Loan Amount
             </li>
-            <li className='h29 text-16 c-#FFFFFF'>
-              ${BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(2)}
+            <li className='h29 text-18 c-#FFFFFF'>
+              $ {Number.parseFloat(BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(2)).toLocaleString()}
             </li>
             <li>
-              {children ?? <CustomAvatar src={item.userInfo?.pictureUrl ?? ''} name={item.userInfo?.nickName ?? 'not bound'} twitter={item.userInfo?.platformName ?? 'not bound'} />}
+              {children ?? <CustomAvatar
+                src={item.userInfo?.pictureUrl ? item.userInfo?.pictureUrl : logo}
+                name={item.userInfo?.nickName ?? 'not bound'}
+                twitter={item.userInfo?.platformName ?? 'not bound'} />}
             </li>
           </ul>
 
           <ul className='m0 flex flex-col list-none gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>
-              {copies ? `Share ${copies}` : 'Risk level'}
+              {copies ? `Share ${copies}` : 'Risk Level'}
 
             </li>
             <li className='h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
-              {item.tradingForm === 'SpotGoods' ? 'Low' : 'Hight'}
+              {item.tradingForm === 'SpotGoods' ? 'Low' : 'High'}
               <Tooltip color='#303241' overlayInnerStyle={{ padding: 25, width: 349 }} title="a. Low-risk loan funds can only be designated for spot transactions,
 and spot transactions can be liquidated to obtain repayment funds;
 

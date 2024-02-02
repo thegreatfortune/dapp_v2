@@ -3,21 +3,19 @@
   "nav.home": "Home",
   "nav.market": "Market",
   "nav.trade": "Trade",
+  "nav.glyph": "Glyph",
   "nav.input.placeholder": "Search item,collector,and more",
   "nav.menu.loan": "My Loan",
   "nav.menu.follow": "My Follow",
   "nav.menu.transaction": "My Transaction",
   "nav.menu.personalCenter": "Personal Center",
   "nav.menu.signOut": "Disconnect & Sign Out",
-
   "applyLoan.formItem.upload.title": "Drag or Drop an image",
   "applyLoan.formItem.upload.description": "PNG or JPG files recommended",
-
   "applyLoan.formItem.item.label": "Item Title",
   "applyLoan.formItem.item.placeholder": "Enter item title",
   "applyLoan.formItem.item.description.label": "Description",
   "applyLoan.formItem.item.description.placeholder": "Tell us the purpose of you loan",
-
   "applyLoan.formItem.applyForLoan.label": "Apply for loan666",
   "applyLoan.formItem.cycle.label": "Cycle(day)",
   "applyLoan.formItem.period.label": "Period",
@@ -27,21 +25,16 @@
   "applyLoan.formItem.number.unit": "share",
   "applyLoan.formItem.dividend.label": "Dividend",
   "applyLoan.formItem.raisingTime.label": "Raising time(day)",
-
   "applyLoan.formItem.designatedTransaction.label": "Designated Transaction",
-
   "applyLoan.btn.submit": "Publish Now",
-
   "market.CardsContainer1.title": "Hot starter",
   "market.CardsContainer2.title": "Popular to follow",
   "market.CardsContainer3.title": "Blacklist",
   "Footer.div.title.footerProfile": "One stop P2P market, secure loans, and secure financial management.",
   "Footer.div.title.footerLogo": "P2P",
-
   "personal.myLend.endMessage": "It is all, nothing more 🤐",
   "personal.myLoan.endMessage": "It is all, nothing more 🤐",
   "personal.myLoan.button": "Extract",
-
   "personal.center.userName": "bu.darmani1",
   "personal.center.userCareer": "@Artist",
   "personal.center.userAddress": "0xf34cc...6fefa +",
@@ -56,7 +49,6 @@
   "personal.center.NFT": "NFT",
   "personal.center.time": "TIME",
   "personal.center.quantify": "Quantify",
-
   "portal.title.theme1": "Collateral-free Financing",
   "portal.title.theme2": "Decentralized Credit Score",
   "portal.title.theme3": "Collateral-free lending market",
@@ -86,13 +78,10 @@
   "portal.pledges8": "8、Stand by to support one another whenever challenges arise.",
   "portal.pledges9": "9、Unite to address any discipline issues within our communities.",
   "portal.pledges10": "10、Introduce physical activities in all communities and actively join social events.",
-
   "portal.layout.title": "FOLLOWFI",
   "portal.layout.menu1": "Home",
   "portal.layout.menu2": "Market",
   "portal.layout.menu3": "Trade",
   "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management.",
-
   "basicLayout.navBar.placeholder": "Search name, user, address"
-
 }

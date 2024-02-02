@@ -1,6 +1,8 @@
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
+
+// import { RightOutlined } from '@ant-design/icons';
 import type { Models } from '@/.generated/api/models'
 import TransparentCard from '@/pages/components/TransparentCard'
 
@@ -38,7 +40,10 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
           : <div className='font-size-14 c-[#D2D2D2]'>
             {/* // TODO records.length > 4 */}
             {
-              records.length > 0 && <Link to={to ?? ''} className='c-white'> view all {'>>'}</Link>
+              records.length > 0 && <Link to={to ?? ''} className='text-18 c-white'> more
+                {'>>'}
+                {/* <RightOutlined /> */}
+              </Link>
             }
 
           </div>
@@ -48,8 +53,11 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
       <div className='h30 w-full'></div>
 
       <div className='flex flex-wrap gap-x-46 gap-y-50'>
-      {
-       records.map(e => <div key={e.tradeId} onClick={() => navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)} > <TransparentCard key={e.tradeId} item={e} /></div>)
+        {
+          records.map(e => <div key={e.tradeId} onClick={() => {
+            navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)
+          }
+          } > <TransparentCard key={e.tradeId} item={e} /></div>)
         }
       </div>
 

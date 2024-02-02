@@ -68,12 +68,24 @@ const OrderViewAll = () => {
           api={LoanService.ApiLoanPageLoanContract_GET}
           params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }}
           containerId='HotStarterContainer'
-          renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} ><TransparentCard key={item.tradeId} item={item} /></div>} />
+          renderItem={(item: Models.LoanOrderVO) => <div onClick={() => {
+            navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
+          }
+          } ><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
       {
         category === 'PopularToFollow'
-        && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} > <TransparentCard key={item.tradeId} item={item} /></div>} />
+        && <ScrollableList
+          grid={{ gutter: 16, column: 4 }}
+          api={LoanService.ApiLoanPageLoanContract_GET}
+          params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
+          containerId='HotStarterContainer'
+          renderItem={(item: Models.LoanOrderVO) => <div onClick={() => {
+            navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
+          }
+          } > <TransparentCard key={item.tradeId} item={item} /></div>} />
+
       }
 
       {
@@ -81,7 +93,7 @@ const OrderViewAll = () => {
         && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
-    </div>
+    </div >
   )
 }
 

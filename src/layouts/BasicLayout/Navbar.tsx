@@ -52,13 +52,34 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
 
   return (
     <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
+
       <div className="flex items-center text-center">
         <Image src={logo} width={120} height={40}></Image>
       </div>
 
+      {/* {
+        showInput
+        &&  */}
+      <div className='relative ml-400 box-border h48 w310'>
+        <div hidden={!showInput}>
+          <AutoComplete
+            popupClassName="certain-category-search-dropdown"
+            options={options}
+            onSearch={handleSearch}
+            onSelect={onSelect}
+            className="h48 w310"
+          >
+            <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
+          </AutoComplete>
+          <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
+        </div>
+
+      </div>
+      {/* } */}
+
       <ul className="flex list-none justify-around p0 text-center font-size-16 c-white">
         <li className="inline-block">
-          <NavLink to="/portal" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
+          <NavLink to="/" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
             {t('nav.home')}
           </NavLink>
         </li>
@@ -72,25 +93,12 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
             {t('nav.trade')}
           </NavLink>
         </li>
+        <li className="ml-30 inline-block">
+          <NavLink to="https://glyph.followfi.io" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
+            {t('nav.glyph')}
+          </NavLink>
+        </li>
       </ul>
-
-      {
-        showInput
-        && <div className='relative box-border h48 w310'>
-
-          <AutoComplete
-            popupClassName="certain-category-search-dropdown"
-            options={options}
-            onSearch={handleSearch}
-            onSelect={onSelect}
-            className="h48 w310"
-          >
-            <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
-          </AutoComplete>
-          <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
-
-        </div>
-      }
 
       <CustomConnectButton />
 

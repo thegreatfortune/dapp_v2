@@ -14,7 +14,6 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
 
       <div className='text-left'>
         <div className='h11 w-full'></div>
-
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-x-6 p0'>
             <li className='text-21'>

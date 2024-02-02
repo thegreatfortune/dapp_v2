@@ -178,7 +178,7 @@ const CustomConnectButton = () => {
               return (
 
                 <div>
-                  <button onClick={onOpenConnectModal} type="button" className='h48 w170 rounded-30 font-size-18 primary-btn' >
+                  <button onClick={onOpenConnectModal} type="button" className='h40 w170 rounded-30 text-16 primary-btn' >
                     Connect Wallet
                   </button>
                 </div>
@@ -189,7 +189,7 @@ const CustomConnectButton = () => {
             if (chain.unsupported) {
               return (
                 <button onClick={openChainModal} type="button">
-                  Wrong network
+                  Wrong Network !
                 </button>
               )
             }
@@ -209,7 +209,7 @@ const CustomConnectButton = () => {
                         background: chain.iconBackground,
                         borderRadius: 999,
                         overflow: 'hidden',
-                        marginRight: 4,
+                        margin: 4,
                       }}
                     >
                       {chain.iconUrl && (

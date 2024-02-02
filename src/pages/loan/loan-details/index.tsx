@@ -39,6 +39,9 @@ const LoanDetails = () => {
 
   const [shellIsModalOpen, setShellIsModalOpen] = useState(false)
 
+  const [sellIsModalOpen, setSellIsModalOpen] = useState(false)
+  const [sellModalLoading, setSellModalLoading] = useState(false)
+
   const [copies, setCopies] = useState<number | null>(1)
 
   const [lendingState, setLendingState] = useState(false)
@@ -203,6 +206,33 @@ const LoanDetails = () => {
     }
   }
 
+  async function sellConfirm() {
+    if (!props.tradeId || amount === undefined || price === undefined)
+      throw new Error('tradeId is undefined')
+
+    setSellModalLoading(true)
+
+    try {
+      const res = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), BigInt(11111), BigInt(22222))
+      console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', res)
+      if (res?.status !== 1) {
+        message.error('Error during confirm')
+        throw new Error('Error during confirm')
+      }
+
+      // setLoadingState(LoadingState.Succeeded)
+    }
+    catch (error) {
+      // setLoadingState(LoadingState.Initial)
+
+      message.error('Error during confirm')
+      console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
+    }
+    finally {
+      setSellModalLoading(false)
+    }
+  }
+
   const handleOk = async () => {
     if (!tradeId || !copies)
       return
@@ -272,6 +302,47 @@ const LoanDetails = () => {
   return (<div className='w-full'>
 
     <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
+
+    <SModal
+      className='h238 w464 b-rd-8'
+      open={sellIsModalOpen}
+      content={
+        <div>
+          {/* loadingState:  {loadingState}
+          <div>
+            Sell Quantity
+            <Input
+              placeholder="Enter value"
+              value={amount}
+              onChange={e => handleNumericInputChange(e.target.value, setAmount)}
+            /> Share
+          </div>
+
+          <div className='h50' />
+
+          <div className='flex'>
+            Unit Price
+            <Input
+              placeholder="Enter value"
+              value={price}
+              onChange={e => handleNumericInputChange(e.target.value, setPrice)}
+            />
+          </div>
+
+          <div className='h30' />
+
+          <div>
+            Total Price: {String(total)}
+          </div> */}
+        </div>
+      }
+      okText="Confirm"
+      onOk={() => sellConfirm()}
+      onCancel={() => setSellIsModalOpen(false)}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: sellModalLoading }}
+    >
+
+    </SModal>
 
     <SModal
       className='h238 w464 b-rd-8'
@@ -422,53 +493,53 @@ const LoanDetails = () => {
 
         <div className="h20" />
 
-        <div className='h166 w1047 flex items-center gap-x-19 p-x-38 text-center'>
+        <div className='h166 w1047 flex items-center gap-x-19 px-20 text-center'>
 
           {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Loan amount</li>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Loan amount</li>
             <li className="h10" />
-            <li className='text-24 font-bold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
+            <li className='text-20 font-semibold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
             {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
 
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
-          <ul className='m0 w150 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Installment</li>
+          <ul className='m0 w120 list-none p0'>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Installment</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.periods}/ {loanInfo.repayCount}</li>
+            <li className='text-20 font-semibold'> {loanInfo.repayCount} / {loanInfo.periods}</li>
           </ul>
           {/* </div> */}
 
           <ul className='m0 w100 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Interest</li>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Interest</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
+            <li className='text-20 font-semibold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 w100 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>dividend</li>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Dividend</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
+            <li className='text-20 font-semibold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
-          <ul className='m0 w80 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Risk level</li>
+          <ul className='m0 w120 list-none p0'>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
-            <li className='text-28 font-bold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+            <li className='text-20 font-semibold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
-          <ul className='m0 w100 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Total shares</li>
+          <ul className='m0 w120 list-none p0'>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
-            <li className='w-100 text-28 font-bold'>{loanInfo.goalCopies}</li>
+            <li className='w-100 text-20 font-semibold'>{loanInfo.goalCopies}</li>
           </ul>
 
-          <ul className='m0 w230 list-none p0'>
-            <li className='text-16 c-#D1D1D1'>Minimum required shares</li>
+          <ul className='m0 w150 list-none p0'>
+            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
-            <li className='text-28 font-bold'>{loanInfo.minGoalQuantity}</li>
+            <li className='text-20 font-semibold'>{loanInfo.minGoalQuantity}</li>
           </ul>
 
         </div>
