@@ -216,7 +216,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
                 split={false}
                 dataSource={data}
                 renderItem={(item, index) => (
-                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='w-full'>
+                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='w-full ps-0'>
                     {renderItem(item, index)}
                   </List.Item>
                 )}

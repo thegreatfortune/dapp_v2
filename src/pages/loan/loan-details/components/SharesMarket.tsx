@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import BigNumber from 'bignumber.js'
 import { useState } from 'react'
 import { Avatar, Button, message } from 'antd'
@@ -27,44 +28,46 @@ const SharesMarket = () => {
 
   const renderItem = (item: Models.TokenMarketVo, index: number) => {
     return (
-      <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822' key={item.loanId}>
-        {/* <li>{index + 1} */}
-        <li>
-        <div className='flex'>
-          <span className='h40 w40' ><Avatar size={40} src={item.userInfo?.pictureUrl}/></span>
-          <span className=''>
-            <div className='ml-15'>{item.userInfo?.nickName}</div>
-            <span className='ml-15'>{item.userInfo?.platformName}</span>
-          </span>
-          </div>
-        </li>
-        <li>{item.price && ethers.formatUnits(item.price)}</li>
-        <li>{item.remainingQuantity}</li>
-        {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
-        <li> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
-        <li>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
-        <li>
-          {isWalletConnected
-            ? (
-              // 用户已连接钱包
-              <>
-                {
-                  activeUser.id === item.userId
-                    ? (
-                      <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+      <div className='w-full'>
+        <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822 ps-0' key={item.loanId}>
+          {/* <li>{index + 1} */}
+          <li className='flex justify-center'>
+            <div className='flex'>
+              <span className='h40 w40' ><Avatar size={40} src={item.userInfo?.pictureUrl} /></span>
+              <span className=''>
+                <div className='ml-15'>{item.userInfo?.nickName}</div>
+                <span className='ml-15'>{item.userInfo?.platformName}</span>
+              </span>
+            </div>
+          </li>
+          <li className='flex justify-center'>{item.price && ethers.formatUnits(item.price)}</li>
+          <li className='flex justify-center'>{item.remainingQuantity}</li>
+          {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
+          <li className='flex justify-center'> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
+          <li className='flex justify-center'>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
+          <li className='flex justify-center'>
+            {isWalletConnected
+              ? (
+                // 用户已连接钱包
+                <>
+                  {
+                    activeUser.id === item.userId
+                      ? (
+                        <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
                       )
-                    : (
-                      <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                      : (
+                        <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
                       )
-                }
-              </>
+                  }
+                </>
               )
-            : (
-              // 用户未连接钱包
-              <Button className='h25 w72 b-rd-30 primary-btn'>Buy</Button>
+              : (
+                // 用户未连接钱包
+                <Button className='h25 w72 b-rd-30 primary-btn'>Buy</Button>
               )}
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </div>
     )
   }
 
@@ -113,10 +116,8 @@ const SharesMarket = () => {
   }
 
   return (
-    <div >
-
-      <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
-
+    <div className='w-full' >
+      <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} content={null}>
         {
           buyState === 'Processing' && <p>Processing</p>
         }
@@ -129,8 +130,22 @@ const SharesMarket = () => {
       </SModal>
 
       {/* // TODO 默认Unit Price 升序排序 */}
-
-      <SorterScrollableList grid={{ gutter: 16, column: 6 }} containerId={'SharesMarketContainerId'} activeUser={activeUser} renderItem={renderItem} tradeId={Number(tradeId)} />
+      <ul className='grid grid-cols-6 gap-10 ps-0'>
+        {/* <li className='flex justify-center text-16'>SN</li> */}
+        <li className='flex justify-center text-18'>User</li>
+        <li className='flex justify-center text-18'>Price</li>
+        <li className='flex justify-center text-18'>Amount</li>
+        <li className='flex justify-center text-18'>Amount</li>
+        <li className='flex justify-center text-18'>Time</li>
+        <li className='flex justify-center text-18'>Action</li>
+      </ul>
+      <SorterScrollableList
+        grid={{ gutter: 16, column: 6 }}
+        containerId={'SharesMarketContainerId'}
+        activeUser={activeUser}
+        renderItem={renderItem}
+        tradeId={Number(tradeId)}
+      />
 
     </div>
   )

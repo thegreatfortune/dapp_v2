@@ -35,7 +35,7 @@ const MyLend = () => {
 
     const params = new Models.ApiMarketBalancePageMyFollowGETParams()
 
-    params.limit = 4
+    params.limit = 16
     params.page = page + 1
 
     params.userId = BigNumber(activeUser.id).toNumber()

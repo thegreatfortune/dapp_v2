@@ -194,7 +194,15 @@ const LoanDetails = () => {
     {
       key: '1',
       label: 'Pool',
-      children: <Pool loanInfo={loanInfo} prePage={prePage} lendState={lentState ? 'Success' : 'Processing'} refundPoolAddress={refundPoolAddress} repayCount={loanInfo.repayCount ?? 0} tradeId={tradeId ? BigInt(tradeId) : null} transactionPair={loanInfo.transactionPairs ?? []} />,
+      children: <Pool
+        loanInfo={loanInfo}
+        prePage={prePage}
+        lendState={lentState ? 'Success' : 'Processing'}
+        refundPoolAddress={refundPoolAddress}
+        repayCount={loanInfo.repayCount ?? 0}
+        tradeId={tradeId ? BigInt(tradeId) : null}
+        transactionPair={loanInfo.transactionPairs ?? []}
+      />,
     },
     {
       key: '2',
@@ -347,7 +355,9 @@ const LoanDetails = () => {
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
       <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Pool</div>
+        <div
+          className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
+          onClick={() => setActiveKey('1')} >Pool</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
         <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Shares market</div>
       </div>
@@ -432,7 +442,9 @@ const LoanDetails = () => {
                 defaultValue='1.00'
                 value={sellUnitPrice}
                 onChange={(value) => {
-                  const processedValue = value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                  const processedValue = value!.toString().includes('.')
+                    ? value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                    : value!.toString()
                   setSellUnitPrice(processedValue)
                   setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
                 }}

@@ -101,7 +101,15 @@ const SorterScrollableList: React.FC<IProps> = ({ grid, activeUser, renderItem, 
   ])
 
   return (
-      <ScrollableList grid={grid} columns={columns} api={MarketService.ApiMarketPageInfo_GET} params={params} containerId={containerId} renderItem={renderItem} />
+    <ScrollableList
+      className=''
+      // grid={grid}
+      columns={columns}
+      api={MarketService.ApiMarketPageInfo_GET}
+      params={params}
+      containerId={containerId}
+      renderItem={renderItem}
+    />
   )
 }
 
