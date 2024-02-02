@@ -125,7 +125,8 @@ const LoanDetails = () => {
     else {
       async function fetchSharesData() {
         const erc3525Contract = await browserContractService?.getERC3525Contract()
-        const shares = await erc3525Contract?.tokenIdBalanceOf(tradeId!)
+        const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(activeUser.address!, tradeId!)
+        const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
         setTotalShares(Number.parseInt(shares!.toString()))
       }
       fetchSharesData()
@@ -354,12 +355,16 @@ const LoanDetails = () => {
 
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
-      <div className='h79 w760 flex items-center justify-center gap-x-30 rounded-14 bg-#12131d text-center' >
+      <div className='h80 w500 flex items-center justify-between gap-x-30 rounded-14 bg-#12131d text-center' >
         <div
-          className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
+          className={`mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
           onClick={() => setActiveKey('1')} >Pool</div>
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Operation record</div>
-        <div className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`} onClick={() => setActiveKey('3')} >Shares market</div>
+        {/* <div
+          className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`}
+          onClick={() => setActiveKey('2')} >Operation record</div> */}
+        <div
+          className={`mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`}
+          onClick={() => setActiveKey('3')} >Shares market</div>
       </div>
     </div>)
   }
@@ -690,12 +695,12 @@ const LoanDetails = () => {
           </div>
           {
             prePage === 'market' && loanInfo.state === 'Following'
-            && <Button className='h60 w180 rounded-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+            && <Button className='m-8 h40 h60 w180 rounded-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
           }
 
           {
             (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
-            && <Button loading={refundLoading} className='h60 w180 primary-btn' onClick={refund}>Liquidate</Button>
+            && <Button loading={refundLoading} className='m-8 h40 w180 primary-btn' onClick={refund}>Liquidate</Button>
           }
 
           {
@@ -713,7 +718,7 @@ const LoanDetails = () => {
 
           {
             prePage === 'loan'
-            && <Button className='h60 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+            && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
           }
 
         </div>

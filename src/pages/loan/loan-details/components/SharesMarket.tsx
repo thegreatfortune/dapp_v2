@@ -20,9 +20,12 @@ const SharesMarket = () => {
 
   const { browserContractService } = useBrowserContract()
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [sellModalOpen, setSellModalOpen] = useState<boolean>(false)
+  const [executing, setExecuting] = useState(false)
 
-  const [buyState, setBuyState] = useState<'Processing' | 'Succeed'>()
+  const [buyModalOpen, setBuyModalOpen] = useState(false)
+
+  const [currentItem, setCurrentItem] = useState<Models.TokenMarketVo>()
 
   const { isWalletConnected } = useBrowserContract()
 
@@ -40,10 +43,10 @@ const SharesMarket = () => {
               </span>
             </div>
           </li>
-          <li className='flex justify-center'>{item.price && ethers.formatUnits(item.price)}</li>
-          <li className='flex justify-center'>{item.remainingQuantity}</li>
+          <li className='flex justify-center'>${item.price && ethers.formatUnits(item.price)}</li>
+          <li className='flex justify-center'>{item.amount}</li>
           {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
-          <li className='flex justify-center'> {BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()}</li>
+          <li className='flex justify-center'>${BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.amount ?? 0).toString()}</li>
           <li className='flex justify-center'>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
           <li className='flex justify-center'>
             {isWalletConnected
@@ -53,10 +56,20 @@ const SharesMarket = () => {
                   {
                     activeUser.id === item.userId
                       ? (
-                        <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
+                        <Button className='h30 w100 items-center b-rd-30' onClick={() => {
+                          setCurrentItem(item)
+                          setSellModalOpen(true)
+                        }}
+                        >Cancel</Button>
+                        // <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onCancelOrder(item)}>Cancel</Button>
                       )
                       : (
-                        <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                        // <Button className='h25 w72 b-rd-30 primary-btn' onClick={() => onBuy(item)}>Buy</Button>
+                        <Button className='h30 w100 b-rd-30 primary-btn' onClick={() => {
+                          setCurrentItem(item)
+                          setBuyModalOpen(true)
+                        }}
+                        >Buy</Button>
                       )
                   }
                 </>
@@ -71,71 +84,82 @@ const SharesMarket = () => {
     )
   }
 
-  async function onBuy(item: Models.TokenMarketVo) {
+  async function onBuyOrder(item: Models.TokenMarketVo) {
     if (!tradeId)
       throw new Error('tradeId is undefined')
-
-    setBuyState('Processing')
-    setIsModalOpen(true)
+    setExecuting(true)
 
     try {
       if (item.marketId === undefined || item.marketId === null)
-        throw new Error('marketId is undefined')
+        throw new Error('MarketId is undefined')
 
       await browserContractService?.followMarketContract_buyERC3525(BigInt(item.marketId), ethers.parseEther(BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toString()))
-      setBuyState('Succeed')
+      setExecuting(false)
+      setBuyModalOpen(false)
     }
     catch (error) {
       message.error('Buy failed')
       console.log('%c [ error ]-34', 'font-size:13px; background:#1fbb1b; color:#63ff5f;', error)
-      setBuyState(undefined)
+      setExecuting(false)
     }
   }
 
   async function onCancelOrder(item: Models.TokenMarketVo) {
     try {
       if (item.marketId === undefined || item.marketId === null)
-        throw new Error('marketId is undefined')
-
-      setBuyState('Processing')
-      setIsModalOpen(true)
+        throw new Error('MarketId is undefined')
+      setExecuting(true)
       console.log('%c [ item.marketId ]-99', 'font-size:13px; background:#dedc23; color:#ffff67;', item.marketId)
       await browserContractService?.followMarketContract_cancelOrder(BigInt(item.marketId))
-      setBuyState('Succeed')
+      setExecuting(false)
+      setSellModalOpen(false)
     }
     catch (error) {
       message.error('Cancel failed')
       console.log('%c [ error ]-61', 'font-size:13px; background:#34c948; color:#78ff8c;', error)
-      setBuyState(undefined)
+      setExecuting(false)
     }
-  }
-
-  function onConfirm() {
-    setIsModalOpen(false)
-    setBuyState(undefined)
   }
 
   return (
     <div className='w-full' >
-      <SModal open={isModalOpen} onCancel={() => setIsModalOpen(false)} content={null}>
-        {
-          buyState === 'Processing' && <p>Processing</p>
-        }
-        {
-          buyState === 'Succeed' && <div>
-            Share
-            <Button className='primary-btn' onClick={onConfirm}>Confirm</Button>
-          </div>
-        }
+      <SModal open={sellModalOpen} content={
+        <div>
+          <h2>Cancal</h2>
+        </div>
+      }
+        okText={'Confirm'}
+        onOk={() => onCancelOrder(currentItem!)}
+        okButtonProps={{
+          className: 'primary-btn',
+          disabled: executing,
+        }}
+        onCancel={() => setSellModalOpen(false)}
+      >
+      </SModal>
+
+      <SModal open={buyModalOpen} content={
+        <div>
+          <h2>Buy</h2>
+        </div>
+      }
+        okText={'Confirm'}
+        onOk={() => onBuyOrder(currentItem!)}
+        okButtonProps={{
+          className: 'primary-btn',
+          disabled: executing,
+        }}
+        onCancel={() => setBuyModalOpen(false)}
+      >
       </SModal>
 
       {/* // TODO 默认Unit Price 升序排序 */}
       <ul className='grid grid-cols-6 gap-10 ps-0'>
         {/* <li className='flex justify-center text-16'>SN</li> */}
-        <li className='flex justify-center text-18'>User</li>
-        <li className='flex justify-center text-18'>Price</li>
-        <li className='flex justify-center text-18'>Amount</li>
-        <li className='flex justify-center text-18'>Amount</li>
+        <li className='flex justify-center text-18'>Trader</li>
+        <li className='flex justify-center text-18'>Unit Price</li>
+        <li className='flex justify-center text-18'>Quantity</li>
+        <li className='flex justify-center text-18'>Total Price</li>
         <li className='flex justify-center text-18'>Time</li>
         <li className='flex justify-center text-18'>Action</li>
       </ul>
