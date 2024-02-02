@@ -498,27 +498,27 @@ const LoanDetails = () => {
         <div>
           <h2>Confirm to Sell</h2>
           <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-22'>
+            <div className='w-120 text-18'>
               Shares:
             </div>
-            <div className='text-22'>
+            <div className='text-18'>
               {sellAmount}
             </div>
           </div>
           <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-22'>
+            <div className='w-120 text-18'>
               Unit Price:
             </div>
-            <div className='text-22'>
+            <div className='text-18'>
               {sellUnitPrice}
             </div>
 
           </div>
           <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-22'>
+            <div className='w-120 text-18'>
               Total Price:
             </div>
-            <div className='text-22'>
+            <div className='text-18'>
               {totalPrice}
             </div>
 
@@ -526,7 +526,7 @@ const LoanDetails = () => {
 
           {/* <div hidden={!sellModalLoading}> */}
           <div className='mt-20'>
-            <div className='flex text-22'>
+            <div className='flex text-18'>
               <div className='mr-8'>
                 {approved === 0
                   ? <BorderOutlined />
@@ -548,7 +548,7 @@ const LoanDetails = () => {
                 }
               </div>
             </div>
-            <div className='flex text-22'>
+            <div className='flex text-18'>
               <div className='mr-8'>
                 {sold === 0
                   ? <BorderOutlined />
