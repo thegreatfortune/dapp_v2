@@ -443,6 +443,20 @@ export class BrowserContractService {
   }
 
   /**
+   * 检查授权额度 tokenId下的_operator
+   *
+   * @param {bigint} tokenId ERC3525的tokenID
+   * @param {string} operator 被授予花费的地址kenId下的份数
+   * @return {*}
+   * @memberof BrowserContractService
+   */
+  async ERC3525_allowance(tokenId: bigint, operator: string) {
+    const c = await this.getERC3525Contract()
+
+    return c.allowance(tokenId, operator)
+  }
+
+  /**
    * 授权tokenId下的数量到_operator
    *
    * @param {bigint} tokenId ERC3525的tokenID
@@ -725,12 +739,44 @@ export class BrowserContractService {
   // write
 
   /**
+   *  授权TimeMarket合约
+   *  @param {bigint} tradeId ERC3525的tokenId
+   */
+  async followMarketContract_approveERC3525(tradeId: bigint, amount: bigint) {
+    console.log(tradeId.toString(), amount.toString())
+
+    const tid = await this.ERC3525_getTokenId(tradeId)
+    if (!tid)
+      throw new Error(`tokenId is undefined: ${tid}`)
+
+    const marketContract = await this.getFollowMarketContract()
+
+    const allowance = await this.ERC3525_allowance(tid, await marketContract.getAddress())
+
+    console.log(allowance)
+
+    if (BigNumber(allowance.toString()).lt(BigNumber(amount.toString()))) {
+      console.log('need approve')
+      const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
+      await approveRes.wait()
+      const res = await handleTransaction(approveRes)
+      if (res?.status === 1) {
+        return Promise.resolve(true)
+      }
+      else {
+        message.error('Transaction Failed!')
+        throw new Error('Transaction Failed!')
+      }
+    }
+    return Promise.resolve(true)
+  }
+
+  /**
    * 卖出质押ERC3525（需要授权TimeMarket合约）
    *
    * @param {bigint} tradeId ERC3525的tokenId
    * @param {bigint} price 出售价格
    * @param {bigint} amount 出售数量
-   * @param {bigint} copies
    * @return {*}
    * @memberof BrowserContractService
    */
@@ -738,14 +784,14 @@ export class BrowserContractService {
     const tid = await this.ERC3525_getTokenId(tradeId)
 
     if (!tid)
-      throw new Error(`tokenId is undefined: ${tid}`)
+      throw new Error(`TokenId is undefined: ${tid}`)
 
     // TODO: allowance 检查授权
     const marketContract = await this.getFollowMarketContract()
 
-    const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
+    // const approveRes = await this.ERC3525_approve(tid, await marketContract.getAddress(), amount)
 
-    await approveRes.wait()
+    // await approveRes.wait()
 
     console.log('%c [ tid, price, amount ]-616', 'font-size:13px; background:#8d01d2; color:#d145ff;', tid, price, amount)
 

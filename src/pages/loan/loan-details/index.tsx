@@ -5,6 +5,7 @@ import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
+import { CheckOutlined, LoadingOutlined } from '@ant-design/icons'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
@@ -41,6 +42,15 @@ const LoanDetails = () => {
 
   const [sellIsModalOpen, setSellIsModalOpen] = useState(false)
   const [sellModalLoading, setSellModalLoading] = useState(false)
+  const [totalShares, setTotalShares] = useState(0)
+  const [sellAmount, setSellAmount] = useState('1')
+  const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
+  const [totalPrice, setTotalPrice] = useState('0')
+
+  const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
+
+  const [approved, setApproved] = useState(false)
+  const [sold, setSold] = useState(false)
 
   const [copies, setCopies] = useState<number | null>(1)
 
@@ -107,6 +117,31 @@ const LoanDetails = () => {
 
     fetchData()
   }, [tradeId, extractIsModalOpen, prePage])
+
+  useEffect(() => {
+    if (!tradeId) {
+      message.error('Operation Failed')
+    }
+    else {
+      if (sellIsModalOpen) {
+        async function fetchSharesData() {
+          const erc3525Contract = await browserContractService?.getERC3525Contract()
+          const shares = await erc3525Contract?.tokenIdBalanceOf(tradeId!)
+          setTotalShares(Number.parseInt(shares!.toString()))
+        }
+        fetchSharesData()
+      }
+    }
+    setSellAmount('1')
+    setSellUnitPrice('1.00')
+    setTotalPrice('0')
+  }, [sellIsModalOpen])
+
+  useEffect(() => {
+    setApproved(false)
+    setSold(false)
+    setSellModalLoading(false)
+  }, [sellConfirmModalOpen])
 
   useEffect(() => {
     async function fetchData() {
@@ -207,30 +242,42 @@ const LoanDetails = () => {
   }
 
   async function sellConfirm() {
-    if (!props.tradeId || amount === undefined || price === undefined)
+    if (!tradeId || sellAmount === undefined || sellUnitPrice === undefined)
       throw new Error('tradeId is undefined')
 
     setSellModalLoading(true)
 
     try {
-      const res = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), BigInt(11111), BigInt(22222))
-      console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', res)
-      if (res?.status !== 1) {
-        message.error('Error during confirm')
-        throw new Error('Error during confirm')
-      }
+      const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
+      if (approvedRes)
+        setApproved(true)
 
-      // setLoadingState(LoadingState.Succeeded)
+      const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
+      const processedPrice = decimals! * BigInt(Number.parseFloat(sellUnitPrice))
+      console.log(processedPrice)
+      const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
+      console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
+      if (sellRes?.status !== 1) {
+        message.error('Sell Transaction Failed!')
+        throw new Error('Sell Transaction Failed!')
+      }
+      setSold(true)
     }
     catch (error) {
-      // setLoadingState(LoadingState.Initial)
-
-      message.error('Error during confirm')
+      message.error('Sell Transaction Failed!')
       console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
     }
     finally {
       setSellModalLoading(false)
     }
+  }
+
+  const handleNumericInputChange = (value: string | undefined, setter: React.Dispatch<React.SetStateAction<string>>) => {
+    const numericValue = value?.replace(/[^0-9]/g, '')
+    setter(
+      numericValue === '0'
+        ? '1'
+        : numericValue || '1')
   }
 
   const handleOk = async () => {
@@ -299,47 +346,136 @@ const LoanDetails = () => {
     </div>)
   }
 
+  // const limitDecimals = (value: string | number): string => {
+  //   const reg = /^(\-)*(\d+)\.(\d\d).*$/
+  //   // 限制两位位小数点
+  //   if (typeof value === 'string')
+  //     return !Number.isNaN(Number(value)) ? value.replace(reg, '$1$2.$3') : ''
+  //   else if (typeof value === 'number')
+  //     return !Number.isNaN(value) ? String(value).replace(reg, '$1$2.$3') : ''
+  //   else
+  //     return ''
+  // }
+
   return (<div className='w-full'>
 
     <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
 
+    {/* sell modal */}
     <SModal
       className='h238 w464 b-rd-8'
       open={sellIsModalOpen}
       content={
         <div>
-          {/* loadingState:  {loadingState}
-          <div>
+          My shares: {totalShares}
+          <div className='flex'>
             Sell Quantity
-            <Input
-              placeholder="Enter value"
-              value={amount}
-              onChange={e => handleNumericInputChange(e.target.value, setAmount)}
-            /> Share
+            <InputNumber
+              className='w-200'
+              min={'1'}
+              max={totalShares.toString()}
+              placeholder="Enter Quantity value"
+              value={sellAmount}
+              defaultValue={'1'}
+              onChange={(value) => {
+                setSellAmount(value!)
+                setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
+              }
+              }
+            />
+            <Button
+              type='primary'
+              // loading={checkMaxLoading}
+              onClick={() => {
+                setSellAmount(totalShares.toString())
+                setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
+              }}
+              disabled={sellModalLoading}>
+              Max
+            </Button>
+            Shares
           </div>
 
           <div className='h50' />
 
           <div className='flex'>
             Unit Price
-            <Input
-              placeholder="Enter value"
-              value={price}
-              onChange={e => handleNumericInputChange(e.target.value, setPrice)}
+            <InputNumber
+              className='w-200'
+              min={'0.01'}
+              placeholder="Enter Unit Price"
+              step="0.10"
+              precision={2}
+              defaultValue='1.00'
+              value={sellUnitPrice}
+              onChange={(value) => {
+                const processedValue = value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                setSellUnitPrice(processedValue)
+                setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
+              }}
             />
+            Usd
           </div>
-
           <div className='h30' />
-
           <div>
-            Total Price: {String(total)}
-          </div> */}
+            Total Price: {totalPrice}
+          </div>
         </div>
       }
-      okText="Confirm"
-      onOk={() => sellConfirm()}
+      okText="Sell"
+      // onOk={() => sellConfirm()}
+      onOk={() => setSellConfirmModalOpen(true)}
       onCancel={() => setSellIsModalOpen(false)}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: sellModalLoading }}
+      okButtonProps={{
+        type: 'primary',
+        className: 'primary-btn w-80',
+        disabled: Number.parseInt(sellAmount) > totalShares || sellConfirmModalOpen,
+      }}
+      cancelButtonProps={{
+        className: 'w-80',
+      }}
+    >
+    </SModal>
+
+    <SModal
+      className='h238 w464 b-rd-8'
+      open={sellConfirmModalOpen}
+      content={
+        <div>
+          确认要出售：<br />
+          shares: {sellAmount} <br />
+          unitprice: {sellUnitPrice} <br />
+          totalPrice:{totalPrice}
+          <div hidden={!sellModalLoading}>
+            <div className='flex'>
+              <div>
+                {approved ? <CheckOutlined /> : <LoadingOutlined />}
+              </div>
+              <div>
+                {approved ? 'Approved' : 'Approving'}
+              </div>
+            </div>
+            <div className='flex'>
+              <div>
+                {sold ? <CheckOutlined /> : <LoadingOutlined />}
+              </div>
+              <div>
+                Trading
+              </div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+
+      }
+      onOk={() => sellConfirm()}
+      okText="Confirm"
+      onCancel={() => setSellConfirmModalOpen(false)}
+      okButtonProps={{
+        type: 'primary',
+        className: 'primary-btn',
+        disabled: sellModalLoading,
+      }}
     >
 
     </SModal>
@@ -470,7 +606,7 @@ const LoanDetails = () => {
             && <div className='flex'>
               {
                 loanInfo.state !== 'CloseByUncollected'
-                && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setShellIsModalOpen(true)}>Sell</Button>
+                && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
 
               }
 
@@ -551,7 +687,7 @@ const LoanDetails = () => {
 
     <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
 
-  </div>)
+  </div >)
 }
 
 export default LoanDetails
