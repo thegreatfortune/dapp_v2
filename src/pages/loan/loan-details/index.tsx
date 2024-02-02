@@ -5,7 +5,7 @@ import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { CheckOutlined, LoadingOutlined } from '@ant-design/icons'
+import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
@@ -45,12 +45,12 @@ const LoanDetails = () => {
   const [totalShares, setTotalShares] = useState(0)
   const [sellAmount, setSellAmount] = useState('1')
   const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
-  const [totalPrice, setTotalPrice] = useState('0')
+  const [totalPrice, setTotalPrice] = useState('1.00')
 
   const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
 
-  const [approved, setApproved] = useState(false)
-  const [sold, setSold] = useState(false)
+  const [approved, setApproved] = useState(0)
+  const [sold, setSold] = useState(0)
 
   const [copies, setCopies] = useState<number | null>(1)
 
@@ -123,23 +123,21 @@ const LoanDetails = () => {
       message.error('Operation Failed')
     }
     else {
-      if (sellIsModalOpen) {
-        async function fetchSharesData() {
-          const erc3525Contract = await browserContractService?.getERC3525Contract()
-          const shares = await erc3525Contract?.tokenIdBalanceOf(tradeId!)
-          setTotalShares(Number.parseInt(shares!.toString()))
-        }
-        fetchSharesData()
+      async function fetchSharesData() {
+        const erc3525Contract = await browserContractService?.getERC3525Contract()
+        const shares = await erc3525Contract?.tokenIdBalanceOf(tradeId!)
+        setTotalShares(Number.parseInt(shares!.toString()))
       }
+      fetchSharesData()
     }
     setSellAmount('1')
     setSellUnitPrice('1.00')
-    setTotalPrice('0')
+    setTotalPrice('1.00')
   }, [sellIsModalOpen])
 
   useEffect(() => {
-    setApproved(false)
-    setSold(false)
+    setApproved(0)
+    setSold(0)
     setSellModalLoading(false)
   }, [sellConfirmModalOpen])
 
@@ -245,30 +243,40 @@ const LoanDetails = () => {
     if (!tradeId || sellAmount === undefined || sellUnitPrice === undefined)
       throw new Error('tradeId is undefined')
 
-    setSellModalLoading(true)
+    // setSellModalLoading(true)
+    setApproved(1)
 
     try {
       const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
-      if (approvedRes)
-        setApproved(true)
-
+      if (approvedRes) {
+        setApproved(2)
+      }
+      else {
+        setApproved(3)
+        throw new Error('error')
+      }
+      setSold(1)
       const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
-      const processedPrice = decimals! * BigInt(Number.parseFloat(sellUnitPrice))
-      console.log(processedPrice)
+      const processedPrice = (BigInt(10) ** (decimals!)) * BigInt(Number.parseFloat(sellUnitPrice) * 100) / BigInt(100)
+      console.log(sellAmount, BigInt(sellAmount), 2222)
       const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
       console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
       if (sellRes?.status !== 1) {
         message.error('Sell Transaction Failed!')
         throw new Error('Sell Transaction Failed!')
       }
-      setSold(true)
+      setSold(2)
+      setSellConfirmModalOpen(false)
+      setSellIsModalOpen(false)
     }
     catch (error) {
-      message.error('Sell Transaction Failed!')
+      setSold(3)
+      message.error('Transaction Failed!')
       console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
     }
     finally {
-      setSellModalLoading(false)
+      // setSellConfirmModalOpen(false)
+      // setSellIsModalOpen(false)
     }
   }
 
@@ -367,58 +375,80 @@ const LoanDetails = () => {
       open={sellIsModalOpen}
       content={
         <div>
-          My shares: {totalShares}
-          <div className='flex'>
-            Sell Quantity
-            <InputNumber
-              className='w-200'
-              min={'1'}
-              max={totalShares.toString()}
-              placeholder="Enter Quantity value"
-              value={sellAmount}
-              defaultValue={'1'}
-              onChange={(value) => {
-                setSellAmount(value!)
-                setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
-              }
-              }
-            />
-            <Button
-              type='primary'
-              // loading={checkMaxLoading}
-              onClick={() => {
-                setSellAmount(totalShares.toString())
-                setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
-              }}
-              disabled={sellModalLoading}>
-              Max
-            </Button>
-            Shares
+          <h2>Sell Shares</h2>
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              My shares:
+            </div>
+            <div className='text-18'>
+              {totalShares}
+            </div>
           </div>
-
-          <div className='h50' />
-
-          <div className='flex'>
-            Unit Price
-            <InputNumber
-              className='w-200'
-              min={'0.01'}
-              placeholder="Enter Unit Price"
-              step="0.10"
-              precision={2}
-              defaultValue='1.00'
-              value={sellUnitPrice}
-              onChange={(value) => {
-                const processedValue = value!.toString().slice(0, value!.toString().indexOf('.') + 3)
-                setSellUnitPrice(processedValue)
-                setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
-              }}
-            />
-            Usd
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Sell Quantity:
+            </div>
+            <div className='flex justify-end'>
+              <InputNumber
+                className='w-170'
+                min={'1'}
+                max={totalShares.toString()}
+                placeholder="Enter Quantity value"
+                value={sellAmount}
+                defaultValue={'1'}
+                onChange={(value) => {
+                  setSellAmount(value!)
+                  setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
+                }
+                }
+              />
+              <Button
+                className='mx-12'
+                type='primary'
+                // loading={checkMaxLoading}
+                onClick={() => {
+                  setSellAmount(totalShares.toString())
+                  setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
+                }}
+                disabled={sellModalLoading}>
+                Max
+              </Button>
+              <div className='text-18'>
+                Shares
+              </div>
+            </div>
           </div>
-          <div className='h30' />
-          <div>
-            Total Price: {totalPrice}
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Unit Price:
+            </div>
+            <div className='flex justify-end'>
+              <InputNumber
+                className='mx-10 w-260'
+                min={'0.01'}
+                placeholder="Enter Unit Price"
+                step="0.10"
+                precision={2}
+                defaultValue='1.00'
+                value={sellUnitPrice}
+                onChange={(value) => {
+                  const processedValue = value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                  setSellUnitPrice(processedValue)
+                  setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
+                }}
+              />
+              <div className='text-18'>
+                USD
+              </div>
+            </div>
+          </div>
+          <div className='mt-10 h-60 flex items-center justify-between'>
+            <div className='w-120 text-22'>
+              Total Price:
+            </div>
+            <div className='text-22'>
+              {totalPrice}
+            </div>
           </div>
         </div>
       }
@@ -428,11 +458,11 @@ const LoanDetails = () => {
       onCancel={() => setSellIsModalOpen(false)}
       okButtonProps={{
         type: 'primary',
-        className: 'primary-btn w-80',
+        className: 'primary-btn w-100',
         disabled: Number.parseInt(sellAmount) > totalShares || sellConfirmModalOpen,
       }}
       cancelButtonProps={{
-        className: 'w-80',
+        className: 'w-100',
       }}
     >
     </SModal>
@@ -442,29 +472,81 @@ const LoanDetails = () => {
       open={sellConfirmModalOpen}
       content={
         <div>
-          确认要出售：<br />
-          shares: {sellAmount} <br />
-          unitprice: {sellUnitPrice} <br />
-          totalPrice:{totalPrice}
-          <div hidden={!sellModalLoading}>
-            <div className='flex'>
-              <div>
-                {approved ? <CheckOutlined /> : <LoadingOutlined />}
+          <h2>Confirm to Sell</h2>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-22'>
+              Shares:
+            </div>
+            <div className='text-22'>
+              {sellAmount}
+            </div>
+          </div>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-22'>
+              Unit Price:
+            </div>
+            <div className='text-22'>
+              {sellUnitPrice}
+            </div>
+
+          </div>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-22'>
+              Total Price:
+            </div>
+            <div className='text-22'>
+              {totalPrice}
+            </div>
+
+          </div>
+
+          {/* <div hidden={!sellModalLoading}> */}
+          <div className='mt-20'>
+            <div className='flex text-22'>
+              <div className='mr-8'>
+                {approved === 0
+                  ? <BorderOutlined />
+                  : approved === 1
+                    ? <LoadingOutlined />
+                    : approved === 2
+                      ? <CheckOutlined className='text-green-500' />
+                      : <CloseSquareOutlined className='text-red-500' />
+                }
               </div>
-              <div>
-                {approved ? 'Approved' : 'Approving'}
+              <div className=''>
+                {approved === 0
+                  ? 'Prepare to approve'
+                  : approved === 1
+                    ? 'Approving...'
+                    : approved === 2
+                      ? 'Approved!'
+                      : 'Approval failed!'
+                }
               </div>
             </div>
-            <div className='flex'>
-              <div>
-                {sold ? <CheckOutlined /> : <LoadingOutlined />}
+            <div className='flex text-22'>
+              <div className='mr-8'>
+                {sold === 0
+                  ? <BorderOutlined />
+                  : sold === 1
+                    ? <LoadingOutlined />
+                    : sold === 2
+                      ? <CheckOutlined className='text-green-500' />
+                      : <CloseSquareOutlined className='text-red-500' />
+                }
               </div>
-              <div>
-                Trading
+              <div className=''>
+                {sold === 0
+                  ? 'Prepare to sell'
+                  : sold === 1
+                    ? 'Selling...'
+                    : sold === 2
+                      ? 'Sold!'
+                      : 'Sale failed!'
+                }
               </div>
             </div>
           </div>
-          <div></div>
         </div>
 
       }
@@ -473,8 +555,11 @@ const LoanDetails = () => {
       onCancel={() => setSellConfirmModalOpen(false)}
       okButtonProps={{
         type: 'primary',
-        className: 'primary-btn',
+        className: 'primary-btn w-100',
         disabled: sellModalLoading,
+      }}
+      cancelButtonProps={{
+        className: 'w-100',
       }}
     >
 
