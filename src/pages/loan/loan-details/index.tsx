@@ -52,7 +52,6 @@ const LoanDetails = () => {
   const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
 
-
   const [executing, setExecuting] = useState(false)
 
   const [copies, setCopies] = useState<number | null>(1)

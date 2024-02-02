@@ -80,8 +80,8 @@ const ApplyLoan = () => {
         name: 'BTC',
       },
       {
-        logo: followIcon,
-        name: 'FTT',
+        logo: solanaIcon,
+        name: 'SOL',
       },
       {
         logo: ethereumIcon,
