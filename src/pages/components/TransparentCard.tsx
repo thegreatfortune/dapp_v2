@@ -7,7 +7,7 @@ import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import logo from '@/assets/images/portalImages/logo.png'
-import cardPic from '@/assets/images/portalImages/loanNote1.jpg'
+import cardPic from '@/assets/images/default.png'
 
 interface CardProps {
   item: Models.LoanOrderVO
