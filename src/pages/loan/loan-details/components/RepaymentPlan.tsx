@@ -144,7 +144,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       message.success('Succeed')
     }
     catch (error) {
-      message.error('operation failure')
+      setConfirmLoading(false)
       console.log('%c [ error ]-105', 'font-size:13px; background:#46bcdf; color:#8affff;', error)
     }
     finally {
@@ -170,13 +170,13 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       }
 
       setIsModalOpen(true)
-
       setCurrentItem(item)
     }
     catch (error) {
       console.log('%c [ error ]-129', 'font-size:13px; background:#719d7d; color:#b5e1c1;', error)
     }
     finally {
+      setIsModalOpen(false)
       setModalLoading(false)
     }
   }

@@ -182,7 +182,6 @@ const CustomConnectButton = () => {
                     Connect Wallet
                   </button>
                 </div>
-
               )
             }
 

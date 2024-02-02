@@ -268,9 +268,8 @@ const LoanDetails = () => {
         throw new Error('error')
       }
       setSold(1)
-      const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
-      const processedPrice = (BigInt(10) ** (decimals!)) * BigInt(Number.parseFloat(sellUnitPrice) * 100) / BigInt(100)
-      console.log(sellAmount, BigInt(sellAmount), 2222)
+      // const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
+      const processedPrice = BigInt(Number.parseFloat(sellUnitPrice) * 100)
       const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
       console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
       if (sellRes?.status !== 1) {
@@ -292,14 +291,6 @@ const LoanDetails = () => {
       // setSellConfirmModalOpen(false)
       // setSellIsModalOpen(false)
     }
-  }
-
-  const handleNumericInputChange = (value: string | undefined, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    const numericValue = value?.replace(/[^0-9]/g, '')
-    setter(
-      numericValue === '0'
-        ? '1'
-        : numericValue || '1')
   }
 
   const handleOk = async () => {
@@ -375,17 +366,6 @@ const LoanDetails = () => {
       </div>
     </div>)
   }
-
-  // const limitDecimals = (value: string | number): string => {
-  //   const reg = /^(\-)*(\d+)\.(\d\d).*$/
-  //   // 限制两位位小数点
-  //   if (typeof value === 'string')
-  //     return !Number.isNaN(Number(value)) ? value.replace(reg, '$1$2.$3') : ''
-  //   else if (typeof value === 'number')
-  //     return !Number.isNaN(value) ? String(value).replace(reg, '$1$2.$3') : ''
-  //   else
-  //     return ''
-  // }
 
   return (<div className='w-full'>
 
@@ -576,7 +556,10 @@ const LoanDetails = () => {
       }
       onOk={() => sellConfirm()}
       okText="Confirm"
-      onCancel={() => setSellConfirmModalOpen(false)}
+      onCancel={() => {
+        setExecuting(false)
+        setSellConfirmModalOpen(false)
+      }}
       okButtonProps={{
         type: 'primary',
         className: 'primary-btn w-100',
@@ -609,7 +592,10 @@ const LoanDetails = () => {
       }
       okText="Confirm"
       onOk={() => extractConfirm()}
-      onCancel={() => setExtractIsModalOpen(false)}
+      onCancel={() => {
+        setExtractIsModalOpen(false)
+      }
+      }
       okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
     >
 
@@ -619,7 +605,7 @@ const LoanDetails = () => {
       maskClosable={false}
       content=
       {
-        <div className='h100 w464 flex'>
+        <div className='h100 w464'>
           <h1 className='font-b m-10 w40 flex items-center text-20 lh-21 c-#fff'>
             {lendingState ? 'Processing' : 'Share'}
           </h1>
@@ -673,17 +659,13 @@ const LoanDetails = () => {
         <div className='flex justify-between lh-33'>
           <div>
             <div className='m-8 flex text-center'>
-
               {loanInfo.state === 'Following'
                 ? <div className='flex gap-x-20'>
                   {loanStateELMap[loanInfo.state]}
-
                   <span className='lh-49' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
                 </div>
                 : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
-
               }
-
               {
                 loanInfo.state !== 'Invalid'
                 && <span>
@@ -702,7 +684,11 @@ const LoanDetails = () => {
           </div>
           {
             prePage === 'market' && loanInfo.state === 'Following'
-            && <Button className='m-8 h40 h60 w180 rounded-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+            && <div className='flex'>
+              {/* <div className='m-8 w180'></div> */}
+              {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+              <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+            </div>
           }
 
           {
@@ -711,14 +697,12 @@ const LoanDetails = () => {
               {
                 loanInfo.state !== 'CloseByUncollected'
                 && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
-
               }
-
               <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
             </div>
           }
 
-          <div className='flex' hidden={prePage === 'lend'}>
+          <div className='flex' hidden={prePage === 'lend' || prePage === 'market'}>
             {
               (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
               && <div>
