@@ -52,6 +52,9 @@ const LoanDetails = () => {
   const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
 
+
+  const [executing, setExecuting] = useState(false)
+
   const [copies, setCopies] = useState<number | null>(1)
 
   const [lendingState, setLendingState] = useState(false)
@@ -253,6 +256,7 @@ const LoanDetails = () => {
       throw new Error('tradeId is undefined')
 
     // setSellModalLoading(true)
+    setExecuting(true)
     setApproved(1)
 
     try {
@@ -277,9 +281,11 @@ const LoanDetails = () => {
       setSold(2)
       setSellConfirmModalOpen(false)
       setSellIsModalOpen(false)
+      setExecuting(false)
     }
     catch (error) {
       setSold(3)
+      setExecuting(false)
       message.error('Transaction Failed!')
       console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
     }
@@ -302,6 +308,7 @@ const LoanDetails = () => {
       return
 
     setLendingState(true)
+    setExecuting(true)
 
     try {
       if (!browserContractService?.getSigner.address)
@@ -317,10 +324,11 @@ const LoanDetails = () => {
     }
     catch (error) {
       message.error('Operation failed!')
-
+      setExecuting(false)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }
     finally {
+      setExecuting(false)
       setLendingState(false)
       navigate('/my-lend')
       setIsModalOpen(false)
@@ -573,7 +581,7 @@ const LoanDetails = () => {
       okButtonProps={{
         type: 'primary',
         className: 'primary-btn w-100',
-        disabled: sellModalLoading,
+        disabled: executing,
       }}
       cancelButtonProps={{
         className: 'w-100',
@@ -623,9 +631,9 @@ const LoanDetails = () => {
               className='m-10 w-full w150 b-#808080 text-center'
               min={1}
               onChange={v => setCopies(v)}
-              disabled={lendingState}
+              disabled={executing}
             />
-            <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={lendingState}>
+            <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
               Max
             </Button>
           </div>
@@ -649,7 +657,7 @@ const LoanDetails = () => {
       okText="Confirm"
       onOk={() => handleOk()}
       onCancel={() => setIsModalOpen(false)}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: lendingState }}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
     >
       {
 
@@ -699,11 +707,6 @@ const LoanDetails = () => {
           }
 
           {
-            (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
-            && <Button loading={refundLoading} className='m-8 h40 w180 primary-btn' onClick={refund}>Liquidate</Button>
-          }
-
-          {
             prePage === 'lend'
             && <div className='flex'>
               {
@@ -716,10 +719,20 @@ const LoanDetails = () => {
             </div>
           }
 
-          {
-            prePage === 'loan'
-            && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
-          }
+          <div className='flex' hidden={prePage === 'lend'}>
+            {
+              (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+              && <div>
+                <Button loading={refundLoading} className='m-8 h40 w180 b-rd-30 primary-btn' onClick={refund}>Liquidate</Button>
+              </div>
+            }
+            {
+              prePage === 'loan'
+              && <div>
+                <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+              </div>
+            }
+          </div>
 
         </div>
 
