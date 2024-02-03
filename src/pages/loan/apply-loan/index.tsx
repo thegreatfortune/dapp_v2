@@ -841,7 +841,7 @@ const ApplyLoan = () => {
               min={1}
               max={10000}
               className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">share</div>}
+              suffix={<div className="px-20 text-14">shares</div>}
             />
           </Form.Item>
 
@@ -859,7 +859,7 @@ const ApplyLoan = () => {
                 min={1}
                 max={loanRequisitionEditModel.numberOfCopies}
                 className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-                suffix={<div className="px-20 text-14">share</div>}
+                suffix={<div className="px-20 text-14">shares</div>}
               />
             </Form.Item>
           }
@@ -881,7 +881,6 @@ const ApplyLoan = () => {
                     message: 'Please input content!',
                   },
                 ]}
-                className="m0"
                 label={
                   <span className="text-16">
                     {t('applyLoan.formItem.designatedTransaction.label')}
@@ -906,7 +905,7 @@ const ApplyLoan = () => {
 
               <Form.Item
                 name="transactionPairs"
-                className="m0 mt33"
+                className="m0 mt61"
                 style={{
                   display: loanRequisitionEditModel.designatedTransaction
                     ? 'block'
@@ -971,11 +970,11 @@ const ApplyLoan = () => {
                       options={[
                         {
                           value: Models.TradingFormType.SpotGoods,
-                          label: 'Spot goods',
+                          label: 'Spot',
                         },
                         {
                           value: Models.TradingFormType.Contract,
-                          label: 'Contract',
+                          label: 'Future',
                         },
                       ]}
                     />
@@ -1022,7 +1021,7 @@ const ApplyLoan = () => {
                 : 'none',
             }}
           >
-            <div className="mt-33 flex flex-wrap gap-x-52 gap-y-20">
+            <div className="mt-61 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
