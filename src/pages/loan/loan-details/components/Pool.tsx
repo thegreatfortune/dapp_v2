@@ -297,7 +297,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
             </div>
             {/* </div> */}
 
-            <div id='KLineContainer' className='w574 bg-white' style={{ height: '500' }}></div>
+            <div id='KLineContainer' className='h500 w574 bg-white' style={{ height: '500' }}></div>
           </div>
         </div>
 

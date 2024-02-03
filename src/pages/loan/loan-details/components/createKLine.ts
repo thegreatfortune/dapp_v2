@@ -65,7 +65,7 @@ export function createKLine(data: Models.UserPortfolioVo[]) {
     list.push(item)
     return true
   })
-
+  // console.log(list)
   // const uniqueAndSortedData = sortBy(uniqBy(list, 'timestamp'), 'timestamp')
   // console.log(1111, uniqueAndSortedData)
   // console.log('%c [ uniqueAndSortedData ]-19', 'font-size:13px; background:#19f670; color:#5dffb4;', uniqueAndSortedData)
