@@ -2,7 +2,6 @@
 import { Line, LineChart, XAxis } from 'recharts'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
-import * as dayjs from 'dayjs'
 import { PortfolioService } from '@/.generated/api'
 
 interface balanceType {
@@ -11,7 +10,6 @@ interface balanceType {
 }
 
 export default function BalanceChart() {
-    const now = dayjs().valueOf()
     const [balanceData, setBalanceData] = useState<balanceType[]>([])
 
     useEffect(() => {
@@ -27,10 +25,6 @@ export default function BalanceChart() {
                     timestamp: e.createDate! * 1000,
                     balance: ethers.formatUnits(e.uPrice ?? '0'),
                 }
-                // console.log(item.timestamp, now)
-                if (item.timestamp > now)
-                    return true
-
                 list.push(item)
                 return true
             })
