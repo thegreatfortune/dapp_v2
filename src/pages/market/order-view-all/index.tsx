@@ -42,7 +42,7 @@ const OrderViewAll = () => {
 
   return (
     <div className='flex flex-col bg-center bg-no-repeat bg-origin-border'>
-      <div className='h48 min-h-full flex items-center justify-between'>
+      <div className='h100 min-h-full flex items-center justify-between'>
         <div className='flex items-center justify-between'>
           {title === 'Blacklist' && <Image src={blacklist1} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
           <span className='ml-4 font-size-34'>
@@ -59,7 +59,7 @@ const OrderViewAll = () => {
 
         </Radio.Group>
       </div>
-      <div className='h30 w-full'></div>
+      <div className='h60 w-full'></div>
 
       {
         category === 'HotStarter'

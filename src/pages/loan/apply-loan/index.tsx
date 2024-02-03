@@ -62,6 +62,8 @@ const ApplyLoan = () => {
 
   const [publishBtnLoading, setPublishBtnLoading] = useState(false)
 
+  const [selectError, setSelectError] = useState(false)
+
   const [loanRequisitionEditModel, setLoanRequisitionEditModel]
     = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
 
@@ -527,7 +529,20 @@ const ApplyLoan = () => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         name="apply-loan-form"
-        onFinish={onFinish}
+        onFinish={() => {
+          if (loanRequisitionEditModel!.transactionPairs!.length < 1) {
+            setSelectError(true)
+            message.error('You must choose at least one token!')
+            return
+          }
+          else {
+            if (selectError)
+              setSelectError(false)
+          }
+
+          setPublishBtnLoading(true)
+          onFinish(loanRequisitionEditModel)
+        }}
         onValuesChange={onValuesChange}
       >
         <div className="w-full flex justify-between">
@@ -538,8 +553,13 @@ const ApplyLoan = () => {
             getValueFromEvent={e => e.fileList}
             rules={projectImageFileRule}
           >
-            <div className="relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
-              <span className="absolute right-40 top-16 z-10 text-14">Use default diagram <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} /></span>
+            <div className="item-center relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
+              <div className="item-center absolute right-40 top-16 z-10 flex text-14">
+                <div className='mx-8'>
+                  Use default image
+                </div>
+                <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} />
+              </div>
               <Dragger
                 name="imageUrl"
                 action={uploadFile}
@@ -574,7 +594,6 @@ const ApplyLoan = () => {
                   useDiagram
                   && <Image preview={false} src={defaultImage} />
                 }
-
               </Dragger>
             </div>
           </Form.Item>
@@ -848,11 +867,13 @@ const ApplyLoan = () => {
         </div>
 
         <div className="h50" />
+        <div className="box-border w-full flex gap-x-42 gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16">
 
-        <div className='flex gap-x-42'>
+          {/* <div className='flex gap-x-42'> */}
           <div>
             <div className="flex gap-x-53">
               <Form.Item
+                className="m0 mt30"
                 name="designatedTransaction"
                 rules={[
                   {
@@ -885,7 +906,7 @@ const ApplyLoan = () => {
 
               <Form.Item
                 name="transactionPairs"
-                className="m0 mt34"
+                className="m0 mt33"
                 style={{
                   display: loanRequisitionEditModel.designatedTransaction
                     ? 'block'
@@ -896,6 +917,7 @@ const ApplyLoan = () => {
                   mode="multiple"
                   popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
                   className="s-container box-border h50 text-14 !w306"
+                  status={selectError ? 'error' : undefined}
                   suffixIcon={
                     <img src={jmtzDown} alt="jmtzDown" className="px30" />
                   }
@@ -906,7 +928,10 @@ const ApplyLoan = () => {
                     ? [...tradingPairBase, ...tradingPairSpotGoods]
                     : [...tradingPairBase, ...tradingPairContract]
                   ).map(e => ({ value: e.name, label: e.name }))}
-                // onChange={onTradingPairChange}
+                  onSelect={() => {
+                    // if (loanRequisitionEditModel!.transactionPairs!.length >= 1)
+                    setSelectError(false)
+                  }}
                 />
               </Form.Item>
             </div>
@@ -997,32 +1022,31 @@ const ApplyLoan = () => {
                 : 'none',
             }}
           >
-            <div className="mt-30 flex flex-wrap gap-x-52 gap-y-20">
+            <div className="mt-33 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
-                  className="s-container box-border h50 w180 flex items-center justify-center gap-x-27 text-14"
+                  className="s-container box-border h50 w-100 flex items-center text-14"
                 >
-                  <div>
-                    <Image
-                      preview={false}
-                      width={24}
-                      height={24}
-                      src={tradingPair.flat().find(p => p.name === e)?.logo}
-                    ></Image>
-                    <span className='ml-4 p-2 text-16'>{e} </span>
-                  </div>
-
+                  {/* <div className='flex items-center'> */}
+                  <Image
+                    preview={false}
+                    width={30}
+                    height={30}
+                    src={tradingPair.flat().find(p => p.name === e)?.logo}
+                  ></Image>
+                  <div className='m-4 p-2 text-16'>{e} </div>
                   <Image
                     preview={false}
                     onClick={() => onCoinClick(i)}
-                    className='cursor-pointer'
+                    className='mb-5 cursor-pointer'
                     width={18}
                     height={18}
                     src={isHovered ? xFloatIcon : xGenalIcon}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                   />
+                  {/* </div> */}
 
                 </div>
               ))}
@@ -1030,7 +1054,7 @@ const ApplyLoan = () => {
           </div>
         </div>
 
-        <Divider className='m0 bg-#6A6A6A' />
+        {/* <Divider className='m0 bg-#6A6A6A' /> */}
 
         <div className="h44" />
 
@@ -1040,7 +1064,6 @@ const ApplyLoan = () => {
             htmlType="submit"
             loading={publishBtnLoading}
             className="h65 w200 text-18 primary-btn"
-            onClick={() => setPublishBtnLoading(true)}
           >
             {t('applyLoan.btn.submit')}
           </Button>
