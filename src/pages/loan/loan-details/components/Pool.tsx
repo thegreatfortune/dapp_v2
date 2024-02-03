@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Image, Input, Tabs, message } from 'antd'
+import { Button, Divider, Image, Input, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
@@ -374,10 +374,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       </div>
 
-      <div className="h58" />
-
+      <div className="h100" />
+      <Divider></Divider>
       <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
 
+      <div className="h100" />
+      <Divider></Divider>
       <LoanHistory tradeId={String(tradeId ?? '')} />
 
       <div className="40" />

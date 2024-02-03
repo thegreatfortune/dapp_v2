@@ -727,7 +727,7 @@ const LoanDetails = () => {
             {loanInfo.usageIntro}
           </Tooltip>
         </p>
-
+        <Divider></Divider>
         <div className="h20" />
 
         <div className='h166 w1047 flex items-center gap-x-19 px-20 text-center'>
@@ -784,8 +784,8 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <div className="h50" />
-
+    <div className="h100" />
+    <Divider></Divider>
     <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
 
   </div >)
