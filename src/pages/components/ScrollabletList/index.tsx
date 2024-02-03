@@ -88,16 +88,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
     try {
       // setLoading(true)
       const res = await api({ ...params, page: cPage })
-      console.log(res)
 
-      if (res.current! * res.size! < res.total!) {
+      if (res.current! * res.size! < res.total!)
         console.log(true)
-      }
-      else {
-        console.log(false)
+      else
         setHasMore(false)
-        // console.log(data.length)
-      }
 
       // setResult(prevResult => ({
       //   ...prevResult,

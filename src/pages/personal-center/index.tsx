@@ -65,7 +65,7 @@ const PersonalCenter = () => {
     {
       key: '1',
       label: 'Points detail',
-      children: <PointsDetail/>,
+      children: <PointsDetail />,
     },
     {
       key: '2',
@@ -87,11 +87,13 @@ const PersonalCenter = () => {
         return
 
       setApplyLoanLoading(true)
+
       const processCenterContract = await browserContractService?.getProcessCenterContract()
 
       const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
 
       const isBlack = await processCenterContract?._getIfBlackList(browserContractService?.getSigner.address)
+
       console.log('%c [ isBlack ]-45', 'font-size:13px; background:#fde876; color:#ffffba;', isBlack)
 
       if (isBlack)
@@ -100,7 +102,7 @@ const PersonalCenter = () => {
       if (!isBlack && orderCanCreatedAgain)
         navigate('/apply-loan')
       else
-        message.warning(`order cant not repetition create :${orderCanCreatedAgain}`)
+        message.warning('Order can not be created: There is an un-liquidate order!')
     }
     catch (error) {
       message.error('Error: order status error')
@@ -162,7 +164,7 @@ const PersonalCenter = () => {
 
               {
                 activeUser.platformName
-                  ? <Link className='text-18' to={`https://twitter.com/${activeUser.platformName}`}>@{ activeUser.platformName}</Link>
+                  ? <Link className='text-18' to={`https://twitter.com/${activeUser.platformName}`}>@{activeUser.platformName}</Link>
                   : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
               }
             </div>
@@ -183,11 +185,11 @@ const PersonalCenter = () => {
             <div className='text-12'>
 
               <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
-                  <div className='flex cursor-pointer'>
+                <div className='flex cursor-pointer'>
                   <span className='c-#307DF5'> {`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}</span>
                   {/* <AddCoin address={'./components/AddCoin'} /> */}
                   <Image preview={false} width={10} height={10} className='ml-6' src={copyImg} />
-                  </div>
+                </div>
               </CopyToClipboard>
 
             </div>
@@ -202,7 +204,7 @@ const PersonalCenter = () => {
           <div className='h-115 flex'>
             <div className='h-full w-136 flex flex-col items-center justify-center gap-y-13 rounded-15 bg-#333341'>
               <span>Points</span>
-              <span>{ ((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2) }</span>
+              <span>{((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2)}</span>
             </div>
 
             <div className="w50" />

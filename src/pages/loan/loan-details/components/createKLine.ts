@@ -16,7 +16,7 @@ export function createKLine(data: Models.UserPortfolioVo[]) {
   }))
 
   const uniqueAndSortedData = sortBy(uniqBy(list, 'timestamp'), 'timestamp')
-  console.log('%c [ uniqueAndSortedData ]-19', 'font-size:13px; background:#19f670; color:#5dffb4;', uniqueAndSortedData)
+  // console.log('%c [ uniqueAndSortedData ]-19', 'font-size:13px; background:#19f670; color:#5dffb4;', uniqueAndSortedData)
 
   chart?.applyNewData(uniqueAndSortedData.splice(0, 10))
 

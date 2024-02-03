@@ -7,11 +7,10 @@ import Image from 'antd/es/image'
 import './style.css'
 import { useTranslation } from 'react-i18next'
 import InputNumber from 'antd/es/input-number'
-import { LoadingOutlined } from '@ant-design/icons'
+import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import Modal from 'antd/es/modal'
-import Checkbox from 'antd/es/checkbox'
-import { Divider, Spin, Switch, Tooltip, Upload, message } from 'antd'
+import { Divider, Switch, Tooltip, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
 import airplane from '@/assets/images/apply-loan/airplane.png'
@@ -54,22 +53,17 @@ const ApplyLoan = () => {
 
   const { browserContractService } = useBrowserContract()
 
+  const [okText, setOkText] = useState('Apply')
+  const [applyModalOpen, setApplyModalOpen] = useState(false)
+  const [executing, setExecuting] = useState(false)
+
+  const [poolCreated, setPoolCreated] = useState(0)
+  const [orderCreated, setOrderCreated] = useState(0)
+
   const [loanRequisitionEditModel, setLoanRequisitionEditModel]
     = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
 
   const [isHovered, setIsHovered] = useState(false)
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const [documentChecked, setDocumentChecked] = useState(false)
-
-  const [publishBtnLoading, setPublishBtnLoading] = useState<boolean>(false)
-
-  const [confirmLoading, setConfirmLoading] = useState<boolean>(false)
-
-  const [createdPoolChecked, setCreatedPoolChecked] = useState<boolean>(false)
-
-  const [createdPoolLoading, setCreatedPoolLoading] = useState<boolean>(false)
 
   const [useDiagram, setUseDiagram] = useState(false)
   /* #endregion */
@@ -153,7 +147,7 @@ const ApplyLoan = () => {
   }, [activeUser])
 
   /**
-   *  检查订单是否可创建
+   *  加载页面之后检查 检查订单是否可创建
    */
   useEffect(() => {
     async function fetchData() {
@@ -163,7 +157,7 @@ const ApplyLoan = () => {
       const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
 
       if (!orderCanCreatedAgain) {
-        message.warning('Order can not be created')
+        message.warning('Order can not be created: There is an un-liquidate order!')
         navigate(-1)
       }
     }
@@ -206,10 +200,6 @@ const ApplyLoan = () => {
     form && fetchData()
   }, [useDiagram, form])
 
-  // useEffect(() => {
-  //   createLoan()
-  // }, [loanRequisitionEditModel])
-
   async function uploadFile(file?: RcFile): Promise<string> {
     try {
       if (useDiagram && !file) {
@@ -241,118 +231,118 @@ const ApplyLoan = () => {
     }
   }
 
-  const handleConfirm = async () => {
-    await createLoan(loanRequisitionEditModel)
+  const handleApply = async () => {
+    await executeTask(loanRequisitionEditModel)
   }
 
-  async function createLoan(value: Models.LoanContractVO) {
-    console.log('%c [createLoan value ]-239', 'font-size:13px; background:#48c27c; color:#8cffc0;', value)
-
-    setPublishBtnLoading(true)
-
-    const poolIsCreated = await checkDoublePoolIsCreated()
-
-    if (poolIsCreated === false)
+  async function executeTask(value: Models.LoanContractVO) {
+    if (!browserContractService)
       return
 
-    const models = { ...value, ...loanRequisitionEditModel }
-    console.log('%c [ models ]-258', 'font-size:13px; background:#a58a88; color:#e9cecc;', models)
+    // check duplicated order
+    const processCenterContract = await browserContractService?.getProcessCenterContract()
+    const orderUnexist = await browserContractService?.checkOrderCanCreateAgain()
+    const isBlocked = await processCenterContract?._getIfBlackList(browserContractService?.getSigner.address)
 
-    await form.validateFields()
-
-    setCreatedPoolLoading(true)
-    let url
-    if (useDiagram === true)
-      url = await uploadFile()
-    setCreatedPoolLoading(false)
-
-    setConfirmLoading(true)
-
-    try {
-      setIsModalOpen(true)
-
-      const res = await browserContractService?.capitalPool_createOrder({ ...models, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
-
-      console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', res)
-
-      setDocumentChecked(true)
-
-      navigate('/my-loan')
+    if (isBlocked || !orderUnexist) {
+      message.error('Order can not be created: There is an un-liquidate order!')
+      return
     }
-    catch (error) {
-      message.error('operation failure!')
-      console.log(
-        '%c [ error ]-99',
-        'font-size:13px; background:#daf6df; color:#ffffff;',
-        error,
-      )
-      throw new Error('upload image failed')
-    }
-    finally {
-      setConfirmLoading(false)
-      setPublishBtnLoading(false)
-    }
-  }
-
-  async function checkDoublePoolIsCreated(): Promise<boolean> {
-    if (createdPoolChecked === true)
-      return true
 
     if (!browserContractService)
       return false
 
-    try {
-      const res = await browserContractService?.checkPoolCreateState()
+    setExecuting(true)
+    if (poolCreated !== 4) {
+      setPoolCreated(1)
 
-      const [capitalPoolState, refundPoolState] = res ?? [false, false]
-
-      setCreatedPoolChecked(capitalPoolState && refundPoolState)
-      if (!(capitalPoolState && refundPoolState)) {
-        setIsModalOpen(true)
-        setCreatedPoolLoading(true)
-
-        const res = await browserContractService?.followRouter_createPool()
-
-        res?.status === 1 && setCreatedPoolChecked(true)
-
-        return res?.status === 1
+      try {
+        const res = await browserContractService?.checkPoolCreateState()
+        const [capitalPoolState, refundPoolState] = res ?? [false, false]
+        if (capitalPoolState && refundPoolState) {
+          // setPoolIsCreated(true)
+          setPoolCreated(4)
+        }
+        else {
+          const res = await browserContractService?.followRouter_createPool()
+          if (res?.status === 1) {
+            // setPoolIsCreated(true)
+            setPoolCreated(2)
+          }
+          else {
+            throw new Error('Pool creation failed')
+          }
+        }
       }
+      catch (error) {
+        setPoolCreated(3)
+        setOkText('Retry')
+        setExecuting(false)
+        message.error('Transaction Failed')
+        console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
+        return false
+      }
+    }
 
+    try {
+      setOrderCreated(1)
+      const models = { ...value, ...loanRequisitionEditModel }
+      console.log('%c [ models ]-258', 'font-size:13px; background:#a58a88; color:#e9cecc;', models)
+      await form.validateFields()
+
+      let url
+      if (useDiagram === true)
+        url = await uploadFile()
+
+      const orderRes = await browserContractService?.capitalPool_createOrder({ ...models, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
+      console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', orderRes)
+      setOrderCreated(2)
+      if (!orderRes)
+        throw new Error('Order creation failed')
+
+      setOkText('Apply')
+      message.success('Your order has beend created successfully')
+      setTimeout(() => {
+        setExecuting(false)
+        setApplyModalOpen(false)
+        navigate('/my-loan')
+      }, 3000)
       return true
     }
     catch (error) {
-      message.error('operation failure')
-      console.log(
-        '%c [ error ]-61',
-        'font-size:13px; background:#c95614; color:#ff9a58;',
-        error,
-      )
+      setOrderCreated(3)
+      setOkText('Retry')
+      setExecuting(false)
+      message.error('Transaction Failed')
+      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
       return false
     }
     finally {
-      setCreatedPoolLoading(false)
+      setOkText('Apply')
+      setExecuting(false)
     }
   }
 
   const onFinish = async (value: LoanRequisitionEditModel) => {
     console.log('%c [ value ]-331', 'font-size:13px; background:#574880; color:#9b8cc4;', value)
 
+    const res = await browserContractService?.checkPoolCreateState()
+    const [capitalPoolState, refundPoolState] = res ?? [false, false]
+    if (capitalPoolState && refundPoolState) {
+      // setPoolIsCreated(true)
+      setPoolCreated(4)
+    }
+
     try {
       setLoanRequisitionEditModel(preState =>
         ({ ...preState, ...value }),
       )
 
-      await createLoan(value)
-      // await handleConfirm()
+      setApplyModalOpen(true)
     }
     catch (error) {
       console.error('%c [ error ]-341', 'font-size:13px; background:#96e638; color:#daff7c;', error)
     }
-  }
-
-  const handleCancel = () => {
-    setIsModalOpen(false)
-    setPublishBtnLoading(false)
   }
 
   function onValuesChange(val: Record<string, any>) {
@@ -447,58 +437,73 @@ const ApplyLoan = () => {
 
   return (
     <div>
-      <Modal
-        centered
-        styles={{ mask: { backgroundColor: 'rgba(0, 0, 0, 0.8)' } }}
-        footer={
-          false
-        }
-        confirmLoading={confirmLoading}
-        closable={false}
-        okText="Create"
-        width={620}
-        maskClosable={false}
-        open={isModalOpen}
+      <Modal open={applyModalOpen}
+        width={600}
+        okText={okText}
+        onOk={handleApply}
+        onCancel={() => {
+          setExecuting(false)
+          setPoolCreated(0)
+          setOrderCreated(0)
+          setApplyModalOpen(false)
+        }}
+        okButtonProps={{ disabled: executing, className: 'primary-btn w-100' }}
+        cancelButtonProps={{ className: 'w-100' }}
       >
-        <div className="box-border flex flex-col items-center text-center text-16">
-
-          <div className="flex flex-col items-start">
-            <div className='m-8'>
-              {createdPoolLoading
-                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
-                : <Checkbox disabled checked={createdPoolChecked}>
-                </Checkbox>}
-              <span className='m-8 p-x-8 c-#3CA9F8'>Pool contract</span>
-            </div>
-
-            <div className='m-8'>
-              {confirmLoading
-                ? <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />
-                : <Checkbox disabled checked={documentChecked}>
-                </Checkbox>}
-              <span className='m-8 p-x-8 c-#3CA9F8'> Create document</span>
-
-            </div>
+        <div>
+          <h2>Apply A Loan</h2>
+          <div className='h-120 p-10 text-18'>
+            {/* <h3>Create Pool Contract (Only Once)</h3> */}
+            {
+              poolCreated === 0
+                ? <div className='flex items-center justify-between'>
+                  <div>Create Pool Contract (Only Once)</div>
+                  <div className='m-8'><BorderOutlined /></div>
+                </div>
+                : poolCreated === 1
+                  ? <div className='flex items-center justify-between'>
+                    <div>Creating your pool contract...</div>
+                    <div className='m-8'><LoadingOutlined /></div>
+                  </div>
+                  : poolCreated === 2
+                    ? <div className='flex items-center justify-between'>
+                      <div>Your pool contract has been created!</div>
+                      <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                    </div>
+                    : poolCreated === 3
+                      ? <div className='flex items-center justify-between'>
+                        <div>The creation of pool contract failed!</div>
+                        <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                      </div>
+                      : <div className='flex items-center justify-between'>
+                        <div>Your pool contract exists!</div>
+                        <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                      </div>
+            }
+            {/* <h3>Create Loan Order</h3> */}
+            {
+              orderCreated === 0
+                ? <div className='flex items-center justify-between'>
+                  <div>Create Loan Order</div>
+                  <div className='m-8'><BorderOutlined /></div>
+                </div>
+                : orderCreated === 1
+                  ? <div className='flex items-center justify-between'>
+                    <div>Creating your loan order...</div>
+                    <div className='m-8'><LoadingOutlined /></div>
+                  </div>
+                  : orderCreated === 2
+                    ? <div className='flex items-center justify-between'>
+                      <div>Your order has been created!</div>
+                      <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                    </div>
+                    : <div className='flex items-center justify-between'>
+                      <div>The creation of order failed</div>
+                      <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                    </div>
+            }
           </div>
-
         </div>
-
-        <div className="h16" />
-
-        <div className="flex justify-center gap-x-8">
-          <Button
-            className='m-8 h32 w84 rounded-2 p0 primary-btn'
-            onClick={() => handleConfirm()}
-            loading={confirmLoading}
-            disabled={createdPoolLoading}
-          >
-            Confirm
-          </Button>
-          <Button className='m-8 h32 w77 rounded-2 bg-#F2F3F5 text-14 c-#1F1F1F' onClick={handleCancel}>
-            Cancel
-          </Button>
-        </div>
-
       </Modal>
 
       <Form
@@ -1019,7 +1024,7 @@ const ApplyLoan = () => {
           <Button
             type="primary"
             htmlType="submit"
-            loading={publishBtnLoading}
+            loading={true}
             className="h78 w300 text-16 primary-btn"
           >
             {t('applyLoan.btn.submit')}

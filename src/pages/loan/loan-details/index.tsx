@@ -372,9 +372,9 @@ const LoanDetails = () => {
     <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
 
     {/* sell modal */}
-    <SModal
+    <SModal open={sellIsModalOpen}
+      // centered={true}
       className='h238 w464 b-rd-8'
-      open={sellIsModalOpen}
       content={
         <div>
           <h2>Sell Shares</h2>

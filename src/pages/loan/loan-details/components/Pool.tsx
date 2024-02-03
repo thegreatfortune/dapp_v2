@@ -120,19 +120,17 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       for (let i = 0; i < transactionPair.length; i++) {
         const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
         if (coin in tradingPairTokenMap) {
-          console.log(tradingPairTokenMap[coin], tradeId, coin)
+          // console.log(tradingPairTokenMap[coin], tradeId, coin)
           const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
           pro && proList.push(pro as Promise<TokenInfo>)
         }
       }
 
       Promise.all(proList).then((res) => {
-        console.log(res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
         throw new Error(err)
       })
-      console.log(tokenInfos.length)
     }
     catch (error) {
       console.log('%c [ error ]-65', 'font-size:13px; background:#abdc31; color:#efff75;', error)

@@ -8,6 +8,7 @@ import { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
 import { isContractAddress } from '@/utils/regex'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import logo from '@/assets/images/portalImages/logo.png'
 
 const Trade = () => {
   const [params, setParams] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
@@ -30,19 +31,20 @@ const Trade = () => {
 
   const renderItem = (item: Models.MarketLoanVo) => {
     return (
-      <div className='h125 w315 cursor-pointer s-container b-rd-6' onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
-        <div className='flex'>
-          <div className='ml-32 mt-20 h50 w50 b-rd-0'>
-            <Avatar size={50} src={item.user?.pictureUrl}/>
+      <div className='s-container box-border h125 w315 cursor-pointer border-2 border-#303241 b-rd-6 rounded-16 border-solid bg-[#171822]'
+        onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
+        <div className='mt-20 flex justify-between'>
+          <div className='ml-32 h50 w50 b-rd-0'>
+            <Avatar className='bg-slate-200' size={50} src={item.user?.pictureUrl ? item.user?.pictureUrl : logo} />
           </div>
-          <div className='grid'>
-            <span className='c-fff ml-20 mt-22 h25 w-full text-20 font-400 lh-20'>{isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'not bound')}</span>
-            <span className='ml-20 h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'not bound'}</span>
+          <div className='grid mr-32 mt-5'>
+            <span className='c-fff h25 w-full text-20 font-400 lh-20'>{isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'not bound')}</span>
+            <span className='h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'not bound'}</span>
           </div>
         </div>
         <div className='flex justify-between'>
-          <span className='ml-32 mt-20'> Price {ethers.formatUnits(String(item.price), BigInt(18))}</span>
-          <span className='mr-29 mt-20'> Volume of business {item.totalTradingCompleted}</span>
+          <span className='ml-32 mt-20'> Volume: {item.totalTradingCompleted}</span>
+          <span className='mr-32 mt-18 text-16'> Price: {ethers.formatUnits(String(item.price), BigInt(18))}</span>
         </div>
       </div>
     )
