@@ -9,7 +9,6 @@ import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } f
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
-import ShellModal from './components/ShellModal'
 import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
@@ -37,8 +36,6 @@ const LoanDetails = () => {
 
   const [extractIsModalOpen, setExtractIsModalOpen] = useState(false)
   const [extraModalLoading, setExtraModalLoading] = useState(false)
-
-  const [shellIsModalOpen, setShellIsModalOpen] = useState(false)
 
   const [sellIsModalOpen, setSellIsModalOpen] = useState(false)
   const [sellModalLoading, setSellModalLoading] = useState(false)
@@ -375,93 +372,10 @@ const LoanDetails = () => {
 
   return (<div className='w-full'>
 
-    <ShellModal open={shellIsModalOpen} onCancel={() => setShellIsModalOpen(false)} tradeId={tradeId ? BigInt(tradeId) : undefined} />
-
     {/* sell modal */}
-    <SModal open={sellIsModalOpen}
+    <Modal open={sellIsModalOpen}
       // centered={true}
       className='h238 w464 b-rd-8'
-      content={
-        <div>
-          <h2>Sell Shares</h2>
-          <div className='h-50 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              My shares:
-            </div>
-            <div className='text-18'>
-              {totalShares}
-            </div>
-          </div>
-          <div className='h-50 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              Sell Quantity:
-            </div>
-            <div className='flex justify-end'>
-              <InputNumber
-                className='w-170'
-                min={'1'}
-                max={totalShares.toString()}
-                placeholder="Enter Quantity value"
-                value={sellAmount}
-                defaultValue={'1'}
-                onChange={(value) => {
-                  setSellAmount(value!)
-                  setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
-                }
-                }
-              />
-              <Button
-                className='mx-12'
-                type='primary'
-                // loading={checkMaxLoading}
-                onClick={() => {
-                  setSellAmount(totalShares.toString())
-                  setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
-                }}
-                disabled={sellModalLoading}>
-                Max
-              </Button>
-              <div className='text-18'>
-                Shares
-              </div>
-            </div>
-          </div>
-          <div className='h-50 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              Unit Price:
-            </div>
-            <div className='flex justify-end'>
-              <InputNumber
-                className='mx-10 w-260'
-                min={'0.01'}
-                placeholder="Enter Unit Price"
-                step="0.10"
-                precision={2}
-                defaultValue='1.00'
-                value={sellUnitPrice}
-                onChange={(value) => {
-                  const processedValue = value!.toString().includes('.')
-                    ? value!.toString().slice(0, value!.toString().indexOf('.') + 3)
-                    : value!.toString()
-                  setSellUnitPrice(processedValue)
-                  setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
-                }}
-              />
-              <div className='text-18'>
-                USD
-              </div>
-            </div>
-          </div>
-          <div className='mt-10 h-60 flex items-center justify-between'>
-            <div className='w-120 text-22'>
-              Total Price:
-            </div>
-            <div className='text-22'>
-              {totalPrice}
-            </div>
-          </div>
-        </div>
-      }
       okText="Sell"
       // onOk={() => sellConfirm()}
       onOk={() => setSellConfirmModalOpen(true)}
@@ -475,7 +389,86 @@ const LoanDetails = () => {
         className: 'w-100',
       }}
     >
-    </SModal>
+      <div>
+        <h2>Sell Shares</h2>
+        <div className='h-50 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            My shares:
+          </div>
+          <div className='text-18'>
+            {totalShares}
+          </div>
+        </div>
+        <div className='h-50 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            Sell Quantity:
+          </div>
+          <div className='flex justify-end'>
+            <InputNumber
+              className='w-170'
+              min={'1'}
+              max={totalShares.toString()}
+              placeholder="Enter Quantity value"
+              value={sellAmount}
+              defaultValue={'1'}
+              onChange={(value) => {
+                setSellAmount(value!)
+                setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
+              }
+              }
+            />
+            <Button
+              className='mx-12'
+              type='primary'
+              // loading={checkMaxLoading}
+              onClick={() => {
+                setSellAmount(totalShares.toString())
+                setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
+              }}
+              disabled={sellModalLoading}>
+              Max
+            </Button>
+            <div className='text-18'>
+              Shares
+            </div>
+          </div>
+        </div>
+        <div className='h-50 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            Unit Price:
+          </div>
+          <div className='flex justify-end'>
+            <InputNumber
+              className='mx-10 w-260'
+              min={'0.01'}
+              placeholder="Enter Unit Price"
+              step="0.10"
+              precision={2}
+              defaultValue='1.00'
+              value={sellUnitPrice}
+              onChange={(value) => {
+                const processedValue = value!.toString().includes('.')
+                  ? value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                  : value!.toString()
+                setSellUnitPrice(processedValue)
+                setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
+              }}
+            />
+            <div className='text-18'>
+              USD
+            </div>
+          </div>
+        </div>
+        <div className='mt-10 h-60 flex items-center justify-between'>
+          <div className='w-120 text-22'>
+            Total Price:
+          </div>
+          <div className='text-22'>
+            {totalPrice}
+          </div>
+        </div>
+      </div>
+    </Modal>
 
     <Modal open={sellConfirmModalOpen}
       className='h238 w464 b-rd-8'
@@ -586,24 +579,9 @@ const LoanDetails = () => {
       </div>
     </Modal>
 
-    <SModal
+    <Modal open={extractIsModalOpen}
       className='h238 w464 b-rd-8'
-      open={extractIsModalOpen}
       maskClosable={false}
-      content={
-        <div>
-          <h2>
-            Extract: {extractMoney}
-          </h2>
-        </div>
-        // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
-        //   confirm
-        // </Button>,
-        // <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
-        //   Cancel
-        // </Button>,
-        // ]
-      }
       okText="Confirm"
       onOk={() => extractConfirm()}
       onCancel={() => {
@@ -612,8 +590,19 @@ const LoanDetails = () => {
       }
       okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
     >
-
-    </SModal>
+      <div>
+        <h2>
+          Extract: {extractMoney}
+        </h2>
+      </div>
+      {/* // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
+      //   confirm
+      // </Button>,
+      // <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
+      //   Cancel
+      // </Button>,
+      // ] */}
+    </Modal>
 
     <SModal open={isModalOpen}
       maskClosable={false}

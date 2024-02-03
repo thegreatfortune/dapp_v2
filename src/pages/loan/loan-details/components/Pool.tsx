@@ -79,6 +79,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   useEffect(() => {
     async function createKLineThis() {
       const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
+      console.log(res)
       createKLine(res.records ?? [])
     }
     if (!kLineCreated) {
@@ -300,7 +301,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               </span>
             </div>
 
-            <div id='KLineContainer' className='h340 w574'></div>
+            <div id='KLineContainer' className='h340 w574 bg-white'></div>
 
           </div>
 
