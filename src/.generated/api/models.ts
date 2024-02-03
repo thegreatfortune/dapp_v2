@@ -182,7 +182,7 @@ Canceled :订单取消 */
     id: string = '';
   }
 
-  export class ApplicationContext {}
+  export class ApplicationContext { }
 
   export class AuthResult {
     success?: boolean = false;
@@ -207,9 +207,9 @@ Canceled :订单取消 */
     additionalPoints?: number = 0;
   }
 
-  export class HttpStatusCode {}
+  export class HttpStatusCode { }
 
-  export class IChainToken {}
+  export class IChainToken { }
 
   export class IntegralVo {
     points?: number = 0;
@@ -221,11 +221,11 @@ Canceled :订单取消 */
     inviteCode: string = '';
   }
 
-  export class ISysWallet {}
+  export class ISysWallet { }
 
-  export class IUserWallet {}
+  export class IUserWallet { }
 
-  export class key {}
+  export class key { }
 
   export class LendingLoanVo {
     /** 贷方id */
@@ -369,9 +369,9 @@ Canceled :订单取消 */
     tokenInfo?: SimpleTokenInfoVo = undefined;
   }
 
-  export class Locale {}
+  export class Locale { }
 
-  export class Log {}
+  export class Log { }
 
   export class LoginDto {
     address?: string = undefined;
@@ -380,6 +380,7 @@ Canceled :订单取消 */
 
   export class Map<T> {
     key?: { uPrice?: string; createDate?: number }[] = undefined;
+    data: any;
   }
 
   export class MarketBalanceVo {
@@ -401,7 +402,7 @@ Canceled :订单取消 */
     totalTradingCompleted?: string = undefined;
   }
 
-  export class MessageSource {}
+  export class MessageSource { }
 
   export class MessageSourceAccessor {
     messageSource?: MessageSource = undefined;
@@ -438,7 +439,7 @@ Canceled :订单取消 */
     key?: string = undefined;
   }
 
-  export class Object {}
+  export class Object { }
 
   export class OrderItem {
     /** 列 需要进行排序的字段 */
@@ -518,7 +519,7 @@ Canceled :订单取消 */
     data?: T = undefined;
   }
 
-  export class ServletContext {}
+  export class ServletContext { }
 
   export class SimpleFileVo {
     url?: string = undefined;
@@ -643,5 +644,6 @@ Canceled :订单取消 */
   export class UserPortfolioVo {
     uPrice?: string = undefined;
     createDate?: number = 0;
+    [key: string]: string | number | undefined
   }
 }

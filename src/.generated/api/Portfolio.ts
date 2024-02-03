@@ -6,7 +6,7 @@ import { Models } from './models';
 export class PortfolioService {
   /** 查询订单的资产价值 GET /api/portfolio/loanPortfolio */
   static async ApiPortfolioLoanPortfolio_GET(options?: { [key: string]: any }) {
-    return request<Models.Map<Models.List<Models.UserPortfolioVo>>>({
+    return request<Models.Map<Models.UserPortfolioVo>>({
       url: 'https://api.followfi.io/core/api/portfolio/loanPortfolio',
       method: 'GET',
       ...(options || {}),

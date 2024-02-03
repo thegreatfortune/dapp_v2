@@ -6,7 +6,12 @@ import { PortfolioService } from '@/.generated/api'
 
 interface balanceType {
     timestamp: number
-    balance: string
+    balance: number
+}
+
+interface tokenData {
+    createDate: number
+    uPrice: string
 }
 
 export default function BalanceChart() {
@@ -14,21 +19,26 @@ export default function BalanceChart() {
 
     useEffect(() => {
         async function getData() {
-            const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
-            console.log(res)
+            const res = await PortfolioService.ApiPortfolioLoanPortfolio_GET()
             return res
         }
-        const list: balanceType[] = []
         getData().then((res) => {
-            res.records?.map((e) => {
-                const item = {
-                    timestamp: e.createDate! * 1000,
-                    balance: ethers.formatUnits(e.uPrice ?? '0'),
-                }
-                list.push(item)
+            const list: balanceType[] = []
+            Object.values(res).map((value) => {
+                value.forEach((e: tokenData, i: number) => {
+                    if (list.length > i) {
+                        list[i].timestamp = e.createDate > list[i].timestamp ? e.createDate : list[i].timestamp
+                        list[i].balance += Number(ethers.formatUnits(value[0].uPrice ?? '0'))
+                    }
+                    else {
+                        list.push({
+                            timestamp: e.createDate,
+                            balance: Number(ethers.formatUnits(value[0].uPrice ?? '0')),
+                        })
+                    }
+                })
                 return true
             })
-            console.log(list)
             setBalanceData(list)
             return true
         })
