@@ -221,15 +221,15 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       <div className='flex items-center gap-4'>
         <span className='text-32 font-400'>Repayment Plan</span>
 
-        <div className='mx-20 flex text-center c-#D1D1D1'>
-          <span className='text-16'>address</span>
-          <div className="w6" />
-
+        <div className='mx-20 flex items-center text-center c-#D1D1D1'>
+          <div className='mr-10 text-20 font-semibold'>Address:</div>
           <Address address={refundPoolAddress ?? ''} />
-
+        </div>
+        <div className='mx-20 flex items-center text-center c-#D1D1D1'>
+          <div className='mr-10 text-20 font-semibold'>Arrears:</div>
+          <div className='text-30'>${Number.parseFloat(arrears).toLocaleString()}</div>
         </div>
 
-        Arrears ${arrears}
       </div>
 
       <ul className='grid grid-cols-5 list-none c-#666873'>

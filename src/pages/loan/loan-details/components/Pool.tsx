@@ -279,32 +279,26 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       <div className="h560 w-full flex justify-between">
         <div className="s-container box-border h560 w634 flex justify-between p-x-30 p-y-16">
           <div>
-            <div className='flex justify-between' >
-              <div className='flex text-center c-#D1D1D1'>
-                <span className='text-16'>address</span>
-
-                <div className="w6" />
-
-                <Address address={capitalPoolAddress ?? ''} />
-
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center c-#D1D1D1'>
+                <div className='mr-10 w-80 text-20 font-semibold'>Address:</div>
+                <div className="w-150 text-16"><Address address={capitalPoolAddress ?? ''} /></div>
               </div>
-
-              <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+              <Button className='h30 w80 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
             </div>
 
-            <div>
-              <div className='text-left text-16 c-#D1D1D1'>
-                total
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center c-#D1D1D1'>
+                <div className='mr-10 w-80 text-20 font-semibold'>Total:</div>
+                <div className="w-150 text-16"></div>
               </div>
-              <span className="text-34">
-                ${BigNumber(tokenTotals).toFixed(2)}
-              </span>
+              <div className="w80 text-right text-30">${BigNumber(tokenTotals).toFixed(2)}</div>
+              {/* <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button> */}
             </div>
+            {/* </div> */}
 
             <div id='KLineContainer' className='h340 w574 bg-white'></div>
-
           </div>
-
         </div>
 
         {/* <div className="w48" /> */}
