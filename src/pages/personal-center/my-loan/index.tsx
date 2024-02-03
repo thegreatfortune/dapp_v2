@@ -91,7 +91,7 @@ const MyLoan = () => {
             dataSource={loanOrderVOList}
             renderItem={item => (
               <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
-                <TransparentCard item={item} btnText='Repayment' >
+                <TransparentCard item={item} btnText='Repay' >
                 <Button className='h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>
               </TransparentCard>
               </List.Item>

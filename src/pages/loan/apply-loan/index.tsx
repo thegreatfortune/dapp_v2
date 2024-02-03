@@ -53,12 +53,14 @@ const ApplyLoan = () => {
 
   const { browserContractService } = useBrowserContract()
 
-  const [okText, setOkText] = useState('Apply')
+  const [okText, setOkText] = useState('Confirm')
   const [applyModalOpen, setApplyModalOpen] = useState(false)
   const [executing, setExecuting] = useState(false)
 
   const [poolCreated, setPoolCreated] = useState(0)
   const [orderCreated, setOrderCreated] = useState(0)
+
+  const [publishBtnLoading, setPublishBtnLoading] = useState(false)
 
   const [loanRequisitionEditModel, setLoanRequisitionEditModel]
     = useState<LoanRequisitionEditModel>(new LoanRequisitionEditModel())
@@ -300,7 +302,7 @@ const ApplyLoan = () => {
       if (!orderRes)
         throw new Error('Order creation failed')
 
-      setOkText('Apply')
+      setOkText('Confirm')
       message.success('Your order has beend created successfully')
       setTimeout(() => {
         setExecuting(false)
@@ -318,7 +320,7 @@ const ApplyLoan = () => {
       return false
     }
     finally {
-      setOkText('Apply')
+      setOkText('Confirm')
       setExecuting(false)
     }
   }
@@ -446,6 +448,7 @@ const ApplyLoan = () => {
           setPoolCreated(0)
           setOrderCreated(0)
           setApplyModalOpen(false)
+          setPublishBtnLoading(false)
         }}
         okButtonProps={{ disabled: executing, className: 'primary-btn w-100' }}
         cancelButtonProps={{ className: 'w-100' }}
@@ -457,26 +460,33 @@ const ApplyLoan = () => {
             {
               poolCreated === 0
                 ? <div className='flex items-center justify-between'>
-                  <div>Create Pool Contract (Only Once)</div>
+                  <div className='flex'>
+                    <div className='mr-8'>1.</div>Create Pool Contract (Only Once)</div>
                   <div className='m-8'><BorderOutlined /></div>
                 </div>
                 : poolCreated === 1
                   ? <div className='flex items-center justify-between'>
-                    <div>Creating your pool contract...</div>
+                    <div className='flex'>
+                      <div className='mr-8'>1.</div>Creating your pool contract...</div>
                     <div className='m-8'><LoadingOutlined /></div>
                   </div>
                   : poolCreated === 2
                     ? <div className='flex items-center justify-between'>
-                      <div>Your pool contract has been created!</div>
+                      <div className='flex'>
+                        <div className='mr-8'>1.</div>Your pool contract has been created!</div>
                       <div className='m-8'><CheckOutlined className='text-green-500' /></div>
                     </div>
                     : poolCreated === 3
                       ? <div className='flex items-center justify-between'>
-                        <div>The creation of pool contract failed!</div>
+                        <div className='flex'>
+                          <div className='mr-8'>1.</div>The creation of pool contract failed!</div>
                         <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
                       </div>
                       : <div className='flex items-center justify-between'>
-                        <div>Your pool contract exists!</div>
+                        <div className='flex'>
+                          <div className='mr-8'>1.</div>
+                          Your pool contract exists!
+                        </div>
                         <div className='m-8'><CheckOutlined className='text-green-500' /></div>
                       </div>
             }
@@ -484,21 +494,25 @@ const ApplyLoan = () => {
             {
               orderCreated === 0
                 ? <div className='flex items-center justify-between'>
-                  <div>Create Loan Order</div>
+                  <div className='flex'>
+                    <div className='mr-8'>2.</div>Create Loan Order</div>
                   <div className='m-8'><BorderOutlined /></div>
                 </div>
                 : orderCreated === 1
                   ? <div className='flex items-center justify-between'>
-                    <div>Creating your loan order...</div>
+                    <div className='flex'>
+                      <div className='mr-8'>2.</div>Creating your loan order...</div>
                     <div className='m-8'><LoadingOutlined /></div>
                   </div>
                   : orderCreated === 2
                     ? <div className='flex items-center justify-between'>
-                      <div>Your order has been created!</div>
+                      <div className='flex'>
+                        <div className='mr-8'>2.</div>Your order has been created!</div>
                       <div className='m-8'><CheckOutlined className='text-green-500' /></div>
                     </div>
                     : <div className='flex items-center justify-between'>
-                      <div>The creation of order failed</div>
+                      <div className='flex'>
+                        <div className='mr-8'>2.</div>The creation of order failed</div>
                       <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
                     </div>
             }
@@ -1024,8 +1038,9 @@ const ApplyLoan = () => {
           <Button
             type="primary"
             htmlType="submit"
-            loading={true}
-            className="h78 w300 text-16 primary-btn"
+            loading={publishBtnLoading}
+            className="h65 w200 text-18 primary-btn"
+            onClick={() => setPublishBtnLoading(true)}
           >
             {t('applyLoan.btn.submit')}
           </Button>

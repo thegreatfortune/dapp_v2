@@ -170,9 +170,9 @@ const PersonalCenter = () => {
             </div>
 
             <div className='flex gap-x-50'>
-              <Button loading={applyLoanLoading} onClick={checkLoanOrderAndUserState} className='h48 w172 rounded-30 primary-btn'>Apply for a loan</Button>
+              <Button loading={applyLoanLoading} onClick={checkLoanOrderAndUserState} className='h40 w180 rounded-30 primary-btn'>Apply for a loan</Button>
 
-              <Button className='h48 w120 rounded-30 primary-btn'>Follow</Button>
+              <Button className='h40 w180 rounded-30 primary-btn'>Follow</Button>
             </div>
 
           </div>

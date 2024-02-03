@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Tabs, Tooltip, message } from 'antd'
+import { Button, Divider, InputNumber, Modal, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
@@ -51,6 +51,7 @@ const LoanDetails = () => {
 
   const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
+  const [okText, setOkText] = useState('Confirm')
 
   const [executing, setExecuting] = useState(false)
 
@@ -139,7 +140,7 @@ const LoanDetails = () => {
   }, [sellIsModalOpen])
 
   useEffect(() => {
-    setApproved(0)
+    // setApproved(0)
     setSold(0)
     setSellModalLoading(false)
   }, [sellConfirmModalOpen])
@@ -256,17 +257,25 @@ const LoanDetails = () => {
 
     // setSellModalLoading(true)
     setExecuting(true)
-    setApproved(1)
+
+    if (approved !== 2) {
+      setApproved(1)
+      try {
+        const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
+        if (approvedRes)
+          setApproved(2)
+        else
+          throw new Error('error')
+      }
+      catch {
+        setOkText('Retry')
+        setExecuting(false)
+        setApproved(3)
+        return
+      }
+    }
 
     try {
-      const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
-      if (approvedRes) {
-        setApproved(2)
-      }
-      else {
-        setApproved(3)
-        throw new Error('error')
-      }
       setSold(1)
       // const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
       const processedPrice = BigInt(Number.parseFloat(sellUnitPrice) * 100)
@@ -277,6 +286,7 @@ const LoanDetails = () => {
         throw new Error('Sell Transaction Failed!')
       }
       setSold(2)
+      setOkText('Confirm')
       setSellConfirmModalOpen(false)
       setSellIsModalOpen(false)
       setExecuting(false)
@@ -284,12 +294,9 @@ const LoanDetails = () => {
     catch (error) {
       setSold(3)
       setExecuting(false)
+      setOkText('Retry')
       message.error('Transaction Failed!')
       console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
-    }
-    finally {
-      // setSellConfirmModalOpen(false)
-      // setSellIsModalOpen(false)
     }
   }
 
@@ -297,7 +304,6 @@ const LoanDetails = () => {
     if (!tradeId || !copies)
       return
 
-    setLendingState(true)
     setExecuting(true)
 
     try {
@@ -471,92 +477,12 @@ const LoanDetails = () => {
     >
     </SModal>
 
-    <SModal
+    <Modal open={sellConfirmModalOpen}
       className='h238 w464 b-rd-8'
-      open={sellConfirmModalOpen}
-      content={
-        <div>
-          <h2>Confirm to Sell</h2>
-          <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              Shares:
-            </div>
-            <div className='text-18'>
-              {sellAmount}
-            </div>
-          </div>
-          <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              Unit Price:
-            </div>
-            <div className='text-18'>
-              {sellUnitPrice}
-            </div>
-
-          </div>
-          <div className='h-40 flex items-center justify-between'>
-            <div className='w-120 text-18'>
-              Total Price:
-            </div>
-            <div className='text-18'>
-              {totalPrice}
-            </div>
-
-          </div>
-
-          {/* <div hidden={!sellModalLoading}> */}
-          <div className='mt-20'>
-            <div className='flex text-18'>
-              <div className='mr-8'>
-                {approved === 0
-                  ? <BorderOutlined />
-                  : approved === 1
-                    ? <LoadingOutlined />
-                    : approved === 2
-                      ? <CheckOutlined className='text-green-500' />
-                      : <CloseSquareOutlined className='text-red-500' />
-                }
-              </div>
-              <div className=''>
-                {approved === 0
-                  ? 'Prepare to approve'
-                  : approved === 1
-                    ? 'Approving...'
-                    : approved === 2
-                      ? 'Approved!'
-                      : 'Approval failed!'
-                }
-              </div>
-            </div>
-            <div className='flex text-18'>
-              <div className='mr-8'>
-                {sold === 0
-                  ? <BorderOutlined />
-                  : sold === 1
-                    ? <LoadingOutlined />
-                    : sold === 2
-                      ? <CheckOutlined className='text-green-500' />
-                      : <CloseSquareOutlined className='text-red-500' />
-                }
-              </div>
-              <div className=''>
-                {sold === 0
-                  ? 'Prepare to sell'
-                  : sold === 1
-                    ? 'Selling...'
-                    : sold === 2
-                      ? 'Sold!'
-                      : 'Sale failed!'
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-
-      }
       onOk={() => sellConfirm()}
-      okText="Confirm"
+      okText={okText}
       onCancel={() => {
+        setOkText('Confirm')
         setExecuting(false)
         setSellConfirmModalOpen(false)
       }}
@@ -569,8 +495,96 @@ const LoanDetails = () => {
         className: 'w-100',
       }}
     >
+      <div>
+        <h2>Confirm to Sell</h2>
+        <div className='h-40 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            Shares:
+          </div>
+          <div className='text-18'>
+            {sellAmount}
+          </div>
+        </div>
+        <div className='h-40 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            Unit Price:
+          </div>
+          <div className='text-18'>
+            {sellUnitPrice}
+          </div>
 
-    </SModal>
+        </div>
+        <div className='h-40 flex items-center justify-between'>
+          <div className='w-120 text-18'>
+            Total Price:
+          </div>
+          <div className='text-18'>
+            {totalPrice}
+          </div>
+
+        </div>
+
+        {/* <div hidden={!sellModalLoading}> */}
+        <div className='mt-20'>
+          <div className='h40 flex justify-between text-18'>
+            <div className='flex'>
+              <div className='mr-8'>
+                1.
+              </div>
+              <div>
+                {approved === 0
+                  ? 'Approve your shares'
+                  : approved === 1
+                    ? 'Approving...'
+                    : approved === 2
+                      ? 'Approved!'
+                      : 'Approval failed!'
+                }
+              </div>
+            </div>
+            <div className='mr-8'>
+              {approved === 0
+                ? <BorderOutlined />
+                : approved === 1
+                  ? <LoadingOutlined />
+                  : approved === 2
+                    ? <CheckOutlined className='text-green-500' />
+                    : <CloseSquareOutlined className='text-red-500' />
+              }
+            </div>
+
+          </div>
+          <div className='h40 flex justify-between text-18'>
+            <div className='flex'>
+              <div className='mr-8'>
+                2.
+              </div>
+              <div>
+                {sold === 0
+                  ? 'Sell to market'
+                  : sold === 1
+                    ? 'Selling...'
+                    : sold === 2
+                      ? 'Sold!'
+                      : 'Sale failed!'
+                }
+              </div>
+            </div>
+            <div className='mr-8'>
+              {sold === 0
+                ? <BorderOutlined />
+                : sold === 1
+                  ? <LoadingOutlined />
+                  : sold === 2
+                    ? <CheckOutlined className='text-green-500' />
+                    : <CloseSquareOutlined className='text-red-500' />
+              }
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </Modal>
 
     <SModal
       className='h238 w464 b-rd-8'
