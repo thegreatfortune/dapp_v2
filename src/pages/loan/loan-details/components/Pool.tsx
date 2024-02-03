@@ -8,6 +8,7 @@ import SwapModal from './SwapModal'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
 import { createKLine } from './createKLine'
+import BalanceChart from './BalanceChart'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
@@ -222,7 +223,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   // const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
   //   <DefaultTabBar {...props} className='h1 text-white' />
   // )
-
   return (
     <div className='w-full'>
 
@@ -297,7 +297,11 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
             </div>
             {/* </div> */}
 
-            <div id='KLineContainer' className='h500 w574 bg-white' style={{ height: '500' }}></div>
+            <div className='w-500 border-4 border-red-500'>
+              <BalanceChart />
+            </div>
+
+            {/* <div id='KLineContainer' className='h500 w574 bg-white' style={{ height: '500' }}></div> */}
           </div>
         </div>
 
