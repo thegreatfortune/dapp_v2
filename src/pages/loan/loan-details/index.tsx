@@ -736,7 +736,7 @@ const LoanDetails = () => {
           <ul className='m0 list-none p0'>
             <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Loan amount</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'>${BigNumber(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)}</li>
+            <li className='text-20 font-semibold'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
             {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
 

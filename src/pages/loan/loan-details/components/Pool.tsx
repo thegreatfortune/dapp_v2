@@ -292,12 +292,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='mr-10 w-80 text-20 font-semibold'>Total:</div>
                 <div className="w-150 text-16"></div>
               </div>
-              <div className="w80 text-right text-30">${BigNumber(tokenTotals).toFixed(2)}</div>
+              <div className="text-right text-30">$ {Number(Number(tokenTotals).toFixed(2)).toLocaleString()}</div>
               {/* <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button> */}
             </div>
             {/* </div> */}
 
-            <div id='KLineContainer' className='h340 w574 bg-white'></div>
+            <div id='KLineContainer' className='w574 bg-white' style={{ height: '500' }}></div>
           </div>
         </div>
 
@@ -319,27 +319,32 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
                   {chunk.map((item, _index) => (
                     <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                      <div className="flex items-center gap-x-6 px-20 pt-31 text-center">
-                        <Image preview={false} width={18} height={18} src={tokenList.find(e => e.address === item.address)?.icon} />
-                        <div className='flex text-21 c-#fff'>
-                          {item.name}({
-                            // 如果余额大于零，则计算比例并显示结果
-                            Number(item.balance) !== 0
-                              ? BigNumber(item.dollars ?? 0)
-                                .div((tokenTotals))
-                                .times(100)
-                                .toFixed(2)
-                              : <span>
-                                0
-                              </span>
-                          }%)
 
-                          <span className='ml-13 mt-7 h13 text-11 lh-13 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                      <div className="flex items-center justify-between gap-x-6 px-20 pt-31 text-center">
+                        <div className='flex items-center'>
+                          <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} />
+                          <div className='ml-10 flex items-center text-20 c-#fff'>
+                            {item.name} ({
+                              // 如果余额大于零，则计算比例并显示结果
+                              Number(item.balance) !== 0
+                                ? BigNumber(item.dollars ?? 0)
+                                  .div((tokenTotals))
+                                  .times(100)
+                                  .toFixed(2)
+                                : <span>
+                                  0
+                                </span>
+                            }%)
+                          </div>
+                        </div>
+                        <div className='flex items-center text-right text-20 c-#fff'>
+                          <span className='ml-13 mt-5 text-11 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
                         </div>
                       </div>
-                      <div className='flex'>
-                        <div className='ml-15 mt-11 h37 text-32 lh-38 c-#303241'>$</div>
-                        <div className='ml-8 mt-11 h37 text-32 lh-38'>{item.dollars ? BigNumber(item.dollars).toFixed(2) : 0}</div>
+
+                      <div className='flex justify-end px-20'>
+                        <div className='mt-25 h37 text-32 lh-38'>$</div>
+                        <div className='ml-10 mt-25 h37 text-32 lh-38'>{item.dollars ? Number(BigNumber(item.dollars).toFixed(2)).toLocaleString() : 0}</div>
                       </div>
 
                       <div className='mb-16 mr-16 flex justify-end'>

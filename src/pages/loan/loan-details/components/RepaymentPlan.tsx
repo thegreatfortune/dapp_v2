@@ -227,7 +227,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         </div>
         <div className='mx-20 flex items-center text-center c-#D1D1D1'>
           <div className='mr-10 text-20 font-semibold'>Arrears:</div>
-          <div className='text-30'>${Number.parseFloat(arrears).toLocaleString()}</div>
+          <div className='text-30'>${Number(Number(arrears).toFixed(2)).toLocaleString()}</div>
         </div>
 
       </div>

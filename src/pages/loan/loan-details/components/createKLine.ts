@@ -7,52 +7,52 @@ import type { Models } from '@/.generated/api/models'
 export function createKLine(data: Models.UserPortfolioVo[]) {
   // TODO 时区
   const chart = init('KLineContainer')
-  chart?.setStyles({
-    grid: {
-      // show: true,
-      horizontal: {
-        // show: true,
-        size: 1,
-        color: '#EDEDED',
-        // style: 'dashed',
-        dashedValue: [2, 2],
-      },
-      vertical: {
-        // show: true,
-        size: 1,
-        color: '#EDEDED',
-        // style: 'dashed',
-        dashedValue: [2, 2],
-      },
-    },
-    candle: {
-      // type: 'candle_solid',
-      // 蜡烛柱
-      bar: {
-        upColor: '#2DC08E',
-        downColor: '#F92855',
-        noChangeColor: '#888888',
-        upBorderColor: '#2DC08E',
-        downBorderColor: '#F92855',
-        noChangeBorderColor: '#888888',
-        upWickColor: '#2DC08E',
-        downWickColor: '#F92855',
-        noChangeWickColor: '#888888',
-      },
-      area: {
-        lineSize: 2,
-        lineColor: '#2196F3',
-        value: 'close',
-        backgroundColor: [{
-          offset: 0,
-          color: 'rgba(33, 150, 243, 0.01)',
-        }, {
-          offset: 1,
-          color: 'rgba(33, 150, 243, 0.2)',
-        }],
-      },
-    },
-  })
+  // chart?.setStyles({
+  //   grid: {
+  //     // show: true,
+  //     horizontal: {
+  //       // show: true,
+  //       size: 1,
+  //       color: '#EDEDED',
+  //       // style: 'dashed',
+  //       dashedValue: [2, 2],
+  //     },
+  //     vertical: {
+  //       // show: true,
+  //       size: 1,
+  //       color: '#EDEDED',
+  //       // style: 'dashed',
+  //       dashedValue: [2, 2],
+  //     },
+  //   },
+  //   candle: {
+  //     // type: 'candle_solid',
+  //     // 蜡烛柱
+  //     bar: {
+  //       upColor: '#2DC08E',
+  //       downColor: '#F92855',
+  //       noChangeColor: '#888888',
+  //       upBorderColor: '#2DC08E',
+  //       downBorderColor: '#F92855',
+  //       noChangeBorderColor: '#888888',
+  //       upWickColor: '#2DC08E',
+  //       downWickColor: '#F92855',
+  //       noChangeWickColor: '#888888',
+  //     },
+  //     area: {
+  //       lineSize: 2,
+  //       lineColor: '#2196F3',
+  //       value: 'close',
+  //       backgroundColor: [{
+  //         offset: 0,
+  //         color: 'rgba(33, 150, 243, 0.01)',
+  //       }, {
+  //         offset: 1,
+  //         color: 'rgba(33, 150, 243, 0.2)',
+  //       }],
+  //     },
+  //   },
+  // })
   const list: { timestamp: number; open: number; high: number; low: number; close: number }[] = []
   data.map((e) => {
     const item = {
