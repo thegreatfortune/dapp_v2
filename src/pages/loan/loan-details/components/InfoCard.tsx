@@ -2,6 +2,7 @@ import { Image } from 'antd'
 import type { Models } from '@/.generated/api/models'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import { isContractAddress } from '@/utils/regex'
+import cardPic from '@/assets/images/default.png'
 
 interface CardProps {
   item: Models.LoanOrderVO
@@ -10,7 +11,9 @@ interface CardProps {
 const InfoCard: React.FC<CardProps> = ({ item }) => {
   return (
     <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-10">
-      <Image width={300} height={271} src={item.picUrl} className='b-rd-12' />
+      <Image width={300} height={271} src={item.picUrl} className='b-rd-12'
+        fallback={cardPic}
+      />
 
       <div className='text-left'>
         <div className='h11 w-full'></div>

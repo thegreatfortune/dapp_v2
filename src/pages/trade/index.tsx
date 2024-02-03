@@ -72,7 +72,7 @@ const Trade = () => {
           </Radio.Group>
         </div>
 
-        <div className='h23 w-full'></div>
+        <div className='h80 w-full'></div>
 
         <ScrollableList grid={{ gutter: 16, column: 4 }} api={MarketService.ApiMarketPageTradingLoan_GET} params={params} containerId='TradeScrollable' renderItem={renderItem} />
       </div>

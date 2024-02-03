@@ -1,6 +1,7 @@
 import { init } from 'klinecharts'
-import { ethers } from 'ethers'
-import { sortBy, uniqBy } from 'lodash-es'
+
+// import { ethers } from 'ethers'
+// import { sortBy, uniqBy } from 'lodash-es'
 import type { Models } from '@/.generated/api/models'
 
 export function createKLine(data: Models.UserPortfolioVo[]) {
