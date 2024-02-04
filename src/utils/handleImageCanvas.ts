@@ -1,4 +1,4 @@
-import toCurrencyString from "./convertToCurrencyString"
+import toCurrencyString from './convertToCurrencyString'
 
 export const handleImageCanvas = async (imagePath: string, drawList: [Name: string, Lender: string, Loan: string, RiskLevel: string, Interest: string, Dividend: string]): Promise<File | null> => {
   // eslint-disable-next-line no-async-promise-executor
