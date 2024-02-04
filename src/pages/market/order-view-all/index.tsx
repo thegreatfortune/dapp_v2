@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Image, Radio } from 'antd'
+import { InfoCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
@@ -50,11 +51,25 @@ const OrderViewAll = () => {
           </span>
         </div>
         <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)} className='w-453 flex' buttonStyle='solid'>
-          <Radio.Button value="All" className='m-auto mr-20 h48 w-100 border-1px b-rd-6 text-center lh-48'>All</Radio.Button>
-          {/* <Radio.Button value="All" className={`m-auto mr-20 h48 w-100 border-1px b-rd-6 text-center lh-48 ${activeKey === 'All' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>All</Radio.Button> */}
-
-          <Radio.Button value="LowRisk" className={`h48 w146 items-center text-18 font-500 lh-48  ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🌈 Low Risk</Radio.Button>
-          <Radio.Button value="HighRisk" className={`h48 w185 items-center text-18 font-500 lh-48 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>🎉 High Risk</Radio.Button>
+          <Radio.Button
+            value="All"
+            className='m-auto mr-20 h40 w-100 border-1px b-rd-6 text-center lh-40'>
+            All
+          </Radio.Button>
+          <Radio.Button
+            value="LowRisk"
+            className={`h40 w140 items-center lh-40  ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+            <div className='flex justify-center'>
+              <InfoCircleOutlined className='mr-4 text-slate-500' /> Low Risk
+            </div>
+          </Radio.Button>
+          <Radio.Button
+            value="HighRisk"
+            className={`h40 w140 items-center lh-40 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+            <div className='flex justify-center'>
+              <WarningOutlined className='mr-4 text-red-500' /> High Risk
+            </div>
+          </Radio.Button>
         </Radio.Group>
       </div>
       <div className='h60 w-full'></div>
@@ -77,12 +92,12 @@ const OrderViewAll = () => {
         category === 'PopularToFollow'
         && <ScrollableList
           // grid={{ gutter: 16, column: 4 }}
-          grid={{ gutter: 16 }}
+          grid={{ gutter: 12 }}
           api={LoanService.ApiLoanPageLoanContract_GET}
           params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
           containerId='PopularToFollow'
           renderItem={(item: Models.LoanOrderVO) =>
-            <div onClick={() => {
+            <div className="grow flex justify-center" onClick={() => {
               navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
             }} >
               <TransparentCard key={item.tradeId} item={item} />

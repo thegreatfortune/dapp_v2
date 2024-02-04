@@ -55,7 +55,6 @@ const Market = () => {
       </div>
 
       <div className="h44 w-full" />
-
       {
         (hotStarterData.records && hotStarterData.records.length > 0)
         && <MarketCardsContainer image='' key='HotStarter' title={`🔥${t('market.CardsContainer1.title')}`} records={hotStarterData.records} to='/view-all?title=🔥Hot starter&category=HotStarter' />

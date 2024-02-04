@@ -53,54 +53,55 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
   return (
     <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
 
+      {/* <div className='flex justify-around'>
+
+      </div> */}
+
       <div className="flex items-center text-center">
         <Image src={logo} width={160} height={44} preview={false}></Image>
       </div>
 
-      {/* {
-        showInput
-        &&  */}
-      <div className='relative ml-400 box-border h48 w310'>
-        <div hidden={!showInput}>
+      <div className='flex items-center justify-end'>
+        <div className='box-border h48 flex items-center justify-center' hidden={!showInput}>
+
+          <Image width={16} height={16} preview={false} className='relative right--195 top--3 z-1' src={searchImg} />
           <AutoComplete
             popupClassName="certain-category-search-dropdown"
             options={options}
             onSearch={handleSearch}
             onSelect={onSelect}
-            className="h48 w310"
+            className="h40 w200"
           >
-            <input className="h48 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-x-30 p-y13 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
+            <input className="h40 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-y13 pl-20 pr-25 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
           </AutoComplete>
-          <Image width={16} height={16} preview={false} className='absolute right--266 top--34 z-1' src={searchImg} />
         </div>
 
+        <ul className="flex list-none justify-between pe-10 ps-10 text-center text-15 c-white">
+          <li className="inline-block">
+            <NavLink to="/" target='_blank' className='c-white hover:c-#5ec1d0'>
+              {t('nav.home')}
+            </NavLink>
+          </li>
+          <li className="ml-20 inline-block">
+            <NavLink to="/market" target='_self' className='c-white hover:c-#5ec1d0' >
+              {t('nav.market')}
+            </NavLink>
+          </li>
+          <li className="ml-20 inline-block">
+            <NavLink to="/trade" target='_self' className='c-white hover:c-#5ec1d0'>
+              {t('nav.trade')}
+            </NavLink>
+          </li>
+          <li className="ml-20 inline-block">
+            <NavLink to="https://glyph.followfi.io" target='_blank' className='c-white hover:c-#5ec1d0'>
+              {t('nav.glyph')}
+            </NavLink>
+          </li>
+        </ul>
+
+        <CustomConnectButton />
+
       </div>
-      {/* } */}
-
-      <ul className="flex list-none justify-around p0 text-center text-16 c-white">
-        <li className="inline-block">
-          <NavLink to="/" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
-            {t('nav.home')}
-          </NavLink>
-        </li>
-        <li className="ml-30 inline-block">
-          <NavLink to="/market" target='_self' className='c-white hover:font-bold hover:c-#5ec1d0' >
-            {t('nav.market')}
-          </NavLink>
-        </li>
-        <li className="ml-30 inline-block">
-          <NavLink to="/trade" target='_self' className='c-white hover:font-bold hover:c-#5ec1d0'>
-            {t('nav.trade')}
-          </NavLink>
-        </li>
-        <li className="ml-30 inline-block">
-          <NavLink to="https://glyph.followfi.io" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
-            {t('nav.glyph')}
-          </NavLink>
-        </li>
-      </ul>
-
-      <CustomConnectButton />
 
     </nav>
   )

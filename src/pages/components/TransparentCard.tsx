@@ -41,7 +41,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 
 const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
   return (
-    <div className="box-border h-440 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
+    <div className="card box-border h-440 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
       {/* <img
         src={item?.picUrl}
         alt={item.loanName}

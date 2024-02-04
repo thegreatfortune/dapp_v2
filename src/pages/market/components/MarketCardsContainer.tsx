@@ -21,7 +21,6 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
       <div className='h48 min-h-full flex items-center justify-between'>
         <div className='flex items-center justify-between'>
           {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
-
           <span className='ml-4 font-size-34'>
             {title}
           </span>
@@ -35,10 +34,10 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
             <Radio.Button value="LowRisk">LowRisk</Radio.Button>
             <Radio.Button value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
-          : <div className='font-size-14 c-[#D2D2D2]'>
+          : <div className='font-size-14 c-[#D2D2D2] underline'>
             {/* // TODO records.length > 4 */}
             {
-              records.length > 0 && <Link to={to ?? ''} className='text-18 c-white'> more
+              records.length > 0 && <Link to={to ?? ''} className='text-18 c-white'> Show more
                 {'>>'}
                 {/* <RightOutlined /> */}
               </Link>
@@ -49,10 +48,10 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
 
       <div className='h30 w-full'></div>
 
-      <div className='grid auto-cols-max grid-flow-col flex flex-wrap justify-between gap-4'>
+      <div className='flex flex-wrap gap-4'>
         {
           records.map(e =>
-            <div className='my-8' key={e.tradeId} onClick={() => {
+            <div className='my-12 flex grow justify-center' key={e.tradeId} onClick={() => {
               navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)
             }
             } > <TransparentCard key={e.tradeId} item={e} /></div>,
