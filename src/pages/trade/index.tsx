@@ -31,29 +31,40 @@ const Trade = () => {
 
   const navigate = useNavigate()
 
-  const renderItem = (item: Models.MarketLoanVo) => {
+  const renderItem = (item: Models.MarketLoanVo, index: number) => {
     return (
-      <div className='s-container flex grow justify-center p-15'
+      <div key={index.toString()} className='s-container flex grow justify-center'
         onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
         <div
           style={{
             backgroundImage: 'linear-gradient(120deg, #171822 0%, #7e7f7d 80%, #4f504f 100%)',
+            // fontVariantNumeric: 'slashed-zero',
           }}
-          className='card shadow-2xl box-border h-230 w-380 flex flex-col cursor-pointer justify-between border-2 border-#303241 b-rd-6 rounded-10 border-solid bg-[#171822]'
+          className='card box-border h-230 w-380 flex flex-col cursor-pointer justify-between border-2 border-#303241 b-rd-6 rounded-10 border-solid bg-[#171822] shadow-2xl'
         >
           <div className='mt-20 flex justify-between'>
-            <div className='ml-32 h50 w50 b-rd-0'>
-              <Avatar className='bg-slate-200' size={50} src={item.user?.pictureUrl ? item.user?.pictureUrl : logo} />
+            <div className='ml-20 h50 w50 b-rd-0'>
+              <Avatar size={50} src={item.user?.pictureUrl ? item.user?.pictureUrl : logo} />
             </div>
             <div className='grid mr-32 mt-5 text-right'>
-              <span className='c-fff h25 w-full text-20 font-400 lh-20'>{
+              <span className='h25 text-18 font-bold lh-20 font-mono uppercase slashed-zero'>{
                 isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'Not bound')}</span>
               <span className='h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'Not bound'}</span>
             </div>
           </div>
+
           <div className='mb-20 flex justify-between'>
-            <span className='ml-32 mt-20'> Volume: {item.totalTradingCompleted}</span>
-            <span className='mr-32 mt-18 text-16'> Price: $ {toCurrencyString(Number(ethers.formatUnits(String(item.price), BigInt(18))))}</span>
+            <div className='ml-32 flex items-end font-bold text-slate-400'>SFT</div>
+            <div className='w-150'>
+              <div className='mr-32 flex justify-between font-bold font-mono slashed-zero'>
+                <div>Price: </div>
+                <div>${toCurrencyString(Number(ethers.formatUnits(String(item.price), BigInt(18))))}</div>
+              </div>
+              <div className='mr-32 flex justify-between text-12 font-mono slashed-zero'>
+                <div className=''>Volume: </div>
+                <div>${item.totalTradingCompleted}</div>
+              </div>
+            </div>
           </div>
 
         </div>

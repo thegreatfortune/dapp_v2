@@ -201,7 +201,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
         >
           {
             grid
-              ? <div className='flex flex-wrap gap-16'>
+              ? <div className='flex flex-wrap gap-x-4 gap-y-16'>
                 {
                   data.map((item, index) => {
                     return renderItem(item, index)
