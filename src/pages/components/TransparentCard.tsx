@@ -77,7 +77,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
       // }}
       >
         <div className='h10 w-full'></div>
-        <h2 className="m0 h35 truncate p0 text-22 font-semibold c-#37A4F8">{item.loanName}</h2>
+        <h2 className="m0 h35 w-250 truncate p0 text-20 font-semibold c-#37A4F8">{item.loanName}</h2>
         <div className='h8 w-full'></div>
 
         <div className='flex justify-between'>
