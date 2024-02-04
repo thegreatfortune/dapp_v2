@@ -7,12 +7,12 @@ import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
-import { createKLine } from './createKLine'
 import BalanceChart from './BalanceChart'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
-import { PortfolioService } from '@/.generated/api'
+
+// import { PortfolioService } from '@/.generated/api'
 
 interface IProps {
   tradeId: bigint | null
@@ -76,18 +76,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
     setUniqueTokenInfos(uniqueTokenInfos)
   }, [tokenInfos])
-
-  useEffect(() => {
-    async function createKLineThis() {
-      const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
-      console.log(res)
-      createKLine(res.records ?? [])
-    }
-    if (!kLineCreated) {
-      createKLineThis()
-      setKLineCreated(true)
-    }
-  }, [])
 
   useEffect(() => {
     if (browserContractService === undefined || tradeId === null)
