@@ -8,6 +8,7 @@ import Address from './Address'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 interface IProps {
   tradeId: bigint | null
@@ -218,34 +219,32 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       >
       </SModal>
 
-      <div className='flex items-center gap-4'>
-        <span className='text-32 font-400'>Repayment Plan</span>
-
-        <div className='mx-20 flex items-center text-center c-#D1D1D1'>
-          <div className='mr-10 text-20 font-semibold'>Address:</div>
+      <div className='flex items-end gap-4'>
+        <div className='h-50 w-280 text-32 font-400'>Repayment Plan</div>
+        <div className='mx-20 mb-5 flex text-center c-#D1D1D1'>
+          <div className='mr-10 text-18 font-semibold'>Address:</div>
           <Address address={refundPoolAddress ?? ''} />
         </div>
-        <div className='mx-20 flex items-center text-center c-#D1D1D1'>
-          <div className='mr-10 text-20 font-semibold'>Arrears:</div>
-          <div className='text-30'>${Number(Number(arrears).toFixed(2)).toLocaleString()}</div>
+        <div className='mx-20 mb-6 flex items-end text-center c-#D1D1D1'>
+          <div className='mr-10 text-18 font-semibold'>Arrears:</div>
+          <div className='text-18'>${Number(Number(arrears).toFixed(2)).toLocaleString()}</div>
         </div>
-
       </div>
-
+      <div className='h-30'></div>
       <ul className='grid grid-cols-5 list-none c-#666873'>
-        <li>TIME</li>
+        <li>Time</li>
         <li>Repayment Amount</li>
         <li>Status</li>
         <li>Overdue days</li>
       </ul>
 
-      <span className='c-red'>
-      </span>
+      {/* <span className='c-red'>
+      </span> */}
 
       <div
         id="scrollableDivPlan"
         style={{
-          height: 400,
+          // height: 400,
           overflow: 'auto',
         }}
       >
@@ -261,10 +260,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             split={false}
             renderItem={(item, index) => (
               <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
-                <ul className='grid grid-cols-5 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822'>
-                  <li className='relative'><span className='absolute left--22'>{index + 1}</span> {item.repayTime}</li>
-                  <li>${item.repayFee && ethers.formatUnits(item.repayFee)}</li>
-
+                <ul className='grid grid-cols-5 h68 w-full list-none items-center rounded-11 bg-#171822'>
+                  <li>{index + 1}. {item.repayTime}</li>
+                  <li>$ {item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</li>
                   <li>{item.state}</li>
                   <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
                   <li>

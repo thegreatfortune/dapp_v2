@@ -34,7 +34,7 @@ const MyLoan = () => {
 
     const params = new Models.ApiLoanPageLoanContractGETParams()
 
-    params.limit = 4
+    params.limit = 16
     params.page = page + 1 // Increment the page
 
     params.borrowUserId = String(activeUser.id)
@@ -49,16 +49,13 @@ const MyLoan = () => {
           const uniqueRecords = res?.records?.filter((newRecord) => {
             return !prevData.some(existingRecord => existingRecord.tradeId === newRecord.tradeId)
           })
-
           return [...prevData, ...uniqueRecords ?? []]
         })
-
         setPage(page + 1)
       }
     }
     catch (error) {
       console.log('%c [ error ]-60', 'font-size:13px; background:#6d0066; color:#b144aa;', error)
-      // Handle error
     }
     finally {
       setLoading(false)
@@ -69,8 +66,20 @@ const MyLoan = () => {
     loadMoreData()
   }, [activeUser.id])
 
+  const renderItem = (item: Models.LoanOrderVO) => {
+    return <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
+      <TransparentCard item={item} btnText='Repay' >
+        <Button className='mt-10 h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>
+      </TransparentCard>
+    </List.Item>
+  }
+
   return (
     <div>
+      <div className='h-30'></div>
+      <div className='text-28'>My Loans</div>
+      <Divider></Divider>
+      <div className='h-30'></div>
       <div
         id="scrollableDiv"
         style={{
@@ -79,23 +88,17 @@ const MyLoan = () => {
         }}
       >
         <InfiniteScroll
-          dataLength={loanOrderVOList.length ?? 0}
+          dataLength={(page + 1) * 16}
           next={loadMoreData}
-          hasMore={(total !== undefined) && (loanOrderVOList.length < total) }
+          hasMore={(total !== undefined) && (loanOrderVOList.length < total)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
           endMessage={<Divider plain>{`${t('personal.myLoan.endMessage')}`}</Divider>}
           scrollableTarget="loanScrollableDiv"
         >
           <List
-          grid={{ gutter: 16, column: 4 }}
+            grid={{ gutter: 16, column: 4 }}
             dataSource={loanOrderVOList}
-            renderItem={item => (
-              <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
-                <TransparentCard item={item} btnText='Repay' >
-                <Button className='h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>
-              </TransparentCard>
-              </List.Item>
-            )}
+            renderItem={renderItem}
           />
         </InfiniteScroll>
       </div>

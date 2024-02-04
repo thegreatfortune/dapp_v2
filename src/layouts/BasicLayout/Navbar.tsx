@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
       </div>
       {/* } */}
 
-      <ul className="flex list-none justify-around p0 text-center font-size-16 c-white">
+      <ul className="flex list-none justify-around p0 text-center text-16 c-white">
         <li className="inline-block">
           <NavLink to="/" target='_blank' className='c-white hover:font-bold hover:c-#5ec1d0'>
             {t('nav.home')}

@@ -41,7 +41,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 
 const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
   return (
-    <div className="box-border h-429 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
+    <div className="box-border h-440 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
       {/* <img
         src={item?.picUrl}
         alt={item.loanName}
@@ -72,8 +72,8 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
         fallback={cardPic}
       />
       <div className='text-left'>
-        <div className='h11 w-full'></div>
-        <h2 className="m0 h35 p0 text-24 font-semibold c-#37A4F8">{item.loanName}</h2>
+        <div className='h10 w-full'></div>
+        <h2 className="m0 h35 truncate p0 text-22 font-semibold c-#37A4F8">{item.loanName}</h2>
         <div className='h8 w-full'></div>
 
         <div className='flex justify-between'>
@@ -99,20 +99,28 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
             </li>
             <li className='h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
               {item.tradingForm === 'SpotGoods' ? 'Low' : 'High'}
-              <Tooltip color='#303241' overlayInnerStyle={{ padding: 25, width: 349 }} title="a. Low-risk loan funds can only be designated for spot transactions,
-and spot transactions can be liquidated to obtain repayment funds;
-
-b. High-risk loan funds can be used to trade contracts,
-which involves the risk of liquidation; loan funds can also be withdrawn,
-requiring the borrower to actively recharge for repayment.">
+              <Tooltip color='#303241' overlayInnerStyle={{ padding: 25, width: 349 }}
+                title={
+                  <div>
+                    1. Low-risk loan funds can only be designated for spot transactions,
+                    and spot transactions can be liquidated to obtain repayment funds;
+                    <br />
+                    <br />
+                    2. High-risk loan funds can be used to trade contracts,
+                    which involves the risk of liquidation; loan funds can also be withdrawn,
+                    requiring the borrower to actively recharge for repayment.
+                  </div>
+                }
+              >
                 <Image className='ml-5 cursor-help' width={14} height={14} src={infoIconIcon} preview={false} />
               </Tooltip>
             </li>
             <li>
               {
-                btnText
-                  ? <Button className='h30 w-110 text-12 primary-btn'>{btnText}</Button>
-                  : <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button>
+                // btnText
+                //   ? <Button className='mt-10 h30 w-110 text-14 primary-btn'>{btnText}</Button>
+                //   :
+                <Button className='mt-10 h30 w-110 text-14 primary-btn'>{btnText ?? 'Follow'}</Button>
               }
 
               {/* <Button className='mt-10 h30 w-110 text-12 primary-btn'>{btnText ?? 'Follow'}</Button> */}

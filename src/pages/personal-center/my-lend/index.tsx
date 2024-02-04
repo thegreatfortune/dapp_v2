@@ -72,6 +72,10 @@ const MyLend = () => {
 
   return (
     <div>
+      <div className='h-30'></div>
+      <div className='text-28'>My Follows</div>
+      <Divider></Divider>
+      <div className='h-30'></div>
       <div
         id="scrollableDiv"
         style={{
@@ -79,7 +83,7 @@ const MyLend = () => {
         }}
       >
         <InfiniteScroll
-          dataLength={lendOrderVOList?.length ?? 0}
+          dataLength={(page + 1) * 16}
           next={loadMoreData}
           hasMore={(total !== undefined) && (lendOrderVOList.length < total)}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}

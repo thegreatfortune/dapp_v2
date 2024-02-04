@@ -19,7 +19,7 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
         <div className='h11 w-full'></div>
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-x-6 p0'>
-            <li className='text-21'>
+            <li className='text-18'>
               {isContractAddress(item.userInfo?.address ?? '') ? maskWeb3Address(item.userInfo?.address ?? '') : (item.userInfo?.nickName ?? 'not bound')}
             </li>
             <li className='h29 text-16 c-#43465C'>
@@ -29,8 +29,8 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
             </li>
             <li className='mt16'>
               <div>
-                <span className='text-20 c-#999999'>Credit score:</span>
-                <span className='ml-10 text-24'>{item.userInfo?.creditScore ? (item.userInfo?.creditScore / 100).toLocaleString() : 0}</span>
+                <span className='text-20 c-#999999'>Credit Score:</span>
+                <span className='ml-10 text-22'>{item.userInfo?.creditScore ? (item.userInfo?.creditScore / 100).toLocaleString() : 0}</span>
               </div>
             </li>
           </ul>

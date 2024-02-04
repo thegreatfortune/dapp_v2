@@ -10,6 +10,7 @@ import type { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import SModal from '@/pages/components/SModal'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const SharesMarket = () => {
   const [searchParams] = useSearchParams()
@@ -34,7 +35,7 @@ const SharesMarket = () => {
       <div className='w-full'>
         <ul className='grid grid-cols-6 h68 w-full list-none items-center gap-4 rounded-11 bg-#171822 ps-0' key={item.loanId}>
           {/* <li>{index + 1} */}
-          <li className='flex justify-center'>
+          <li>
             <div className='flex'>
               <span className='h40 w40' ><Avatar size={40} src={item.userInfo?.pictureUrl} /></span>
               <span className=''>
@@ -43,12 +44,12 @@ const SharesMarket = () => {
               </span>
             </div>
           </li>
-          <li className='flex justify-center'>${item.price && ethers.formatUnits(item.price)}</li>
-          <li className='flex justify-center'>{item.amount}</li>
+          <li>$ {item.price && toCurrencyString(Number(ethers.formatUnits(item.price)))}</li>
+          <li>{item.amount}</li>
           {/* <li>{BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.remainingQuantity ?? 0).toPrecision(2)}</li> */}
-          <li className='flex justify-center'>${BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.amount ?? 0).toString()}</li>
-          <li className='flex justify-center'>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
-          <li className='flex justify-center'>
+          <li>$ {toCurrencyString(Number(BigNumber(ethers.formatUnits(item.price ?? 0)).times(item.amount ?? 0)))}</li>
+          <li>{item.depositeTime && dayjs.unix(item.depositeTime).format('YYYY-MM-DD HH:mm:ss')}</li>
+          <li>
             {isWalletConnected
               ? (
                 // 用户已连接钱包
@@ -154,14 +155,14 @@ const SharesMarket = () => {
       </SModal>
 
       {/* // TODO 默认Unit Price 升序排序 */}
-      <ul className='grid grid-cols-6 gap-10 ps-0'>
+      <ul className='grid grid-cols-6 list-none c-#666873'>
         {/* <li className='flex justify-center text-16'>SN</li> */}
-        <li className='flex justify-center text-18'>Trader</li>
-        <li className='flex justify-center text-18'>Unit Price</li>
-        <li className='flex justify-center text-18'>Quantity</li>
-        <li className='flex justify-center text-18'>Total Price</li>
-        <li className='flex justify-center text-18'>Time</li>
-        <li className='flex justify-center text-18'>Action</li>
+        <li>Trader</li>
+        <li>Unit Price</li>
+        <li>Quantity</li>
+        <li>Total Price</li>
+        <li>Time</li>
+        <li>Action</li>
       </ul>
       <SorterScrollableList
         grid={{ gutter: 16, column: 6 }}
@@ -170,7 +171,6 @@ const SharesMarket = () => {
         renderItem={renderItem}
         tradeId={Number(tradeId)}
       />
-
     </div>
   )
 }

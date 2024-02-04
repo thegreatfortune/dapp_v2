@@ -358,14 +358,14 @@ const LoanDetails = () => {
     return (<div className='mb-30'>
       <div className='h80 w500 flex items-center justify-between gap-x-30 rounded-14 bg-#12131d text-center' >
         <div
-          className={`mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
+          className={`text-18 mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
           onClick={() => setActiveKey('1')} >Pool</div>
         {/* <div
-          className={`h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`}
+          className={`text-18 h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`}
           onClick={() => setActiveKey('2')} >Operation record</div> */}
         <div
-          className={`mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`}
-          onClick={() => setActiveKey('3')} >Shares market</div>
+          className={`text-18 mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`}
+          onClick={() => setActiveKey('3')} >Shares Market</div>
       </div>
     </div>)
   }
@@ -728,55 +728,55 @@ const LoanDetails = () => {
           </Tooltip>
         </p>
         <Divider></Divider>
-        <div className="h20" />
+        {/* <div className="h20" /> */}
 
-        <div className='h166 w1047 flex items-center gap-x-19 px-20 text-center'>
+        <div className='h100 w1047 flex items-center gap-x-19 px-20 text-center'>
 
           {/* <div className='flex'> */}
           <ul className='m0 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Loan amount</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Loan amount</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
+            <li className='text-18 font-semibold'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
             {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
           </ul>
 
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
           <ul className='m0 w120 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Installment</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'> {loanInfo.repayCount} / {loanInfo.periods}</li>
+            <li className='text-18 font-semibold'> {loanInfo.repayCount} / {loanInfo.periods}</li>
           </ul>
           {/* </div> */}
 
           <ul className='m0 w100 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Interest</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Interest</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
+            <li className='text-18 font-semibold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 w100 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Dividend</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Dividend</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
+            <li className='text-18 font-semibold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
           <ul className='m0 w120 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Risk level</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+            <li className='text-18 font-semibold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
           <ul className='m0 w120 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Total shares</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
-            <li className='w-100 text-20 font-semibold'>{loanInfo.goalCopies}</li>
+            <li className='w-100 text-18 font-semibold'>{loanInfo.goalCopies}</li>
           </ul>
 
           <ul className='m0 w150 list-none p0'>
-            <li className='h60 flex items-center justify-center text-20 c-#D1D1D1'>Minimum required shares</li>
+            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
-            <li className='text-20 font-semibold'>{loanInfo.minGoalQuantity}</li>
+            <li className='text-18 font-semibold'>{loanInfo.minGoalQuantity}</li>
           </ul>
 
         </div>
@@ -784,8 +784,8 @@ const LoanDetails = () => {
       </div>
     </div>
 
-    <div className="h100" />
     <Divider></Divider>
+    <div className="h30" />
     <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
 
   </div >)
