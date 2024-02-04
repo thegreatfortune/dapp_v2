@@ -642,8 +642,11 @@ Canceled :订单取消 */
   }
 
   export class UserPortfolioVo {
-    uPrice?: string = undefined;
-    createDate?: number = 0;
-    [key: string]: string | number | undefined
+    uPrice: string = '0';
+    createDate: number = 0;
+    // uPrice?: string = undefined;
+    // createDate?: number = 0;
   }
+
+
 }
