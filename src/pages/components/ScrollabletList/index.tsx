@@ -2,6 +2,8 @@ import { Divider, List, Skeleton } from 'antd'
 import { useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import type { ListGridType } from 'antd/es/list'
+import { useNavigate } from 'react-router-dom'
+import TransparentCard from '../TransparentCard'
 import Title from './Title'
 import type { Models } from '@/.generated/api/models'
 
@@ -75,6 +77,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   //   total: 0,
   //   records: [],
   // })
+  const navigate = useNavigate()
 
   const [data, setData] = useState<DataType[]>([])
 
@@ -170,11 +173,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   }
 
   return (
-    <div>
+    <div className='w-full'>
       {/* {columns && insideColumnRenderItem()} */}
       <div
         id={containerId}
-        className={`${className} overflow-auto relative`}
+        className={`${className}`}
       >
         <InfiniteScroll
           dataLength={(page + 1) * 16}
@@ -197,16 +200,28 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
         >
           {
             grid
-              ? <List
-                split={false}
-                grid={grid}
-                dataSource={data}
-                renderItem={(item, index) => (
-                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='grid grid-cols-4 w-full'>
-                    {renderItem(item, index)}
-                  </List.Item>
-                )}
-              />
+              ? <div className='grid auto-cols-max grid-flow-col flex flex-wrap justify-between gap-4'>
+                {
+                  data.map((item) => {
+                    return <div className='my-8' onClick={() => {
+                      navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
+                    }} >
+                      <TransparentCard key={item.tradeId} item={item as unknown as Models.LoanOrderVO} />
+                    </div>
+                  })
+                }
+                {/* <List
+                  split={false}
+                  grid={grid}
+                  dataSource={data}
+                  renderItem={(item, index) => (
+                    <List.Item style={{ paddingTop: 3, paddingBottom: 3 }}
+                    >
+                      {renderItem(item, index)}
+                    </List.Item>
+                  )}
+                /> */}
+              </div>
               : <List
                 split={false}
                 dataSource={data}
@@ -219,8 +234,8 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
           }
 
         </InfiniteScroll>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
 

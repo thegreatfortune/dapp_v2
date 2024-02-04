@@ -54,7 +54,7 @@ const Market = () => {
         />
       </div>
 
-      <div className="h44" />
+      <div className="h44 w-full" />
 
       {
         (hotStarterData.records && hotStarterData.records.length > 0)

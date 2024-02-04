@@ -1,8 +1,6 @@
 import Radio from 'antd/es/radio'
 import { Link, useNavigate } from 'react-router-dom'
 import { Image } from 'antd'
-
-// import { RightOutlined } from '@ant-design/icons';
 import type { Models } from '@/.generated/api/models'
 import TransparentCard from '@/pages/components/TransparentCard'
 
@@ -45,19 +43,20 @@ const MarketCardsContainer: React.FC<ICardsContainerProps> = ({ records, title, 
                 {/* <RightOutlined /> */}
               </Link>
             }
-
           </div>
         }
       </div>
 
       <div className='h30 w-full'></div>
 
-      <div className='flex flex-wrap gap-x-46 gap-y-50'>
+      <div className='grid auto-cols-max grid-flow-col flex flex-wrap justify-between gap-4'>
         {
-          records.map(e => <div key={e.tradeId} onClick={() => {
-            navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)
-          }
-          } > <TransparentCard key={e.tradeId} item={e} /></div>)
+          records.map(e =>
+            <div className='my-8' key={e.tradeId} onClick={() => {
+              navigate(`/loan-details?prePage=market&tradeId=${e.tradeId}`)
+            }
+            } > <TransparentCard key={e.tradeId} item={e} /></div>,
+          )
         }
       </div>
 

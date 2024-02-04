@@ -37,20 +37,8 @@ export default function BalanceChart() {
                         balance: Number(ethers.formatUnits(e.uPrice)),
                     })
                 }
-                console.log(111, list)
                 setBalanceData(list)
             }
-
-            // res.records?.map((e) => {
-            //     // console.log(e)
-            //     list.push({
-            //         time: dayjs.unix(e.createDate).format('YYYY/MM/DD'),
-            //         balance: Number(ethers.formatUnits(e.uPrice)),
-            //     })
-            //     return true
-            // })
-            // console.log(111, list)
-            // setBalanceData(list)
         })
     }, [])
 

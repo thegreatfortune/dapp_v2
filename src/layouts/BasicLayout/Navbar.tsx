@@ -54,7 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
     <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
 
       <div className="flex items-center text-center">
-        <Image src={logo} width={120} height={40}></Image>
+        <Image src={logo} width={160} height={44} preview={false}></Image>
       </div>
 
       {/* {
