@@ -1,7 +1,7 @@
 import { Contract, ethers } from 'ethers'
 import { message, notification } from 'antd'
 import BigNumber from 'bignumber.js'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, FollowRouter, ProcessCenter, UniswapV3 } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowFaucet, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, FollowRouter, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
@@ -11,6 +11,7 @@ import followManage_ABI from '@/abis/FollowManage.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import FollowMarket_ABI from '@/abis/FollowMarket.json'
 import FollowRouter_ABI from '@/abis/FollowRouter.json'
+import FollowFaucet_ABI from '@/abis/FollowFaucet.json'
 
 // import LocalERC20_ABI from '@/abis/LocalERC20.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
@@ -153,6 +154,8 @@ export class BrowserContractService {
   private _capitalPoolAddress: string | undefined
 
   private _ERC20Contract: ERC20 | undefined
+
+  private _faucetContract: FollowFaucet | undefined
 
   /**
    *获取资金池地址
@@ -426,6 +429,20 @@ export class BrowserContractService {
     return createContract<ERC3525>(
       import.meta.env.VITE_ERC3525_ADDRESS,
       ERC3525_ABI,
+      this.signer,
+    )
+  }
+
+  /**
+   * Faucet
+   */
+  async getFaucetContract(): Promise<FollowFaucet> {
+    if (this._faucetContract)
+      return this._faucetContract
+
+    return this._faucetContract = createContract<FollowFaucet>(
+      import.meta.env.VITE_FOLLOW_FAUCET_ADDRESS,
+      FollowFaucet_ABI,
       this.signer,
     )
   }
@@ -1320,12 +1337,17 @@ export class BrowserContractService {
     const followRouterContract = await this.getFollowRouterContract()
 
     const tIndex = tokenList.findIndex(e => e.address === swapToken)
-    console.log('999', amount, buyOrSell, swapToken, tIndex)
 
     const hIndex = await this.getHIndex()
 
     const res = await followRouterContract.doV3Swap(tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
     console.log('%c [ tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee ]-1281', 'font-size:13px; background:#b5288d; color:#f96cd1;', tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
+    return handleTransaction(res)
+  }
+
+  async followFaucetClaim(token_address: string) {
+    const faucetContract = await this.getFaucetContract()
+    const res = await faucetContract?.faucet(token_address)
     return handleTransaction(res)
   }
 

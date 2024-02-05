@@ -1,5 +1,5 @@
 import type { TabsProps } from 'antd'
-import { Avatar, Button, Divider, Image, Tabs, message } from 'antd'
+import { Avatar, Button, Divider, Image, Modal, Select, Tabs, message } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
@@ -132,8 +132,63 @@ const PersonalCenter = () => {
     </div>)
   }
 
+  const [usdcModelOpen, setUsdcModelOpen] = useState(false)
+  const [faucetText, setFaucetText] = useState('Claim')
+  const [executing, setExecuting] = useState(false)
+  const [hiddenCancel, setHiddenCancel] = useState(false)
+
+  const faucetSelect = (value: string) => {
+    if (value === 'USDC') {
+      setUsdcModelOpen(true)
+      return true
+    }
+    else {
+      window.open('https://mumbaifaucet.com/', '_blank')
+    }
+    return true
+  }
+  async function claimUsdc() {
+    if (faucetText === 'Completed!') {
+      setFaucetText('Claim')
+      setHiddenCancel(false)
+      setUsdcModelOpen(false)
+      return true
+    }
+
+    setExecuting(true)
+
+    const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_USDC_TOKEN)
+
+    try {
+      if (res?.status === 1) {
+        ///
+        setTimeout(() => {
+          setFaucetText('Completed!')
+          setHiddenCancel(true)
+          setExecuting(false)
+        }, 3000)
+      }
+    }
+    catch {
+      message.error('Transaction failed')
+    }
+  }
+
   return (
     <div >
+      <Modal open={usdcModelOpen}
+        onCancel={() => setUsdcModelOpen(false)}
+        okText={faucetText}
+        onOk={claimUsdc}
+        okButtonProps={{ disabled: executing, className: 'primary-btn' }}
+        cancelButtonProps={{ hidden: hiddenCancel }}
+        className='rounded-20'
+      >
+        <div>
+          <h2>Faucet</h2>
+          <div>You will receive 2,000 USDC</div>
+        </div>
+      </Modal>
       <div className="h368 bg-cover bg-no-repeat" style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}>
         <div className="m-x-a w1400"><Navbar title={t('nav.title')} showInput={false} /></div>
       </div>
@@ -173,7 +228,19 @@ const PersonalCenter = () => {
             <div className='flex gap-x-50'>
               <Button loading={applyLoanLoading} onClick={checkLoanOrderAndUserState} className='h40 w180 rounded-30 primary-btn'>Apply for a loan</Button>
 
-              <Button className='h40 w180 rounded-30 primary-btn'>Follow</Button>
+              {/* <Button className='h40 w180 rounded-30 primary-btn'>Follow</Button> */}
+
+              <Select
+                className='h40 w180'
+                size='large'
+                defaultValue='Faucet'
+                options={[
+                  { label: 'Claim Matic', value: 'Matic' },
+                  { label: 'Claim USDC', value: 'USDC' },
+                ]}
+                onSelect={faucetSelect}
+              ></Select>
+
             </div>
 
           </div>

@@ -169,7 +169,6 @@ const SwapModal: React.FC<IProps> = (props) => {
     }
 
     try {
-      console.log(888, props.tradeId, tokenInformation.address, buyOrSell, tokenInformation.amount)
       const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
       if (res?.status === 1)
         await props.resetSwapTokenInfo()
