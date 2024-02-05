@@ -1,22 +1,22 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit'
-import { Avatar } from 'antd'
 import Dropdown from 'antd/es/dropdown'
 import type { MenuProps } from 'antd/es/menu'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import useUserStore from '@/store/userStore'
+import React from 'react'
 import myLoanImg from '@/assets/images/personal-center/myLoan.png'
 import myFollowImg from '@/assets/images/personal-center/myFollow.png'
 import personalImg from '@/assets/images/personal-center/Personal.png'
 import disconnectImg from '@/assets/images/personal-center/Disconnect.png'
-import logo from '@/assets/images/portalImages/logo.png'
 
-const UserDropdown = () => {
+interface IProps {
+  children: React.ReactNode
+}
+
+const UserDropdown: React.FC<IProps> = ({ children }) => {
   const { t } = useTranslation()
 
   const { openAccountModal } = useAccountModal()
-
-  const { activeUser } = useUserStore()
 
   const items: MenuProps['items'] = [
     {
@@ -60,9 +60,7 @@ const UserDropdown = () => {
   ]
   return (
     <Dropdown menu={{ items }} placement="bottomRight" overlayClassName='pt-12 text-12 box-border h18'>
-      <a onClick={e => e.preventDefault()}>
-        <Avatar src={activeUser.pictureUrl ? activeUser.pictureUrl : logo} className="mx6 h34 w34 bg-slate-200" />
-      </a>
+      {children}
     </Dropdown>
   )
 }

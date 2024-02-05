@@ -17,6 +17,7 @@ const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
       <header className='w-2/3'>
         <Navbar title={t('nav.title')} showInput={showInput} />
       </header>
+
       <div className="h30 w-2/3" />
       <main className='h-full w-2/3 items-center'>
         {children}

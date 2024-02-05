@@ -3,7 +3,7 @@ import { debounce } from 'lodash-es'
 import type { PublicClient } from 'wagmi'
 import { useAccount, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { message } from 'antd'
+import { Avatar, message } from 'antd'
 import { ethers } from 'ethers'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { GetAccountResult } from 'wagmi/actions'
@@ -13,6 +13,7 @@ import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import logo from '@/assets/images/portalImages/logo.png'
 
 const CustomConnectButton = () => {
   const { userList, switchActiveUser, setUserInfo } = useUserStore()
@@ -30,6 +31,8 @@ const CustomConnectButton = () => {
   const location = useLocation()
 
   const { chain } = useNetwork()
+
+  const { activeUser } = useUserStore()
 
   const { isConnected } = useAccount(
     {
@@ -163,7 +166,6 @@ const CustomConnectButton = () => {
 
       return (
         <div
-
           {...(!ready && {
             'aria-hidden': true,
             'style': {
@@ -178,7 +180,7 @@ const CustomConnectButton = () => {
               return (
 
                 <div>
-                  <button onClick={onOpenConnectModal} type="button" className='h40 w170 rounded-30 text-16 primary-btn' >
+                  <button onClick={onOpenConnectModal} type="button" className='h36 w166 rounded-30 text-16 primary-btn' >
                     Connect Wallet
                   </button>
                 </div>
@@ -195,33 +197,35 @@ const CustomConnectButton = () => {
 
             return (
               <div style={{ display: 'flex', gap: 12 }} className='items-center' >
-                <button
-                  onClick={openChainModal}
-                  className='h40 w166 border-[#7189f7] rounded-full bg-transparent text-14 c-purple'
-                  style={{ display: 'flex', alignItems: 'center' }}
-                  type="button"
-                >
-                  {chain.hasIcon && (
-                    <div
-                      className='h20 w20'
-                      style={{
-                        background: chain.iconBackground,
-                        borderRadius: 999,
-                        overflow: 'hidden',
-                        margin: 4,
-                      }}
-                    >
-                      {chain.iconUrl && (
-                        <img
-                          alt={chain.name ?? 'Chain icon'}
-                          src={chain.iconUrl}
-                          className='h20 w20'
-                        />
-                      )}
-                    </div>
-                  )}
-                  {chain.name}
-                </button>
+                <div className="max-md:hidden">
+                  <button
+                    onClick={openChainModal}
+                    className='h36 w166 border-[#7189f7] rounded-full bg-transparent text-14 c-purple'
+                    style={{ display: 'flex', alignItems: 'center' }}
+                    type="button"
+                  >
+                    {chain.hasIcon && (
+                      <div
+                        className='h20 w20'
+                        style={{
+                          background: chain.iconBackground,
+                          borderRadius: 999,
+                          overflow: 'hidden',
+                          margin: 4,
+                        }}
+                      >
+                        {chain.iconUrl && (
+                          <img
+                            alt={chain.name ?? 'Chain icon'}
+                            src={chain.iconUrl}
+                            className='h20 w20'
+                          />
+                        )}
+                      </div>
+                    )}
+                    {chain.name}
+                  </button>
+                </div>
 
                 {/* <button onClick={openAccountModal} type="button" className='w160 h60 text-14 c-orange '>
                                 {account.displayName}
@@ -230,7 +234,17 @@ const CustomConnectButton = () => {
                                   : ''}
                             </button> */}
 
-                <UserDropdown />
+                <UserDropdown>
+                  <button className="h36 flex items-center justify-between border-[#7189f7] rounded-full bg-transparent text-14 c-purple" type="button">
+
+                    {/* <a onClick={e => e.preventDefault()}> */}
+                    <Avatar
+                      src={activeUser.pictureUrl ? activeUser.pictureUrl : logo}
+                      className="mr-5 h25 w25 bg-slate-200" />
+                    {/* </a> */}
+                    <div>{account.displayName}</div>
+                  </button>
+                </UserDropdown>
               </div>
             )
           })()}

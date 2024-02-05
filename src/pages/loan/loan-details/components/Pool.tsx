@@ -58,7 +58,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const [kLineCreated, setKLineCreated] = useState(false)
 
-  const [topUpTitle, setTopUpTitle] = useState('Top-up')
+  const [topUpTitle, setTopUpTitle] = useState('Deposit')
 
   // console.log(111, transactionPair)
 
@@ -207,7 +207,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     }
     finally {
       setDepositIsModalOpen(false)
-      setTopUpTitle('Top-up')
+      setTopUpTitle('Deposit')
       // setSupplyState(undefined)
     }
   }
@@ -281,7 +281,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='mr-10 w-80 text-20 font-semibold'>Address:</div>
                 <div className="w-150 text-16"><Address address={capitalPoolAddress ?? ''} /></div>
               </div>
-              <Button className='h30 w80 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button>
+              <Button className='h30 w80 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button>
             </div>
 
             <div className='flex items-center justify-between'>
@@ -290,7 +290,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className="w-150 text-16"></div>
               </div>
               <div className="text-right text-30">$ {Number(Number(tokenTotals).toFixed(2)).toLocaleString()}</div>
-              {/* <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Top-up</Button> */}
+              {/* <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button> */}
             </div>
             {/* </div> */}
 

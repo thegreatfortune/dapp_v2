@@ -52,11 +52,6 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
 
   return (
     <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
-
-      {/* <div className='flex justify-around'>
-
-      </div> */}
-
       <div className="flex items-center text-center">
         <Image src={logo} width={160} height={44} preview={false}></Image>
       </div>
@@ -98,11 +93,8 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
             </NavLink>
           </li>
         </ul>
-
         <CustomConnectButton />
-
       </div>
-
     </nav>
   )
 }
