@@ -7,7 +7,7 @@ import BasicLayout from '@/layouts/BasicLayout'
 import Test from '@/pages/Test'
 
 const PersonalCenter = lazy(() => import('../pages/personal-center'))
-const ApplyLoan = lazy(() => import('../pages/loan/apply-loan'))
+const ApplyLoan = lazy(() => import('../pages/loan/apply-loan/index'))
 const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
 const MyLend = lazy(() => import('../pages/personal-center/my-lend'))
 
@@ -25,9 +25,9 @@ const routes: IRouter[] = [
   {
     path: '/personal-center',
     element: (
-        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <PersonalCenter />
-        </React.Suspense>
+      <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+        <PersonalCenter />
+      </React.Suspense>
     ),
   },
   {
@@ -56,7 +56,7 @@ const routes: IRouter[] = [
       <BasicLayout>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
           <ApplyLoan />
-s        </React.Suspense>
+        </React.Suspense>
       </BasicLayout>
     ),
   },
@@ -70,11 +70,11 @@ if (import.meta.env.DEV) {
       {
         path: 'test',
         element: (
-        <BasicLayout>
-          <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-            <Test />
-          </React.Suspense>
-        </BasicLayout>
+          <BasicLayout>
+            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+              <Test />
+            </React.Suspense>
+          </BasicLayout>
         ),
 
       }])

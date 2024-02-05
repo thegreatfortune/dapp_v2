@@ -229,7 +229,6 @@ const ApplyLoan = () => {
       }
     }
     catch (error) {
-      console.log('%c [ error ]-127', 'font-size:13px; background:#38eeb8; color:#7cfffc;', error)
       throw new Error('Image upload failed')
     }
   }
@@ -282,7 +281,6 @@ const ApplyLoan = () => {
         setOkText('Retry')
         setExecuting(false)
         message.error('Transaction Failed')
-        console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
         return false
       }
     }
@@ -290,7 +288,6 @@ const ApplyLoan = () => {
     try {
       setOrderCreated(1)
       const models = { ...value, ...loanRequisitionEditModel }
-      console.log('%c [ models ]-258', 'font-size:13px; background:#a58a88; color:#e9cecc;', models)
       await form.validateFields()
 
       let url
@@ -298,7 +295,6 @@ const ApplyLoan = () => {
         url = await uploadFile()
 
       const orderRes = await browserContractService?.capitalPool_createOrder({ ...models, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
-      console.log('%c [ res ]-158', 'font-size:13px; background:#b6f031; color:#faff75;', orderRes)
       setOrderCreated(2)
       if (!orderRes)
         throw new Error('Order creation failed')
@@ -318,7 +314,6 @@ const ApplyLoan = () => {
       setOkText('Retry')
       setExecuting(false)
       message.error('Transaction Failed')
-      console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
       return false
     }
     // finally {
@@ -328,8 +323,6 @@ const ApplyLoan = () => {
   }
 
   const onFinish = async (value: LoanRequisitionEditModel) => {
-    console.log('%c [ value ]-331', 'font-size:13px; background:#574880; color:#9b8cc4;', value)
-
     const res = await browserContractService?.checkPoolCreateState()
     const [capitalPoolState, refundPoolState] = res ?? [false, false]
     if (capitalPoolState && refundPoolState) {
@@ -350,8 +343,6 @@ const ApplyLoan = () => {
   }
 
   function onValuesChange(val: Record<string, any>) {
-    console.log('%c [ val ]-335', 'font-size:13px; background:#2aad7e; color:#6ef1c2;', val)
-
     if ('designatedTransaction' in val)
       designatedTransactionChange(val.designatedTransaction)
 
@@ -438,7 +429,6 @@ const ApplyLoan = () => {
 
     setLoanRequisitionEditModel(preState => ({ ...preState, tradingPair: arr }))
   }
-
   return (
     <div>
       <Modal open={applyModalOpen}
@@ -752,7 +742,7 @@ const ApplyLoan = () => {
             label={
               <span className="text-16">
                 {t('applyLoan.formItem.dividend.label')}
-                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="he dividend ratio is profit dividends. The remaining funds after deducting principal + interest + handling fees from the repayment pool funds are profits. Part of the profits will be deducted according to the allocation ratio and given to the lender.">
+                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="The dividend ratio is profit dividends. The remaining funds after deducting principal + interest + handling fees from the repayment pool funds are profits. Part of the profits will be deducted according to the allocation ratio and given to the lender.">
                   <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
                 </Tooltip>
               </span>
@@ -781,7 +771,7 @@ const ApplyLoan = () => {
               <span className="text-16">
                 {t('applyLoan.formItem.interest.label')}
 
-                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="hInterest is deducted first, and the lender only needs to provide funds after interest is deducted.">
+                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="Interest is deducted first, and the lender only needs to provide funds after interest is deducted.">
                   <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
                 </Tooltip>
               </span>
@@ -1068,7 +1058,9 @@ const ApplyLoan = () => {
           </Button>
         </Form.Item>
       </Form>
-    </div>)
+      <div className="h44" />
+    </div>
+  )
 }
 
 export default ApplyLoan
