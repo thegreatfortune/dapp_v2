@@ -23,6 +23,7 @@ class SwapInfo {
 }
 
 const SwapModal: React.FC<IProps> = (props) => {
+  // console.log(111, props.currentTokenInfo)
   const { browserContractService } = useBrowserContract()
 
   const [loading, setLoading] = useState(false)
@@ -157,7 +158,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       // tokenInformation.amount = youPay.amount
     }
 
-    console.log(buyOrSell, tokenInformation, youReceiver)
+    // console.log(buyOrSell, tokenInformation, youPay, youReceiver)
+
+    // console.log(333, youPay)
+    // console.log(444, youReceiver)
 
     if (!tokenInformation?.address) {
       message.error('address is undefined')
@@ -165,6 +169,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     }
 
     try {
+      console.log(888, props.tradeId, tokenInformation.address, buyOrSell, tokenInformation.amount)
       const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
       if (res?.status === 1)
         await props.resetSwapTokenInfo()

@@ -1033,7 +1033,7 @@ export class BrowserContractService {
         _shareRate: BigInt(BigNumber(model.dividend ?? 0).times(100).toString()),
         _goalShareCount: BigInt(model.numberOfCopies),
         _minShareCount: BigInt(model.minimumRequiredCopies ?? 0),
-        _collectEndTime: BigInt(model.raisingTime!) * BigInt(60), // TODO 秒数
+        _collectEndTime: BigInt(model.raisingTime!) * BigInt(86400), // TODO 秒数
         _goalMoney: BigInt(model.applyLoan!) * BigInt(10 ** 18), // TODO: decimals token标志位
         uri: model.imageUrl!,
         name: model.itemTitle!,
@@ -1320,6 +1320,7 @@ export class BrowserContractService {
     const followRouterContract = await this.getFollowRouterContract()
 
     const tIndex = tokenList.findIndex(e => e.address === swapToken)
+    console.log('999', amount, buyOrSell, swapToken, tIndex)
 
     const hIndex = await this.getHIndex()
 

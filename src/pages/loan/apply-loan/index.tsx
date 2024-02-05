@@ -25,7 +25,6 @@ import arbitrumIcon from '@/assets/images/apply-loan/token-icons/ARB.png'
 import chainlinkIcon from '@/assets/images/apply-loan/token-icons/LINK.png'
 import uniswapIcon from '@/assets/images/apply-loan/token-icons/UNI.png'
 import lidofiIcon from '@/assets/images/apply-loan/token-icons/LDO.png'
-import makerIcon from '@/assets/images/apply-loan/token-icons/MKR.png'
 import aaveIcon from '@/assets/images/apply-loan/token-icons/AAVE.png'
 import solanaIcon from '@/assets/images/apply-loan/token-icons/SOL.png'
 import dogecoinIcon from '@/assets/images/apply-loan/token-icons/DOGE.png'
@@ -104,10 +103,10 @@ const ApplyLoan = () => {
         logo: lidofiIcon,
         name: 'LDO',
       },
-      {
-        logo: makerIcon,
-        name: 'MKR',
-      },
+      // {
+      //   logo: makerIcon,
+      //   name: 'MKR',
+      // },
       {
         logo: aaveIcon,
         name: 'AAVE',
@@ -304,9 +303,10 @@ const ApplyLoan = () => {
       if (!orderRes)
         throw new Error('Order creation failed')
 
-      setOkText('Confirm')
       message.success('Your order has beend created successfully')
+      // setOkText('Finished')
       setTimeout(() => {
+        setOkText('Confirm')
         setExecuting(false)
         setApplyModalOpen(false)
         navigate('/my-loan')
@@ -321,10 +321,10 @@ const ApplyLoan = () => {
       console.log('%c [ error ]-61', 'font-size:13px; background:#c95614; color:#ff9a58;', error)
       return false
     }
-    finally {
-      setOkText('Confirm')
-      setExecuting(false)
-    }
+    // finally {
+    // setOkText('Confirm')
+    // setExecuting(false)
+    // }
   }
 
   const onFinish = async (value: LoanRequisitionEditModel) => {
@@ -1068,9 +1068,7 @@ const ApplyLoan = () => {
           </Button>
         </Form.Item>
       </Form>
-
-    </div>
-  )
+    </div>)
 }
 
 export default ApplyLoan

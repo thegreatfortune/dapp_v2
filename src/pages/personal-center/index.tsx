@@ -101,6 +101,7 @@ const PersonalCenter = () => {
 
       if (!isBlack && orderCanCreatedAgain)
         navigate('/apply-loan')
+      // navigate('/trade')
       else
         message.warning('Order can not be created: There is an un-liquidate order!')
     }
@@ -239,7 +240,6 @@ const PersonalCenter = () => {
       <div className='m-x-a w-1400'>
         <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
       </div>
-
     </div>
   )
 }

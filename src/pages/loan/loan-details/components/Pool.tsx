@@ -11,6 +11,7 @@ import BalanceChart from './BalanceChart'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 // import { PortfolioService } from '@/.generated/api'
 
@@ -58,6 +59,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const [kLineCreated, setKLineCreated] = useState(false)
 
   const [topUpTitle, setTopUpTitle] = useState('Top-up')
+
+  // console.log(111, transactionPair)
 
   useEffect(() => {
     // if (tokenInfos.length <= 1)
@@ -174,6 +177,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   function onOpenModal(item: TokenInfo) {
+    console.log(222, item)
     setCurrentTokenInfo(item)
     setSetIsModalOpen(true)
   }
@@ -214,7 +218,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   return (
     <div className='w-full'>
 
-      <SwapModal resetSwapTokenInfo={resetSwapTokenInfo} tradeId={tradeId} currentTokenInfo={currentTokenInfo} open={isSwapModalOpen} onCancel={() => setSetIsModalOpen(false)} />
+      <SwapModal
+        resetSwapTokenInfo={resetSwapTokenInfo}
+        tradeId={tradeId}
+        currentTokenInfo={currentTokenInfo}
+        open={isSwapModalOpen}
+        onCancel={() => setSetIsModalOpen(false)} />
 
       <SModal
         open={isDepositModalOpen}
@@ -311,7 +320,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
                   {chunk.map((item, _index) => (
                     <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-
                       <div className="flex items-center justify-between gap-x-6 px-20 pt-31 text-center">
                         <div className='flex items-center'>
                           <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} />
@@ -330,35 +338,31 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                           </div>
                         </div>
                         <div className='flex items-center text-right text-20 c-#fff'>
-                          <span className='ml-13 mt-5 text-11 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                          <span className='ml-10 mt-5 text-11 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
                         </div>
                       </div>
-
-                      <div className='flex justify-end px-20'>
-                        <div className='mt-25 h37 text-32 lh-38'>$</div>
-                        <div className='ml-10 mt-25 h37 text-32 lh-38'>{item.dollars ? Number(BigNumber(item.dollars).toFixed(2)).toLocaleString() : 0}</div>
+                      <div className='mt-10 flex items-end justify-end px-20'>
+                        <div className='slahed-zero mt-25 h30 text-24 lh-38 font-mono'>${toCurrencyString((item.dollars ? Number(BigNumber(item.dollars)) : 0))}</div>
+                        {
+                          item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                            ? <Button id={item.name} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                            : null
+                        }
                       </div>
 
-                      <div className='mb-16 mr-16 flex justify-end'>
-
-                        {/* //Test 用户创建的才能看 */}
-                        {/* {
+                      {/* <div className='mb-16 mr-16 flex justify-end'> */}
+                      {/* //Test 用户创建的才能看 */}
+                      {/* {
                       item.name !== 'USDC'
                       ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                       : null
                     } */}
-                        {/* // 下面这个才是要的 */}
-                        {
-                          item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                            ? <Button className='h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                            : null
-                        }
-                      </div>
+                      {/* // 下面这个才是要的 */}
+                      {/* </div> */}
                     </div>
                   ))}
                 </div>
-              )
-              ,
+              ),
             }))
           }>
           {/* 其他 Tabs 相关的配置和渲染 */}

@@ -159,6 +159,7 @@ const LoanDetails = () => {
     async function fetchData() {
       if (tradeId) {
         const res = await LoanService.ApiLoanLoanInfo_GET({ tradeId: Number(tradeId) })
+        console.log(res)
 
         setLoanInfo(preState => ({ ...preState, ...res }))
       }
@@ -275,7 +276,7 @@ const LoanDetails = () => {
     try {
       setSold(1)
       // const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
-      const processedPrice = BigInt(Number.parseFloat(sellUnitPrice) * 100)
+      const processedPrice = BigInt(Number.parseFloat(sellUnitPrice))
       const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
       console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
       if (sellRes?.status !== 1) {
@@ -679,7 +680,7 @@ const LoanDetails = () => {
 
             </div>
 
-            <div className='ml-8 mb20 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
+            <div className='mb20 ml-8 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
 
             <div className="h12" />
           </div>
@@ -719,7 +720,7 @@ const LoanDetails = () => {
           </div>
         </div>
 
-        <p className='ml-8 line-clamp-3 my-6 h91 overflow-hidden text-16 font-400'>
+        <p className='line-clamp-3 my-6 ml-8 h91 overflow-hidden text-16 font-400'>
           <Tooltip title={loanInfo.usageIntro}>
             {loanInfo.usageIntro}
           </Tooltip>
@@ -783,7 +784,12 @@ const LoanDetails = () => {
 
     <Divider></Divider>
     <div className="h30" />
-    <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
+    <Tabs
+      defaultActiveKey="1"
+      items={items}
+      activeKey={activeKey}
+      onChange={key => setActiveKey(key)}
+      renderTabBar={renderTabBar} />
 
   </div >)
 }

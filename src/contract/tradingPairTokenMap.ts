@@ -30,11 +30,6 @@ export const tokenList = [
     address: import.meta.env.VITE_USDC_TOKEN,
     icon: USDC_Icon,
   },
-  // {
-  //   name: 'FTT',
-  //   address: import.meta.env.VITE_FOLLOW_TOKEN,
-  //   icon: UNI_Icon,
-  // },
   {
     name: 'BTC',
     address: import.meta.env.VITE_BTC_TOKEN,
@@ -49,11 +44,6 @@ export const tokenList = [
     name: 'SOL',
     address: import.meta.env.VITE_SOL_TOKEN,
     icon: SOL_Icon,
-  },
-  {
-    name: 'DOGE',
-    address: import.meta.env.VITE_DOGE_TOKEN,
-    icon: DOGE_Icon,
   },
   {
     name: 'ARB',
@@ -79,6 +69,11 @@ export const tokenList = [
     name: 'AAVE',
     address: import.meta.env.VITE_AAVE_TOKEN,
     icon: AAVE_Icon,
+  },
+  {
+    name: 'DOGE',
+    address: import.meta.env.VITE_DOGE_TOKEN,
+    icon: DOGE_Icon,
   },
 ]
 
