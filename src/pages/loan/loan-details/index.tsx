@@ -372,7 +372,6 @@ const LoanDetails = () => {
 
   return (<div className='w-full'>
 
-    {/* sell modal */}
     <Modal open={sellIsModalOpen}
       // centered={true}
       className='h238 w464 b-rd-8'
@@ -655,12 +654,12 @@ const LoanDetails = () => {
     <div className='flex'>
       <InfoCard item={loanInfo} />
 
-      <div className="w-32"></div>
+      {/* <div className="w-32"></div> */}
 
-      <div className='h419 w1048'>
+      <div className='ml-40 h419 grow'>
 
         <div className='flex justify-between lh-33'>
-          <div>
+          <div className=''>
             <div className='m-8 flex text-center'>
               {loanInfo.state === 'Following'
                 ? <div className='flex gap-x-20'>
@@ -680,10 +679,9 @@ const LoanDetails = () => {
 
             </div>
 
-            <div className='mb20 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
+            <div className='ml-8 mb20 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
 
             <div className="h12" />
-
           </div>
           {
             prePage === 'market' && loanInfo.state === 'Following'
@@ -719,10 +717,9 @@ const LoanDetails = () => {
               </div>
             }
           </div>
-
         </div>
 
-        <p className='line-clamp-3 my-6 h91 overflow-hidden text-16 font-400'>
+        <p className='ml-8 line-clamp-3 my-6 h91 overflow-hidden text-16 font-400'>
           <Tooltip title={loanInfo.usageIntro}>
             {loanInfo.usageIntro}
           </Tooltip>
@@ -730,10 +727,10 @@ const LoanDetails = () => {
         <Divider></Divider>
         {/* <div className="h20" /> */}
 
-        <div className='h100 w1047 flex items-center gap-x-19 px-20 text-center'>
+        <div className='h100 flex grow items-center gap-x-19 px-20 text-center'>
 
           {/* <div className='flex'> */}
-          <ul className='m0 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Loan amount</li>
             <li className="h10" />
             <li className='text-18 font-semibold'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
@@ -742,38 +739,38 @@ const LoanDetails = () => {
 
           <Divider type='vertical' className='box-border h-78 bg-#fff' />
 
-          <ul className='m0 w120 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Installment</li>
             <li className="h10" />
             <li className='text-18 font-semibold'> {loanInfo.repayCount} / {loanInfo.periods}</li>
           </ul>
           {/* </div> */}
 
-          <ul className='m0 w100 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Interest</li>
             <li className="h10" />
             <li className='text-18 font-semibold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
-          <ul className='m0 w100 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Dividend</li>
             <li className="h10" />
             <li className='text-18 font-semibold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
           </ul>
 
-          <ul className='m0 w120 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Risk level</li>
             <li className="h10" />
             <li className='text-18 font-semibold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
           </ul>
 
-          <ul className='m0 w120 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Total shares</li>
             <li className="h10" />
             <li className='w-100 text-18 font-semibold'>{loanInfo.goalCopies}</li>
           </ul>
 
-          <ul className='m0 w150 list-none p0'>
+          <ul className='m0 grow list-none p0'>
             <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Minimum required shares</li>
             <li className="h10" />
             <li className='text-18 font-semibold'>{loanInfo.minGoalQuantity}</li>

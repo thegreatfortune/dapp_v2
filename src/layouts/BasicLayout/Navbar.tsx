@@ -84,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
           </li>
           <li className="ml-20 inline-block">
             <NavLink to="/market" target='_self' className='c-white hover:c-#5ec1d0' >
-              {t('nav.market')}
+              {t('nav.follow')}
             </NavLink>
           </li>
           <li className="ml-20 inline-block">

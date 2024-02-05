@@ -10,17 +10,21 @@ interface CardProps {
 
 const InfoCard: React.FC<CardProps> = ({ item }) => {
   return (
-    <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-10">
-      <Image width={300} height={271} src={item.picUrl} className='b-rd-12'
-        fallback={cardPic}
-      />
-
-      <div className='text-left'>
-        <div className='h11 w-full'></div>
+    <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-8 border-solid bg-[#171822]">
+      <div className='rounded-t-8 bg-[#F1F8FF]'>
+        <Image width={317} src={item.picUrl}
+          fallback={cardPic}
+          preview={false}
+        />
+      </div>
+      <div className='p-15'>
+        {/* <div className='h11 w-full'></div> */}
         <div className='flex justify-between'>
           <ul className='m0 flex flex-col list-none gap-x-6 p0'>
             <li className='text-18'>
-              {isContractAddress(item.userInfo?.address ?? '') ? maskWeb3Address(item.userInfo?.address ?? '') : (item.userInfo?.nickName ?? 'not bound')}
+              {isContractAddress(item.userInfo?.address ?? '')
+                ? maskWeb3Address(item.userInfo?.address ?? '')
+                : (item.userInfo?.nickName ?? 'Not Bound')}
             </li>
             <li className='h29 text-16 c-#43465C'>
               {
@@ -34,10 +38,9 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
               </div>
             </li>
           </ul>
-
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

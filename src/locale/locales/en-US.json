@@ -1,8 +1,9 @@
 {
   "nav.title": "Follow",
   "nav.home": "Home",
-  "nav.market": "Market",
-  "nav.trade": "Trade",
+  "nav.follow": "Follows",
+  "nav.market": "SFT Market",
+  "nav.trade": "SFT Market",
   "nav.glyph": "Glyph",
   "nav.input.placeholder": "Search item,collector,and more",
   "nav.menu.loan": "My Loan",
