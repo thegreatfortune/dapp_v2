@@ -97,7 +97,7 @@ const OrderViewAll = () => {
           params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
           containerId='PopularToFollow'
           renderItem={(item: Models.LoanOrderVO) =>
-            <div className="grow flex justify-center" onClick={() => {
+            <div className="grow flex justify-center my-10" onClick={() => {
               navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
             }} >
               <TransparentCard key={item.tradeId} item={item} />
