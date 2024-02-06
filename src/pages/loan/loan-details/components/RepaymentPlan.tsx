@@ -58,7 +58,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const [currentDebt, setCurrentDebt] = useState<number | undefined>()
 
-  const [currentBtnType, setCurrentBtnType] = useState<'Liquidation' | 'Repayment'>()
+  const [currentBtnType, setCurrentBtnType] = useState<'Liquidate' | 'Repay'>()
 
   async function fetchData() {
     if (loading)
@@ -153,7 +153,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     }
   }
 
-  async function onOpenModal(item: Models.RepayPlanVo, type: 'Liquidation' | 'Repayment') {
+  async function onOpenModal(item: Models.RepayPlanVo, type: 'Liquidate' | 'Repay') {
     setCurrentBtnType(type)
 
     if (!tradeId)
@@ -162,7 +162,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     setModalLoading(true)
 
     try {
-      if (type === 'Repayment' && item.state === 'OVERDUE_ARREARS') {
+      if (type === 'Repay' && item.state === 'OVERDUE_ARREARS') {
         const processCenterContract = await browserContractService?.getProcessCenterContract()
 
         const count = await processCenterContract?.getTradeIdToEveryMultiFee(tradeId)
@@ -267,8 +267,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                   <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
                   <li>
                     <div className='flex'>
-                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidation')} className='m-8 h40 w180 b-rd-30 primary-btn'>Liquidate</Button>
-                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repayment')} className='m-8 h40 w180 b-rd-30 primary-btn'>Repay</Button>}
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')} className='m-8 h40 w180 b-rd-30 primary-btn'>Liquidate</Button>
+                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')} className='m-8 h40 w180 b-rd-30 primary-btn'>Repay</Button>}
                     </div>
                   </li>
                 </ul>
