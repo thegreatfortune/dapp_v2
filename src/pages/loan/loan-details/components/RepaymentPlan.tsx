@@ -130,7 +130,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       //   console.log('%c [ repay ]-104', 'font-size:13px; background:#eb963e; color:#ffda82;', 'repay')
       // }
       // else
-      if (currentBtnType === 'Repayment') {
+      if (currentBtnType === 'Repay') {
         console.log('%c [ capitalPool_repay ]-115', 'font-size:13px; background:#8da9a4; color:#d1ede8;')
         await browserContractService?.followRouter_doRepay(tradeId)
       }
@@ -155,11 +155,10 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   async function onOpenModal(item: Models.RepayPlanVo, type: 'Liquidate' | 'Repay') {
     setCurrentBtnType(type)
-
     if (!tradeId)
       return
 
-    setModalLoading(true)
+    // setModalLoading(true)
 
     try {
       if (type === 'Repay' && item.state === 'OVERDUE_ARREARS') {
@@ -169,16 +168,15 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
         setCurrentDebt(Number(count)) // TODO Loading
       }
-
-      setIsModalOpen(true)
       setCurrentItem(item)
+      setIsModalOpen(true)
     }
     catch (error) {
       console.log('%c [ error ]-129', 'font-size:13px; background:#719d7d; color:#b5e1c1;', error)
     }
     finally {
-      setIsModalOpen(false)
-      setModalLoading(false)
+      // setIsModalOpen(false)
+      // setModalLoading(false)
     }
   }
 
