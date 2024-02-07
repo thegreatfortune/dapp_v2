@@ -235,8 +235,8 @@ const LoanDetails = () => {
         const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
 
         if (balance === undefined || balance === BigInt(0)) {
-          message.warning('You have no balance, please buy ERC352')
-          throw new Error('You have no balance, please buy ERC352')
+          message.warning('You have no balance')
+          throw new Error('You have no balance')
         }
         await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
       }
@@ -586,8 +586,7 @@ const LoanDetails = () => {
       onOk={() => extractConfirm()}
       onCancel={() => {
         setExtractIsModalOpen(false)
-      }
-      }
+      }}
       okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
     >
       <div>
@@ -595,13 +594,6 @@ const LoanDetails = () => {
           Extract: {extractMoney}
         </h2>
       </div>
-      {/* // [<Button key="submit" loading={extraModalLoading} type="primary" onClick={() => extractConfirm()}>
-      //   confirm
-      // </Button>,
-      // <Button key="Cancel" onClick={() => setExtractIsModalOpen(false)}>
-      //   Cancel
-      // </Button>,
-      // ] */}
     </Modal>
 
     <SModal open={isModalOpen}
