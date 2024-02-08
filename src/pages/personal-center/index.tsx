@@ -137,7 +137,21 @@ const PersonalCenter = () => {
   const [executing, setExecuting] = useState(false)
   const [hiddenCancel, setHiddenCancel] = useState(false)
 
-  const faucetSelect = (value: string) => {
+  const addUsdcToWallet = async () => {
+    const signer = browserContractService?.getSigner
+
+    await signer?.provider.send('wallet_watchAsset', {
+      type: 'ERC20',
+      options: {
+        address: '0x8f78aAF91dea7D38acF813c9C121F648d20c1c0F',
+        symbol: 'USDC',
+        decimals: 18,
+        // "image": "https://foo.io/token-image.svg"
+      },
+    })
+  }
+
+  const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
       setUsdcModelOpen(true)
       return true
@@ -187,7 +201,10 @@ const PersonalCenter = () => {
         >
           <div>
             <h2>Faucet</h2>
-            <div>You will receive 2,000 USDC</div>
+            <div className='mb-30 flex items-center justify-between'>
+              <div>You will receive 2,000 USDC on Polygon mumbai!</div>
+              <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
+            </div>
           </div>
         </Modal>
         <div
