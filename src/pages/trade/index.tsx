@@ -74,8 +74,8 @@ const Trade = () => {
 
   return (
     <div className='m-auto'>
-      <img src={marketBanner} alt="" className='m-auto h280 w-full b-rd-20 object-cover' />
-      <div className='h80 w-full'></div>
+      <img src={marketBanner} alt="" className='banner w-full b-rd-20 object-cover' />
+      <div className='h30 w-full'></div>
       <div className='page-title-box'>
         <div className='my-20'>
           <span className='page-title'>
