@@ -22,7 +22,7 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
         <div className='flex items-center justify-between'>
           {image && <Image src={image} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
 
-          <span className='ml-4 font-size-34'>
+          <span className='page-title'>
             {title}
           </span>
         </div>
@@ -31,9 +31,9 @@ const CardsContainer: React.FC<ICardsContainerProps> = ({ records, title, isView
 
         {isViewAll
           ? <Radio.Group defaultValue='All' onChange={e => fetchData && fetchData(e.target.value)}>
-            <Radio.Button value="All">All</Radio.Button>
-            <Radio.Button value="LowRisk">LowRisk</Radio.Button>
-            <Radio.Button value="HighRisk">HighRisk</Radio.Button>
+            <Radio.Button className='radio-btn-all' value="All">All</Radio.Button>
+            <Radio.Button className='radio-btn-other' value="LowRisk">LowRisk</Radio.Button>
+            <Radio.Button className='radio-btn-other' value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
             {/* // TODO records.length > 4 */}

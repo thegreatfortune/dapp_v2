@@ -17,18 +17,15 @@ const TradeContainer: React.FC<ICardsContainerProps> = ({ title, isViewAll, to }
   return (<div>
       <div className='h48 flex items-center justify-between'>
         <div>
-          <h2 className='font-size-34'>
+          <h2 className='page-title'>
             {title}
           </h2>
         </div>
-
-        {/* {children} */}
-
         {isViewAll
           ? <Radio.Group value={risk} onChange={e => setRisk(e.target.value)} >
-            <Radio.Button value="All">All</Radio.Button>
-            <Radio.Button value="LowRisk">LowRisk</Radio.Button>
-            <Radio.Button value="HighRisk">HighRisk</Radio.Button>
+            <Radio.Button className='radio-btn-all' value="All">All</Radio.Button>
+            <Radio.Button className='radio-btn-other' value="LowRisk">LowRisk</Radio.Button>
+            <Radio.Button className='radio-btn-other' value="HighRisk">HighRisk</Radio.Button>
           </Radio.Group>
           : <div className='font-size-14 c-[#D2D2D2]'>
            <Link to={to ?? ''}> view all {'>>'}</Link>

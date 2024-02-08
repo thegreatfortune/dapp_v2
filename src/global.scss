@@ -1,0 +1,13 @@
+@layer components {
+
+    @screen sm {
+
+    }
+    .btn {
+        @apply py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700
+    }
+}
+
+.custom-div {
+    @apply text-center my-0 font-medium;
+  }

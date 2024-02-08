@@ -43,34 +43,37 @@ const OrderViewAll = () => {
 
   return (
     <div className='bg-center bg-no-repeat bg-origin-border'>
-      <div className='h100 min-h-full w-full flex items-center justify-between'>
-        <div className='flex items-center justify-between'>
+      <div className='page-title-box'>
+        <div className='my-20'>
           {title === 'Blacklist' && <Image src={blacklist1} preview={false} className='mr-5 h-50 w-50 pl-7 pr-10' />}
-          <span className='ml-4 font-size-34'>
+          <span className='page-title'>
             {title}
           </span>
         </div>
-        <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)} className='w-453 flex' buttonStyle='solid'>
-          <Radio.Button
-            value="All"
-            className='m-auto mr-20 h40 w-100 border-1px b-rd-6 text-center lh-40'>
-            All
-          </Radio.Button>
-          <Radio.Button
-            value="LowRisk"
-            className={`h40 w140 items-center lh-40  ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
-            <div className='flex justify-center'>
-              <InfoCircleOutlined className='mr-4 text-slate-500' /> Low Risk
-            </div>
-          </Radio.Button>
-          <Radio.Button
-            value="HighRisk"
-            className={`h40 w140 items-center lh-40 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
-            <div className='flex justify-center'>
-              <WarningOutlined className='mr-4 text-red-500' /> High Risk
-            </div>
-          </Radio.Button>
-        </Radio.Group>
+        <div className='my-20'>
+          <Radio.Group defaultValue='All' onChange={e => fetchData(e.target.value)} className='flex' buttonStyle='solid'>
+            <Radio.Button
+              value="All"
+              className='radio-btn-all'>
+              All
+            </Radio.Button>
+            <Radio.Button
+              value="LowRisk"
+              className={`radio-btn-other ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <InfoCircleOutlined className='mr-4 text-slate-500' />Low Risk
+              </div>
+            </Radio.Button>
+            <Radio.Button
+              value="HighRisk"
+              // className={`h40 w140 items-center lh-40 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              className={`radio-btn-other ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <WarningOutlined className='mr-4 text-red-500' /> High Risk
+              </div>
+            </Radio.Button>
+          </Radio.Group>
+        </div>
       </div>
       <div className='h60 w-full'></div>
 

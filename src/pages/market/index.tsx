@@ -45,27 +45,24 @@ const Market = () => {
   }, [])
 
   return (
-    <div className="relative m-auto h-full min-h-full">
-      <div >
+    <div className="">
+      <div className='w-full' >
         <img
           src={bannerImage}
           alt='Image 2'
-          className='h-280 w-full b-rd-20 object-cover'
+          className='banner w-full b-rd-20 object-cover'
         />
       </div>
 
-      <div className="h44 w-full" />
+      <div className="h44" />
       {
         (hotStarterData.records && hotStarterData.records.length > 0)
         && <MarketCardsContainer image='' key='HotStarter' title={`🔥${t('market.CardsContainer1.title')}`} records={hotStarterData.records} to='/view-all?title=🔥Hot starter&category=HotStarter' />
       }
-      <div className='h-44 w-full' />
       {
         (popularToFollowData.records && popularToFollowData.records.length > 0)
         && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData.records} to='/view-all?title=💥Popular to follow&category=PopularToFollow' />
       }
-
-      <div className='h-44 w-full' />
 
       {
         (blacklist.total && blacklist.total > 0)

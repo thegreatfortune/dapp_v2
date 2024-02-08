@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useNavigate } from 'react-router-dom'
 import Image from 'antd/es/image'
-import { AutoComplete } from 'antd'
+import type { MenuProps } from 'antd'
+import { AutoComplete, Dropdown } from 'antd'
 import BigNumber from 'bignumber.js'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/images/LOGO.svg'
@@ -10,13 +11,15 @@ import searchImg from '@/assets/images/search.png'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
 import { isContractAddress, isTwitterHandle } from '@/utils/regex'
+import menuImage from '@/assets/images/menu.png'
 
 interface NavbarProps {
   title: string
   showInput?: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
+// hidden search bar after user searched
+const Navbar: React.FC<NavbarProps> = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -50,50 +53,104 @@ const Navbar: React.FC<NavbarProps> = ({ showInput }) => {
     navigate(`/loan-details?prePage=market&tradeId=${value}`)
   }
 
+  const items: MenuProps['items'] = [
+    {
+      key: t('nav.home'),
+      label: (
+        <NavLink
+          to="/"
+          target="_self"
+          className="nav-bar-dropdown-item">
+          Home
+        </NavLink>
+      ),
+    },
+    {
+      key: t('nav.follow'),
+      label: (
+        <NavLink
+          to="/market"
+          target="_self"
+          // className={`text-white hover:c-#5ec1d0 ${['/market', '/market-token'].includes(location.pathname) && 'c-#5ec1d0'}`}>
+          className="nav-bar-dropdown-item">
+          Market
+        </NavLink>
+      ),
+    },
+    {
+      key: t('nav.market'),
+      label: (
+        <NavLink
+          to="/trade"
+          target="_self"
+          // className={`text-white  hover:c-#5ec1d0 ${['/tokens', '/my-glyph', '/token-detail'].includes(location.pathname) && 'c-#5ec1d0'}`}>
+          className="nav-bar-dropdown-item">
+          Tokens
+        </NavLink>
+      ),
+    },
+    {
+      key: t('nav.glyph'),
+      label: (
+        <NavLink
+          to="https://glyph.followfi.io"
+          target="_blank"
+          // className={`text-white  hover:c-#5ec1d0 ${['/tokens', '/my-glyph', '/token-detail'].includes(location.pathname) && 'c-#5ec1d0'}`}>
+          className="nav-bar-dropdown-item">
+          Glyph
+        </NavLink>
+      ),
+    },
+  ]
+
   return (
     <nav className="h100 w-full flex items-center justify-between text-white" id='navBar'>
-      <div className="flex items-center text-center">
-        <Image src={logo} width={160} height={44} preview={false}></Image>
+      <div className="nav-logo">
+        <Image src={logo} preview={false}></Image>
       </div>
 
       <div className='flex items-center justify-end'>
-        <div className='box-border h48 flex items-center justify-center' hidden={!showInput}>
-
-          <Image width={16} height={16} preview={false} className='relative right--195 top--3 z-1' src={searchImg} />
+        <div className='box-border hidden h48 flex items-center justify-center'>
+          <Image width={16} height={16} preview={false} className='relative right--195 top--3 z-1 hidden' src={searchImg} />
           <AutoComplete
             popupClassName="certain-category-search-dropdown"
             options={options}
             onSearch={handleSearch}
             onSelect={onSelect}
-            className="h40 w200"
+            className="hidden h40 w200"
           >
             <input className="h40 w310 border-1 border-white rounded-24 border-solid bg-#040508 p-y13 pl-20 pr-25 c-white placeholder-c-#D2D2D2" placeholder={t('basicLayout.navBar.placeholder')} type="text" />
           </AutoComplete>
         </div>
 
-        <ul className="flex list-none justify-between pe-10 ps-10 text-center text-15 c-white">
-          <li className="inline-block">
+        <ul className="nav-bar">
+          <li className="nav-bar-item">
             <NavLink to="/" target='_blank' className='c-white hover:c-#5ec1d0'>
               {t('nav.home')}
             </NavLink>
           </li>
-          <li className="ml-20 inline-block">
+          <li className="nav-bar-item">
             <NavLink to="/market" target='_self' className='c-white hover:c-#5ec1d0' >
               {t('nav.follow')}
             </NavLink>
           </li>
-          <li className="ml-20 inline-block">
+          <li className="nav-bar-item">
             <NavLink to="/trade" target='_self' className='c-white hover:c-#5ec1d0'>
-              {t('nav.trade')}
+              {t('nav.market')}
             </NavLink>
           </li>
-          <li className="ml-20 inline-block">
+          <li className="nav-bar-item">
             <NavLink to="https://glyph.followfi.io" target='_blank' className='c-white hover:c-#5ec1d0'>
               {t('nav.glyph')}
             </NavLink>
           </li>
         </ul>
         <CustomConnectButton />
+        <div className="nav-bar-dropdown">
+          <Dropdown menu={{ items }} placement="bottomRight" overlayClassName="pt-12 text-12 box-border h18 w120">
+            <Image width={30} height={30} preview={false} src={menuImage} />
+          </Dropdown>
+        </div>
       </div>
     </nav>
   )

@@ -25,9 +25,11 @@ const routes: IRouter[] = [
   {
     path: '/personal-center',
     element: (
-      <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-        <PersonalCenter />
-      </React.Suspense>
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <PersonalCenter />
+        </React.Suspense>
+      </BasicLayout>
     ),
   },
   {

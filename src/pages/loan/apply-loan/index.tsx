@@ -535,93 +535,105 @@ const ApplyLoan = () => {
         }}
         onValuesChange={onValuesChange}
       >
-        <div className="w-full flex justify-between">
-          <Form.Item
-            name="imageUrl"
-            className="m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"
-            valuePropName="file"
-            getValueFromEvent={e => e.fileList}
-            rules={projectImageFileRule}
-          >
-            <div className="item-center relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822">
-              <div className="item-center absolute right-40 top-16 z-10 flex text-14">
+        <div className="title-box">
+          {/* <div className="w-full flex justify-between "> */}
+          <div className="image-box">
+            <Form.Item
+              name="imageUrl"
+              // className="image-box"
+              valuePropName="file"
+              getValueFromEvent={e => e.fileList}
+              rules={projectImageFileRule}
+            >
+              {/* <div className="item-center relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"> */}
+              <div className="item-center my-20 mx-10 flex justify-end text-14">
                 <div className='mx-8'>
                   Use default image
                 </div>
                 <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={onSwitchChange} />
               </div>
-              <Dragger
-                name="imageUrl"
-                action={uploadFile}
-                beforeUpload={beforeUpload}
-                style={{ height: 453 }}
-                disabled={useDiagram}
-                showUploadList={false}
-                accept='.png,.jpg,.jpeg'
-              >
+              <div className='default-image'>
 
-                {
-                  !useDiagram
-                  && <div>
-                    {
-                      loanRequisitionEditModel.projectImagePreViewUrl
-                        ? <Image height={348} width={400} src={loanRequisitionEditModel.projectImagePreViewUrl} preview={false} />
-                        : <div>
-                          <Image src={airplane} preview={false} />
-                          <p className="ant-upload-drag-icon"></p>
-                          <p className="ant-upload-text !text-28 !font-bold">
-                            {t('applyLoan.formItem.upload.title')}
-                          </p>
-                          <p className="ant-upload-hint !text-18">
-                            800 x 800px {t('applyLoan.formItem.upload.description')}
-                          </p>
-                        </div>
-                    }
-                  </div>
-                }
+                <Dragger
+                  name="imageUrl"
+                  action={uploadFile}
+                  beforeUpload={beforeUpload}
+                  // style={{ height: 453 }}
+                  disabled={useDiagram}
+                  showUploadList={false}
+                  accept='.png,.jpg,.jpeg'
+                  style={{
+                    border: 0,
+                    backgroundColor: 'rgb(23 24 34 / var(--un-bg-opacity))',
+                  }}
+                >
+                  {
+                    !useDiagram
+                    && <>
+                      {
+                        loanRequisitionEditModel.projectImagePreViewUrl
+                          ? <Image src={loanRequisitionEditModel.projectImagePreViewUrl} preview={false} />
+                          : <div>
+                            <Image src={airplane} preview={false} />
+                            <p className="ant-upload-drag-icon"></p>
+                            <p className="ant-upload-text !text-24 !font-bold">
+                              {t('applyLoan.formItem.upload.title')}
+                            </p>
+                            <p className="ant-upload-hint !text-18">
+                              800 x 800px {t('applyLoan.formItem.upload.description')}
+                            </p>
+                          </div>
+                      }
+                    </>
+                  }
 
-                {
-                  useDiagram
-                  && <Image preview={false} src={defaultImage} />
-                }
-              </Dragger>
-            </div>
-          </Form.Item>
+                  {
+                    useDiagram
+                    && <Image preview={false} src={defaultImage} />
+                  }
+                </Dragger>
 
-          <div className="w-917">
-            <Form.Item
-              name="itemTitle"
-              className="m0 w-full"
-              label={
-                <span className="p0 text-16">
-                  {t('applyLoan.formItem.item.label')}
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your title!',
-                },
-                {
-                  max: 36,
-                  message: 'Title must be at most 36 characters.',
-                },
-              ]}
-            >
-              <TextArea
-                className="s-container text-14"
-                placeholder={t('applyLoan.formItem.item.placeholder')}
-                style={{ height: 102, resize: 'none' }}
-              />
+              </div>
             </Form.Item>
+          </div>
+
+          <div className='content-box'>
+            <div>
+
+              <Form.Item
+                name="itemTitle"
+                // className="title"
+                label={
+                  <span className="p0 text-16">
+                    {t('applyLoan.formItem.item.label')}
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your title!',
+                  },
+                  {
+                    max: 36,
+                    message: 'Title must be at most 36 characters.',
+                  },
+                ]}
+                style={{ margin: 0 }}
+              >
+                <TextArea
+                  className="s-container text-14"
+                  placeholder={t('applyLoan.formItem.item.placeholder')}
+                  style={{ height: 102, resize: 'none' }}
+                />
+              </Form.Item>
+            </div>
 
             <div className="h16"></div>
-
             <Form.Item
               name="description"
-              className="m0 w-full"
+              // className="content"
               label={
-                <span className="p0 text-16">
+                <span className="text-16">
                   {t('applyLoan.formItem.item.description.label')}
                 </span>
               }
@@ -635,206 +647,219 @@ const ApplyLoan = () => {
                   message: 'Description must be at most 500 characters.',
                 },
               ]}
+              style={{ margin: 0 }}
             >
               <TextArea
-                className="s-container text-14"
+                className="text-14"
                 placeholder={t(
                   'applyLoan.formItem.item.description.placeholder',
                 )}
-                style={{ height: 269, resize: 'none' }}
+                // style={{ height: 269, resize: 'none' }}
+                style={{ height: 280 }}
               />
             </Form.Item>
           </div>
-        </div>
+        </div >
 
         <div className="h-50" />
 
         {/* Apply for a loan */}
-        <div className="box-border h-394 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16">
-          <Form.Item
-            name="applyLoan"
-            rules={[
-              {
-                required: true,
-                message: 'Please input content!',
-              },
-            ]}
-            label={
-              <span className="w-full text-16">
-                {t('applyLoan.formItem.applyForLoan.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              min={100}
-              max={1000000}
-              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">USDC</div>}
-            />
-          </Form.Item>
+        <div className="apply-option">
+          {/* <div className="box-border h-394 w-full flex flex-wrap gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16"> */}
 
-          <Form.Item
-            name="cycle"
-            rules={[
-              {
-                required: true,
-                message: 'Please input content!',
-              },
-            ]}
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.cycle.label')}
-              </span>
-            }
-          >
-            <Select
-              popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="s-container box-border h50 text-24 !w412"
-              suffixIcon={
-                <img src={jmtzDown} alt="jmtzDown" className="px30" />
-              }
-              options={[
-                { value: 0, label: 10 },
-                { value: 1, label: 20 },
-                { value: 2, label: 30 },
-                { value: 3, label: 60 },
-                { value: 4, label: 90 },
-                { value: 5, label: 180 },
+          <div className='apply-option-item'>
+            <Form.Item
+              name="applyLoan"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
               ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="period"
-
-            rules={[
-              {
-                required: true,
-                message: 'Please input content!',
-              },
-            ]}
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.period.label')}
-              </span>
-            }
-          >
-            <Select
-              popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="s-container box-border h50 text-14 !w412"
-              disabled={loanRequisitionEditModel.cycle <= 3}
-              suffixIcon={
-                <img src={jmtzDown} alt="jmtzDown" className="px30" />
+              label={
+                <span className="w-full text-16">
+                  {t('applyLoan.formItem.applyForLoan.label')}
+                </span>
               }
-              options={[
-                { value: 1, label: 1 },
-                { value: 2, label: 2 },
-                { value: 5, label: 5 },
-                { value: 10, label: 10 },
-              ]}
-            />
-          </Form.Item>
+            // className="mb-10"
+            >
+              <InputNumber
+                min={100}
+                max={1000000}
+                // className="s-container box-border h45 w-full items-center px-30 pr-106 text-14"
+                // className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
+                className="apply-option-item-input"
+                suffix={<div className="px-20 text-14">USDC</div>}
+              />
+            </Form.Item>
+          </div>
 
+          <div className="apply-option-item">
+            <Form.Item
+              name="cycle"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
+              ]}
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.cycle.label')}
+                </span>
+              }
+            // className="apply-option-item-input"
+            >
+              <Select
+                popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                className="apply-option-item-select"
+                suffixIcon={
+                  <img src={jmtzDown} alt="jmtzDown" className="px-20" />
+                }
+                options={[
+                  { value: 0, label: 10 },
+                  { value: 1, label: 20 },
+                  { value: 2, label: 30 },
+                  { value: 3, label: 60 },
+                  { value: 4, label: 90 },
+                  { value: 5, label: 180 },
+                ]}
+              />
+            </Form.Item>
+          </div>
+          <div className="apply-option-item">
+            <Form.Item
+              name="period"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
+              ]}
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.period.label')}
+                </span>
+              }
+            >
+              <Select
+                popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                className="apply-option-item-select"
+                disabled={loanRequisitionEditModel.cycle <= 3}
+                suffixIcon={
+                  <img src={jmtzDown} alt="jmtzDown" className="px-20" />
+                }
+                options={[
+                  { value: 1, label: 1 },
+                  { value: 2, label: 2 },
+                  { value: 5, label: 5 },
+                  { value: 10, label: 10 },
+                ]}
+              />
+            </Form.Item>
+          </div>
           {/* Second */}
+          <div className="apply-option-item">
+            <Form.Item
+              name="dividend"
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.dividend.label')}
+                  <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="The dividend ratio is profit dividends. The remaining funds after deducting principal + interest + handling fees from the repayment pool funds are profits. Part of the profits will be deducted according to the allocation ratio and given to the lender.">
+                    <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+                  </Tooltip>
+                </span>
 
-          <Form.Item
-            name="dividend"
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.dividend.label')}
-                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="The dividend ratio is profit dividends. The remaining funds after deducting principal + interest + handling fees from the repayment pool funds are profits. Part of the profits will be deducted according to the allocation ratio and given to the lender.">
-                  <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
-                </Tooltip>
-              </span>
-
-            }
-          >
-            <InputNumber
-              min={0}
-              max={100}
-              precision={2}
-              step={0.01}
-              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">%</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="interest"
-            rules={[
-              {
-                required: true,
-                message: 'Please input content!',
-              },
-            ]}
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.interest.label')}
-
-                <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="Interest is deducted first, and the lender only needs to provide funds after interest is deducted.">
-                  <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
-                </Tooltip>
-              </span>
-            }
-          >
-            <InputNumber
-              min={5}
-              max={80}
-              precision={2}
-              step={0.01}
-              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">%</div>}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="raisingTime"
-            rules={[
-              {
-                required: true,
-                message: 'Please input content!',
-              },
-            ]}
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.raisingTime.label')}
-              </span>
-            }
-          >
-            <Select
-              popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-              className="s-container box-border h50 text-14 !w412"
-              suffixIcon={
-                <img src={jmtzDown} alt="jmtzDown" className="px30" />
               }
-              options={[
-                { value: 1, label: 1 },
-                { value: 3, label: 3 },
-                { value: 7, label: 7 },
-                { value: 14, label: 14 },
-                { value: 20, label: 20 },
+            >
+              <InputNumber
+                min={0}
+                max={100}
+                precision={2}
+                step={0.01}
+                className="apply-option-item-input"
+                suffix={<div className="px-20 text-14">%</div>}
+              />
+            </Form.Item>
+          </div>
+          <div className="apply-option-item">
+            <Form.Item
+              name="interest"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
               ]}
-            />
-          </Form.Item>
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.interest.label')}
 
+                  <Tooltip color='#303241' overlayInnerStyle={{ padding: 25 }} title="Interest is deducted first, and the lender only needs to provide funds after interest is deducted.">
+                    <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+                  </Tooltip>
+                </span>
+              }
+            >
+              <InputNumber
+                min={5}
+                max={80}
+                precision={2}
+                step={0.01}
+                className="apply-option-item-input"
+                suffix={<div className="px-20 text-14">%</div>}
+              />
+            </Form.Item>
+          </div>
+          <div className="apply-option-item">
+            <Form.Item
+              name="raisingTime"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input content!',
+                },
+              ]}
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.raisingTime.label')}
+                </span>
+              }
+            >
+              <Select
+                popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                className="apply-option-item-select"
+                suffixIcon={
+                  <img src={jmtzDown} alt="jmtzDown" className="px-20" />
+                }
+                options={[
+                  { value: 1, label: 1 },
+                  { value: 3, label: 3 },
+                  { value: 7, label: 7 },
+                  { value: 14, label: 14 },
+                  { value: 20, label: 20 },
+                ]}
+              />
+            </Form.Item>
+          </div>
           {/* Three */}
-
-          <Form.Item
-            name="numberOfCopies"
-            label={
-              <span className="text-16">
-                {t('applyLoan.formItem.numberOfCopies.label')}
-              </span>
-            }
-          >
-            <InputNumber
-              min={1}
-              max={10000}
-              className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
-              suffix={<div className="px-20 text-14">shares</div>}
-            />
-          </Form.Item>
-
+          <div className="apply-option-item">
+            <Form.Item
+              name="numberOfCopies"
+              label={
+                <span className="text-16">
+                  {t('applyLoan.formItem.numberOfCopies.label')}
+                </span>
+              }
+            >
+              <InputNumber
+                min={1}
+                max={10000}
+                className="apply-option-item-input"
+                suffix={<div className="px-20 text-14">shares</div>}
+              />
+            </Form.Item>
+          </div>
           {
             loanRequisitionEditModel.numberOfCopies > 1
             && <Form.Item
@@ -848,22 +873,23 @@ const ApplyLoan = () => {
               <InputNumber
                 min={1}
                 max={loanRequisitionEditModel.numberOfCopies}
-                className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
+                className="apply-option-item-input"
                 suffix={<div className="px-20 text-14">shares</div>}
               />
             </Form.Item>
           }
-
         </div>
 
         <div className="h50" />
-        <div className="box-border w-full flex gap-x-42 gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16">
 
-          {/* <div className='flex gap-x-42'> */}
-          <div>
-            <div className="flex gap-x-53">
+        <div className="apply-trade-box">
+          <div className="mb-20 text-20">
+            {t('applyLoan.formItem.designatedTransaction.label')}
+          </div>
+          <div className="apply-trade-option">
+            <div className='apply-option-item'>
               <Form.Item
-                className="m0 mt30"
+                // className="m0 mt30"
                 name="designatedTransaction"
                 rules={[
                   {
@@ -871,17 +897,17 @@ const ApplyLoan = () => {
                     message: 'Please input content!',
                   },
                 ]}
-                label={
-                  <span className="text-16">
-                    {t('applyLoan.formItem.designatedTransaction.label')}
-                  </span>
-                }
+              // label={
+              //   <span className="text-16">
+              //     {t('applyLoan.formItem.designatedTransaction.label')}
+              //   </span>
+              // }
               >
                 <Select
-                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="s-container box-border h50 text-14 !w306"
+                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                  className="apply-option-item-select"
                   suffixIcon={
-                    <img src={jmtzDown} alt="jmtzDown" className="px30" />
+                    <img src={jmtzDown} alt="jmtzDown" className="px-20" />
                   }
                   // onChange={v =>
                   //   designatedTransactionChange(v)
@@ -892,10 +918,74 @@ const ApplyLoan = () => {
                   ]}
                 />
               </Form.Item>
+            </div>
+            <div className='apply-option-item'>
+              <Form.Item
+                name="tradingFormType"
+              // className="m0 w306"
+              >
+                <Select
+                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                  className="apply-option-item-select"
+                  suffixIcon={
+                    <img src={jmtzDown} alt="jmtzDown" className="px-20" />
+                  }
 
+                  // onChange={(v) => {
+                  //   setLoanRequisitionEditModel(prevState => ({
+                  //     ...prevState,
+                  //     tradingFormType: v,
+                  //     // tradingPlatformType: v === 'SpotGoods'
+                  //     //   ? 'Uniswap'
+                  //     //   : 'GMX',
+                  //   }))
+                  // }
+                  // }
+                  options={[
+                    {
+                      value: Models.TradingFormType.SpotGoods,
+                      label: 'Spot',
+                    },
+                    {
+                      value: Models.TradingFormType.Contract,
+                      label: 'Future',
+                    },
+                  ]}
+                />
+              </Form.Item>
+            </div>
+            <div className='apply-option-item'>
+              <Form.Item
+                name="tradingPlatformType"
+              // className="m0 w306"
+              >
+                {/* START 冗余 为了页面更新 */}
+                {/* <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span> */}
+                {/* END */}
+                <Select
+                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                  className="apply-option-item-select"
+                  suffixIcon={
+                    <img src={jmtzDown} alt="jmtzDown" className="px-20" />
+                  }
+                  disabled
+                  value={
+                    loanRequisitionEditModel.tradingPlatformType
+                    // === Models.TradingFormType.SpotGoods
+                    // ? 'Uniswap'
+                    // : 'GMX'
+                  }
+                  options={[
+                    { value: 'Uniswap', label: 'Uniswap' },
+                    { value: 'GMX', label: 'GMX' },
+                  ]}
+                />
+              </Form.Item>
+            </div>
+            <div className='apply-option-item'>
               <Form.Item
                 name="transactionPairs"
-                className="m0 mt61"
+                // className="m0 mt61"
                 style={{
                   display: loanRequisitionEditModel.designatedTransaction
                     ? 'block'
@@ -904,11 +994,11 @@ const ApplyLoan = () => {
               >
                 <Select
                   mode="multiple"
-                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                  className="s-container box-border h50 text-14 !w306"
+                  popupClassName="bg-#111a2c border-2 border-#303241 border-solid"
+                  className="apply-option-item-select"
                   status={selectError ? 'error' : undefined}
                   suffixIcon={
-                    <img src={jmtzDown} alt="jmtzDown" className="px30" />
+                    <img src={jmtzDown} alt="jmtzDown" className="px-20" />
                   }
                   value={loanRequisitionEditModel.transactionPairs}
                   maxTagCount={1}
@@ -924,94 +1014,19 @@ const ApplyLoan = () => {
                 />
               </Form.Item>
             </div>
-
-            <div className="h30"></div>
-
-            <div
-              style={{
-                display: loanRequisitionEditModel.designatedTransaction
-                  ? 'block'
-                  : 'none',
-              }}
-            >
-              <div className="flex">
-                <div className="h186 flex flex-col flex-wrap gap-y-30">
-                  <Form.Item
-                    name="tradingFormType"
-                    className="m0 w306"
-                  >
-                    <Select
-                      popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="s-container box-border h50 text-14 !w306"
-                      suffixIcon={
-                        <img src={jmtzDown} alt="jmtzDown" className="px30" />
-                      }
-
-                      // onChange={(v) => {
-                      //   setLoanRequisitionEditModel(prevState => ({
-                      //     ...prevState,
-                      //     tradingFormType: v,
-                      //     // tradingPlatformType: v === 'SpotGoods'
-                      //     //   ? 'Uniswap'
-                      //     //   : 'GMX',
-                      //   }))
-                      // }
-                      // }
-                      options={[
-                        {
-                          value: Models.TradingFormType.SpotGoods,
-                          label: 'Spot',
-                        },
-                        {
-                          value: Models.TradingFormType.Contract,
-                          label: 'Future',
-                        },
-                      ]}
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="tradingPlatformType"
-                    className="m0 w306"
-                  >
-                    {/* START 冗余 为了页面更新 */}
-                    {/* <span className='hidden opacity-0'>{loanRequisitionEditModel.tradingPlatformType}</span> */}
-                    {/* END */}
-                    <Select
-                      popupClassName="bg-#111a2c border-2 border-#303241 border-solid px30"
-                      className="s-container box-border h50 !w306 !text-14"
-                      suffixIcon={
-                        <img src={jmtzDown} alt="jmtzDown" className="px30" />
-                      }
-                      disabled
-                      value={
-                        loanRequisitionEditModel.tradingPlatformType
-                        // === Models.TradingFormType.SpotGoods
-                        // ? 'Uniswap'
-                        // : 'GMX'
-                      }
-                      options={[
-                        { value: 'Uniswap', label: 'Uniswap' },
-                        { value: 'GMX', label: 'GMX' },
-                      ]}
-                    />
-                  </Form.Item>
-
-                </div>
-              </div>
+            <div>
             </div>
-          </div>
 
-          <Divider type='vertical' className='mx-0 mt-36 h-210 w1 border-none bg-#696969' />
-
+          </div >
+          <Divider className='w-full'></Divider>
           <div
             style={{
               display: loanRequisitionEditModel.designatedTransaction
-                ? 'block'
+                ? 'inline'
                 : 'none',
             }}
           >
-            <div className="mt-61 flex flex-wrap gap-x-52 gap-y-20">
+            <div className="my-50 flex flex-wrap gap-x-52 gap-y-20">
               {loanRequisitionEditModel.transactionPairs?.map((e, i) => (
                 <div
                   key={i}
@@ -1045,21 +1060,21 @@ const ApplyLoan = () => {
 
         {/* <Divider className='m0 bg-#6A6A6A' /> */}
 
-        <div className="h44" />
+        < div className="h44" />
 
         <Form.Item className="text-center">
           <Button
             type="primary"
             htmlType="submit"
             loading={publishBtnLoading}
-            className="h65 w200 text-18 primary-btn"
+            className="h65 w200 text-18 primary-btn b-rd-10"
           >
             {t('applyLoan.btn.submit')}
           </Button>
         </Form.Item>
-      </Form>
+      </Form >
       <div className="h44" />
-    </div>
+    </div >
   )
 }
 

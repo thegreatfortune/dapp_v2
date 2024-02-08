@@ -54,7 +54,7 @@ const Trade = () => {
           </div>
 
           <div className='mb-20 flex justify-between'>
-            <div className='ml-32 flex items-end font-bold text-slate-400'>SFT</div>
+            <div className='ml-32 flex items-end text-slate-400 font-bold'>SFT</div>
             <div className='w-150'>
               <div className='mr-32 flex justify-between font-bold font-mono slashed-zero'>
                 <div>Price: </div>
@@ -77,35 +77,37 @@ const Trade = () => {
       <img src={marketBanner} alt="" className='m-auto h280 w-full b-rd-20 object-cover' />
       <div className='h80 w-full'></div>
 
-      <div className='h48 flex items-center justify-between'>
-        <div>
-          <h2 className='font-size-34'>
+      <div className='page-title-box'>
+        <div className='my-20'>
+          <h2 className='page-title'>
             🔥 Hot Trade
           </h2>
         </div>
-        <Radio.Group defaultValue='All' className='w453 flex' onChange={e => fetchData(e.target.value)} buttonStyle='solid'>
-          {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
-          <Radio.Button
-            value="All"
-            className='m-auto mr-20 h40 w-100 border-1px b-rd-6 text-center lh-40'>
-            All
-          </Radio.Button>
-          <Radio.Button
-            value="LowRisk"
-            className={`h40 w140 items-center lh-40 ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
-            <div className='flex justify-center'>
-              <InfoCircleOutlined className='mr-4 text-slate-500' /> Low Risk
-            </div>
-          </Radio.Button>
-          <Radio.Button
-            value="HighRisk"
-            className={`h40 w140 items-center lh-40 ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
-            <div className='flex justify-center'>
-              <WarningOutlined className='mr-4 text-red-500' /> High Risk
-            </div>
-          </Radio.Button>
+        <div className='my-20'>
+          <Radio.Group defaultValue='All' className='flex' onChange={e => fetchData(e.target.value)} buttonStyle='solid'>
+            {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
+            <Radio.Button
+              value="All"
+              className='radio-btn-all'>
+              All
+            </Radio.Button>
+            <Radio.Button
+              value="LowRisk"
+              className={`radio-btn-other ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <InfoCircleOutlined className='mr-4 text-slate-500' /> Low Risk
+              </div>
+            </Radio.Button>
+            <Radio.Button
+              value="HighRisk"
+              className={`radio-btn-other ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <WarningOutlined className='mr-4 text-red-500' /> High Risk
+              </div>
+            </Radio.Button>
 
-        </Radio.Group>
+          </Radio.Group>
+        </div>
       </div>
 
       <div className='h80 w-full'></div>

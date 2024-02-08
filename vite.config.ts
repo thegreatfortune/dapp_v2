@@ -6,8 +6,6 @@ import react from '@vitejs/plugin-react-swc'
 import configCompressPlugin from './config/plugin/compress'
 import configVisualizerPlugin from './config/plugin/visualizer'
 
-// import basicSsl from '@vitejs/plugin-basic-ssl'
-
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
   // eslint-disable-next-line n/prefer-global/process
@@ -23,7 +21,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
 
-    plugins: [UnoCSS(), react(), configCompressPlugin('gzip'), configVisualizerPlugin(mode)],
+    plugins: [
+      UnoCSS(),
+      react(),
+      configCompressPlugin('gzip'),
+      configVisualizerPlugin(mode)],
 
     server: {
       // https: true,

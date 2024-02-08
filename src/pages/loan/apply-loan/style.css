@@ -1,35 +1,36 @@
 .ant-select-selection-item {
-    font-size: 14px; 
-  }
+  font-size: 14px;
+}
 
-  .ant-select-item-option-content {
-    font-size: 14px;
-  }
+.ant-select-item-option-content {
+  font-size: 14px;
+}
 
-  /* .ant-select-selection-overflow-item{
+/* .ant-select-selection-overflow-item{
     width: 120px;
   } */
 
-  .ant-select-selection-item {
-    padding-left: 16px !important;
-    padding-right: 20px !important;
-  }
-
-.ant-select-selector , .ant-input-number-affix-wrapper {
-    background-color: #171822 !important; 
-  }
-
-.ant-input-number {
-    background-color: #171822;
-    font-size: 14px;
+.ant-select-selection-item {
+  padding-left: 16px !important;
+  padding-right: 20px !important;
 }
 
-   .ant-select-selection-search {
-    background-color: #171822;
-  }
+.ant-select-selector,
+.ant-input-number-affix-wrapper {
+  background-color: #171822 !important;
+}
+
+.ant-input-number {
+  background-color: #171822;
+  font-size: 14px;
+}
+
+.ant-select-selection-search {
+  background-color: #171822;
+}
 
 
-  /* .ant-select-dropdown {
+/* .ant-select-dropdown {
     border: 1px solid #00a7efab !important;
     background-color: red !important;
     background: red !important;
@@ -38,3 +39,100 @@
 .ant-select-dropdown-menu-item{
     background-color: red !important;
 } */
+
+
+.title-box {
+  @apply block
+}
+
+.image-box {
+  @apply box-border w-full border-1 border-#303241 rounded-20 border-solid bg-#171822 flex justify-center h-auto
+}
+
+.default-image {
+  @apply flex items-center justify-center mx-25
+}
+
+.content-box {
+  @apply h-auto
+}
+
+.apply-option {
+  @apply box-border w-full h-auto gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16
+}
+
+.apply-trade-box {
+  @apply box-border w-full h-auto gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16
+}
+
+.apply-option-item {
+  @apply w-full
+}
+
+.apply-option-item-input {
+  @apply w-full h-45 my-10 items-center px-25 text-14
+}
+
+.apply-option-item-select {
+  @apply w-full h-45 my-10 items-center text-14
+}
+
+/* .title {
+  @apply w-full
+}
+
+.content {
+  @apply w-full
+} */
+
+
+@screen sm {}
+
+@screen md {
+  .title-box {
+    @apply flex
+  }
+
+  .apply-option {
+    @apply box-border w-full grid grid-cols-2 h-auto gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16
+  }
+
+  .apply-trade-box {
+    @apply box-border w-full h-auto gap-x-52 rounded-20 from-#0E0F14 to-#16273B bg-gradient-to-br px30 pb-16 pt-44 text-16
+  }
+
+  .apply-trade-option {
+    @apply box-border grid grid-cols-2 gap-x-52 rounded-20 
+  }
+
+  .apply-option-item {
+    @apply grow
+  }
+
+  .image-box {
+    @apply box-border w-300 border-1 border-#303241 rounded-20 border-solid bg-#171822 flex justify-center
+  }
+
+  .content-box {
+    @apply grow ml-30
+  }
+
+}
+
+@screen lg {
+  .image-box {
+    @apply box-border w-350 border-1 border-#303241 rounded-20 border-solid bg-#171822 flex justify-center
+  }
+}
+
+@screen xl {
+  .image-box {
+    @apply box-border w-450 border-1 border-#303241 rounded-20 border-solid bg-#171822 flex justify-center
+  }
+
+  /* .default-image {
+    @apply w-450 mt-50 mx-25
+  } */
+}
+
+@screen 2xl {}

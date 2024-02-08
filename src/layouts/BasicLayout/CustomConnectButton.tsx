@@ -180,7 +180,7 @@ const CustomConnectButton = () => {
               return (
 
                 <div>
-                  <button onClick={onOpenConnectModal} type="button" className='h36 w166 rounded-30 text-16 primary-btn' >
+                  <button onClick={onOpenConnectModal} type="button" className='connect-wallet' >
                     Connect Wallet
                   </button>
                 </div>
@@ -197,33 +197,27 @@ const CustomConnectButton = () => {
 
             return (
               <div style={{ display: 'flex', gap: 12 }} className='items-center' >
-                <div className="max-md:hidden">
+                <div className="">
                   <button
                     onClick={openChainModal}
-                    className='h36 w166 border-[#7189f7] rounded-full bg-transparent text-14 c-purple'
-                    style={{ display: 'flex', alignItems: 'center' }}
+                    className='user-chain-logo'
                     type="button"
                   >
                     {chain.hasIcon && (
                       <div
-                        className='h20 w20'
+                        className='h25 w25'
                         style={{
                           background: chain.iconBackground,
                           borderRadius: 999,
                           overflow: 'hidden',
-                          margin: 4,
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            className='h20 w20'
-                          />
+                          <Avatar src={chain.iconUrl} className='h25 w25' />
                         )}
                       </div>
                     )}
-                    {chain.name}
+                    <div className='network-name ml-5'>{chain.name}</div>
                   </button>
                 </div>
 
@@ -235,14 +229,16 @@ const CustomConnectButton = () => {
                             </button> */}
 
                 <UserDropdown>
-                  <button className="h36 flex items-center justify-between border-[#7189f7] rounded-full bg-transparent text-14 c-purple" type="button">
+                  <button className="user-chain-logo" type="button">
 
                     {/* <a onClick={e => e.preventDefault()}> */}
-                    <Avatar
-                      src={activeUser.pictureUrl ? activeUser.pictureUrl : logo}
-                      className="mr-5 h25 w25 bg-slate-200" />
-                    {/* </a> */}
-                    <div>{account.displayName}</div>
+                    <div className='h25 w25'>
+                      <Avatar
+                        src={activeUser.pictureUrl ? activeUser.pictureUrl : logo}
+                        className="h25 w25 bg-slate-200" />
+                      {/* </a> */}
+                    </div>
+                    <div className='truncate user-address ml-5 '>{account.displayName}</div>
                   </button>
                 </UserDropdown>
               </div>

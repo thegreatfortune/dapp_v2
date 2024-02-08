@@ -14,15 +14,15 @@ const BasicLayout: React.FC<IProps> = ({ showInput, children }) => {
     <div className='min-h-screen w-full flex flex-col items-center bg-cover bg-fixed bg-center bg-no-repeat bg-origin-border'
       style={{ backgroundImage: 'url(/static/marketBackground.svg)' }}
     >
-      <header className='w-2/3'>
+      <header className='body-width'>
         <Navbar title={t('nav.title')} showInput={showInput} />
       </header>
 
-      <div className="h30 w-2/3" />
-      <main className='h-full w-2/3 items-center'>
+      <div className="h30"></div>
+      <main className='body-width h-full'>
         {children}
       </main>
-      <div className='h-60 w-2/3' />
+      <div className='h-60'></div>
     </div>
   )
 }

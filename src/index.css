@@ -55,6 +55,225 @@ h1 {
   transform: scale(1.05, 1.05);
   transition: all 0.4s;
   -webkit-transform: perspective(800px) rotateX(10deg)
-  /* box-shadow: 5px 5px 30px 15px rgba(0, 0, 0, 0.25),
+    /* box-shadow: 5px 5px 30px 15px rgba(0, 0, 0, 0.25),
     -5px -5px 30px 15px rgba(0, 0, 0, 0.22); */
+}
+
+
+@layer components {
+  /* @screen xs {
+    .test-class {
+      @apply flex list-none justify-between pe-10 ps-10 text-center text-12 c-white
+    }
+  } */
+
+  /*
+  sm:640
+  md:768
+  lg:1024
+  xl:1280
+  2xl:1536
+  */
+}
+
+.body-width {
+  @apply w-4/5
+}
+
+.nav-logo {
+  @apply w200 flex items-center text-center
+}
+
+.nav-bar {
+  @apply hidden
+}
+
+.nav-bar-item {
+  @apply ml-10
+}
+
+.nav-bar-dropdown {
+  @apply inline pl-10
+}
+
+.nav-bar-dropdown-item {
+  @apply flex justify-end c-white hover:c-#5ec1d0 text-13 h25 items-center
+}
+
+.network-name {
+  @apply hidden
+}
+
+.connect-wallet {
+  @apply h30 w120 rounded-30 text-12 primary-btn
+}
+
+.user-address {
+  @apply hidden
+}
+
+.banner {
+  @apply h120
+}
+
+.personal-banner {
+  @apply h200 w-full b-rd-6 bg-cover bg-no-repeat flex justify-center
+}
+
+.page-title-box {
+  @apply inline
+}
+
+.page-title {
+  @apply text-20 c-white
+}
+
+.show-more {
+  @apply text-14 c-white
+}
+
+.radio-group {
+  @apply b-rd-6
+}
+
+.radio-btn-all {
+  @apply h30 w60 text-center items-center text-12
+}
+
+.radio-btn-other {
+  @apply h30 items-center text-12 truncate
+}
+
+.user-chain-logo {
+  @apply h36 flex items-center border-[#7189f7] rounded-full bg-transparent text-14 c-purple border-0
+}
+
+.user-basic-box {
+  @apply box-border pt-60
+}
+
+.user-basic-info {
+  @apply flex
+}
+
+.point-box {
+  @apply inline
+}
+
+@screen sm {
+  .banner {
+    @apply h180
+  }
+
+}
+
+@screen md {
+  .nav-logo {
+    @apply w160 flex items-center text-center
+  }
+
+  .connect-wallet {
+    @apply h30 w160 rounded-30 text-14 primary-btn
+  }
+
+  .banner {
+    @apply h250
+  }
+
+  .page-title-box {
+    @apply flex justify-between
+  }
+
+  .user-basic-box {
+    @apply box-border pt-60 flex justify-between
+  }
+
+  .user-basic-info {
+    @apply inline
+  }
+
+  .point-box {
+    @apply grid grid-cols-2 gap-4
+  }
+}
+
+@screen lg {
+  .body-width {
+    @apply w-2/3
+  }
+
+  .nav-bar {
+    @apply flex list-none justify-between pe-20 ps-20 text-center text-13 c-white
+  }
+
+  .nav-bar-dropdown {
+    @apply hidden
+  }
+
+  .user-chain-logo {
+    @apply user-chain-logo border-2
+  }
+
+  .network-name {
+    @apply inline truncate
+  }
+
+  .user-address {
+    @apply inline
+  }
+
+  .banner {
+    @apply h280
+  }
+
+  .personal-banner {
+    @apply personal-banner h300
+  }
+
+  .radio-btn-all {
+    @apply h35 w100 text-center items-center text-14
+  }
+
+  .radio-btn-other {
+    @apply h35 items-center text-14
+  }
+
+  .user-basic-box {
+    @apply user-basic-box felx
+  }
+
+
+
+}
+
+@screen xl {
+  .page-title {
+    @apply text-24 c-white
+  }
+
+  .show-more {
+    @apply text-18 c-white
+  }
+
+  .personal-banner {
+    @apply personal-banner h350
+  }
+
+  .point-box {
+    @apply grid grid-cols-4 gap-4
+  }
+}
+
+@screen 2xl {
+  .nav-bar-item {
+    @apply ml-20
+  }
+
+  .page-title {
+    @apply text-30 c-white
+  }
+
+  .show-more {
+    @apply text-20 c-white
+  }
 }

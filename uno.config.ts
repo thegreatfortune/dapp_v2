@@ -5,9 +5,11 @@ import {
   presetTypography,
   presetUno,
   presetWebFonts,
-  transformerDirectives,
+  // transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
+
+import transformerDirectives from '@unocss/transformer-directives'
 
 export default defineConfig({
   shortcuts: [
