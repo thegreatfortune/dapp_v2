@@ -76,12 +76,11 @@ const Trade = () => {
     <div className='m-auto'>
       <img src={marketBanner} alt="" className='m-auto h280 w-full b-rd-20 object-cover' />
       <div className='h80 w-full'></div>
-
       <div className='page-title-box'>
         <div className='my-20'>
-          <h2 className='page-title'>
+          <span className='page-title'>
             🔥 Hot Trade
-          </h2>
+          </span>
         </div>
         <div className='my-20'>
           <Radio.Group defaultValue='All' className='flex' onChange={e => fetchData(e.target.value)} buttonStyle='solid'>
