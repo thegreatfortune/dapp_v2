@@ -1,4 +1,4 @@
 # Design
 
-deploy to vercel
+deploy to vercel for new project
 
