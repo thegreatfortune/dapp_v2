@@ -10,8 +10,8 @@ interface IProps {
 
 class IncomeInfo {
   extractable: string | undefined
-  liquidation: string | undefined
-  repayment: string | undefined
+  liquidate: string | undefined
+  repay: string | undefined
   dividend: string | undefined
 }
 
@@ -43,7 +43,7 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
           const repayment = await processCenterContract?.getLenderToRepayMoney(tokenId)
           const dividend = await processCenterContract?.getShareProfit(tokenId)
 
-          setIncomeInfo(preState => ({ ...preState, extractable: String(extractable), liquidation: String(liquidation), repayment: String(repayment), dividend: String(dividend) }))
+          setIncomeInfo(preState => ({ ...preState, extractable: String(extractable), liquidate: String(liquidation), repay: String(repayment), dividend: String(dividend) }))
         }
       }
       catch (error) {
@@ -54,18 +54,18 @@ const IncomeCalculation: React.FC<IProps> = ({ tradeId, isOrderOriginator }) => 
     fetchData()
   }, [tradeId, isOrderOriginator, browserContractService])
 
-  return (<div className='flex gap-x-24'>
+  return (<div className='flex gap-x-20'>
     {
       // TODO 取消注释
       Number(incomeInfo.extractable ?? 0) > 0
       && <div className='ml-16'>
         <Select
-          className='w180'
+          className='h-40'
           defaultValue={`Extractable: $${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()}`}
           options={[
             { label: `Extractable: $${Number.parseFloat(ethers.formatUnits(incomeInfo.extractable ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.extractable ?? 0)} + U` },
-            { label: `Liquidation: $${Number.parseFloat(ethers.formatUnits(incomeInfo.liquidation ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.liquidation ?? 0)} U` },
-            { label: `Repayment: $${Number.parseFloat(ethers.formatUnits(incomeInfo.repayment ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.repayment ?? 0)} U` },
+            { label: `Liquidate: $${Number.parseFloat(ethers.formatUnits(incomeInfo.liquidate ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.liquidate ?? 0)} U` },
+            { label: `Repay: $${Number.parseFloat(ethers.formatUnits(incomeInfo.repay ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.repay ?? 0)} U` },
             { label: `Dividend: $${Number.parseFloat(ethers.formatUnits(incomeInfo.dividend ?? 0)).toLocaleString()}`, value: `${ethers.formatUnits(incomeInfo.dividend ?? 0)} U` },
           ]}
           size='middle'

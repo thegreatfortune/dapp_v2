@@ -40,7 +40,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 
 const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
   return (
-    <div className="w-300 card box-border flex flex-col cursor-pointer border-2 border-#303241 rounded-8 border-solid"
+    <div className="card box-border w-300 flex flex-col cursor-pointer border-2 border-#303241 rounded-10 border-solid"
     >
       {/* <div className="card box-border flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822]"> */}
       {/* <img
@@ -52,7 +52,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
           currentTarget.src = cardPic
         }}
       /> */}
-      <div className='h-261 rounded-t-8 bg-[#F1F8FF]'>
+      <div className='h-261 rounded-t-10 bg-[#F1F8FF]'>
         <Image
           preview={false}
           src={item?.picUrl}
@@ -77,7 +77,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
       // }}
       >
         <div className='h10 w-full'></div>
-        <h2 className="m0 h35 w-250 truncate p0 text-20 font-semibold c-#37A4F8">{item.loanName}</h2>
+        <h2 className="m0 h35 w-250 truncate p0 text-20 c-#37A4F8 font-semibold">{item.loanName}</h2>
         <div className='h8 w-full'></div>
 
         <div className='flex justify-between'>
@@ -85,7 +85,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
             <li className='h18 flex flex-col text-14 c-#999999'>
               Loan Amount
             </li>
-            <li className='h29 text-17 font-mono slashed-zero c-#FFFFFF'>
+            <li className='h29 text-17 c-#FFFFFF font-mono slashed-zero'>
               ${Number.parseFloat(BigNumber(item.loanMoney ?? 0).div(BigNumber(10 ** 18)).toFixed(2)).toLocaleString()}
             </li>
             <li>

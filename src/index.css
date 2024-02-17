@@ -160,6 +160,56 @@ h1 {
   @apply inline
 }
 
+.loan-detail-info {
+  @apply inline
+}
+
+.loan-detail-title {
+  @apply text-22 font-bold
+}
+
+.loan-detail-status {
+  @apply text-14 rounded-6 box-border h-35 flex items-center justify-center p-10
+}
+
+.loan-detail-btn {
+  @apply mr-8 h40 w-120 b-rd-20 primary-btn
+}
+
+.loan-detail-option {
+  @apply grid grid-cols-2 gap-4
+}
+
+.loan-detail-option-item {
+  @apply mx-5 my-10 h-60 w-350 list-none border-2 rounded-10 border-solid border-#2d2f3d bg-#171822
+}
+
+.loan-detail-option-title {
+  @apply h30 flex items-center justify-center text-12 c-#D1D1D1
+}
+
+.loan-detail-option-content {
+  @apply flex justify-center text-left text-14 font-semibold
+}
+
+.balance-chart {
+  @apply w-full h-380 mb-20
+}
+
+.balance-info {
+  @apply
+}
+
+.token-info-box {
+  @apply grid grid-cols-1 gap-20
+}
+
+.token-info-item {
+  @apply rounded-18 h-150 border-2 border-solid border-#2d2f3d p-10 flex flex-col
+}
+
+/* @apply border-2 b-rd-20 bg-cover bg-no-repeat h-180 border-solid border-#2d2f3d */
+
 @screen sm {
   .banner {
     @apply h180
@@ -173,7 +223,7 @@ h1 {
   }
 
   .connect-wallet {
-    @apply h30 w160 rounded-30 text-14 primary-btn
+    @apply h35 w160 rounded-30 text-14 primary-btn
   }
 
   .banner {
@@ -195,6 +245,41 @@ h1 {
   .point-box {
     @apply grid grid-cols-2 gap-4
   }
+
+  .loan-detail-info {
+    @apply flex
+  }
+
+  .loan-detail-title {
+    @apply text-24 font-bold
+  }
+
+  .loan-detail-option {
+    @apply grid grid-cols-2 gap-4
+  }
+
+  .loan-detail-option-item {
+    @apply mx-5 my-10 w-280 list-none border-2 rounded-10 border-solid p-10 border-#2d2f3d bg-#171822
+  }
+
+  .loan-detail-option-title {
+    @apply loan-detail-option-title text-14
+  }
+
+  .loan-detail-option-content {
+    @apply loan-detail-option-content text-16
+  }
+
+  .balance-chart {
+    @apply w-1/2 h-380 mb-20
+  }
+
+  .token-info-box {
+    @apply grid grid-cols-2 gap-20
+  }
+
+  
+
 }
 
 @screen lg {
@@ -242,8 +327,33 @@ h1 {
     @apply user-basic-box felx
   }
 
+  .loan-detail-title {
+    @apply text-28 font-bold w-auto
+  }
 
+  .loan-detail-option {
+    @apply grid grid-cols-4 gap-10 col-auto
+  }
 
+  .loan-detail-option-item {
+    @apply loan-detail-option-item w-140
+  }
+
+  .loan-detail-option-title {
+    @apply loan-detail-option-title text-16
+  }
+
+  .loan-detail-option-content {
+    @apply loan-detail-option-content text-18
+  }
+
+  .token-info-box {
+    @apply grid grid-cols-3 gap-y-10 gap-x-10
+  }
+
+  .token-info-item {
+    @apply rounded-18 h-130 border-2 border-solid border-#2d2f3d p-8
+  }
 }
 
 @screen xl {
@@ -259,14 +369,43 @@ h1 {
     @apply personal-banner h350
   }
 
+  .loan-detail-option {
+    @apply grid grid-cols-6 gap-4
+  }
+
+  .loan-detail-option-item {
+    @apply loan-detail-option-item w-110
+  }
+
+  .loan-detail-title {
+    @apply text-32 font-bold
+  }
+
   .point-box {
     @apply grid grid-cols-4 gap-4
   }
+
+  .token-info-box {
+    @apply grid grid-cols-4 gap-6 gap-y-10
+  }
+
+  .token-info-item {
+    @apply rounded-18 h-150 border-2 border-solid border-#2d2f3d p-10
+  }
+
 }
 
 @screen 2xl {
   .nav-bar-item {
     @apply ml-20
+  }
+
+  .loan-detail-option {
+    @apply flex justify-around
+  }
+
+  .loan-detail-option-item {
+    @apply loan-detail-option-item w-130
   }
 
   .page-title {
@@ -276,4 +415,5 @@ h1 {
   .show-more {
     @apply text-20 c-white
   }
+
 }

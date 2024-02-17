@@ -217,63 +217,117 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       >
       </SModal>
 
-      <div className='flex items-end gap-4'>
-        <div className='h-50 w-280 text-32 font-400'>Repayment Plan</div>
-        <div className='mx-20 mb-5 flex text-center c-#D1D1D1'>
-          <div className='mr-10 text-18 font-semibold'>Address:</div>
-          <Address address={refundPoolAddress ?? ''} />
-        </div>
-        <div className='mx-20 mb-6 flex items-end text-center c-#D1D1D1'>
-          <div className='mr-10 text-18 font-semibold'>Arrears:</div>
-          <div className='text-18'>${Number(Number(arrears).toFixed(2)).toLocaleString()}</div>
+      <div className=''>
+        <div className='items-end gap-4 sm:flex'>
+          <div className='w-280 items-center text-24 font-400 md:text-32'>
+            Repayment Plan
+          </div>
+          <div className='flex items-center text-center c-#D1D1D1 max-sm:my-10 md:mx-10'>
+            <div className='mr-10 text-18 font-semibold'>Address:</div>
+            <Address address={refundPoolAddress ?? ''} />
+          </div>
+          <div className='flex items-end text-center c-#D1D1D1 max-sm:my-10 md:ml-10'>
+            <div className='mr-10 text-18 font-semibold'>Arrears:</div>
+            <div className='text-18'>${Number(Number(arrears).toFixed(2)).toLocaleString()}</div>
+          </div>
         </div>
       </div>
       <div className='h-30'></div>
-      <ul className='grid grid-cols-5 list-none c-#666873'>
-        <li>Time</li>
-        <li>Repayment Amount</li>
-        <li>Status</li>
-        <li>Overdue days</li>
-      </ul>
-
-      {/* <span className='c-red'>
-      </span> */}
-
-      <div
-        id="scrollableDivPlan"
-        style={{
-          // height: 400,
-          overflow: 'auto',
-        }}
-      >
-        <InfiniteScroll
-          dataLength={result?.records?.length ?? 0}
-          next={fetchData}
-          hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
-          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-          scrollableTarget="scrollableDivPlan"
+      <div className='max-md:hidden'>
+        <ul className='grid grid-cols-6 list-none c-#666873 ps-0 lg:px-20'>
+          <li>Time</li>
+          <li>Repayment Amount</li>
+          <li>Status</li>
+          <li>Overdue Days</li>
+          <li className='flex justify-center col-span-2'>Action</li>
+        </ul>
+        <div
+          id="scrollableDivPlan"
+          style={{
+            // height: 400,
+            overflow: 'auto',
+          }}
         >
-          <List
-            dataSource={result.records}
-            split={false}
-            renderItem={(item, index) => (
-              <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
-                <ul className='grid grid-cols-5 h68 w-full list-none items-center rounded-11 bg-#171822'>
-                  <li>{index + 1}. {item.repayTime}</li>
-                  <li>$ {item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</li>
-                  <li>{item.state}</li>
-                  <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
-                  <li>
-                    <div className='flex'>
-                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')} className='m-8 h40 w180 b-rd-30 primary-btn'>Liquidate</Button>
-                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')} className='m-8 h40 w180 b-rd-30 primary-btn'>Repay</Button>}
+          <InfiniteScroll
+            dataLength={result?.records?.length ?? 0}
+            next={fetchData}
+            hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
+            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            scrollableTarget="scrollableDivPlan"
+          >
+            <List
+              dataSource={result.records}
+              split={false}
+              renderItem={(item, index) => (
+                <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
+                  <ul className='grid grid-cols-6 h68 w-full list-none items-center rounded-11 bg-#171822 ps-0 lg:px-20'>
+                    <li>{index + 1}. {item.repayTime}</li>
+                    <li>$ {item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</li>
+                    <li className='truncate'>{item.state === 'OVERDUE_ARREARS' ? 'Arrears' : item.state}</li>
+                    <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
+                    <li className='col-span-2 flex flex justify-center'>
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
+                        className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button>
+                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                        className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>}
+                    </li>
+                  </ul>
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
+        </div>
+      </div>
+      <div className='md:hidden'>
+        <div
+          id="scrollableDivPlan"
+          style={{
+            // height: 400,
+            overflow: 'auto',
+          }}
+        >
+          <InfiniteScroll
+            dataLength={result?.records?.length ?? 0}
+            next={fetchData}
+            hasMore={(result?.records?.length ?? 0) < (result?.total ?? 0)}
+            loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+            scrollableTarget="scrollableDivPlan"
+          >
+            <List
+              dataSource={result.records}
+              split={false}
+              renderItem={(item, index) => (
+                <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
+                  <div key={index} className='items-between h-150 w-full flex flex-col border-2 border-#2d2f3d rounded-20 border-solid px-20 py-20 text-14'>
+                    {/* <ul className='h68 w-full list-none items-center rounded-11 bg-#171822'> */}
+                    <div className='my-4 flex grow justify-between text-15 font-bold'>
+                      <div>Time:</div>
+                      <div>{item.repayTime}</div>
                     </div>
-                  </li>
-                </ul>
-              </List.Item>
-            )}
-          />
-        </InfiniteScroll>
+                    <div className='my-4 flex grow justify-between'>
+                      <div className='text-left'>Repayment Amount:</div>
+                      <div className='text-right'>${item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</div>
+                    </div>
+                    <div className='my-4 flex grow justify-between'>
+                      <div className='text-left'>Status:</div>
+                      <div className='text-right'>{item.state}</div>
+                    </div>
+                    <div className='my-4 flex grow justify-between'>
+                      <div className='text-left'>Overdue Days:</div>
+                      <div className='text-right'>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</div>
+                    </div>
+                    <div className='my-4 flex grow justify-end'>
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
+                        className='h30 w80 b-rd-30 primary-btn'>Liquidate</Button>
+                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                        className='ml-30 h30 w80 b-rd-30 primary-btn'>Repay</Button>}
+                    </div>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
+        </div>
       </div>
     </div>
   )

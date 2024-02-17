@@ -6,6 +6,7 @@ import { Button, Divider, InputNumber, Modal, Tabs, Tooltip, message } from 'ant
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
+import Image from 'antd/es/image'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
@@ -17,6 +18,7 @@ import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
+import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -71,15 +73,15 @@ const LoanDetails = () => {
   const [activeKey, setActiveKey] = useState('1')
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
-    Invalid: <div className='box-border h40 min-w174 flex items-center justify-center rounded-4 bg-yellow'>Invalid</div>,
-    Following: <div className='box-border h40 min-w174 flex items-center justify-center rounded-4 bg-#165dff'>Ongoing fundraising </div>,
-    Trading: <div className='box-border h40 min-w174 flex items-center justify-center rounded-4 bg-#00b42a'>Transaction ongoing</div>,
-    PaidOff: <div className='box-border h40 min-w174 w174 flex items-center justify-center rounded-4 bg-#2d5c9a'>Settled transaction</div>,
-    PaidButArrears: <div className='box-border h40 min-w174 flex items-center justify-center rounded-4 bg-#ff7d00'>Amount due</div>,
-    Blacklist: <div className='ounded-4 box-border h40 min-w174 flex items-center justify-center bg-#2b2b2b'>Blacklist</div>,
-    CloseByUncollected: <div className='box-border h40 min-w174 flex items-center justify-center rounded-4 bg-#a9e1d7'>Settled transaction</div>,
-    Fail: <div></div>,
-    ClearingFail: <div></div>,
+    Invalid: <div className='loan-detail-status bg-yellow'>Invalid</div>,
+    Following: <div className='loan-detail-status bg-#165dff'>Fundraising </div>,
+    Trading: <div className='loan-detail-status bg-#00b42a'>Ongoing</div>,
+    PaidOff: <div className='loan-detail-status bg-#2d5c9a'>Settled</div>,
+    PaidButArrears: <div className='loan-detail-status bg-#ff7d00'>Amount due</div>,
+    Blacklist: <div className='loan-detail-status bg-#2b2b2b'>Blocked</div>,
+    CloseByUncollected: <div className='loan-detail-status bg-#a9e1d7'>Settled</div>,
+    Fail: <div>Failed</div>,
+    ClearingFail: <div>ClearingFail</div>,
   }
 
   useEffect(() => {
@@ -357,15 +359,15 @@ const LoanDetails = () => {
 
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-30'>
-      <div className='h80 w500 flex items-center justify-between gap-x-30 rounded-14 bg-#12131d text-center' >
+      <div className='h80 flex items-center rounded-14 bg-#12131d text-center lg:w500 max-md:justify-between lg:gap-x-30' >
         <div
-          className={`text-18 mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
+          className={`text-16 lg:text-18 mx-20 h50 w200 lg:w-240 rounded-8 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
           onClick={() => setActiveKey('1')} >Pool</div>
         {/* <div
           className={`text-18 h49 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`}
           onClick={() => setActiveKey('2')} >Operation record</div> */}
         <div
-          className={`text-18 mx-20 h50 w220 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`}
+          className={`text-16 lg:text-18 mx-20 h50 w200 lg:w-240 rounded-8 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '3' && 'primary-btn'}`}
           onClick={() => setActiveKey('3')} >Shares Market</div>
       </div>
     </div>)
@@ -644,145 +646,146 @@ const LoanDetails = () => {
       }
     </SModal>
 
-    <div className='flex'>
+    <div className='loan-detail-info'>
       <InfoCard item={loanInfo} />
-
       {/* <div className="w-32"></div> */}
-
-      <div className='ml-40 h419 grow'>
-
-        <div className='flex justify-between lh-33'>
+      <div className='ml-30 grow max-md:ml-0'>
+        <div className='flex flex-col max-md:mt-30 md:min-h-420'>
+          <div className='mb-20 flex items-center'>
+            <div className='loan-detail-title mr-30'>
+              {loanInfo.loanName}
+            </div>
+            <div>
+              {
+                // Loan status && countdown
+                loanInfo.state === 'Following'
+                  ? <div className='items-center lg:flex'>
+                    {loanStateELMap[loanInfo.state]}
+                    <div className='flex items-center lg:mx-10' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</div>
+                  </div>
+                  : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
+              }
+            </div>
+          </div>
+          <div className='mb20 grow'>
+            <div>
+              <Tooltip title={loanInfo.usageIntro}>
+                {loanInfo.usageIntro}
+              </Tooltip>
+            </div>
+          </div>
           <div className=''>
-            <div className='m-8 flex text-center'>
-              {loanInfo.state === 'Following'
-                ? <div className='flex gap-x-20'>
-                  {loanStateELMap[loanInfo.state]}
-                  <span className='lh-49' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</span>
+            {
+              prePage === 'market' && loanInfo.state === 'Following'
+              && <div className='flex'>
+                {/* <div className='m-8 w180'></div> */}
+                {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+                <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+                {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+              </div>
+            }
+
+            {
+              prePage === 'lend'
+              && <div className='flex'>
+                {
+                  loanInfo.state !== 'CloseByUncollected'
+                  && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
+                }
+                <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+              </div>
+            }
+
+            <div className='flex flex-wrap' hidden={prePage === 'lend' || prePage === 'market'}>
+              {
+                (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+                && <div>
+                  <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
                 </div>
-                : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
               }
               {
+                prePage === 'loan'
+                && <div>
+                  <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+                </div>
+              }
+              {
+                // Income calculate
                 loanInfo.state !== 'Invalid'
-                && <span>
+                && <div>
                   {(prePage === 'loan' || prePage === 'lend')
                     && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
                   }
-                </span>
+                </div>
               }
-
             </div>
-
-            <div className='mb20 ml-8 mt30 text-32 font-bold'> {loanInfo.loanName}</div>
-
-            <div className="h12" />
-          </div>
-          {
-            prePage === 'market' && loanInfo.state === 'Following'
-            && <div className='flex'>
-              {/* <div className='m-8 w180'></div> */}
-              {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-              <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
-            </div>
-          }
-
-          {
-            prePage === 'lend'
-            && <div className='flex'>
-              {
-                loanInfo.state !== 'CloseByUncollected'
-                && <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
-              }
-              <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
-            </div>
-          }
-
-          <div className='flex' hidden={prePage === 'lend' || prePage === 'market'}>
-            {
-              (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
-              && <div>
-                <Button loading={refundLoading} className='m-8 h40 w180 b-rd-30 primary-btn' onClick={refund}>Liquidate</Button>
-              </div>
-            }
-            {
-              prePage === 'loan'
-              && <div>
-                <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
-              </div>
-            }
           </div>
         </div>
-
-        <p className='line-clamp-3 my-6 ml-8 h91 overflow-hidden text-16 font-400'>
-          <Tooltip title={loanInfo.usageIntro}>
-            {loanInfo.usageIntro}
-          </Tooltip>
-        </p>
-        <Divider></Divider>
-        {/* <div className="h20" /> */}
-
-        <div className='h100 flex grow items-center gap-x-19 px-20 text-center'>
-
-          {/* <div className='flex'> */}
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Loan amount</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
-            {/* <li> {loanInfo.loanMoney && BigNumber(loanInfo.loanMoney).div(BigNumber(10).pow(18)).toFixed(2)}</li> */}
-          </ul>
-
-          <Divider type='vertical' className='box-border h-78 bg-#fff' />
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Installment</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'> {loanInfo.repayCount} / {loanInfo.periods}</li>
-          </ul>
-          {/* </div> */}
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Interest</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
-          </ul>
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Dividend</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
-          </ul>
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Risk level</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
-          </ul>
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Total shares</li>
-            <li className="h10" />
-            <li className='w-100 text-18 font-semibold'>{loanInfo.goalCopies}</li>
-          </ul>
-
-          <ul className='m0 grow list-none p0'>
-            <li className='h60 flex items-center justify-center text-16 c-#D1D1D1'>Minimum required shares</li>
-            <li className="h10" />
-            <li className='text-18 font-semibold'>{loanInfo.minGoalQuantity}</li>
-          </ul>
-
-        </div>
-
       </div>
     </div>
-
     <Divider></Divider>
-    <div className="h30" />
+
+    <div className='loan-detail-option'>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Loan Amount</li>
+          <li className='loan-detail-option-content'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Installments
+            <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
+              title="Repaid / Total">
+              <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+            </Tooltip>
+          </li>
+          <li className='loan-detail-option-content'> {loanInfo.repayCount} / {loanInfo.periods}</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Interest</li>
+          <li className='loan-detail-option-content'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Dividend</li>
+          <li className='loan-detail-option-content'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Risk Level</li>
+          <li className='loan-detail-option-content'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>Total Shares</li>
+          <li className='loan-detail-option-content'>{loanInfo.goalCopies}</li>
+        </div>
+      </div>
+      <div className='flex justify-center'>
+        <div className='loan-detail-option-item'>
+          <li className='loan-detail-option-title'>MRS
+            <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
+              title="Minimum Required Shares">
+              <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+            </Tooltip>
+          </li>
+          <li className='loan-detail-option-content'>{loanInfo.minGoalQuantity}</li>
+        </div>
+      </div>
+    </div>
+    <Divider></Divider>
     <Tabs
       defaultActiveKey="1"
       items={items}
       activeKey={activeKey}
       onChange={key => setActiveKey(key)}
       renderTabBar={renderTabBar} />
-
   </div >)
 }
 

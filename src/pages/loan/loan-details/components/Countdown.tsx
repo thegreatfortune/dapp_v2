@@ -40,19 +40,17 @@ function Countdown(props: Props) {
   }, [props.targetTimestamp])
 
   return (
-    <span className='flex'>
+    <div className='flex items-center text-center max-lg:mt-10'>
       {/* 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
       {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。 */}
 
-      <span className='text-14 font-400'>
-      Fundraising countdown
-      </span>
-      <div className="w8"></div>
-      <span className='text-16 c-#FDB600'>
+      <div className='flex text-14 font-400 items-center text-center'>
+        Countdown:
+      </div>
+      <div className='ml-10 flex  text-16 c-#FDB600 items-center text-center'>
         {timeRemaining.days}day {timeRemaining.hours}:{timeRemaining.minutes}:{timeRemaining.seconds}
-      </span>
-
-    </span>
+      </div>
+    </div>
   )
 }
 

@@ -60,8 +60,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const [topUpTitle, setTopUpTitle] = useState('Deposit')
 
-  // console.log(111, transactionPair)
-
   useEffect(() => {
     // if (tokenInfos.length <= 1)
     //   return
@@ -217,14 +215,14 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   // )
   return (
     <div className='w-full'>
-
       <SwapModal
         resetSwapTokenInfo={resetSwapTokenInfo}
         tradeId={tradeId}
         currentTokenInfo={currentTokenInfo}
         open={isSwapModalOpen}
-        onCancel={() => setSetIsModalOpen(false)} />
+        onCancel={() => setSetIsModalOpen(false)} >
 
+      </SwapModal>
       <SModal
         open={isDepositModalOpen}
         content={
@@ -272,112 +270,107 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         } */}
 
       </SModal>
-
-      <div className="h560 w-full flex justify-between">
-        <div className="s-container box-border h560 w634 flex justify-between p-x-30 p-y-16">
-          <div>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center c-#D1D1D1'>
-                <div className='mr-10 w-80 text-20 font-semibold'>Address:</div>
-                <div className="w-150 text-16"><Address address={capitalPoolAddress ?? ''} /></div>
-              </div>
-              <Button className='h30 w80 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button>
-            </div>
-
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center c-#D1D1D1'>
-                <div className='mr-10 w-80 text-20 font-semibold'>Total:</div>
-                <div className="w-150 text-16"></div>
-              </div>
-              <div className="text-right text-30">$ {Number(Number(tokenTotals).toFixed(2)).toLocaleString()}</div>
-              {/* <Button className='h25 w72 b-rd-30 p0 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button> */}
-            </div>
-            {/* </div> */}
-
-            <div className='w-500 border-4 border-red-500'>
+      <div className="w-full">
+        <div className='flex items-center justify-between'>
+          <div className='w-full md:flex'>
+            <div className='balance-chart'>
               <BalanceChart />
             </div>
-
-            {/* <div id='KLineContainer' className='h500 w574 bg-white' style={{ height: '500' }}></div> */}
+            <div className='grid grid-cols-2 h-90 grow place-content-between max-md:my-30 md:ml-20 md:mt-35 md:h-350'>
+              <div className='flex'>
+                <div className='mr-4 text-18 font-semibold md:mr-10 md:text-20'>Address:</div>
+                <div className="text-16"><Address address={capitalPoolAddress ?? ''} /></div>
+              </div>
+              <div className='flex justify-end'>
+                <Button className='h30 b-rd-30 md:w120 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button>
+              </div>
+              <div className='text-24 font-semibold md:text-32'>Total:
+              </div>
+              <div className="text-right text-24 font-semibold md:text-32">$ {Number(Number(tokenTotals).toFixed(2)).toLocaleString()}</div>
+            </div>
           </div>
         </div>
-
-        {/* <div className="w48" /> */}
-        {/* rootClassName='grid grid-cols-2 w715 gap-x-36' */}
-        <Tabs
-          centered
-          size="large"
-          rootClassName='w-715'
-          tabPosition="top"
-          // renderTabBar={renderTabBar}
-          items={
-            Array.from({ length: Math.ceil(uniqueTokenInfos.length / 6) }, (_, index) =>
-              uniqueTokenInfos.slice(index * 6, (index + 1) * 6),
-            ).map((chunk, index) => ({
-              label: `${index + 1}`.toString(),
-              key: (index + 1).toString(),
-              children: (
-                <div className='grid grid-cols-2 w715 gap-x-36 gap-y-20'>
-                  {chunk.map((item, _index) => (
-                    <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
-                      <div className="flex items-center justify-between gap-x-6 px-20 pt-31 text-center">
-                        <div className='flex items-center'>
-                          <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} />
-                          <div className='ml-10 flex items-center text-20 c-#fff'>
-                            {item.name} ({
-                              // 如果余额大于零，则计算比例并显示结果
-                              Number(item.balance) !== 0
-                                ? BigNumber(item.dollars ?? 0)
-                                  .div((tokenTotals))
-                                  .times(100)
-                                  .toFixed(2)
-                                : <span>
-                                  0
-                                </span>
-                            }%)
+        <div className=''>
+          <Tabs
+            centered
+            size="large"
+            rootClassName=''
+            tabPosition="top"
+            // renderTabBar={renderTabBar}
+            items={
+              Array.from({ length: Math.ceil(uniqueTokenInfos.length / 10) }, (_, index) =>
+                uniqueTokenInfos.slice(index * 10, (index + 1) * 10),
+              ).map((chunk, index) => ({
+                label: `${index + 1}`.toString(),
+                key: (index + 1).toString(),
+                children: (
+                  <div className='token-info-box'>
+                    {chunk.map((item, _index) => (
+                      // <div key={item.name} className="s-container h160 w321 bg-cover" style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}>
+                      <div key={item.name}
+                        className="token-info-item"
+                      // style={{ backgroundImage: 'url(/static/cardBackGround.png)' }}
+                      >
+                        <div className="flex grow items-center justify-between px-10 text-center xl:px-1">
+                          <div className='flex items-center'>
+                            <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} />
+                            <div className='ml-10 flex items-center text-20 c-#fff md:text-16'>
+                              {item.name} ({
+                                // 如果余额大于零，则计算比例并显示结果
+                                Number(item.balance) !== 0
+                                  ? BigNumber(item.dollars ?? 0)
+                                    .div((tokenTotals))
+                                    .times(100)
+                                    .toFixed(2)
+                                  : <span>
+                                    0
+                                  </span>
+                              }%)
+                            </div>
+                          </div>
+                          <div className='flex items-center text-right text-20 c-#fff'>
+                            <span className='ml-10 mt-5 text-11 c-green lg:ml-5'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
                           </div>
                         </div>
-                        <div className='flex items-center text-right text-20 c-#fff'>
-                          <span className='ml-10 mt-5 text-11 c-green'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
+                        <div className='mt-20 flex grow items-center justify-end px-10 xl:px-1'>
+                          <div className='slahed-zero h30 text-24 xl:text-22 font-mono'>
+                            ${toCurrencyString((item.dollars ? Number(BigNumber(item.dollars)) : 0))}
+                          </div>
+                          {/* <Button id={item.name} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button> */}
+                          {
+                            item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                              ? <Button id={item.name} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                              : null
+                          }
                         </div>
-                      </div>
-                      <div className='mt-10 flex items-end justify-end px-20'>
-                        <div className='slahed-zero mt-25 h30 text-24 lh-38 font-mono'>${toCurrencyString((item.dollars ? Number(BigNumber(item.dollars)) : 0))}</div>
-                        {
-                          item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                            ? <Button id={item.name} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                            : null
-                        }
-                      </div>
 
-                      {/* <div className='mb-16 mr-16 flex justify-end'> */}
-                      {/* //Test 用户创建的才能看 */}
-                      {/* {
+                        {/* <div className='mb-16 mr-16 flex justify-end'> */}
+                        {/* //Test 用户创建的才能看 */}
+                        {/* {
                       item.name !== 'USDC'
                       ? <Button className='float-right mr-22 mt-4 h30 w50 b-rd-30 p0 text-center primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
                       : null
                     } */}
-                      {/* // 下面这个才是要的 */}
-                      {/* </div> */}
-                    </div>
-                  ))}
-                </div>
-              ),
-            }))
-          }>
-          {/* 其他 Tabs 相关的配置和渲染 */}
-        </Tabs>
-
+                        {/* // 下面这个才是要的 */}
+                        {/* </div> */}
+                      </div>
+                    ))}
+                  </div>
+                ),
+              }))
+            }>
+            {/* 其他 Tabs 相关的配置和渲染 */}
+          </Tabs>
+        </div>
       </div>
-
-      <div className="h100" />
-      <Divider></Divider>
+      <div className="h50" />
+      {/* <Divider></Divider> */}
+      {/* <div className="h800" /> */}
       <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
 
-      <div className="h100" />
+      <div className="h50" />
       <Divider></Divider>
       <LoanHistory tradeId={String(tradeId ?? '')} />
-
       <div className="40" />
     </div >
   )

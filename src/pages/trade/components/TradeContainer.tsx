@@ -35,9 +35,9 @@ const TradeContainer: React.FC<ICardsContainerProps> = ({ title, isViewAll, to }
 
       <div className='h23 w-full'></div>
 
-      <div className='flex flex-wrap gap-x-46 gap-y-50'>
+      {/* <div className='flex flex-wrap gap-x-46 gap-y-50'>
       666
-      </div>
+      </div> */}
 
     </div>)
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { TooltipProps } from 'recharts'
-import { Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import * as dayjs from 'dayjs'
@@ -60,15 +60,39 @@ export default function BalanceChart() {
         return null
     }
 
-    return <LineChart width={500} height={500} data={balanceData}>
-        <XAxis dataKey="time" />
-        <YAxis />
-        <Tooltip content={<CustomTooltip />} />
-        <Line
-            type="monotone"
-            dataKey="balance"
-            stroke="#8884d8"
-            dot={{ strokeWidth: 2 }}
-            strokeWidth={4} />
-    </LineChart>
+    return <ResponsiveContainer width='100%' height='100%' >
+        <AreaChart data={balanceData}>
+            <defs>
+                <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2451B7" stopOpacity={0.4} />
+                    <stop offset="75%" stopColor="#2451B7" stopOpacity={0.05} />
+                </linearGradient>
+            </defs>
+            <Area
+                dataKey="balance"
+                stroke="#2451B7"
+                fill="url(#color)"
+                dot={{ strokeWidth: 0.2 }}
+                strokeWidth={3}
+            />
+            <XAxis
+                hide={true}
+                dataKey="time"
+                axisLine={false}
+                tickLine={false}
+            />
+
+            <YAxis
+                dataKey="balance"
+                hide={true}
+                axisLine={false}
+                tickLine={false}
+                tickCount={6}
+                tickFormatter={number => `$${number.toFixed(2)}`}
+            />
+            <Tooltip content={<CustomTooltip />} />
+
+            <CartesianGrid opacity={0.1} vertical={false} />
+        </AreaChart>
+    </ResponsiveContainer>
 }
