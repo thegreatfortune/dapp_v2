@@ -57,7 +57,7 @@ const Market = () => {
         />
       </div>
       <div className="h44" />
-      <div className='flex justify-around'>
+      {/* <div className='flex justify-around'>
         <div className='relative h-241 min-w-380 w-380 flex flex-col rounded-15 bg-#141d29'>
           <div className='absolute left--40 top--20 h-280 w-280 flex items-center justify-center opacity-5'>
             <Image preview={false} src={tlogo}></Image>
@@ -69,7 +69,7 @@ const Market = () => {
             }}>FOLLOW FINANCE</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {
         (hotStarterData.records && hotStarterData.records.length > 0)
