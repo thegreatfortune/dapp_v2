@@ -41,7 +41,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
 
 const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies }) => {
   return (
-    <div className="card box-border w-300 flex flex-col cursor-pointer border-2 border-#303241 rounded-15 border-solid"
+    <div className="relative card box-border w-300 flex flex-col cursor-pointer border-2 border-#303241 rounded-15 border-solid"
     >
       {/* <div className="card box-border flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822]"> */}
       {/* <img
@@ -53,6 +53,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
           currentTarget.src = cardPic
         }}
       /> */}
+      <div className='absolute right-15 top-10 text-slate-500 font-semibold'>ID: {item.tradeId}</div>
       <div className='rounded-t-15 bg-[#F1F8FF]'>
         <Image
           preview={false}
@@ -60,8 +61,8 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
           src={tlogo}
           alt={item.loanName}
           className="rounded-t-15 object-cover"
-          // width={300}
-          // height={261}
+        // width={300}
+        // height={261}
         // placeholder={
         //   <Image
         //     preview={false}
