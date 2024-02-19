@@ -2,6 +2,7 @@ import Button from 'antd/es/button'
 import { ethers } from 'ethers'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
+import tlogo from '@/assets/images/portalImages/tLogo.png'
 
 interface CardProps {
   item: Models.MyFollowVo
@@ -17,21 +18,22 @@ interface CustomAvatarProps {
 
 const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
   return (
-    <div className="box-border h-429 w-315 flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
+    <div className="box-border flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
       <div className='relative'>
-        <div className="absolute w-8.7/10 flex justify-between p-l-18 c-black">
+        <div className="absolute w-300 flex justify-between p-l-18 c-black">
           <span># {item.marketBalance?.tokenId}</span>
           <span>X {item.marketBalance?.amount}</span>
         </div>
         <img
-          src={item?.loan?.picUrl}
+          // src={item?.loan?.picUrl}
+          src={tlogo}
           alt={item.loan?.loanName}
-          className="h-232 w-266 rounded-16 object-cover"
+          className="rounded-b-15 object-cover"
         />
       </div>
       <div className='text-left'>
         <div className='h11 w-full'></div>
-        <h2 className="m0 h35 p0 text-22 font-semibold c-#37A4F8">{item.loan?.loanName}</h2>
+        <h2 className="m0 h35 p0 text-22 c-#37A4F8 font-semibold">{item.loan?.loanName}</h2>
 
         <div className='flex justify-between'>
           <ul className='mt-6 flex flex-col list-none gap-8 p0'>
