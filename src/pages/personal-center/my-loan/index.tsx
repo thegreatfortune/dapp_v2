@@ -7,6 +7,7 @@ import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
 import TransparentCard from '@/pages/components/TransparentCard'
+import { dataLength } from 'ethers'
 
 const MyLoan = () => {
   const { activeUser } = useUserStore()
@@ -75,7 +76,7 @@ const MyLoan = () => {
   }
 
   return (
-    <div>
+    <div className='w-full'>
       <div className='h-30'></div>
       <div className='text-28'>My Loans</div>
       <Divider></Divider>
@@ -96,7 +97,7 @@ const MyLoan = () => {
           scrollableTarget="loanScrollableDiv"
         >
           <List
-            grid={{ gutter: 16, column: 4 }}
+            grid={{ gutter: 8, column: 4, xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 3 }}
             dataSource={loanOrderVOList}
             renderItem={renderItem}
           />

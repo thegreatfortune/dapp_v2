@@ -80,11 +80,11 @@ const Market = () => {
         && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData.records} to='/view-all?title=💥Popular to follow&category=PopularToFollow' />
       }
 
-      {
+      {/* {
         (blacklist.total && blacklist.total > 0)
           ? <MarketCardsContainer image={blacklist1} key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist&category=Blacklist' />
           : null
-      }
+      } */}
 
     </div >
   )
