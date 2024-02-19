@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Modal, Tabs, Tooltip, message } from 'antd'
+import { Button, Divider, InputNumber, Modal, Progress, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
@@ -682,6 +682,9 @@ const LoanDetails = () => {
                 {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
                 <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
                 {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+                <div className='ml-30 flex grow items-center justify-center'>
+                  <Progress percent={90} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
+                </div>
               </div>
             }
 
@@ -718,6 +721,7 @@ const LoanDetails = () => {
                   }
                 </div>
               }
+
             </div>
           </div>
         </div>
