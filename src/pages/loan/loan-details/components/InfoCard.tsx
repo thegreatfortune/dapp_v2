@@ -3,18 +3,23 @@ import type { Models } from '@/.generated/api/models'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import { isContractAddress } from '@/utils/regex'
 import cardPic from '@/assets/images/default.png'
-
+import tlogo from '@/assets/images/portalImages/tLogo.png'
 interface CardProps {
   item: Models.LoanOrderVO
 }
 
 const InfoCard: React.FC<CardProps> = ({ item }) => {
   return (
-    <div className="box-border h-419 w-321 flex flex-col border-2 border-#303241 rounded-8 border-solid bg-[#171822]">
-      <div className='rounded-t-8 bg-[#F1F8FF]'>
-        <Image width={317} src={item.picUrl}
-          fallback={cardPic}
+    <div className="box-border flex flex-col border-2 border-#303241 rounded-15 border-solid bg-[#171822]">
+      <div className='w-300 rounded-t-15 bg-[#F1F8FF]'>
+        <Image
+          // height={261}
+          // width={261}
+          src={tlogo}
+          // src={item.picUrl}
+          // fallback={cardPic}
           preview={false}
+          className="rounded-t-15 object-cover"
         />
       </div>
       <div className='p-15'>
