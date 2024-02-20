@@ -529,7 +529,6 @@ const ApplyLoan = () => {
             if (selectError)
               setSelectError(false)
           }
-
           setPublishBtnLoading(true)
           onFinish(loanRequisitionEditModel)
         }}
@@ -1067,7 +1066,7 @@ const ApplyLoan = () => {
             type="primary"
             htmlType="submit"
             loading={publishBtnLoading}
-            className="h65 w200 text-18 primary-btn b-rd-10"
+            className="h65 w200 b-rd-10 text-18 primary-btn"
           >
             {t('applyLoan.btn.submit')}
           </Button>

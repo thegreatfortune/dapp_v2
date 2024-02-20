@@ -1,5 +1,6 @@
 import Button from 'antd/es/button'
 import { ethers } from 'ethers'
+import { Image } from 'antd'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
@@ -18,20 +19,18 @@ interface CustomAvatarProps {
 
 const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
   return (
-    <div className="box-border flex flex-col cursor-pointer border-2 border-#303241 rounded-16 border-solid bg-[#171822] p-24">
-      <div className='relative'>
-        <div className="absolute w-300 flex justify-between p-l-18 c-black">
-          <span># {item.marketBalance?.tokenId}</span>
-          <span>X {item.marketBalance?.amount}</span>
-        </div>
-        <img
+    <div className="card relative box-border w-300 flex flex-col cursor-pointer border-2 border-#303241 rounded-15 border-solid">
+      <div className="absolute right-15 top-10 text-slate-500 font-semibold">ID: {item.marketBalance?.tokenId}</div>
+      <div className='rounded-t-15 bg-[#F1F8FF]'>
+        <Image
           // src={item?.loan?.picUrl}
+          preview={false}
           src={tlogo}
-          alt={item.loan?.loanName}
+          // alt={item.loan?.loanName}
           className="rounded-b-15 object-cover"
         />
       </div>
-      <div className='text-left'>
+      <div className='px-25 pb-20 pt-15 text-left'>
         <div className='h11 w-full'></div>
         <h2 className="m0 h35 p0 text-22 c-#37A4F8 font-semibold">{item.loan?.loanName}</h2>
 
@@ -43,9 +42,9 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
             <li className='h29 text-16 c-#FFFFFF'>
               $ {toCurrencyString(Number(ethers.formatUnits(item.loan?.loanMoney ?? 0)))}
             </li>
-            <li>
+            {/* <li>
               <Button className='mt-4 h30 w-110 text-14 primary-btn' >Sell</Button>
-            </li>
+            </li> */}
           </ul>
 
           <ul className='mt-6 flex flex-col list-none gap-8 p0'>
@@ -55,9 +54,9 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
             <li className='h29 text-16 c-#FFFFFF' style={{ color: item.loan?.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
               {item.loan?.tradingForm === 'SpotGoods' ? 'Low' : 'Hight'}
             </li>
-            <li>
+            {/* <li>
               <Button className='mt-4 h30 w-110 text-14 primary-btn' >Extract</Button>
-            </li>
+            </li> */}
           </ul>
 
         </div>

@@ -68,6 +68,7 @@ async function handleTransaction(
       throw new Error('HandleTransaction: Your transaction failed. Please try again.')
     }
 
+    console.log('test receipt return info', receipt)
     return receipt
   }
   catch (error) {

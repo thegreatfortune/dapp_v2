@@ -161,6 +161,7 @@ const PersonalCenter = () => {
     }
     return true
   }
+
   async function claimUsdc() {
     if (faucetText === 'Completed!') {
       setFaucetText('Claim')

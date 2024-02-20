@@ -10,7 +10,8 @@ interface CardProps {
 
 const InfoCard: React.FC<CardProps> = ({ item }) => {
   return (
-    <div className="box-border flex flex-col border-2 border-#303241 rounded-15 border-solid bg-[#171822]">
+    <div className="relative box-border flex flex-col border-2 border-#303241 rounded-15 border-solid bg-[#171822]">
+      <div className='absolute right-15 top-10 text-slate-500 font-semibold'>ID: {item.tradeId}</div>
       <div className='w-300 rounded-t-15 bg-[#F1F8FF]'>
         <Image
           // height={261}
