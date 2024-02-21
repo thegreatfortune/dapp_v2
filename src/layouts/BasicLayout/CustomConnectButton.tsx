@@ -44,7 +44,8 @@ const CustomConnectButton = () => {
           if (havenUser)
             switchActiveUser(havenUser)
 
-          logInOrSwitching(address)
+          // logInOrSwitching(address)
+          await login(address)
         }
       },
       onDisconnect() {

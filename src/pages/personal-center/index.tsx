@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
 import PointsDetail from './components/PointsDetail'
+import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
 import copyImg from '@/assets/images/loan-details/copy.svg'
@@ -64,13 +65,13 @@ const PersonalCenter = () => {
   const items: TabsProps['items'] = [
     {
       key: '1',
-      label: 'Points detail',
-      children: <PointsDetail />,
+      label: 'NFT',
+      children: <NftDetail />,
     },
     {
       key: '2',
-      label: 'NFT',
-      children: <div>NFT</div>,
+      label: 'Points detail',
+      children: <PointsDetail />,
     },
   ]
 
@@ -126,8 +127,8 @@ const PersonalCenter = () => {
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-10'>
       <div className='h80 flex items-center gap-x-30 rounded-14 bg-#12131d px-30 text-center' >
-        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >Points detail</div>
-        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >NFT</div>
+        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >NFT</div>
+        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Points detail</div>
       </div>
     </div>)
   }
