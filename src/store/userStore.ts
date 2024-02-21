@@ -78,9 +78,9 @@ const useUserStore = create<IUserState>()(
         },
 
         signOut: async () => {
-          await disconnect()
-
           set(state => ({ activeUser: new User() }))
+
+          await disconnect()
 
           // localStorage.removeItem('persist:userStore')
         },

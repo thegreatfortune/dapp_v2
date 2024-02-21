@@ -20,7 +20,7 @@ const CustomConnectButton = () => {
 
   const { resetProvider, setNewProvider } = useBrowserContract()
 
-  const { signIn, signOut } = useUserStore()
+  const { signIn, signOut, clear } = useUserStore()
 
   const [canLogin, setCanLogin] = useState(false)
 
@@ -48,7 +48,8 @@ const CustomConnectButton = () => {
         }
       },
       onDisconnect() {
-        signOut()
+        // signOut()
+        clear()
         navigator('/market')
       },
     },
@@ -93,7 +94,7 @@ const CustomConnectButton = () => {
       // await initializeProvider (newProvider)
     }
     catch (error) {
-      signOut()
+      clear()
       navigator('/market')
       message.error('login failed')
       console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
