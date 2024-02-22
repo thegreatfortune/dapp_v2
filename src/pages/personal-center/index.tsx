@@ -17,6 +17,8 @@ import copyImg from '@/assets/images/loan-details/copy.svg'
 import { TwitterService, UserInfoService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
+import { formatUnits } from 'ethers'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -37,20 +39,27 @@ const PersonalCenter = () => {
 
   const location = useLocation()
 
+  const [fofBalance, setFofBalance] = useState(0)
+
   useEffect(() => {
     async function getUserInfo() {
       const searchParams = new URLSearchParams(location.search)
       const isBind = searchParams.get('bind') || undefined
-
       if (isBind) {
         const user = await UserInfoService.ApiUserInfo_GET()
-
         setUserInfo({ ...activeUser, ...user, id: user.userId })
       }
     }
 
+    async function setBalance() {
+      const fofBalance = await browserContractService?.getFofBalance()
+      const result = formatUnits(fofBalance ?? 0, 18)
+      setFofBalance(Number(result))
+    }
+
     // location.pathname === '/personal-center' && getUserInfo()
     getUserInfo()
+    setBalance()
   }, [location])
 
   useEffect(() => {
@@ -275,6 +284,10 @@ const PersonalCenter = () => {
           <Divider></Divider>
           <div className='mt-30 box-border items-center'>
             <div className='point-box'>
+              <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span>$FOF</span>
+                <span>{toCurrencyString(fofBalance)}</span>
+              </div>
               <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
                 <span>Points</span>
                 <span>{((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2)}</span>

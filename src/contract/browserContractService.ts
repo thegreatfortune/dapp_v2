@@ -1,14 +1,13 @@
 import { Contract, ethers } from 'ethers'
 import { message, notification } from 'antd'
 import BigNumber from 'bignumber.js'
-import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowFaucet, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, FollowRouter, ProcessCenter, UniswapV3 } from '@/abis/types'
+import type { ERC20, ERC3525, FollowCapitalPool, FollowFactory, FollowFaucet, FollowFiERC1155, FollowHandle, FollowManage, FollowMarket, FollowRefundFactory, FollowRefundPool, FollowRouter, ProcessCenter, UniswapV3 } from '@/abis/types'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followRefundFactory_ABI from '@/abis/FollowRefundFactory.json'
 import followRefundPool_ABI from '@/abis/FollowRefundPool.json'
 import processCenter_ABI from '@/abis/ProcessCenter.json'
 import followManage_ABI from '@/abis/FollowManage.json'
-import ERC20_ABI from '@/abis/ERC20.json'
 import FollowMarket_ABI from '@/abis/FollowMarket.json'
 import FollowRouter_ABI from '@/abis/FollowRouter.json'
 import FollowFaucet_ABI from '@/abis/FollowFaucet.json'
@@ -17,10 +16,13 @@ import FollowFaucet_ABI from '@/abis/FollowFaucet.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import FollowHandle_ABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
+import ERC20_ABI from '@/abis/ERC20.json'
+import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
 import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
 import { tokenList } from '@/contract/tradingPairTokenMap'
+import { threadId } from 'worker_threads'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -430,6 +432,34 @@ export class BrowserContractService {
     return createContract<ERC3525>(
       import.meta.env.VITE_ERC3525_ADDRESS,
       ERC3525_ABI,
+      this.signer,
+    )
+  }
+
+  /**
+   * ERC1155
+   *
+   * @return {*}  {Promise<ERC3525>}
+   * @memberof BrowserContractService
+   */
+  async getERC1155Contract() {
+    return createContract<FollowFiERC1155>(
+      import.meta.env.VITE_ERC1155_ADDRESS,
+      ERC1155_ABI,
+      this.signer,
+    )
+  }
+
+  /**
+   * ERC20 $FOF
+   *
+   * @return {*}  {Promise<ERC3525>}
+   * @memberof BrowserContractService
+   */
+  async getERC20FOFContract() {
+    return createContract<ERC20>(
+      import.meta.env.VITE_ERC20_ADDRESS,
+      ERC20_ABI,
       this.signer,
     )
   }
@@ -1507,5 +1537,55 @@ export class BrowserContractService {
 
     const transaction = await processCenterContract.supply(import.meta.env.VITE_USDC_TOKEN, amount, tradeId)
     return handleTransaction(transaction)
+  }
+
+  /**
+   * ERC20
+   */
+  async getFofBalance() {
+    const fofContract = await this.getERC20FOFContract()
+    const balance = await fofContract.balanceOf(this.signer)
+    return balance
+  }
+
+  /**
+   * ERC1155
+   */
+  async getNftBalance() {
+    const fofContract = await this.getERC1155Contract()
+    const balanceOfOctopus = await fofContract.balanceOf(this.signer, 0)
+    const balanceOfDolphin = await fofContract.balanceOf(this.signer, 1)
+    const balanceOfShark = await fofContract.balanceOf(this.signer, 2)
+    const balanceOfWhale = await fofContract.balanceOf(this.signer, 3)
+    return [balanceOfOctopus, balanceOfDolphin, balanceOfShark, balanceOfWhale]
+    // return [0n, 0n, 0n, 0n]
+  }
+
+  /**
+   * ERC1155 whitelist
+   */
+  async checkWhitelist() {
+    const erc1155Contract = await this.getERC1155Contract()
+    const whitelist = await erc1155Contract.getIfWhitelist(this.signer)
+    return whitelist
+  }
+
+  /**
+   * approve $fof for ERC1155
+   */
+  async approveFofForERC1155(amount: bigint) {
+    const erc1155Contract = await this.getERC1155Contract()
+    const fofContract = await this.getERC20FOFContract()
+    const res = await fofContract.approve(erc1155Contract.getAddress(), amount)
+    return handleTransaction(res)
+  }
+
+  /**
+   * do mint nft
+   */
+  async mintNft(id: bigint) {
+    const erc1155Contract = await this.getERC1155Contract()
+    const res = await erc1155Contract.doMint(id, 1)
+    return handleTransaction(res)
   }
 }
