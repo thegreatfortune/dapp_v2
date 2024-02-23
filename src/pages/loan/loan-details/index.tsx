@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Modal, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
-import { ethers } from 'ethers'
+import { ethers, formatUnits } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import Image from 'antd/es/image'
 import InfoCard from './components/InfoCard'
@@ -47,6 +47,9 @@ const LoanDetails = () => {
   const [totalPrice, setTotalPrice] = useState('1.00')
 
   const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
+  const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [claimAmount, setClaimAmount] = useState(0)
+  const [claimBtndisable, setClaimBtndisable] = useState(true)
 
   const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
@@ -331,6 +334,39 @@ const LoanDetails = () => {
     }
   }
 
+  const checkFofAmount = async () => {
+    if (!browserContractService)
+      return
+    if (tradeId) {
+      const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
+      if (fofBalance > 0)
+        setClaimBtndisable(false)
+      const result = formatUnits(fofBalance ?? 0, 18)
+      setClaimAmount(Number(result))
+    }
+  }
+
+  const claim = async () => {
+    setClaimBtndisable(true)
+    if (!browserContractService || !tradeId)
+      return
+
+    try {
+      const res = await browserContractService?.claimFof(Number(tradeId))
+      if (res?.status !== 1)
+        throw new Error('Failed')
+      message.success('Transaction successfully!')
+      setTimeout(() => {
+        setClaimAmount(0)
+        setClaimModalOpen(false)
+      }, 3000)
+    }
+    catch (error) {
+      message.error('Transaction failed!')
+      setClaimBtndisable(false)
+    }
+  }
+
   async function onSetMax() {
     setCheckMaxLoading(true)
   }
@@ -598,6 +634,28 @@ const LoanDetails = () => {
       </div>
     </Modal>
 
+    <Modal open={claimModalOpen}
+      className='h238 w464 b-rd-8'
+      maskClosable={false}
+      okText="Claim"
+      onOk={claim}
+      onCancel={() => {
+        setClaimBtndisable(true)
+        setClaimModalOpen(false)
+        setClaimAmount(0)
+      }}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: claimBtndisable }}
+    >
+      <div>
+        <h2>
+          Claim:
+        </h2>
+        <div>
+          You can claim {claimAmount} $FOF!
+        </div>
+      </div>
+    </Modal>
+
     <SModal open={isModalOpen}
       maskClosable={false}
       content=
@@ -674,7 +732,7 @@ const LoanDetails = () => {
               </Tooltip>
             </div>
           </div>
-          <div className=''>
+          <div className='flex'>
             {
               prePage === 'market' && loanInfo.state === 'Following'
               && <div className='flex'>
@@ -721,7 +779,12 @@ const LoanDetails = () => {
                   }
                 </div>
               }
-
+            </div>
+            <div>
+              <Button className='loan-detail-btn' onClick={() => {
+                checkFofAmount()
+                setClaimModalOpen(true)
+              }}>Claim $FOF</Button>
             </div>
           </div>
         </div>

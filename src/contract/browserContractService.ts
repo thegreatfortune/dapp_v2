@@ -1587,4 +1587,16 @@ export class BrowserContractService {
     const res = await erc1155Contract.doMint(id, 1)
     return handleTransaction(res)
   }
+
+  async checkClaimableFofAmount(id: number) {
+    const routerContract = await this.getFollowRouterContract()
+    const result = await routerContract.getUserEarnTokenAmount(id)
+    return result
+  }
+
+  async claimFof(id: number) {
+    const routerContract = await this.getFollowRouterContract()
+    const res = await routerContract.claimToken(id)
+    return handleTransaction(res)
+  }
 }
