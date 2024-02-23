@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 // import { IntegralRecordService } from '@/.generated/api'
 import { Badge, Button, Image, Modal, message } from 'antd'
 import { formatUnits } from 'ethers'
-import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
+
+// import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import octopus from '@/assets/images/nft/octopus.png'
 import dolphin from '@/assets/images/nft/dolphin.png'
 import shark from '@/assets/images/nft/shark.png'
@@ -20,21 +21,18 @@ const NftDetail = () => {
     const [loading, setLoading] = useState(false)
     const [fofChecking, setFofChecking] = useState(false)
     const [mintWithoutWhitelist, setMintWithoutWhitelist] = useState(false)
-    const [canMint, setCanMint] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [disableMintButton, setDisableMintButton] = useState(true)
+    const [loadingBtnDisable, setLoadingBtnDisable] = useState(false)
+    const [fofCheckingBtnDisable, setFofCheckingBtnDisable] = useState(false)
 
     const [id, setId] = useState(0)
 
     const [whitelistResult, setWhitelistResult] = useState('')
     const [fofAmountResult, setFofAmountResult] = useState('')
 
-    const [approved, setApproved] = useState(0)
-    const [mint, setMint] = useState(0)
-
     useEffect(() => {
         async function setNftBalance() {
-            console.log('refreshed')
             const nftBalances = await browserContractService?.getNftBalance()
             if (nftBalances)
                 setNftBalances(nftBalances)
@@ -48,10 +46,12 @@ const NftDetail = () => {
         if (inWhitelist) {
             setWhitelistResult('Congratulations!!! You are in the whitelist!')
             setDisableMintButton(false)
+            setLoadingBtnDisable(true)
         }
         else {
             setWhitelistResult('Sorry!!! You are not in the whitelist!')
             setMintWithoutWhitelist(true)
+            setLoadingBtnDisable(true)
         }
         setLoading(false)
     }
@@ -62,7 +62,6 @@ const NftDetail = () => {
         switch (id) {
             case 1:
                 if ((fofBalance ?? 0) > BigInt('200000000000000000000000')) {
-                    setCanMint(true)
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Dolphin NFT!')
                 }
@@ -72,7 +71,6 @@ const NftDetail = () => {
                 break
             case 2:
                 if ((fofBalance ?? 0) > BigInt('400000000000000000000000')) {
-                    setCanMint(true)
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Shark NFT!')
                 }
@@ -82,7 +80,6 @@ const NftDetail = () => {
                 break
             case 3:
                 if ((fofBalance ?? 0) > BigInt('800000000000000000000000')) {
-                    setCanMint(true)
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Whale NFT!')
                 }
@@ -93,7 +90,6 @@ const NftDetail = () => {
             case 0:
             default:
                 if ((fofBalance ?? 0) > BigInt('100000000000000000000000')) {
-                    setCanMint(true)
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Octopus NFT!')
                 }
@@ -102,6 +98,7 @@ const NftDetail = () => {
                 }
                 break
         }
+        setFofCheckingBtnDisable(true)
         setFofChecking(false)
     }
 
@@ -113,37 +110,17 @@ const NftDetail = () => {
     }
 
     const doMint = async () => {
-        setApproved(1)
         setDisableMintButton(true)
-        try {
-            if (approved !== 2) {
-                const approveRes = await browserContractService?.approveFofForERC1155(BigInt('100000000000000000000000') * BigInt(2 ** id))
-                if (approveRes?.status === 1)
-                    setApproved(2)
-                else
-                    throw new Error('Approval Failed')
-            }
-        }
-        catch (error) {
-            setApproved(3)
-            setDisableMintButton(false)
-            message.error('Transaction Failed')
-            return false
-        }
         try {
             const mintRes = await browserContractService?.mintNft(BigInt(id))
             if (mintRes?.status === 1) {
-                // setPoolIsCreated(true)
-                setMint(2)
                 setOkText('Finished')
                 setTimeout(() => {
                     setMintModalOpen(false)
                     setWhitelistResult('')
                     setMintWithoutWhitelist(false)
-                    setCanMint(false)
                     setId(0)
                     setFofAmountResult('')
-                    setApproved(0)
                     setDisableMintButton(true)
                     setLoading(false)
                     setFofChecking(false)
@@ -156,7 +133,6 @@ const NftDetail = () => {
             }
         }
         catch (error) {
-            setMint(3)
             setDisableMintButton(false)
             message.error('Transaction Failed')
             return false
@@ -173,83 +149,27 @@ const NftDetail = () => {
                 setWhitelistResult('')
                 setMintModalOpen(false)
                 setMintWithoutWhitelist(false)
-                setCanMint(false)
                 setId(0)
                 setFofAmountResult('')
-                setApproved(0)
                 setDisableMintButton(true)
                 setLoading(false)
                 setFofChecking(false)
+                setLoadingBtnDisable(false)
+                setFofCheckingBtnDisable(false)
             }}
             okButtonProps={{ disabled: disableMintButton, className: 'primary-btn w-100' }}
             cancelButtonProps={{ className: 'w-100' }}
         >
             <div>
                 <h2>Mint</h2>
-                <div className='mx-10 my-20 flex justify-between text-18'>
-                    <Button className='w-180 primary-btn' onClick={checkWhitelist} loading={loading}>Check Whitelist</Button>
+                <div className='my-30 flex justify-between text-18'>
                     <div>{whitelistResult}</div>
+                    <Button className='w-180 primary-btn' onClick={checkWhitelist} loading={loading} disabled={loadingBtnDisable}>Check Whitelist</Button>
                 </div>
-                <div className='mx-10 my-20 flex justify-between text-18' hidden={!mintWithoutWhitelist}>
-                    <Button className='w-180 primary-btn' onClick={() => checkFofAmount(id)} loading={fofChecking}>Check $FOF Amount</Button>
+                <div className='mt-30 mb-40 flex justify-between text-18' hidden={!mintWithoutWhitelist}>
                     <div>{fofAmountResult}</div>
+                    <Button className='w-180 primary-btn' onClick={() => checkFofAmount(id)} loading={fofChecking} disabled={fofCheckingBtnDisable}>Check $FOF Amount</Button>
                 </div>
-
-                <div className='mx-10 my-20 text-18' hidden={!canMint}>
-                    {
-                        approved === 0
-                            ? <div className='flex items-center justify-between'>
-                                <div className='flex'>
-                                    <div className='mr-8'>1.</div>Approve your $FOF token</div>
-                                <div className='m-8'><BorderOutlined /></div>
-                            </div>
-                            : approved === 1
-                                ? <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>1.</div>Approving your $FOF token...</div>
-                                    <div className='m-8'><LoadingOutlined /></div>
-                                </div>
-                                : approved === 2
-                                    ? <div className='flex items-center justify-between'>
-                                        <div className='flex'>
-                                            <div className='mr-8'>1.</div>Approved for mint NFT!</div>
-                                        <div className='m-8'><CheckOutlined className='text-green-500' /></div>
-                                    </div>
-                                    : <div className='flex items-center justify-between'>
-                                        <div className='flex'>
-                                            <div className='mr-8'>1.</div>Approval failed!</div>
-                                        <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                                    </div>
-                    }
-                </div>
-                <div className='mx-10 my-20 text-18' hidden={!canMint}>
-                    {
-                        mint === 0
-                            ? <div className='flex items-center justify-between'>
-                                <div className='flex'>
-                                    <div className='mr-8'>2.</div>Mint</div>
-                                <div className='m-8'><BorderOutlined /></div>
-                            </div>
-                            : mint === 1
-                                ? <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>1.</div>Minting...</div>
-                                    <div className='m-8'><LoadingOutlined /></div>
-                                </div>
-                                : mint === 2
-                                    ? <div className='flex items-center justify-between'>
-                                        <div className='flex'>
-                                            <div className='mr-8'>1.</div>Mint successfully!</div>
-                                        <div className='m-8'><CheckOutlined className='text-green-500' /></div>
-                                    </div>
-                                    : <div className='flex items-center justify-between'>
-                                        <div className='flex'>
-                                            <div className='mr-8'>1.</div>Mint failed!</div>
-                                        <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                                    </div>
-                    }
-                </div>
-
             </div>
         </Modal>
 
