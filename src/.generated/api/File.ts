@@ -29,7 +29,7 @@ export class FileService {
     });
 
     return request<string>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/file/upload',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/file/upload',
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },

@@ -11,7 +11,7 @@ export class MarketBalanceService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.MyFollowVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/market/balance/pageMyFollow',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/market/balance/pageMyFollow',
       method: 'GET',
       params: {
         ...params,

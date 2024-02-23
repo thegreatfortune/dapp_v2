@@ -70,7 +70,7 @@ const Test = () => {
   async function USDC_mint() {
     try {
       // debugger
-      await browserContractService?.ERC20_mint(import.meta.env.VITE_USDC_TOKEN)
+      await browserContractService?.ERC20_mint(import.meta.env.VITE_TOKEN_USDC)
     }
     catch (error) {
       console.log('%c [ error ]-75', 'font-size:13px; background:#dceb80; color:#ffffc4;', error)

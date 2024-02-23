@@ -11,7 +11,7 @@ export class LendingService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.LendingLoanVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/lending/pageInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/lending/pageInfo',
       method: 'GET',
       params: {
         ...params,

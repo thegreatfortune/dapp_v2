@@ -185,7 +185,7 @@ const PersonalCenter = () => {
 
     setExecuting(true)
 
-    const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_USDC_TOKEN)
+    const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_TOKEN_USDC)
 
     try {
       if (res?.status === 1) {

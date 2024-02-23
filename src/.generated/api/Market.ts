@@ -11,7 +11,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.TokenMarketVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/market/pageInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/market/pageInfo',
       method: 'GET',
       params: {
         ...params,
@@ -27,7 +27,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.MarketLoanVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/market/pageTradingLoan',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/market/pageTradingLoan',
       method: 'GET',
       params: {
         ...params,

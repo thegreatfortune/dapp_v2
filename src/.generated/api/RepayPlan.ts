@@ -11,7 +11,7 @@ export class RepayPlanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.RepayPlanVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/repayPlan/pageInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/repayPlan/pageInfo',
       method: 'GET',
       params: {
         ...params,

@@ -11,7 +11,7 @@ export class CreditRecordService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.CreditRecordVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/creditRecord/page',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/creditRecord/page',
       method: 'GET',
       params: {
         ...params,

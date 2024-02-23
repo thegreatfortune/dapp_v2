@@ -7,7 +7,7 @@ export class UserInfoService {
   /** 获取当前登录用户的信息 GET /api/user/info/ */
   static async ApiUserInfo_GET(options?: { [key: string]: any }) {
     return request<Models.UserInfoVo1>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/user/info/',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/user/info/',
       method: 'GET',
       ...(options || {}),
     });
@@ -16,7 +16,7 @@ export class UserInfoService {
   /** 整合的计分信息 GET /api/user/info/totalScoreInfo */
   static async ApiUserInfoTotalScoreInfo_GET(options?: { [key: string]: any }) {
     return request<Models.TotalScoreVo>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/user/info/totalScoreInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/user/info/totalScoreInfo',
       method: 'GET',
       ...(options || {}),
     });

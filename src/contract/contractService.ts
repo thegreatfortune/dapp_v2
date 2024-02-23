@@ -23,6 +23,6 @@ export class ContractService {
    * @memberof ContractService
    */
   static getFollowFactoryContract() {
-    return useJsonContract<FollowFactory>(import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS, followFactory_ABI)
+    return useJsonContract<FollowFactory>(import.meta.env.VITE_CORE_CAPITAL_FACTORY, followFactory_ABI)
   }
 }

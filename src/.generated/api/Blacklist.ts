@@ -11,7 +11,7 @@ export class BlacklistService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.BlacklistVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/blacklist/pageInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/blacklist/pageInfo',
       method: 'GET',
       params: {
         ...params,

@@ -17,7 +17,7 @@ export default function useContracts() {
    * @memberof ContractService
    */
   function useJsonFollowFactoryContract() {
-    return useJsonContract<FollowFactory>(import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS, followFactory_ABI)
+    return useJsonContract<FollowFactory>(import.meta.env.VITE_CORE_CAPITAL_FACTORY, followFactory_ABI)
   }
 
   /**
@@ -26,7 +26,7 @@ export default function useContracts() {
    * @return {*}
    */
   // function useBrowserFollowFactoryContract() {
-  //   return useBrowserContract<FollowFactory>(import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS, followFactory_ABI)
+  //   return useBrowserContract<FollowFactory>(import.meta.env.VITE_CORE_CAPITAL_FACTORY, followFactory_ABI)
   // }
 
   return {

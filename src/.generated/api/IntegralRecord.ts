@@ -11,7 +11,7 @@ export class IntegralRecordService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.IntegralVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'api/integralRecord/page',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/integralRecord/page',
       method: 'GET',
       params: {
         ...params,

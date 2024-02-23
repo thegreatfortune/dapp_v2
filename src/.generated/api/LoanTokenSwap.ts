@@ -11,7 +11,7 @@ export class LoanTokenSwapService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.LoanTokenSwapVo>>({
-      url: import.meta.env.VITE_API_ENDPOINT + 'loan/tokenSwap/pageInfo',
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'loan/tokenSwap/pageInfo',
       method: 'GET',
       params: {
         ...params,

@@ -23,7 +23,7 @@ const useBrowserContracts = () => {
 
     return {
       followFactoryContract: createContract<FollowFactory>(
-        import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,
+        import.meta.env.VITE_CORE_CAPITAL_FACTORY,
         followFactory_ABI,
         signer,
       ),

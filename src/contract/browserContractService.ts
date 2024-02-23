@@ -208,14 +208,14 @@ export class BrowserContractService {
 
     // if (LocalEnv) {
     //   return createContract<LocalContractType<typeof LocalEnv, LocalERC20>>(
-    //     token ?? import.meta.env.VITE_USDC_TOKEN,
+    //     token ?? import.meta.env.VITE_TOKEN_USDC,
     //     LocalERC20_ABI,
     //     this.signer,
     //   )
     // }
 
     return createContract<LocalContractType<typeof LocalEnv, ERC20>>(
-      token ?? import.meta.env.VITE_USDC_TOKEN,
+      token ?? import.meta.env.VITE_TOKEN_USDC,
       ERC20_ABI,
       this.signer,
     )
@@ -233,7 +233,7 @@ export class BrowserContractService {
     //   return this._ERC20Contract
 
     return createContract<UniswapV3>(
-      token ?? import.meta.env.VITE_TEST_LIQUIDITY_ADDRESS,
+      token ?? import.meta.env.VITE_CORE_LIQUIDITY,
       TEST_LIQUIDITY_ABI,
       this.signer,
     )
@@ -247,7 +247,7 @@ export class BrowserContractService {
    */
   async getFollowMarketContract(marketId?: bigint) {
     const contract = createContract<FollowMarket>(
-      import.meta.env.VITE_FOLLOW_MARKET_ADDRESS,
+      import.meta.env.VITE_CORE_MARKET,
       FollowMarket_ABI,
       this.signer,
     )
@@ -268,7 +268,7 @@ export class BrowserContractService {
    */
   async getFollowHandleContract() {
     return createContract<FollowHandle>(
-      import.meta.env.VITE_FOLLOW_HANDLE_ADDRESS,
+      import.meta.env.VITE_CORE_HANDLE,
       FollowHandle_ABI,
       this.signer,
     )
@@ -282,7 +282,7 @@ export class BrowserContractService {
    */
   async getFollowRouterContract() {
     return createContract<FollowRouter>(
-      import.meta.env.VITE_FOLLOW_ROUTER_ADDRESS,
+      import.meta.env.VITE_CORE_ROUTER,
       FollowRouter_ABI,
       this.signer,
     )
@@ -317,7 +317,7 @@ export class BrowserContractService {
     //   return this._FollowFactoryContract
 
     return this._FollowFactoryContract = createContract<FollowFactory>(
-      import.meta.env.VITE_FOLLOW_FACTORY_ADDRESS,
+      import.meta.env.VITE_CORE_CAPITAL_FACTORY,
       followFactory_ABI,
       this.signer,
     )
@@ -358,7 +358,7 @@ export class BrowserContractService {
 
     // if (LocalEnv) {
     //   const followManageContract = await this.getFollowManageContract()
-    //   const res = await this._refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await followManageContract.getAddress())
+    //   const res = await this._refundPoolContract.testSet(import.meta.env.VITE_TOKEN_USDC, await followManageContract.getAddress())
     //   console.log('%c [ testSet ]-320', 'font-size:13px; background:#4ad8b6; color:#8efffa;', res)
     //   await res?.wait()
     // }
@@ -377,7 +377,7 @@ export class BrowserContractService {
       return this._refundFactoryContract
 
     return this._refundFactoryContract = createContract<FollowRefundFactory>(
-      import.meta.env.VITE_REFUND_FACTORY_ADDRESS,
+      import.meta.env.VITE_CORE_REFUND_FACTORY,
       followRefundFactory_ABI,
       this.signer,
     )
@@ -394,7 +394,7 @@ export class BrowserContractService {
       return this._processCenterContract
 
     return this._processCenterContract = createContract<ProcessCenter>(
-      import.meta.env.VITE_PROCESS_CENTER_ADDRESS,
+      import.meta.env.VITE_CORE_PROCESS_CENTER,
       processCenter_ABI,
       this.signer,
     )
@@ -412,10 +412,10 @@ export class BrowserContractService {
 
     // const provider = new JsonRpcProvider(import.meta.env.VITE_RPC)
 
-    // return new Contract(import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS, followManage_ABI, provider) as unknown as FollowManage
+    // return new Contract(import.meta.env.VITE_CORE_MANAGE, followManage_ABI, provider) as unknown as FollowManage
 
     return this._followManageContract = createContract<FollowManage>(
-      import.meta.env.VITE_FOLLOW_MANAGE_ADDRESS,
+      import.meta.env.VITE_CORE_MANAGE,
       followManage_ABI,
       this.signer,
     )
@@ -429,7 +429,7 @@ export class BrowserContractService {
    */
   async getERC3525Contract() {
     return createContract<ERC3525>(
-      import.meta.env.VITE_ERC3525_ADDRESS,
+      import.meta.env.VITE_CORE_SHARES,
       ERC3525_ABI,
       this.signer,
     )
@@ -443,7 +443,7 @@ export class BrowserContractService {
    */
   async getERC1155Contract() {
     return createContract<FollowFiERC1155>(
-      import.meta.env.VITE_ERC1155_ADDRESS,
+      import.meta.env.VITE_CORE_NFT,
       ERC1155_ABI,
       this.signer,
     )
@@ -457,7 +457,7 @@ export class BrowserContractService {
    */
   async getERC20FOFContract() {
     return createContract<ERC20>(
-      import.meta.env.VITE_ERC20_ADDRESS,
+      import.meta.env.VITE_CORE_FOF,
       ERC20_ABI,
       this.signer,
     )
@@ -471,7 +471,7 @@ export class BrowserContractService {
       return this._faucetContract
 
     return this._faucetContract = createContract<FollowFaucet>(
-      import.meta.env.VITE_FOLLOW_FAUCET_ADDRESS,
+      import.meta.env.VITE_CORE_FAUCET,
       FollowFaucet_ABI,
       this.signer,
     )
@@ -842,7 +842,7 @@ export class BrowserContractService {
 
     console.log('%c [ tid, price, amount ]-616', 'font-size:13px; background:#8d01d2; color:#d145ff;', tid, price, amount)
 
-    const decimals = await this.ERC20_decimals(import.meta.env.VITE_USDC_TOKEN)
+    const decimals = await this.ERC20_decimals(import.meta.env.VITE_TOKEN_USDC)
     console.log('%c [ decimals ]-630', 'font-size:13px; background:#7c3b4e; color:#c07f92;', decimals)
 
     const wei = ethers.parseUnits(String(price), decimals)
@@ -871,7 +871,7 @@ export class BrowserContractService {
     console.log('%c [ marketId ]-654', 'font-size:13px; background:#8e6612; color:#d2aa56;', marketId)
     const marketContract = await this.getFollowMarketContract(marketId)
 
-    const state = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, await marketContract.getAddress(), amount)
+    const state = await this.ERC20_approve(import.meta.env.VITE_TOKEN_USDC, await marketContract.getAddress(), amount)
 
     if (!state)
       throw new Error(' approval failed ')
@@ -1143,7 +1143,7 @@ export class BrowserContractService {
   async capitalPool_lend(copies: bigint, tradeId: bigint) {
     const followRouterContract = await this.getFollowRouterContract()
 
-    const approveState = await this.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_USDC_TOKEN, await followRouterContract.getAddress())
+    const approveState = await this.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_TOKEN_USDC, await followRouterContract.getAddress())
 
     if (!approveState)
       throw new Error('Authorization failed')
@@ -1317,7 +1317,7 @@ export class BrowserContractService {
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(
-      import.meta.env.VITE_USDC_TOKEN,
+      import.meta.env.VITE_TOKEN_USDC,
       swapToken,
       fee,
       ethers.parseEther(String(1)),
@@ -1395,8 +1395,8 @@ export class BrowserContractService {
   // async followHandle_swapERC20(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
   //   const contract = await this.getFollowHandleContract()
 
-  //   // const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount)
-  //   const res = await this.capitalPool_newApproveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_USDC_TOKEN, await contract.getAddress(), amount, buyOrSell)
+  //   // const res = await this.capitalPool_approveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_TOKEN_USDC, await contract.getAddress(), amount)
+  //   const res = await this.capitalPool_newApproveHandle(tradeId, buyOrSell === BigInt(1) ? swapToken : import.meta.env.VITE_TOKEN_USDC, await contract.getAddress(), amount, buyOrSell)
 
   //   if (!res) {
   //     message.error('approveHandle is error')
@@ -1493,7 +1493,7 @@ export class BrowserContractService {
   //   if (LocalEnv) {
   //     const fmc = await this.getFollowManageContract()
 
-  //     const fmce = await refundPoolContract.testSet(import.meta.env.VITE_USDC_TOKEN, await fmc.getAddress())
+  //     const fmce = await refundPoolContract.testSet(import.meta.env.VITE_TOKEN_USDC, await fmc.getAddress())
   //     console.log('%c [ fmce ]-844', 'font-size:13px; background:#c4d0d6; color:#ffffff;', fmce)
   //     handleTransaction(fmce)
   //   }
@@ -1527,14 +1527,14 @@ export class BrowserContractService {
 
     const processCenterAddress = await processCenterContract.getAddress()
 
-    const approve = await this.ERC20_approve(import.meta.env.VITE_USDC_TOKEN, processCenterAddress, amount)
+    const approve = await this.ERC20_approve(import.meta.env.VITE_TOKEN_USDC, processCenterAddress, amount)
 
     if (!approve) {
       message.error('approve is error')
       throw new Error('approve is error')
     }
 
-    const transaction = await processCenterContract.supply(import.meta.env.VITE_USDC_TOKEN, amount, tradeId)
+    const transaction = await processCenterContract.supply(import.meta.env.VITE_TOKEN_USDC, amount, tradeId)
     return handleTransaction(transaction)
   }
 

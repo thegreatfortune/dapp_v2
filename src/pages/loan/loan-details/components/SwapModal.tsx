@@ -34,7 +34,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
-    address: import.meta.env.VITE_USDC_TOKEN,
+    address: import.meta.env.VITE_TOKEN_USDC,
     amount: '',
   })
 
@@ -55,7 +55,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
       setYouPay(() => ({
         token: 'USDC',
-        address: import.meta.env.VITE_USDC_TOKEN,
+        address: import.meta.env.VITE_TOKEN_USDC,
         amount: '',
       }))
 
@@ -190,7 +190,7 @@ const SwapModal: React.FC<IProps> = (props) => {
     setYouPay(
       {
         token: 'USDC',
-        address: import.meta.env.VITE_USDC_TOKEN,
+        address: import.meta.env.VITE_TOKEN_USDC,
         amount: '',
       },
     )

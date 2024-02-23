@@ -26,32 +26,32 @@ import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
 
-const localhost = {
-  ...polygonMumbai,
-  id: 31337,
-  name: 'Localhost',
-  network: 'localhost',
-  rpcUrls: {
-    ...polygonMumbai.rpcUrls,
-    ...{
-      localhost: {
-        http: [import.meta.env.VITE_ALCHEMY_ID],
-        webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2/ubn43XNUtUXvA2ScuHqBUwiMqIPCW6ET'],
-      },
-      default: {
-        http: [import.meta.env.VITE_ALCHEMY_ID],
-      },
-      public: {
-        http: [import.meta.env.VITE_ALCHEMY_ID],
-      },
-    },
-  },
-}
+// const localhost = {
+//   ...polygonMumbai,
+//   id: 31337,
+//   name: 'Localhost',
+//   network: 'localhost',
+//   rpcUrls: {
+//     ...polygonMumbai.rpcUrls,
+//     ...{
+//       localhost: {
+//         http: [import.meta.env.VITE_ALCHEMY_ID],
+//         webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2/ubn43XNUtUXvA2ScuHqBUwiMqIPCW6ET'],
+//       },
+//       default: {
+//         http: [import.meta.env.VITE_ALCHEMY_ID],
+//       },
+//       public: {
+//         http: [import.meta.env.VITE_ALCHEMY_ID],
+//       },
+//     },
+//   },
+// }
 
 const chainList = [polygonMumbai, arbitrum]
 
-if (import.meta.env.DEV)
-  chainList.push(localhost as any)
+// if (import.meta.env.DEV)
+//   chainList.push(localhost as any)
 
 const { chains, publicClient } = configureChains(
   chainList,
@@ -61,8 +61,8 @@ const { chains, publicClient } = configureChains(
 )
 
 const { connectors } = getDefaultWallets({
-  appName: import.meta.env.VITE_DAPP_TITLE,
-  projectId: import.meta.env.VITE_PROJECT_ID_FOR_WALLETS,
+  appName: import.meta.env.VITE_CORE_DAPP_TITLE,
+  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
   chains,
 })
 
