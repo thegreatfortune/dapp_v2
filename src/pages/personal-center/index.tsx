@@ -94,6 +94,7 @@ const PersonalCenter = () => {
   // }, [activeUser])
 
   const checkLoanOrderAndUserState = async () => {
+    // navigate('/apply-loan')
     try {
       if (!browserContractService)
         return

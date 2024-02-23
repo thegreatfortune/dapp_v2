@@ -296,7 +296,7 @@ const ApplyLoan = () => {
 
       const orderRes = await browserContractService?.capitalPool_createOrder({ ...models, imageUrl: url ?? loanRequisitionEditModel.imageUrl })
       setOrderCreated(2)
-      if (!orderRes)
+      if (orderRes === false)
         throw new Error('Order creation failed')
 
       message.success('Your order has beend created successfully')
