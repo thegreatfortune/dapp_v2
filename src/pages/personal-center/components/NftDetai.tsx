@@ -42,9 +42,9 @@ const NftDetail = () => {
         setNftBalance()
     }, [browserContractService, refresh])
 
-    const checkWhitelist = async () => {
+    const checkWhitelist = async (id: number) => {
         setLoading(true)
-        const inWhitelist = await browserContractService!.checkWhitelist()
+        const inWhitelist = await browserContractService!.checkWhitelist(id)
         if (inWhitelist) {
             setWhitelistResult('Congratulations!!! You are in the whitelist!')
             setDisableMintButton(false)
@@ -166,9 +166,9 @@ const NftDetail = () => {
                 <h2>Mint</h2>
                 <div className='my-30 flex justify-between text-18'>
                     <div>{whitelistResult}</div>
-                    <Button className='w-180 primary-btn' onClick={checkWhitelist} loading={loading} disabled={loadingBtnDisable}>Check Whitelist</Button>
+                    <Button className='w-180 primary-btn' onClick={() => checkWhitelist(id)} loading={loading} disabled={loadingBtnDisable}>Check Whitelist</Button>
                 </div>
-                <div className='mt-30 mb-40 flex justify-between text-18' hidden={!mintWithoutWhitelist}>
+                <div className='mb-40 mt-30 flex justify-between text-18' hidden={!mintWithoutWhitelist}>
                     <div>{fofAmountResult}</div>
                     <Button className='w-180 primary-btn' onClick={() => checkFofAmount(id)} loading={fofChecking} disabled={fofCheckingBtnDisable}>Check $FOF Amount</Button>
                 </div>

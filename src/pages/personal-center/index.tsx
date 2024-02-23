@@ -9,6 +9,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
+import { formatUnits } from 'ethers'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -17,7 +18,6 @@ import copyImg from '@/assets/images/loan-details/copy.svg'
 import { TwitterService, UserInfoService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
-import { formatUnits } from 'ethers'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const PersonalCenter = () => {
@@ -40,8 +40,6 @@ const PersonalCenter = () => {
   const location = useLocation()
 
   const [fofBalance, setFofBalance] = useState(0)
-
-
 
   const setBalance = async () => {
     const fofBalance = await browserContractService?.getFofBalance()

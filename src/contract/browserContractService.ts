@@ -1563,9 +1563,9 @@ export class BrowserContractService {
   /**
    * ERC1155 whitelist
    */
-  async checkWhitelist() {
+  async checkWhitelist(id: number) {
     const erc1155Contract = await this.getERC1155Contract()
-    const whitelist = await erc1155Contract.getIfWhitelist(this.signer)
+    const whitelist = await erc1155Contract.getIfWhitelist(this.signer, id)
     return whitelist
   }
 
