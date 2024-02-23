@@ -22,7 +22,6 @@ import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
 import { tokenList } from '@/contract/tradingPairTokenMap'
-import { threadId } from 'worker_threads'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 

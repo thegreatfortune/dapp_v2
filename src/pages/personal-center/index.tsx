@@ -41,6 +41,18 @@ const PersonalCenter = () => {
 
   const [fofBalance, setFofBalance] = useState(0)
 
+
+
+  const setBalance = async () => {
+    const fofBalance = await browserContractService?.getFofBalance()
+    const result = formatUnits(fofBalance ?? 0, 18)
+    setFofBalance(Number(result))
+  }
+
+  useEffect(() => {
+    setBalance()
+  }, [browserContractService])
+
   useEffect(() => {
     async function getUserInfo() {
       const searchParams = new URLSearchParams(location.search)
@@ -50,16 +62,8 @@ const PersonalCenter = () => {
         setUserInfo({ ...activeUser, ...user, id: user.userId })
       }
     }
-
-    async function setBalance() {
-      const fofBalance = await browserContractService?.getFofBalance()
-      const result = formatUnits(fofBalance ?? 0, 18)
-      setFofBalance(Number(result))
-    }
-
     // location.pathname === '/personal-center' && getUserInfo()
     getUserInfo()
-    setBalance()
   }, [location])
 
   useEffect(() => {

@@ -31,14 +31,16 @@ const NftDetail = () => {
     const [whitelistResult, setWhitelistResult] = useState('')
     const [fofAmountResult, setFofAmountResult] = useState('')
 
+    const setNftBalance = async () => {
+        if (!browserContractService)
+            return
+        const nftBalances = await browserContractService?.getNftBalance()
+        if (nftBalances)
+            setNftBalances(nftBalances)
+    }
     useEffect(() => {
-        async function setNftBalance() {
-            const nftBalances = await browserContractService?.getNftBalance()
-            if (nftBalances)
-                setNftBalances(nftBalances)
-        }
         setNftBalance()
-    }, [refresh])
+    }, [browserContractService, refresh])
 
     const checkWhitelist = async () => {
         setLoading(true)
