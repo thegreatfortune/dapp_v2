@@ -29,7 +29,7 @@ export class FileService {
     });
 
     return request<string>({
-      url: 'https://api.followfi.io/core/api/file/upload',
+      url: import.meta.env.VITE_API_ENDPOINT + 'api/file/upload',
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },

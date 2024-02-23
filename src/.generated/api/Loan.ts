@@ -10,7 +10,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<boolean>({
-      url: 'https://api.followfi.io/core/api/loan/confirm',
+      url: import.meta.env.VITE_API_ENDPOINT + 'api/loan/confirm',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export class LoanService {
   /** 查询跟随中状态的订单信息 GET /api/loan/homeInfo */
   static async ApiLoanHomeInfo_GET(options?: { [key: string]: any }) {
     return request<Models.LoanOrderVO[]>({
-      url: 'https://api.followfi.io/core/api/loan/homeInfo',
+      url: import.meta.env.VITE_API_ENDPOINT + 'api/loan/homeInfo',
       method: 'GET',
       ...(options || {}),
     });
@@ -36,7 +36,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.LoanOrderVO>({
-      url: 'https://api.followfi.io/core/api/loan/loanInfo',
+      url: 'import.meta.env.VITE_API_ENDPOINT + api/loan/loanInfo',
       method: 'GET',
       params: {
         ...params,
@@ -52,7 +52,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.LoanOrderVO>>({
-      url: 'https://api.followfi.io/core/api/loan/pageLoanContract',
+      url: import.meta.env.VITE_API_ENDPOINT + 'api/loan/pageLoanContract',
       method: 'GET',
       params: {
         ...params,

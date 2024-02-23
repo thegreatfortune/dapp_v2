@@ -11,7 +11,7 @@ export class LoanTokenSwapService {
     options?: { [key: string]: any },
   ) {
     return request<Models.PageResult<Models.LoanTokenSwapVo>>({
-      url: 'https://api.followfi.io/core/api/loan/tokenSwap/pageInfo',
+      url: import.meta.env.VITE_API_ENDPOINT + 'loan/tokenSwap/pageInfo',
       method: 'GET',
       params: {
         ...params,
