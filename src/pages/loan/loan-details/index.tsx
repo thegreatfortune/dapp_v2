@@ -19,6 +19,7 @@ import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -651,7 +652,7 @@ const LoanDetails = () => {
           Claim:
         </h2>
         <div>
-          You can claim {claimAmount} $FOF!
+          You can claim {toCurrencyString(claimAmount)} $FOF!
         </div>
       </div>
     </Modal>
