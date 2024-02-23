@@ -36,7 +36,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.LoanOrderVO>({
-      url: 'import.meta.env.VITE_API_ENDPOINT + api/loan/loanInfo',
+      url: import.meta.env.VITE_API_ENDPOINT + 'api/loan/loanInfo',
       method: 'GET',
       params: {
         ...params,
