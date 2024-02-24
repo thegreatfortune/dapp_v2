@@ -63,7 +63,7 @@ const NftDetail = () => {
         // const fofBalance = BigInt('800000000000000000000001')
         switch (id) {
             case 1:
-                if ((fofBalance ?? 0) > BigInt('200000000000000000000000')) {
+                if ((fofBalance ?? 0) >= BigInt('200000000000000000000000')) {
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Dolphin NFT!')
                 }
@@ -72,7 +72,7 @@ const NftDetail = () => {
                 }
                 break
             case 2:
-                if ((fofBalance ?? 0) > BigInt('400000000000000000000000')) {
+                if ((fofBalance ?? 0) >= BigInt('400000000000000000000000')) {
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Shark NFT!')
                 }
@@ -81,7 +81,7 @@ const NftDetail = () => {
                 }
                 break
             case 3:
-                if ((fofBalance ?? 0) > BigInt('800000000000000000000000')) {
+                if ((fofBalance ?? 0) >= BigInt('800000000000000000000000')) {
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Whale NFT!')
                 }
@@ -91,7 +91,7 @@ const NftDetail = () => {
                 break
             case 0:
             default:
-                if ((fofBalance ?? 0) > BigInt('100000000000000000000000')) {
+                if ((fofBalance ?? 0) >= BigInt('100000000000000000000000')) {
                     setDisableMintButton(false)
                     setFofAmountResult('Congratulations!!! You can mint Octopus NFT!')
                 }

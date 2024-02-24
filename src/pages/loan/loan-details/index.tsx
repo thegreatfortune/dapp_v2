@@ -323,7 +323,7 @@ const LoanDetails = () => {
       setLentState(true)
     }
     catch (error) {
-      message.error('Operation failed!')
+      message.error('Transaction failed!')
       setExecuting(false)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }

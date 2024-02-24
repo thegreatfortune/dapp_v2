@@ -1150,6 +1150,8 @@ export class BrowserContractService {
 
     const transaction = await followRouterContract.lendMoney(tradeId, copies)
 
+    console.log('transaction', transaction)
+
     return handleTransaction(transaction, 'Transaction Successful', 'Transaction Failed. Please try again.')
   }
 
