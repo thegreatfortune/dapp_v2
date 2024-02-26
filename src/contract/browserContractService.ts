@@ -1131,6 +1131,12 @@ export class BrowserContractService {
     }
   }
 
+  async calculateFollowAmountFromCopies(tradeId: bigint, copies: bigint) {
+    const processContract = await this.getProcessCenterContract()
+    const checkAmount = await processContract.getLendStakeMoney(tradeId, copies)
+    return checkAmount
+  }
+
   /**
    * 贷款人存入份数数量(贷款人借出)
    * 使用订单ID对应的资金池地址来进行认购初始化合约
@@ -1143,10 +1149,10 @@ export class BrowserContractService {
   async capitalPool_lend(copies: bigint, tradeId: bigint) {
     const followRouterContract = await this.getFollowRouterContract()
 
-    const approveState = await this.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_TOKEN_USDC, await followRouterContract.getAddress())
+    // const approveState = await this.processCenter_checkERC20Allowance(BigInt(tradeId), BigInt(copies), import.meta.env.VITE_TOKEN_USDC, await followRouterContract.getAddress())
 
-    if (!approveState)
-      throw new Error('Authorization failed')
+    // if (!approveState)
+    // throw new Error('Authorization failed')
 
     const transaction = await followRouterContract.lendMoney(tradeId, copies)
 
@@ -1600,5 +1606,15 @@ export class BrowserContractService {
     const routerContract = await this.getFollowRouterContract()
     const res = await routerContract.claimToken(id)
     return handleTransaction(res)
+  }
+
+  async approveBeforeFollow(amount: bigint) {
+    const routerContract = await this.getFollowRouterContract()
+
+    const ERC20Contract = await this?.getERC20Contract(import.meta.env.VITE_TOKEN_USDC)
+
+    const approveRes = await ERC20Contract?.approve(routerContract.getAddress(), amount)
+
+    return handleTransaction(approveRes)
   }
 }

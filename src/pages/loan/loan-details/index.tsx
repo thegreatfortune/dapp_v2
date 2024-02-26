@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Modal, Tabs, Tooltip, message } from 'antd'
+import { Button, Divider, InputNumber, Modal, Progress, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers, formatUnits } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
@@ -75,6 +75,20 @@ const LoanDetails = () => {
   const [refundLoading, setRefundLoading] = useState(false)
 
   const [activeKey, setActiveKey] = useState('1')
+
+  const [followUSDCAmount, setFollowUSDCAmount] = useState(BigInt(0))
+
+  const [unitPrice, setUnitPrice] = useState(BigInt(0))
+
+  const [maxCopies, setMaxCopies] = useState(1)
+
+  const [currentCopies, setCurrentCopies] = useState(0)
+
+  const [followModalOpen, setFollowModalOpen] = useState(false)
+  const [usdcApproved, setUsdcApproved] = useState(0)
+  const [followed, setFollowed] = useState(0)
+
+  const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
     Invalid: <div className='loan-detail-status bg-yellow'>Invalid</div>,
@@ -174,8 +188,8 @@ const LoanDetails = () => {
   }, [tradeId])
 
   useEffect(() => {
-    async function checkMax() {
-      if (!tradeId || !checkMaxLoading)
+    async function updateCopies() {
+      if (!tradeId)
         return
 
       try {
@@ -184,19 +198,19 @@ const LoanDetails = () => {
         const res = await followCapitalPoolContract?.getList(tradeId)
 
         if (res) {
-          const copies = Number(BigInt(res[7])) - Number(BigInt(res[9]))
-          setCopies(copies)
+          setMaxCopies(Number(BigInt(res[7])) - Number(BigInt(res[9])))
+          setCurrentCopies(Number(BigInt(res[9])))
+          const amount = await browserContractService?.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(1))
+          setFollowUSDCAmount(amount ?? BigInt(0))
+          setUnitPrice(amount ?? BigInt(0))
         }
       }
       catch (error) {
         console.log('%c [ error ]-107', 'font-size:13px; background:#64ed0c; color:#a8ff50;', error)
       }
-      finally {
-        setCheckMaxLoading(false)
-      }
     }
-    checkMax()
-  }, [checkMaxLoading])
+    updateCopies()
+  }, [browserContractService])
 
   const items: TabsProps['items'] = [
     {
@@ -304,34 +318,57 @@ const LoanDetails = () => {
     }
   }
 
-  const handleOk = async () => {
+  const handleFollow = async () => {
     if (!tradeId || !copies)
       return
 
     setExecuting(true)
 
-    try {
-      if (!browserContractService?.getSigner.address)
-        return
+    if (!browserContractService)
+      return
 
+    try {
+      setUsdcApproved(1)
+      const approveRes = await browserContractService.approveBeforeFollow(followUSDCAmount)
+      console.log(321321, approveRes)
+      if (approveRes?.status === 1)
+        setUsdcApproved(2)
+      else
+        throw new Error('Failed')
+    }
+    catch (error) {
+      console.log(error)
+      setUsdcApproved(3)
+      setExecuting(false)
+      message.error('Transaction failed!')
+      return
+    }
+
+    try {
+      setFollowed(1)
       const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
       console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
       if (result?.status !== 1)
         message.error('Transaction failed!')
 
+      setFollowed(2)
       setLentState(true)
     }
     catch (error) {
+      setFollowed(3)
       message.error('Transaction failed!')
       setExecuting(false)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
     }
     finally {
-      setExecuting(false)
-      setLendingState(false)
-      navigate('/my-lend')
-      setIsModalOpen(false)
+      setTimeout(() => {
+        setFollowModalBtnText('Finished')
+        setLendingState(false)
+        setFollowModalOpen(false)
+        setExecuting(false)
+        location.reload()
+      }, 3000)
     }
   }
 
@@ -369,7 +406,9 @@ const LoanDetails = () => {
   }
 
   async function onSetMax() {
-    setCheckMaxLoading(true)
+    const amount = await browserContractService?.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(maxCopies))
+    setFollowUSDCAmount(amount ?? BigInt(0))
+    setCopies(maxCopies)
   }
 
   // function confirmLend() {
@@ -657,7 +696,109 @@ const LoanDetails = () => {
       </div>
     </Modal>
 
-    <SModal open={isModalOpen}
+    <Modal open={followModalOpen}
+      className='h238 w464 b-rd-8'
+      okText={followModalBtnText}
+      onOk={() => handleFollow()}
+      onCancel={() => {
+        setCopies(1)
+        setUsdcApproved(0)
+        setFollowed(0)
+        setExecuting(false)
+        setFollowModalOpen(false)
+      }}
+      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
+    >
+      <div>
+        <h2 className='font-b m-10 w40 flex items-center text-20 c-#fff lh-21'>
+          {lendingState ? 'Processing' : 'Share'}
+        </h2>
+        <div className='w-full flex content-center items-center justify-end'>
+          <InputNumber
+            size='large'
+            value={copies}
+            className='m-10 w-full w150 b-#808080 text-center'
+            min={1}
+            onChange={async (v) => {
+              if (!browserContractService?.getSigner.address)
+                return
+              if (v) {
+                if (v > maxCopies) {
+                  message.error('You can not follow over max shares!')
+                  v = maxCopies
+                }
+                else {
+                  const amount = await browserContractService.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(v))
+                  setFollowUSDCAmount(amount)
+                }
+              }
+              setCopies(v)
+            }}
+            disabled={executing}
+          />
+          <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
+            Max
+          </Button>
+        </div>
+        <div className='flex justify-end'>
+          {copies} Copies = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
+        </div>
+        <div className='mt-30'>
+          {
+            usdcApproved === 0
+              ? <div className='flex items-center justify-between'>
+                <div className='flex'>
+                  <div className='mr-8'>1.</div>Approve your USDC for Follow Finance Protocol</div>
+                <div className='m-8'><BorderOutlined /></div>
+              </div>
+              : usdcApproved === 1
+                ? <div className='flex items-center justify-between'>
+                  <div className='flex'>
+                    <div className='mr-8'>1.</div>Approve...</div>
+                  <div className='m-8'><LoadingOutlined /></div>
+                </div>
+                : usdcApproved === 2
+                  ? <div className='flex items-center justify-between'>
+                    <div className='flex'>
+                      <div className='mr-8'>1.</div>Approved successfully!</div>
+                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                  </div>
+                  : <div className='flex items-center justify-between'>
+                    <div className='flex'>
+                      <div className='mr-8'>1.</div>Approval failed!</div>
+                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                  </div>
+          }
+          {
+            followed === 0
+              ? <div className='flex items-center justify-between'>
+                <div className='flex'>
+                  <div className='mr-8'>2.</div>Follow this loan</div>
+                <div className='m-8'><BorderOutlined /></div>
+              </div>
+              : followed === 1
+                ? <div className='flex items-center justify-between'>
+                  <div className='flex'>
+                    <div className='mr-8'>2.</div>Following...</div>
+                  <div className='m-8'><LoadingOutlined /></div>
+                </div>
+                : followed === 2
+                  ? <div className='flex items-center justify-between'>
+                    <div className='flex'>
+                      <div className='mr-8'>2.</div>Followed successfully!</div>
+                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                  </div>
+                  : <div className='flex items-center justify-between'>
+                    <div className='flex'>
+                      <div className='mr-8'>2.</div>Follow failed!</div>
+                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                  </div>
+          }
+        </div>
+      </div>
+    </Modal >
+
+    {/* <SModal open={isModalOpen}
       maskClosable={false}
       content=
       {
@@ -678,8 +819,8 @@ const LoanDetails = () => {
               Max
             </Button>
           </div>
-        </div>
-        // : lendState === 'Processing'
+        </div> */}
+    {/* // : lendState === 'Processing'
         //   ? <h2>Processing.....</h2>
         //   : <div>
         //     <h2>Success</h2>
@@ -693,17 +834,14 @@ const LoanDetails = () => {
         //     lendState === 'Success'
         //       ? null
         //       : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
-        //   ]
-      }
+        //   ] */}
+    {/* }
       okText="Confirm"
       onOk={() => handleOk()}
       onCancel={() => setIsModalOpen(false)}
       okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
     >
-      {
-
-      }
-    </SModal>
+    </SModal> */}
 
     <div className='loan-detail-info'>
       <InfoCard item={loanInfo} />
@@ -739,11 +877,9 @@ const LoanDetails = () => {
               && <div className='flex'>
                 {/* <div className='m-8 w180'></div> */}
                 {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-                <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button>
+                <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
                 {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-                {/* <div className='ml-30 flex grow items-center justify-center'>
-                  <Progress percent={90} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
-                </div> */}
+
               </div>
             }
 
@@ -780,12 +916,16 @@ const LoanDetails = () => {
                   }
                 </div>
               }
+
             </div>
             <div>
               <Button className='loan-detail-btn' onClick={() => {
                 checkFofAmount()
                 setClaimModalOpen(true)
               }}>Claim $FOF</Button>
+            </div>
+            <div className='ml-30 flex grow items-center justify-center'>
+              <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
             </div>
           </div>
         </div>
