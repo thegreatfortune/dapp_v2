@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
 import { formatUnits } from 'ethers'
+import { useDisconnect } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -33,13 +34,17 @@ const PersonalCenter = () => {
 
   const [activeKey, setActiveKey] = useState('1')
 
-  const { activeUser, setUserInfo } = useUserStore()
+  const { activeUser, setUserInfo, clear } = useUserStore()
 
   const [totalScoreVo, setTotalScoreVo] = useState(new Models.TotalScoreVo())
 
   const location = useLocation()
 
   const [fofBalance, setFofBalance] = useState(0)
+
+  const { disconnect } = useDisconnect()
+
+  const [bindModalOpen, setBindModalOpen] = useState(false)
 
   const setBalance = async () => {
     const fofBalance = await browserContractService?.getFofBalance()
@@ -51,13 +56,22 @@ const PersonalCenter = () => {
     setBalance()
   }, [browserContractService])
 
+  const searchParams = new URLSearchParams(location.search)
+  const isBind = searchParams.get('bind') || undefined
+
   useEffect(() => {
     async function getUserInfo() {
-      const searchParams = new URLSearchParams(location.search)
-      const isBind = searchParams.get('bind') || undefined
       if (isBind) {
-        const user = await UserInfoService.ApiUserInfo_GET()
-        setUserInfo({ ...activeUser, ...user, id: user.userId })
+        // clear()
+        // disconnect()
+        // countDown()
+        // console.log(searchParams)
+        // modal.success({
+        //   title: 'This is a notification message',
+        // })
+        setBindModalOpen(true)
+        // const user = await UserInfoService.ApiUserInfo_GET()
+        // setUserInfo({ ...activeUser, ...user, id: user.userId })
       }
     }
     // location.pathname === '/personal-center' && getUserInfo()
@@ -69,7 +83,6 @@ const PersonalCenter = () => {
       const res = await UserInfoService.ApiUserInfoTotalScoreInfo_GET()
       setTotalScoreVo(res)
     }
-
     fetchData()
   }, [])
 
@@ -95,6 +108,8 @@ const PersonalCenter = () => {
 
   const checkLoanOrderAndUserState = async () => {
     // navigate('/apply-loan')
+    // return
+
     try {
       if (!browserContractService)
         return
@@ -203,121 +218,138 @@ const PersonalCenter = () => {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className='w-full'>
-        <Modal open={usdcModelOpen}
-          onCancel={() => setUsdcModelOpen(false)}
-          okText={faucetText}
-          onOk={claimUsdc}
-          okButtonProps={{ disabled: executing, className: 'primary-btn' }}
-          cancelButtonProps={{ hidden: hiddenCancel }}
-          className='rounded-20'
+    isBind === 'true'
+      ? <div>
+        <Modal open={bindModalOpen}
+          okText={'OK'}
+          onOk={() => {
+            clear()
+            disconnect()
+            navigate('/')
+          }}
+          cancelButtonProps={{ disabled: true }}
         >
           <div>
-            <h2>Faucet</h2>
-            <div className='mb-30 flex items-center justify-between'>
-              <div>You will receive 2,000 USDC on Polygon mumbai!</div>
-              <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
-            </div>
+            <h3>Your X acount binds successfully, please re-login!</h3>
           </div>
         </Modal>
-        <div
-          className="personal-banner"
-          style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
-        >
-        </div>
-
-        <div className="w-full">
-          <div className='relative'>
-            <div className="absolute left-10 top--80 rounded-100 bg-#171822">
-              <Avatar className='' shape="circle" size={140} src={activeUser.pictureUrl ?? defaultAvatar} />
+      </div >
+      : <div className="flex justify-center">
+        <div className='w-full'>
+          <Modal open={usdcModelOpen}
+            onCancel={() => setUsdcModelOpen(false)}
+            okText={faucetText}
+            onOk={claimUsdc}
+            okButtonProps={{ disabled: executing, className: 'primary-btn' }}
+            cancelButtonProps={{ hidden: hiddenCancel }}
+            className='rounded-20'
+          >
+            <div>
+              <h2>Faucet</h2>
+              <div className='mb-30 flex items-center justify-between'>
+                <div>You will receive 2,000 USDC on Polygon mumbai!</div>
+                <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
+              </div>
             </div>
+          </Modal>
+          <div
+            className="personal-banner"
+            style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
+          >
           </div>
-          <div className="user-basic-box items-center">
-            <div className='user-basic-info'>
-              <div className=''>
-                <div className='ml-25 mt-20 text-20'>
-                  {activeUser.nickName ?? 'Not Bound'}
-                </div>
-                <div className='flex items-center'>
-                  <div className="ml-25 mt-20">
-                    {
-                      activeUser.platformName
-                        ? <Link className='text-18' to={`https://twitter.com/${activeUser.platformName}`}>@{activeUser.platformName}</Link>
-                        : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
-                    }
+
+          <div className="w-full">
+            <div className='relative'>
+              <div className="absolute left-10 top--80 rounded-100 bg-#171822">
+                <Avatar className='' shape="circle" size={140} src={activeUser.pictureUrl ?? defaultAvatar} />
+              </div>
+            </div>
+            <div className="user-basic-box items-center">
+              <div className='user-basic-info'>
+                <div className=''>
+                  <div className='ml-25 mt-20 text-20'>
+                    {activeUser.nickName ?? 'Not Bound'}
                   </div>
-                  <div className='ml-20 mt-20'>
-                    <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
-                      <div className='flex cursor-pointer'>
-                        <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}>Invitation Link</a>
-                        <Image preview={false} width={16} height={16} className='ml-6' src={copyImg} />
-                      </div>
-                    </CopyToClipboard>
+                  <div className='flex items-center'>
+                    <div className="ml-25 mt-20">
+                      {
+                        activeUser.platformName
+                          ? <Link className='text-18' to={`https://twitter.com/${activeUser.platformName}`}>@{activeUser.platformName}</Link>
+                          : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
+                      }
+                    </div>
+                    <div className='ml-20 mt-20'>
+                      <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
+                        <div className='flex cursor-pointer'>
+                          <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}>Invitation Link</a>
+                          <Image preview={false} width={16} height={16} className='ml-6' src={copyImg} />
+                        </div>
+                      </CopyToClipboard>
+                    </div>
                   </div>
-                </div>
-                {/* <div className="mt-20">
+                  {/* <div className="mt-20">
                   {
                     activeUser.address ? <Address address={activeUser.address} /> : null
                   }
                 </div> */}
+                </div>
               </div>
-            </div>
-            <div className='mt-65 items-center max-md:mt-30'>
-              <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
-                <Button
-                  loading={applyLoanLoading}
-                  onClick={checkLoanOrderAndUserState}
-                  className='h40 w130 rounded-30 primary-btn'>Apply for a loan</Button>
-                <Select
-                  className='h40 w120'
-                  size='large'
-                  defaultValue='Faucet'
-                  options={[
-                    { label: 'Claim Matic', value: 'Matic' },
-                    { label: 'Claim USDC', value: 'USDC' },
-                  ]}
-                  onSelect={faucetSelect}
-                ></Select>
+              <div className='mt-65 items-center max-md:mt-30'>
+                <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
+                  <Button
+                    loading={applyLoanLoading}
+                    onClick={checkLoanOrderAndUserState}
+                    className='h40 w130 rounded-30 primary-btn'>Apply for a loan</Button>
+                  <Select
+                    className='h40 w120'
+                    size='large'
+                    defaultValue='Faucet'
+                    options={[
+                      { label: 'Claim Matic', value: 'Matic' },
+                      { label: 'Claim USDC', value: 'USDC' },
+                    ]}
+                    onSelect={faucetSelect}
+                  ></Select>
+                </div>
               </div>
+
             </div>
 
+            <Divider></Divider>
+            <div className='mt-30 box-border items-center'>
+              <div className='point-box'>
+                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                  <span>$FOF</span>
+                  <span>{toCurrencyString(fofBalance)}</span>
+                </div>
+                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                  <span>Points</span>
+                  <span>{((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2)}</span>
+                </div>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                  <span className='text-16'>Credit score</span>
+                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.totalPoints ?? 0) / 100}</span>
+                </div>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                  <span className='text-16'>Initial Points</span>
+                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.initialPoints ?? 0) / 100}</span>
+                </div>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                  <span className='text-16'>Additional Points</span>
+                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.additionalPoints ?? 0) / 100}</span>
+                </div>
+              </div>
+            </div>
           </div>
-
           <Divider></Divider>
-          <div className='mt-30 box-border items-center'>
-            <div className='point-box'>
-              <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
-                <span>$FOF</span>
-                <span>{toCurrencyString(fofBalance)}</span>
-              </div>
-              <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
-                <span>Points</span>
-                <span>{((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2)}</span>
-              </div>
-              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                <span className='text-16'>Credit score</span>
-                <span className='flex justify-center text-16'>{(totalScoreVo.credit?.totalPoints ?? 0) / 100}</span>
-              </div>
-              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                <span className='text-16'>Initial Points</span>
-                <span className='flex justify-center text-16'>{(totalScoreVo.credit?.initialPoints ?? 0) / 100}</span>
-              </div>
-              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                <span className='text-16'>Additional Points</span>
-                <span className='flex justify-center text-16'>{(totalScoreVo.credit?.additionalPoints ?? 0) / 100}</span>
-              </div>
-            </div>
+          <div className="h30" />
+
+          <div className='m-x-a'>
+            <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
           </div>
         </div>
-        <Divider></Divider>
-        <div className="h30" />
+      </div >
 
-        <div className='m-x-a'>
-          <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
-        </div>
-      </div>
-    </div >
   )
 }
 

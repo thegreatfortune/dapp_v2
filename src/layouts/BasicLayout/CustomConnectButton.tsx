@@ -1,7 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
 import type { PublicClient } from 'wagmi'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useDisconnect, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { Avatar, message } from 'antd'
 import { ethers } from 'ethers'
@@ -33,6 +33,8 @@ const CustomConnectButton = () => {
   const { chain } = useNetwork()
 
   const { activeUser } = useUserStore()
+
+
 
   const { isConnected } = useAccount(
     {
@@ -86,6 +88,8 @@ const CustomConnectButton = () => {
 
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
+
+        console.log('when user login:', user)
 
         setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
       }
