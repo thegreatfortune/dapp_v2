@@ -383,7 +383,7 @@ const LoanDetails = () => {
     if (tradeId) {
       const withdrawed = await browserContractService.checkWithdrawed(Number(tradeId))
 
-      if (withdrawed) {
+      if (!withdrawed) {
         const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
         if (fofBalance > 0)
           setClaimBtndisable(false)
