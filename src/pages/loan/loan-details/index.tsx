@@ -381,11 +381,18 @@ const LoanDetails = () => {
     if (!browserContractService)
       return
     if (tradeId) {
-      const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
-      if (fofBalance > 0)
-        setClaimBtndisable(false)
-      const result = formatUnits(fofBalance ?? 0, 18)
-      setClaimAmount(Number(result))
+      const withdrawed = await browserContractService.checkWithdrawed(Number(tradeId))
+
+      if (withdrawed) {
+        const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
+        if (fofBalance > 0)
+          setClaimBtndisable(false)
+        const result = formatUnits(fofBalance ?? 0, 18)
+        setClaimAmount(Number(result))
+      }
+      else {
+        setClaimAmount(0)
+      }
     }
   }
 

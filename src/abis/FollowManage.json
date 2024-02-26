@@ -690,6 +690,19 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_erc1155",
+				"type": "address"
+			}
+		],
+		"name": "setFollowERC1155",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_FollowRouter",
 				"type": "address"
 			}

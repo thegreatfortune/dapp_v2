@@ -1034,14 +1034,13 @@ export class BrowserContractService {
    * 铸币
    *
    * @param {string} token
-   * @param {number} [amount]
    * @return {*}
    * @memberof BrowserContractService
    */
-  async ERC20_mint(token: string, amount: bigint = ethers.parseEther(String(10 ** 8))) {
+  async ERC20_mint(token: string) {
     try {
       const contract = await this.getERC20Contract(token)
-      const res = await contract?.doMint(this.getSigner.address, amount)
+      const res = await contract?.doMint()
       return handleTransaction(res)
     }
     catch (error) {
@@ -1626,5 +1625,11 @@ export class BrowserContractService {
     const allowance = await ERC20Contract?.allowance(this.signer, routerContract.getAddress())
 
     return allowance
+  }
+
+  async checkWithdrawed(id: number) {
+    const routerContract = await this.getFollowRouterContract()
+    const result = await routerContract.getUserIfWithdraw(id)
+    return result
   }
 }
