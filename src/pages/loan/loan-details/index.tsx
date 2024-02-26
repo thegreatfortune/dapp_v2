@@ -886,7 +886,7 @@ const LoanDetails = () => {
                 }}>Claim $FOF</Button>
               </div>
             </div>
-            <div className='flex grow items-center justify-center lg:ml-30 max-lg:mt-30'>
+            <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>
               <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
             </div>
           </div>
