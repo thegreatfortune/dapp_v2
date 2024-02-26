@@ -1617,4 +1617,14 @@ export class BrowserContractService {
 
     return handleTransaction(approveRes)
   }
+
+  async checkUsdcAllowance() {
+    const routerContract = await this.getFollowRouterContract()
+
+    const ERC20Contract = await this?.getERC20Contract(import.meta.env.VITE_TOKEN_USDC)
+
+    const allowance = await ERC20Contract?.allowance(this.signer, routerContract.getAddress())
+
+    return allowance
+  }
 }

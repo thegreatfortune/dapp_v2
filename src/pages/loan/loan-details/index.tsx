@@ -329,12 +329,19 @@ const LoanDetails = () => {
 
     try {
       setUsdcApproved(1)
-      const approveRes = await browserContractService.approveBeforeFollow(followUSDCAmount)
-      console.log(321321, approveRes)
-      if (approveRes?.status === 1)
+
+      const allowance = await browserContractService.checkUsdcAllowance()
+
+      if (allowance >= followUSDCAmount) {
         setUsdcApproved(2)
-      else
-        throw new Error('Failed')
+      }
+      else {
+        const approveRes = await browserContractService.approveBeforeFollow(ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+        if (approveRes?.status === 1)
+          setUsdcApproved(2)
+        else
+          throw new Error('Failed')
+      }
     }
     catch (error) {
       console.log(error)
@@ -360,16 +367,15 @@ const LoanDetails = () => {
       message.error('Transaction failed!')
       setExecuting(false)
       console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
+      return
     }
-    finally {
-      setTimeout(() => {
-        setFollowModalBtnText('Finished')
-        setLendingState(false)
-        setFollowModalOpen(false)
-        setExecuting(false)
-        location.reload()
-      }, 3000)
-    }
+    setTimeout(() => {
+      setFollowModalBtnText('Finished')
+      setLendingState(false)
+      setFollowModalOpen(false)
+      setExecuting(false)
+      location.reload()
+    }, 3000)
   }
 
   const checkFofAmount = async () => {
