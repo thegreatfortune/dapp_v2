@@ -32,7 +32,7 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
       </div>
       <div className='px-25 pb-20 pt-15 text-left'>
         <div className='h11 w-full'></div>
-        <h2 className="m0 h35 p0 text-22 c-#37A4F8 font-semibold">{item.loan?.loanName}</h2>
+        <h2 className="m0 h35 p0 text-22 c-#37A4F8 font-semibold truncate">{item.loan?.loanName}</h2>
 
         <div className='flex justify-between'>
           <ul className='mt-6 flex flex-col list-none gap-8 p0'>
