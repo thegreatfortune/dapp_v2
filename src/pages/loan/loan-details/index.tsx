@@ -15,7 +15,6 @@ import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
-import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
@@ -804,51 +803,6 @@ const LoanDetails = () => {
       </div>
     </Modal >
 
-    {/* <SModal open={isModalOpen}
-      maskClosable={false}
-      content=
-      {
-        <div className='h100 w464'>
-          <h1 className='font-b m-10 w40 flex items-center text-20 lh-21 c-#fff'>
-            {lendingState ? 'Processing' : 'Share'}
-          </h1>
-          <div className='w-full flex content-center items-center justify-end'>
-            <InputNumber
-              size='large'
-              value={copies}
-              className='m-10 w-full w150 b-#808080 text-center'
-              min={1}
-              onChange={v => setCopies(v)}
-              disabled={executing}
-            />
-            <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
-              Max
-            </Button>
-          </div>
-        </div> */}
-    {/* // : lendState === 'Processing'
-        //   ? <h2>Processing.....</h2>
-        //   : <div>
-        //     <h2>Success</h2>
-        //     {copies}Share
-        //     <Button className='primary-btn' onClick={confirmLend}>Confirm</Button>
-        //   </div>
-        // lendState === 'Processing'
-        //   ? null
-        //   : [
-        //     <Button key="submit" type="primary" onClick={() => handleOk()} className='float-left h32 w113 b-rd-2 from-[#0154fa] to-[#11b5dd] bg-gradient-to-r'>Confirm</Button>,
-        //     lendState === 'Success'
-        //       ? null
-        //       : <Button key="Cancel" onClick={() => setIsModalOpen(false)} className='h32 w113 b-rd-2 bg-#f2f3f5 text-14 c-#1f1f1f'>Cancel</Button>,
-        //   ] */}
-    {/* }
-      okText="Confirm"
-      onOk={() => handleOk()}
-      onCancel={() => setIsModalOpen(false)}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
-    >
-    </SModal> */}
-
     <div className='loan-detail-info'>
       <InfoCard item={loanInfo} />
       {/* <div className="w-32"></div> */}
@@ -877,60 +831,62 @@ const LoanDetails = () => {
               </Tooltip>
             </div>
           </div>
-          <div className='flex'>
-            {
-              prePage === 'market' && loanInfo.state === 'Following'
-              && <div className='flex'>
-                {/* <div className='m-8 w180'></div> */}
-                {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-                <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
-                {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-
-              </div>
-            }
-
-            {
-              prePage === 'lend'
-              && <div className='flex'>
-                {
-                  loanInfo.state !== 'CloseByUncollected'
-                  && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
-                }
-                <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
-              </div>
-            }
-
-            <div className='flex flex-wrap' hidden={prePage === 'lend' || prePage === 'market'}>
+          <div className='lg:flex'>
+            <div className='flex'>
               {
-                (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
-                && <div>
-                  <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
+                prePage === 'market' && loanInfo.state === 'Following'
+                && <div className='flex'>
+                  {/* <div className='m-8 w180'></div> */}
+                  {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+                  <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
+                  {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+
                 </div>
               }
+
               {
-                prePage === 'loan'
-                && <div>
+                prePage === 'lend'
+                && <div className='flex'>
+                  {
+                    loanInfo.state !== 'CloseByUncollected'
+                    && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
+                  }
                   <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
                 </div>
               }
-              {
-                // Income calculate
-                loanInfo.state !== 'Invalid'
-                && <div>
-                  {(prePage === 'loan' || prePage === 'lend')
-                    && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
-                  }
-                </div>
-              }
 
+              <div className='flex flex-wrap' hidden={prePage === 'lend' || prePage === 'market'}>
+                {
+                  (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+                  && <div>
+                    <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
+                  </div>
+                }
+                {
+                  prePage === 'loan'
+                  && <div>
+                    <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+                  </div>
+                }
+                {
+                  // Income calculate
+                  loanInfo.state !== 'Invalid'
+                  && <div>
+                    {(prePage === 'loan' || prePage === 'lend')
+                      && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                    }
+                  </div>
+                }
+
+              </div>
+              <div>
+                <Button className='loan-detail-btn' onClick={() => {
+                  checkFofAmount()
+                  setClaimModalOpen(true)
+                }}>Claim $FOF</Button>
+              </div>
             </div>
-            <div>
-              <Button className='loan-detail-btn' onClick={() => {
-                checkFofAmount()
-                setClaimModalOpen(true)
-              }}>Claim $FOF</Button>
-            </div>
-            <div className='ml-30 flex grow items-center justify-center'>
+            <div className='flex grow items-center justify-center lg:ml-30 max-lg:mt-30'>
               <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
             </div>
           </div>
