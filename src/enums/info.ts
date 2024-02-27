@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
-export enum InfoMessage {
+export enum NotificationInfo {
     TransactionSuccessful = 'Transaction successful',
 
 }

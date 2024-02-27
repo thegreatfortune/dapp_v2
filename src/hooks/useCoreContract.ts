@@ -4,8 +4,8 @@ import { message, notification } from 'antd'
 import useUserStore from '@/store/userStore'
 import { CoreContracts } from '@/contract/coreContracts'
 import { MessageError, NotificationError } from '@/enums/error'
-import { InfoMessage } from '@/enums/info'
-import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
+import { NotificationInfo } from '@/enums/info'
+import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { tokenList } from '@/contract/tradingPairTokenMap'
 
 const useCoreContract = () => {
@@ -20,7 +20,6 @@ const useCoreContract = () => {
   }
 
   type Task<T> = (coreContracts: CoreContracts) => Promise<T>
-
   const executeTask = async<T>(task: Task<T>) => {
     if (coreContracts) {
       try {
@@ -49,34 +48,34 @@ const useCoreContract = () => {
     }
   }
 
-  const handleTransactionResponse = async (transactionResponse: ethers.ContractTransactionResponse) => {
-    try {
-      const receipt = await transactionResponse.wait()
+  const handleTransactionResponse = async (
+    transactionResponse: ethers.ContractTransactionResponse,
+    successNotification: NotificationInfo = NotificationInfo.TransactionSuccessful,
+    failureNotification: NotificationError = NotificationError.TransactionFailed,
+  ) => {
+    const receipt = await transactionResponse.wait()
 
-      if (!receipt)
-        throw new Error(`HandleTransactionResponse: ${NotificationError.TransactionFailed}`)
-
-      if (receipt.status === 1) {
-        // Transaction successful
-        notification.success({
-          message: InfoMessage.TransactionSuccessful,
-        })
-      }
-      else {
-        // Transaction failed
-        notification.error({
-          message: NotificationError.TransactionFailed,
-        })
-        throw new Error(`HandleTransactionResponse: ${NotificationError.TransactionFailed}`)
-      }
-      return Promise.resolve(receipt)
-    }
-    catch (error) {
+    if (!receipt) {
       notification.error({
         message: NotificationError.TransactionError,
       })
-      throw error
+      throw new Error(MessageError.NullReceipt)
     }
+
+    if (receipt.status === 1) {
+      // Transaction successful
+      notification.success({
+        message: successNotification,
+      })
+    }
+    else {
+      // Transaction failed
+      notification.error({
+        message: failureNotification,
+      })
+      throw new Error(MessageError.TransactionFailed)
+    }
+    return Promise.resolve(receipt)
   }
 
   /**
@@ -436,7 +435,7 @@ const useCoreContract = () => {
     return executeTask(task)
   }
 
-
+  
 
   const approveErc20 = async (token: string, spender: string, amount: bigint) => {
     const task = async (coreContracts: CoreContracts) => {
@@ -474,7 +473,6 @@ const useCoreContract = () => {
     getShareProfitByUser,
     canCreateNewOrder,
     getOrderState,
-    getHandleIndex,
     getAllowanceOfShares,
     approveShares,
     listShares,
@@ -487,6 +485,8 @@ const useCoreContract = () => {
     followOrder,
     withdrawAsset,
     liquidateOrder,
+    repay,
+    getHandleIndex,
     swapUniV3,
     faucetClaim,
 

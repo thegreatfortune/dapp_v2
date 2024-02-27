@@ -2,6 +2,7 @@ import { Contract, ZeroAddress, ethers } from 'ethers'
 import { message, notification } from 'antd'
 import BigNumber from 'bignumber.js'
 import type {
+  FollowFiERC1155 as ERC1155,
   ERC20,
   UniswapV3,
   FollowFactory as capitalFactory,
@@ -10,7 +11,6 @@ import type {
   FollowHandle as handle,
   FollowManage as manage,
   FollowMarket as market,
-  FollowFiERC1155 as ERC1155,
   ProcessCenter as processCenter,
   FollowRefundFactory as refundFactory,
   FollowRefundPool as refundPool,
@@ -27,76 +27,14 @@ import marketABI from '@/abis/FollowMarket.json'
 import routerABI from '@/abis/FollowRouter.json'
 import faucetABI from '@/abis/FollowFaucet.json'
 import handleABI from '@/abis/FollowHandle.json'
-
-// import LocalERC20_ABI from '@/abis/LocalERC20.json'
-import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
-import { Models } from '@/.generated/api/models'
-import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
-import { LoanService } from '@/.generated/api/Loan'
-import { tokenList } from '@/contract/tradingPairTokenMap'
-import { Errors } from '@/errors/errors'
+import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import { MessageError } from '@/enums/error'
 
-const LocalEnv = true
-
-type LocalContractType<T extends boolean, U> = T extends true
-  ? U
-  : U
-
-function createContract<T>(
-  address: string,
-  abi: any,
-  signer: ethers.Signer,
-): T {
+function createContract<T>(address: string, abi: ethers.InterfaceAbi, signer: ethers.Signer): T {
   return new Contract(address, abi, signer) as T
-}
-
-async function handleTransaction(
-  transactionResponse: ethers.ContractTransactionResponse | undefined,
-  successMessage = 'Transaction Successful',
-  failureMessage = 'Transaction Failed',
-): Promise<ethers.ContractTransactionReceipt | undefined> {
-  if (!transactionResponse)
-    throw new Error('Transaction response is undefined')
-
-  try {
-    const receipt = await transactionResponse.wait()
-
-    if (!receipt)
-      throw new Error('HandleTransaction: Transaction receipt is undefined')
-
-    if (receipt.status === 1) {
-      // Transaction succeeded
-      notification.success({
-        message: successMessage,
-        description: 'Your transaction was successful!',
-      })
-    }
-    else {
-      // Transaction failed
-      notification.error({
-        message: failureMessage,
-        description: 'Your transaction failed. Please try again.',
-      })
-      throw new Error('HandleTransaction: Your transaction failed. Please try again.')
-    }
-
-    console.log('Receipt Info', receipt)
-    return receipt
-  }
-  catch (error) {
-    console.error('Error while waiting for transaction receipt:', error)
-
-    notification.error({
-      message: 'Transaction Error',
-      description: 'An error occurred during the transaction. Please try again.',
-    })
-
-    throw error
-  }
 }
 
 export class CoreContracts {
@@ -201,7 +139,7 @@ export class CoreContracts {
     return this._capitalFactoryContract
   }
 
-  get refundFactoryContract(): capitalFactory {
+  get refundFactoryContract(): refundFactory {
     return this._refundFactoryContract
   }
 
@@ -287,7 +225,7 @@ export class CoreContracts {
       return Promise.reject(new Error(Errors.CapitalPoolOrRefundPoolAddressIsUnavailable))
     }
     this._refundPoolAddress = refundPoolAddress
-    this._refundPoolContract = createContract<refundPool>(this._refundPoolAddress, capitalPoolABI, this.signer)
+    this._refundPoolContract = createContract<refundPool>(this._refundPoolAddress, refundPoolABI, this.signer)
     return this._refundPoolAddress
   }
 
