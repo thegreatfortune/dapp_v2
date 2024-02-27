@@ -1,7 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
 import type { PublicClient } from 'wagmi'
-import { useAccount, useDisconnect, useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { Avatar, message } from 'antd'
 import { ethers } from 'ethers'
@@ -20,7 +20,7 @@ const CustomConnectButton = () => {
 
   const { resetProvider, setNewProvider } = useBrowserContract()
 
-  const { signIn, signOut, clear } = useUserStore()
+  const { signIn, clear } = useUserStore()
 
   const [canLogin, setCanLogin] = useState(false)
 
@@ -34,9 +34,7 @@ const CustomConnectButton = () => {
 
   const { activeUser } = useUserStore()
 
-
-
-  const { isConnected } = useAccount(
+  const { isConnected, address, status } = useAccount(
     {
       async onConnect({ address, connector, isReconnected }) {
         // const getChainId = await connector?.getChainId()
@@ -57,6 +55,8 @@ const CustomConnectButton = () => {
       },
     },
   )
+
+
 
   async function login(address?: string) {
     try {
@@ -95,6 +95,7 @@ const CustomConnectButton = () => {
       }
 
       setNewProvider(newProvider)
+      console.log(address)
 
       // await initializeProvider (newProvider)
     }
@@ -118,21 +119,23 @@ const CustomConnectButton = () => {
     }
   }
 
-  const debouncedCallback = debounce((account: GetAccountResult<PublicClient>) => {
-    // setCanLogin(false)
-    if (account)
-      logInOrSwitching(account.address as string)
+  // const debouncedCallback = debounce((account: GetAccountResult<PublicClient>) => {
+  //   // setCanLogin(false)
+  //   if (account)
+  //     // logInOrSwitching(account.address as string)
+  //     login(account.address as string)
+  // }, 1000)
+
+  const debouncedCallback = debounce((address: string) => {
+    login(address)
   }, 1000)
 
-  useEffect(() => {
-    const unwatch = watchAccount((account) => {
-      debouncedCallback(account)
-    })
+  useEffect(() => debouncedCallback(address as string), [address])
 
-    return () => {
-      unwatch()
-    }
-  }, [])
+  // useEffect(() => {
+  //   console.log('switeched account:', address, status)
+  //   login(address as string)
+  // }, [address, status])
 
   return <ConnectButton.Custom>
     {({
