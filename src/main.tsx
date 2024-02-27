@@ -12,11 +12,10 @@ import {
   darkTheme,
   getDefaultWallets,
 } from '@rainbow-me/rainbowkit'
+import type { Chain } from 'wagmi'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import {
-  arbitrum,
-  polygonMumbai,
-} from 'wagmi/chains'
+
+import { arbitrum } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 
 import './index.css'
@@ -26,29 +25,39 @@ import { getLanguageLib } from './utils/getLanguageLib.ts'
 
 dayjs.extend(relativeTime)
 
-// const localhost = {
-//   ...polygonMumbai,
-//   id: 31337,
-//   name: 'Localhost',
-//   network: 'localhost',
-//   rpcUrls: {
-//     ...polygonMumbai.rpcUrls,
-//     ...{
-//       localhost: {
-//         http: [import.meta.env.VITE_ALCHEMY_ID],
-//         webSocket: ['wss://polygon-mumbai.g.alchemy.com/v2/ubn43XNUtUXvA2ScuHqBUwiMqIPCW6ET'],
-//       },
-//       default: {
-//         http: [import.meta.env.VITE_ALCHEMY_ID],
-//       },
-//       public: {
-//         http: [import.meta.env.VITE_ALCHEMY_ID],
-//       },
-//     },
-//   },
-// }
+const chainList: Chain[] = []
 
-const chainList = [polygonMumbai, arbitrum]
+if (import.meta.env.VITE_TESTNET === 'true') {
+  const polygonMumbai = {
+    id: 80001,
+    name: 'Polygon Mumbai',
+    network: 'Polygon Mumbai',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: [import.meta.env.VITE_MUMBAI_RPC],
+      },
+      public: {
+        http: [import.meta.env.VITE_MUMBAI_RPC],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'PolygonScan',
+        url: 'https://mumbai.polygonscan.com',
+      },
+    },
+    testnet: true,
+  }
+  chainList.push(polygonMumbai)
+}
+else {
+  chainList.push(arbitrum)
+}
 
 // if (import.meta.env.DEV)
 //   chainList.push(localhost as any)
@@ -78,19 +87,19 @@ const browserLanguageLib = getLanguageLib()
 
 root.render(
   // <React.StrictMode>
-    <ConfigProvider locale={browserLanguageLib.locale} theme={{
-      // 使用暗色算法
-      algorithm: theme.darkAlgorithm,
-      // token: {
-      //   colorPrimary: '#171822',
-      // },
-    }}>
-      <BrowserRouter>
-        <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
-            <App />
-          </RainbowKitProvider>
-        </WagmiConfig>
-      </BrowserRouter>
-    </ConfigProvider>,
+  <ConfigProvider locale={browserLanguageLib.locale} theme={{
+    // 使用暗色算法
+    algorithm: theme.darkAlgorithm,
+    // token: {
+    //   colorPrimary: '#171822',
+    // },
+  }}>
+    <BrowserRouter>
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
+          <App />
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </BrowserRouter>
+  </ConfigProvider>,
 )

@@ -1,13 +1,10 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { debounce } from 'lodash-es'
-import type { PublicClient } from 'wagmi'
 import { useAccount, useNetwork } from 'wagmi'
 import { useEffect, useState } from 'react'
 import { Avatar, message } from 'antd'
 import { ethers } from 'ethers'
 import { useLocation, useNavigate } from 'react-router-dom'
-import type { GetAccountResult } from 'wagmi/actions'
-import { watchAccount } from 'wagmi/actions'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
@@ -55,8 +52,6 @@ const CustomConnectButton = () => {
       },
     },
   )
-
-
 
   async function login(address?: string) {
     try {
