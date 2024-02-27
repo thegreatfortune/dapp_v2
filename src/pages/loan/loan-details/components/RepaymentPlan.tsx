@@ -183,14 +183,6 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
   return (
     <div>
       <SModal open={isModalOpen} content={
-        // <div>
-        //   <Button onClick={() => setIsModalOpen(false)}>
-        //     Cancel
-        //   </Button>
-        //   <Button type='primary' onClick={onConfirm} loading={confirmLoading}>
-        //     Confirm
-        //   </Button>
-        // </div>
         <div>
           <h2> {currentBtnType} </h2>
           <div className='flex items-center justify-between text-center'>
@@ -234,12 +226,12 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       </div>
       <div className='h-30'></div>
       <div className='max-md:hidden'>
-        <ul className='grid grid-cols-6 list-none c-#666873 ps-0 lg:px-20'>
+        <ul className='grid grid-cols-6 list-none ps-0 c-#666873 lg:px-20'>
           <li>Time</li>
           <li>Repayment Amount</li>
           <li>Status</li>
           <li>Overdue Days</li>
-          <li className='flex justify-center col-span-2'>Action</li>
+          <li className='col-span-2 flex justify-center'>Action</li>
         </ul>
         <div
           id="scrollableDivPlan"
@@ -310,7 +302,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                     </div>
                     <div className='my-4 flex grow justify-between'>
                       <div className='text-left'>Status:</div>
-                      <div className='text-right'>{item.state}</div>
+                      <div className='text-right'>{item.state === 'OVERDUE_ARREARS' ? 'Arrears' : item.state}</div>
                     </div>
                     <div className='my-4 flex grow justify-between'>
                       <div className='text-left'>Overdue Days:</div>

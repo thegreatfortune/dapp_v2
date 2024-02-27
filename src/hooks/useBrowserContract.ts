@@ -69,7 +69,6 @@ const useBrowserContract = () => {
   useEffect(() => {
     if (!activeUser.accessToken)
       return
-
     initializeProvider()
     initializeSigner()
   }, [provider, signer, activeUser])

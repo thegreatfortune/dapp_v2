@@ -2,8 +2,8 @@ import { Image } from 'antd'
 import type { Models } from '@/.generated/api/models'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import { isContractAddress } from '@/utils/regex'
-import cardPic from '@/assets/images/default.png'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
+
 interface CardProps {
   item: Models.LoanOrderVO
 }
@@ -33,8 +33,11 @@ const InfoCard: React.FC<CardProps> = ({ item }) => {
                 : (item.userInfo?.nickName ?? 'Not Bound')}
             </li>
             <li className='h29 text-16 c-#43465C'>
+
               {
-                item.userInfo?.platformName ? `@${item.userInfo?.platformName}` : '@not bound'
+                item.userInfo?.platformName
+                  ? <a href={`https://twitter.com/${item.userInfo?.platformName}`}>@{item.userInfo?.platformName}</a>
+                  : '@not bound'
               }
             </li>
             <li className='mt16'>
