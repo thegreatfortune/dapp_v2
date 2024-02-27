@@ -31,20 +31,20 @@ const CustomConnectButton = () => {
 
   const { activeUser } = useUserStore()
 
-  const { isConnected, address, status } = useAccount(
+  const { isConnected, address } = useAccount(
     {
-      async onConnect({ address, connector, isReconnected }) {
-        // const getChainId = await connector?.getChainId()
-        if (address && canLogin) {
-          const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+      // async onConnect({ address, connector, isReconnected }) {
+      //   // const getChainId = await connector?.getChainId()
+      //   if (address && canLogin) {
+      //     const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
 
-          if (havenUser)
-            switchActiveUser(havenUser)
+      //     if (havenUser)
+      //       switchActiveUser(havenUser)
 
-          // logInOrSwitching(address)
-          await login(address)
-        }
-      },
+      //     // logInOrSwitching(address)
+      //     await login(address)
+      //   }
+      // },
       onDisconnect() {
         // signOut()
         clear()
@@ -122,10 +122,20 @@ const CustomConnectButton = () => {
   // }, 1000)
 
   const debouncedCallback = debounce((address: string) => {
+    if (canLogin) {
+      const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+
+      if (havenUser)
+        switchActiveUser(havenUser)
+
+      // logInOrSwitching(address)
+    }
     login(address)
   }, 1000)
 
-  useEffect(() => debouncedCallback(address as string), [address])
+  useEffect(() => {
+    debouncedCallback(address as string)
+  }, [address])
 
   // useEffect(() => {
   //   console.log('switeched account:', address, status)
