@@ -84,7 +84,7 @@ const CustomConnectButton = () => {
       if (res.success) {
         const user = await UserInfoService.ApiUserInfo_GET()
 
-        console.log('when user login:', user)
+        console.log('The User logged in:', user)
 
         setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
       }

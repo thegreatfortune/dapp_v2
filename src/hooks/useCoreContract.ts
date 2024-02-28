@@ -7,6 +7,8 @@ import { MessageError, NotificationError } from '@/enums/error'
 import { NotificationInfo } from '@/enums/info'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { tokenList } from '@/contract/tradingPairTokenMap'
+import { Models } from '@/.generated/api/models'
+import tradeService from '@/api/tradeService'
 
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
@@ -16,6 +18,7 @@ const useCoreContract = () => {
     const provider = new ethers.BrowserProvider(window.ethereum)
     const signer = await provider.getSigner()
     const coreContracts = CoreContracts.getCoreContractsInstance(signer)
+    coreContracts.signer = signer
     setCoreContracts(() => coreContracts)
   }
 
@@ -26,7 +29,7 @@ const useCoreContract = () => {
         return task(coreContracts)
       }
       catch (error) {
-        if (error instanceof TypeError) {
+        if (error instanceof Error) {
           if (error.toString() !== MessageError.GenenalError) {
             message.error(error.toString())
             return Promise.reject(error.toString())
@@ -241,7 +244,19 @@ const useCoreContract = () => {
   }
 
   /**
-   *创建订单
+   * get user's latest trader Id
+   */
+  const getLatestTradeIdByUser = async () => {
+    const task = async (coreContracts: CoreContracts) => {
+      if (coreContracts.capitalPoolAddress === ZeroAddress)
+        await coreContracts.getUserCapitalPoolAddress()
+      return coreContracts.capitalPoolContract!.getLastId()
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * create order
    *
    * @param {LoanRequisitionEditModel} model
    */
@@ -262,58 +277,19 @@ const useCoreContract = () => {
           name: model.itemTitle!,
         },
       )
-      return handleTransactionResponse(res)
-    }
-    return executeTask(task)
-
-    if (result?.status === 1) {
-      const getTrulyTradeId = async (): Promise<bigint> => {
-        let trulyTradeId = null
-
-        const transaction = await result?.getTransaction()
-
-        const transactionReceipt = await result?.provider.getTransactionReceipt(transaction?.hash ?? '')
-
-        transactionReceipt?.logs.forEach((log) => {
-          const parseLog = followRouterContract.interface.parseLog({ topics: log?.topics.concat([]) ?? [], data: log?.data ?? '' })
-
-          if (parseLog)
-            trulyTradeId = parseLog.args[0]
-        })
-
-        if (!trulyTradeId) {
-          const followManageContract = await this.getFollowManageContract()
-          trulyTradeId = await followManageContract.getLastTradeId()
-
-          return (trulyTradeId === BigInt(0) ? trulyTradeId : trulyTradeId - BigInt(1))
-        }
-        return trulyTradeId
-      }
-
-      const trulyTradeId = await getTrulyTradeId()
-
-      const loanConfirm = {
+      await handleTransactionResponse(res)
+      const latestTradeId = await getLatestTradeIdByUser()
+      const tradeDetail = {
         ...new Models.LoanConfirmParam(),
+        tradeId: Number(latestTradeId),
         loanPicUrl: model.imageUrl,
         loanName: model.itemTitle ?? '',
         loanIntro: model.description ?? '',
         transactionPairs: model.transactionPairs,
         tradingFormType: model.tradingFormType,
         tradingPlatformType: model.tradingPlatformType,
-        tradeId: Number(trulyTradeId),
       }
-
-      return LoanService.ApiLoanConfirm_POST(loanConfirm)
-    }
-  }
-
-  /**
-   * get user's latest order Id
-   */
-  const getLatestTradeId = async () => {
-    const task = async (coreContracts: CoreContracts) => {
-      // TODO get user's latest order Id
-      return 0
+      return tradeService.submitTradeDetail(tradeDetail)
     }
     return executeTask(task)
   }
@@ -344,10 +320,10 @@ const useCoreContract = () => {
   }
 
   /**
-   * when trade is uncollected, withdraw asset
+   * when trade is uncollected, the lender recover principal
    * @param tradeId
    */
-  const withdrawAsset = async (tradeId: bigint) => {
+  const recoverPrincipal = async (tradeId: bigint) => {
     const task = async (coreContracts: CoreContracts) => {
       const res = await coreContracts.routerContract.refundMoney(tradeId)
       return handleTransactionResponse(res)
@@ -427,7 +403,70 @@ const useCoreContract = () => {
     return executeTask(task)
   }
 
-  const faucetClaim = async (token: string) => {
+  /**
+   * the lender or borrower withdraw all profits
+   * @param tradeId
+   */
+  const withdrawProfit = async (tradeId: bigint, isLender: boolean) => {
+    const task = async (coreContracts: CoreContracts) => {
+      if (coreContracts.refundPoolAddress === ZeroAddress)
+        coreContracts.getUserRefundPoolAddress()
+
+      if (isLender) {
+        const tokenId = await coreContracts.sharesContract.getPersonalSlotToTokenId(coreContracts.signer.address, tradeId)
+        if (!tokenId)
+          throw new Error(MessageError.TokenIdIsNotFound)
+        const res = await coreContracts.refundPoolContract!.lenderWithdraw(tokenId)
+        return handleTransactionResponse(res)
+      }
+      else {
+        const res = await coreContracts.refundPoolContract!.borrowerWithdraw(tradeId)
+        return handleTransactionResponse(res)
+      }
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * deposit fund to capital pool. Anyone can call it
+   * @param amount
+   * @param tradeId
+   */
+  const deposit = async (amount: bigint, tradeId: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      const allowance = await coreContracts.usdcContract.allowance(coreContracts.signer.address, await coreContracts.processCenterContract.getAddress())
+      if (allowance < amount)
+        return Promise.reject(MessageError.AllowanceIsNotEnough)
+      const res = await coreContracts.processCenterContract.supply(import.meta.env.VITE_TOKEN_USDC, amount, tradeId)
+      return handleTransactionResponse(res)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * check if the token has been claimed
+   * @param token
+   */
+  const canClaimTokenFromFaucet = async (token: string) => {
+    const task = async (coreContracts: CoreContracts) => {
+      try {
+        await coreContracts.faucetContract.faucet.staticCall(token)
+      }
+      catch (error) {
+        console.log('claim Error:', coreContracts.signer.address, error)
+        if (error instanceof Error && error.toString().includes('Not withdraw'))
+          return Promise.resolve(false)
+      }
+      return Promise.resolve(true)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * claim the test token from faucet, like usdc
+   * @param token
+   */
+  const claimTokenFromFaucet = async (token: string) => {
     const task = async (coreContracts: CoreContracts) => {
       const res = await coreContracts.faucetContract.faucet(token)
       return handleTransactionResponse(res)
@@ -435,7 +474,119 @@ const useCoreContract = () => {
     return executeTask(task)
   }
 
-  
+  /**
+   * approve usdc to spender
+   * @param spender
+   * @param amount
+   */
+  const approveUsdc = async (spender: string, amount: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      const allowance = await coreContracts.usdcContract.allowance(coreContracts.signer.address, spender)
+      if (allowance < amount) {
+        const res = await coreContracts.usdcContract.approve(spender, amount)
+        await handleTransactionResponse(res)
+      }
+      return Promise.resolve(true)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * get FOF Balance
+   */
+  const getFofBalance = async () => {
+    const task = async (coreContracts: CoreContracts) => {
+      return coreContracts.fofContract.balanceOf(coreContracts.signer.address)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * get NFT Balance
+   */
+  const getNftBalance = async () => {
+    const task = async (coreContracts: CoreContracts) => {
+      return [
+        await coreContracts.nftContract.balanceOf(coreContracts.signer.address, 0),
+        await coreContracts.nftContract.balanceOf(coreContracts.signer.address, 1),
+        await coreContracts.nftContract.balanceOf(coreContracts.signer.address, 2),
+        await coreContracts.nftContract.balanceOf(coreContracts.signer.address, 3),
+      ]
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * check NFT mint whitelist
+   * @param nftId
+   */
+  const checkNftWhitelist = async (nftId: number) => {
+    const task = async (coreContracts: CoreContracts) => {
+      return coreContracts.nftContract.getIfWhitelist(coreContracts.signer.address, nftId)
+    }
+    return executeTask(task)
+  }
+  /**
+   * approve $FOF
+   * @param spender
+   * @param amount
+   */
+  const approveFof = async (spender: string, amount: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      const allowance = await coreContracts.fofContract.allowance(coreContracts.signer.address, spender)
+      if (allowance < amount) {
+        const res = await coreContracts.fofContract.approve(spender, amount)
+        await handleTransactionResponse(res)
+      }
+      return Promise.resolve(true)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * do mint nft
+   * @param id
+   * @param amount
+   */
+  const mintNft = async (id: bigint, amount: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      const res = await coreContracts.nftContract.doMint(id, amount)
+      return handleTransactionResponse(res)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * check claimable $FOF amount for user
+   */
+  const checkClaimableFoF = async (tradeId: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      return coreContracts.routerContract.getUserEarnTokenAmount(tradeId)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * claim $FOF
+   */
+  const claimFoF = async (tradeId: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      const res = await coreContracts.routerContract.claimToken(tradeId)
+      return handleTransactionResponse(res)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * check if user has withdrawn
+   * @param tradeId
+   */
+  const hasWithdrawn = async (tradeId: bigint) => {
+    const task = async (coreContracts: CoreContracts) => {
+      return coreContracts.routerContract.getUserIfWithdraw(tradeId)
+    }
+    return executeTask(task)
+  }
 
   const approveErc20 = async (token: string, spender: string, amount: bigint) => {
     const task = async (coreContracts: CoreContracts) => {
@@ -480,16 +631,28 @@ const useCoreContract = () => {
     buyShares,
     createPools,
     createOrder,
-    getLatestTradeId,
+    getLatestTradeIdByUser,
     getAmountForShares,
     followOrder,
-    withdrawAsset,
+    recoverPrincipal,
     liquidateOrder,
     repay,
     getHandleIndex,
     swapUniV3,
-    faucetClaim,
+    withdrawProfit,
+    deposit,
+    getFofBalance,
+    getNftBalance,
+    checkNftWhitelist,
+    approveFof,
+    mintNft,
+    checkClaimableFoF,
+    claimFoF,
+    hasWithdrawn,
+    canClaimTokenFromFaucet,
+    claimTokenFromFaucet,
 
+    approveUsdc,
     approveErc20,
     allowanceErc20,
   }

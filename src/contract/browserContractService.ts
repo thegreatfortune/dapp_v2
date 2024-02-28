@@ -1084,7 +1084,6 @@ export class BrowserContractService {
         uri: model.imageUrl!,
         name: model.itemTitle!,
       },
-
     )
 
     const result = await handleTransaction(transaction)

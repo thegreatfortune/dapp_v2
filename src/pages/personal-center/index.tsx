@@ -20,6 +20,7 @@ import { TwitterService, UserInfoService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
+import useCoreContract from '@/hooks/useCoreContract'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -27,6 +28,8 @@ const PersonalCenter = () => {
   const navigate = useNavigate()
 
   const { browserContractService } = useBrowserContract()
+
+  const { canClaimTokenFromFaucet, claimTokenFromFaucet } = useCoreContract()
 
   const [applyLoanLoading, setApplyLoanLoading] = useState(false)
 
@@ -45,6 +48,10 @@ const PersonalCenter = () => {
   const { disconnect } = useDisconnect()
 
   const [bindModalOpen, setBindModalOpen] = useState(false)
+
+  const [canClaimText, setCanClaimText] = useState('You will receive 2,000 USDC on Polygon mumbai!')
+
+  const [claimOkBtnDisabled, setClaimOkBtnDisabled] = useState(false)
 
   const setBalance = async () => {
     const fofBalance = await browserContractService?.getFofBalance()
@@ -162,8 +169,8 @@ const PersonalCenter = () => {
 
   const [usdcModelOpen, setUsdcModelOpen] = useState(false)
   const [faucetText, setFaucetText] = useState('Claim')
-  const [executing, setExecuting] = useState(false)
   const [hiddenCancel, setHiddenCancel] = useState(false)
+  const [executing, setExecuting] = useState(false)
 
   const addUsdcToWallet = async () => {
     const signer = browserContractService?.getSigner
@@ -181,6 +188,12 @@ const PersonalCenter = () => {
 
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
+      const canClaim = await canClaimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
+      if (!canClaim) {
+        setCanClaimText('You have claimed the test $USDC token.')
+        setClaimOkBtnDisabled(true)
+      }
+
       setUsdcModelOpen(true)
       return true
     }
@@ -198,23 +211,32 @@ const PersonalCenter = () => {
       return true
     }
 
+    setClaimOkBtnDisabled(true)
     setExecuting(true)
 
-    const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_TOKEN_USDC)
+    await claimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
+    setTimeout(() => {
+      setExecuting(false)
+      setFaucetText('Completed!')
+      setHiddenCancel(true)
+      setClaimOkBtnDisabled(false)
+    }, 3000)
 
-    try {
-      if (res?.status === 1) {
-        ///
-        setTimeout(() => {
-          setFaucetText('Completed!')
-          setHiddenCancel(true)
-          setExecuting(false)
-        }, 3000)
-      }
-    }
-    catch {
-      message.error('Transaction failed')
-    }
+    // const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_TOKEN_USDC)
+
+    // try {
+    //   if (res?.status === 1) {
+    //     ///
+    //     setTimeout(() => {
+    //       setFaucetText('Completed!')
+    //       setHiddenCancel(true)
+    //       setExecuting(false)
+    //     }, 3000)
+    //   }
+    // }
+    // catch {
+    //   message.error('Transaction failed')
+    // }
   }
 
   return (
@@ -237,17 +259,20 @@ const PersonalCenter = () => {
       : <div className="flex justify-center">
         <div className='w-full'>
           <Modal open={usdcModelOpen}
-            onCancel={() => setUsdcModelOpen(false)}
+            onCancel={() => {
+              setCanClaimText('You will receive 2,000 USDC on Polygon mumbai!')
+              setUsdcModelOpen(false)
+            }}
             okText={faucetText}
             onOk={claimUsdc}
-            okButtonProps={{ disabled: executing, className: 'primary-btn' }}
+            okButtonProps={{ disabled: claimOkBtnDisabled, className: 'primary-btn', loading: executing }}
             cancelButtonProps={{ hidden: hiddenCancel }}
             className='rounded-20'
           >
             <div>
               <h2>Faucet</h2>
               <div className='mb-30 flex items-center justify-between'>
-                <div>You will receive 2,000 USDC on Polygon mumbai!</div>
+                <div>{canClaimText}</div>
                 <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
               </div>
             </div>
