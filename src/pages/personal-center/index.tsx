@@ -206,21 +206,31 @@ const PersonalCenter = () => {
   async function claimUsdc() {
     if (faucetText === 'Completed!') {
       setFaucetText('Claim')
+      setExecuting(false)
       setHiddenCancel(false)
+      setClaimOkBtnDisabled(false)
       setUsdcModelOpen(false)
       return true
     }
 
     setClaimOkBtnDisabled(true)
     setExecuting(true)
+    setHiddenCancel(true)
 
-    await claimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
-    setTimeout(() => {
+    try {
+      await claimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
+      setTimeout(() => {
+        setExecuting(false)
+        setFaucetText('Completed!')
+        setClaimOkBtnDisabled(false)
+        setHiddenCancel(false)
+      }, 3000)
+    }
+    catch (error) {
       setExecuting(false)
-      setFaucetText('Completed!')
-      setHiddenCancel(true)
+      setHiddenCancel(false)
       setClaimOkBtnDisabled(false)
-    }, 3000)
+    }
 
     // const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_TOKEN_USDC)
 
@@ -261,6 +271,10 @@ const PersonalCenter = () => {
           <Modal open={usdcModelOpen}
             onCancel={() => {
               setCanClaimText('You will receive 2,000 USDC on Polygon mumbai!')
+              setClaimOkBtnDisabled(false)
+              setFaucetText('Claim')
+              setExecuting(false)
+              setHiddenCancel(false)
               setUsdcModelOpen(false)
             }}
             okText={faucetText}
