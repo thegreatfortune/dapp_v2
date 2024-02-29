@@ -39,7 +39,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     },
 
     esbuild: {
-      pure: ['console.log'],
+      pure: ['console.log', 'console.info'],
       drop: ['debugger'],
     },
 

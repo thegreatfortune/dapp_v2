@@ -1,146 +1,204 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { debounce } from 'lodash-es'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useChainId, useDisconnect, useSignTypedData } from 'wagmi'
 import { useEffect, useState } from 'react'
-import { Avatar, message } from 'antd'
-import { ethers } from 'ethers'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Avatar, message, notification } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import dayjs from 'dayjs'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
 import useUserStore from '@/store/userStore'
-import useBrowserContract from '@/hooks/useBrowserContract'
 import logo from '@/assets/images/portalImages/logo.png'
+import { MessageError } from '@/enums/error'
+import { NotificationInfo } from '@/enums/info'
 
 const CustomConnectButton = () => {
-  const { userList, switchActiveUser, setUserInfo } = useUserStore()
-
-  const { resetProvider, setNewProvider } = useBrowserContract()
-
-  const { signIn, clear } = useUserStore()
-
-  const [canLogin, setCanLogin] = useState(false)
+  const { userLogin, userLogout, currentUser, users } = useUserStore()
 
   const navigator = useNavigate()
 
   const [inviteCode, setInviteCode] = useState<string>()
 
-  const location = useLocation()
+  const chainId = useChainId()
 
-  const { chain } = useNetwork()
+  const { disconnect } = useDisconnect()
 
-  const { activeUser } = useUserStore()
+  const { address } = useAccount()
 
-  const { isConnected, address } = useAccount(
-    {
-      // async onConnect({ address, connector, isReconnected }) {
-      //   // const getChainId = await connector?.getChainId()
-      //   if (address && canLogin) {
-      //     const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
+  const { signTypedDataAsync } = useSignTypedData()
 
-      //     if (havenUser)
-      //       switchActiveUser(havenUser)
+  // async function login_old(address?: string) {
+  //   try {
+  //     if (!address)
+  //       return
 
-      //     // logInOrSwitching(address)
-      //     await login(address)
-      //   }
-      // },
-      onDisconnect() {
-        // signOut()
-        clear()
-        navigator('/market')
-      },
-    },
-  )
+  //     resetProvider()
 
-  async function login(address?: string) {
-    try {
-      if (!address)
-        return
+  //     const newProvider = new ethers.BrowserProvider(window.ethereum)
 
-      resetProvider()
+  //     // await initializeProvider (newProvider)
 
-      const newProvider = new ethers.BrowserProvider(window.ethereum)
+  //     const signer = await newProvider.getSigner()
 
-      // await initializeProvider (newProvider)
+  //     const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
 
-      const signer = await newProvider.getSigner()
+  //     const signature = await signer?.signMessage(nonce)
 
-      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
-      const signature = await signer?.signMessage(nonce)
+  //     console.log('nonce:', nonce)
 
-      if (!signature) {
-        message.error('signature cannot be empty')
-        return
-      }
+  //     if (!signature) {
+  //       message.error('signature cannot be empty')
+  //       return
+  //     }
 
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode })
-      // const res = await UserService.ApiUserLogin_POST({ address })
+  //     const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode, rawMessage: '' })
+  //     // const res = await UserService.ApiUserLogin_POST({ address })
 
-      // const res = await UserService.ApiUserLogin_POST({ address })
+  //     // const res = await UserService.ApiUserLogin_POST({ address })
 
-      signIn({ accessToken: res.accessToken, address, chainId: chain?.id })
+  //     signIn({ accessToken: res.accessToken, address, chainId: chain?.id })
 
-      if (res.success) {
-        const user = await UserInfoService.ApiUserInfo_GET()
+  //     if (res.success) {
+  //       const user = await UserInfoService.ApiUserInfo_GET()
 
-        console.log('The User logged in:', user)
+  //       console.log('The user logged in:', user)
 
-        setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
-      }
+  //       setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
+  //     }
 
-      setNewProvider(newProvider)
-      console.log(address)
+  //     setNewProvider(newProvider)
 
-      // await initializeProvider (newProvider)
+  //     // await initializeProvider (newProvider)
+  //   }
+  //   catch (error) {
+  //     reset()
+  //     navigator('/market')
+  //     message.error('login failed')
+  //     console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
+  //     throw new Error('login failed')
+  //   }
+  // }
+
+  interface TypedData {
+    domain: {
+      name: string
+      chainId: number
+      version: string
     }
-    catch (error) {
-      clear()
-      navigator('/market')
-      message.error('login failed')
-      console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
-      throw new Error('login failed')
+    types: {
+      Message: {
+        name: string
+        type: string
+      }[]
     }
-  }
-
-  async function logInOrSwitching(address: string) {
-    if (isConnected) {
-      const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
-
-      if (havenUser)
-        switchActiveUser(havenUser)
-      else
-        await login(address)
+    primaryType: 'Message'
+    message: {
+      Content: string
+      URL: string
+      Wallet: string
+      Nonce: string
+      ChainId: number
+      Version: string
+      Date: string
     }
   }
 
-  // const debouncedCallback = debounce((account: GetAccountResult<PublicClient>) => {
-  //   // setCanLogin(false)
-  //   if (account)
-  //     // logInOrSwitching(account.address as string)
-  //     login(account.address as string)
-  // }, 1000)
-
-  const debouncedCallback = debounce((address: string) => {
-    if (canLogin) {
-      const havenUser = userList.find(user => ethers.getAddress(user.address ?? '') === ethers.getAddress(address))
-
-      if (havenUser)
-        switchActiveUser(havenUser)
-
-      // logInOrSwitching(address)
+  async function login() {
+    const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address: address as string })
+    const now = dayjs()
+    const originUser = users.find(e => e.address === address as string)
+    if (originUser && originUser.nonce === nonce) {
+      const userInfo = await UserInfoService.ApiUserInfo_GET()
+      userLogin({ ...originUser, ...userInfo, address: address as string })
     }
-    login(address)
-  }, 1000)
+    else {
+      const typedData: TypedData = {
+        domain: {
+          name: 'Follow Finance',
+          chainId,
+          version: '1',
+        },
+        types: {
+          Message: [
+            { name: 'Content', type: 'string' },
+            { name: 'URL', type: 'string' },
+            { name: 'Wallet', type: 'string' },
+            { name: 'Nonce', type: 'string' },
+            { name: 'ChainId', type: 'string' },
+            { name: 'Version', type: 'string' },
+            { name: 'Date', type: 'string' },
+          ],
+        },
+        primaryType: 'Message',
+        message: {
+          Content: 'Welcome to Follow Finance App!',
+          URL: window.location.origin,
+          Wallet: address as string,
+          Nonce: nonce,
+          ChainId: chainId,
+          Version: '1',
+          Date: now.format(),
+        },
+      }
+      try {
+        const signature = await signTypedDataAsync(typedData)
+
+        const res = await MetamaskService.ApiMetamaskLogin_POST({
+          address: address as string,
+          sign: signature,
+          rawMessage: JSON.stringify(typedData),
+          inviteCode,
+        })
+        if (res.success) {
+          // const user = { address: address as string, accessToken: res.accessToken }
+          const user = await UserInfoService.getUserInfo({ header: { Authorization: res.accessToken } })
+          userLogin({
+            ...user,
+            address: address as string,
+            accessToken: res.accessToken,
+            chainId,
+            nonce,
+          })
+          console.info(`The new user ( ${address} ) logged in, navigate to personal center...`)
+          notification.info({
+            message: NotificationInfo.LogInSuccessfully,
+            description: 'Welcome to Follow Finance!',
+          })
+          setTimeout(() => {
+            if (!originUser) {
+              if (location.pathname !== '/personal-center')
+                navigator('/personal-center')
+              else
+                location.reload()
+            }
+          }, 3000)
+        }
+        else {
+          message.error(MessageError.LoginFailed)
+          userLogout()
+          disconnect()
+          setTimeout(() => {
+            if (location.pathname !== '/market')
+              navigator('/market')
+          }, 3000)
+        }
+      }
+      catch (error) {
+        message.error(MessageError.SiganMessageError)
+        userLogout()
+        disconnect()
+        setTimeout(() => {
+          if (location.pathname !== '/market')
+            navigator('/market')
+        }, 3000)
+      }
+    }
+  }
 
   useEffect(() => {
-    debouncedCallback(address as string)
+    if (address)
+      login()
   }, [address])
-
-  // useEffect(() => {
-  //   console.log('switeched account:', address, status)
-  //   login(address as string)
-  // }, [address, status])
 
   return <ConnectButton.Custom>
     {({
@@ -174,8 +232,6 @@ const CustomConnectButton = () => {
 
       async function onOpenConnectModal() {
         openConnectModal()
-
-        setCanLogin(true)
       }
 
       return (
@@ -235,24 +291,17 @@ const CustomConnectButton = () => {
                   </button>
                 </div>
 
-                {/* <button onClick={openAccountModal} type="button" className='w160 h60 text-14 c-orange '>
-                                {account.displayName}
-                                {account.displayBalance
-                                  ? ` (${account.displayBalance})`
-                                  : ''}
-                            </button> */}
-
                 <UserDropdown>
                   <button className="user-chain-logo" type="button">
 
                     {/* <a onClick={e => e.preventDefault()}> */}
                     <div className='h25 w25'>
                       <Avatar
-                        src={activeUser.pictureUrl ? activeUser.pictureUrl : logo}
+                        src={currentUser.pictureUrl ? currentUser.pictureUrl : logo}
                         className="h25 w25 bg-slate-200" />
                       {/* </a> */}
                     </div>
-                    <div className='truncate user-address ml-5 '>{account.displayName}</div>
+                    <div className='user-address ml-5 truncate'>{account.displayName}</div>
                   </button>
                 </UserDropdown>
               </div>

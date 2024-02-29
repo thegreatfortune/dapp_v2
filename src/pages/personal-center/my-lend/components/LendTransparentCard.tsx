@@ -1,4 +1,3 @@
-import Button from 'antd/es/button'
 import { ethers } from 'ethers'
 import { Image } from 'antd'
 import type { Models } from '@/.generated/api/models'

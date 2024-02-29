@@ -48,7 +48,7 @@ const ApplyLoan = () => {
 
   const navigate = useNavigate()
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -143,11 +143,11 @@ const ApplyLoan = () => {
   ])
 
   useEffect(() => {
-    if (!activeUser.accessToken) {
+    if (!currentUser.accessToken) {
       message.warning('You must be logged in ')
       navigate('/personal-center')
     }
-  }, [activeUser])
+  }, [currentUser])
 
   /**
    *  加载页面之后检查 检查订单是否可创建

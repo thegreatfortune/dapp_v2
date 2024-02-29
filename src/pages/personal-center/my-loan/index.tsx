@@ -7,10 +7,9 @@ import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
 import TransparentCard from '@/pages/components/TransparentCard'
-import { dataLength } from 'ethers'
 
 const MyLoan = () => {
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const navigate = useNavigate()
 
@@ -30,7 +29,7 @@ const MyLoan = () => {
 
     setLoading(true)
 
-    if (!activeUser.id)
+    if (!currentUser.userId)
       return
 
     const params = new Models.ApiLoanPageLoanContractGETParams()
@@ -38,7 +37,7 @@ const MyLoan = () => {
     params.limit = 16
     params.page = page + 1 // Increment the page
 
-    params.borrowUserId = String(activeUser.id)
+    params.borrowUserId = String(currentUser.userId)
 
     try {
       const res = await LoanService.ApiLoanPageLoanContract_GET(params)
@@ -65,7 +64,7 @@ const MyLoan = () => {
 
   useEffect(() => {
     loadMoreData()
-  }, [activeUser.id])
+  }, [currentUser.userId])
 
   const renderItem = (item: Models.LoanOrderVO) => {
     return <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>

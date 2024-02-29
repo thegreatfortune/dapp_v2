@@ -9,7 +9,7 @@ const useBrowserContract = () => {
   const [browserContractService, setBrowserContractService] = useState<BrowserContractService>()
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false)
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const checkWalletConnection = async (currentSigner: ethers.JsonRpcSigner): Promise<boolean> => {
     try {
@@ -67,11 +67,11 @@ const useBrowserContract = () => {
   }
 
   useEffect(() => {
-    if (!activeUser.accessToken)
+    if (!currentUser.accessToken)
       return
     initializeProvider()
     initializeSigner()
-  }, [provider, signer, activeUser])
+  }, [provider, signer, currentUser])
 
   const resetProvider = () => {
     setProvider(undefined)

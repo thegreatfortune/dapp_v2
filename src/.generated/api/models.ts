@@ -409,13 +409,15 @@ Canceled :订单取消 */
     defaultLocale?: Locale = undefined;
   }
 
-  export class MetaMaskLoginParam {
-    /** 钱包 */
-    address?: string = undefined;
-    /** 用户邀请码 */
-    inviteCode?: string = undefined;
+  export interface MetaMaskLoginParam {
+    /** 钱包地址 */
+    address: string;
     /** 签名 */
-    sign?: string = undefined;
+    sign: string;
+    /** 原始数据 */
+    rawMessage: string
+    /** 用户邀请码 */
+    inviteCode?: string;
   }
 
   export class MetaMaskVerifyParam {
@@ -636,10 +638,28 @@ Canceled :订单取消 */
     pictureUrl?: string = undefined;
     /** 邀请码 */
     inviteCode?: string = undefined;
+
     userId?: string = undefined;
     /** 信用分 */
     creditScore?: number = 0;
   }
+
+  export interface UserInfo {
+    userId?: string
+
+    address: string
+
+    nickName?: string
+
+    platformName?: string
+
+    pictureUrl?: string
+
+    inviteCode?: string
+
+    creditScore?: number
+  }
+
 
   export class UserPortfolioVo {
     uPrice: string = '0';

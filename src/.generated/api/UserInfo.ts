@@ -21,4 +21,17 @@ export class UserInfoService {
       ...(options || {}),
     });
   }
+
+  /**
+   * get UserInfo with accessToken
+   * @param options
+   * @returns 
+   */
+  static async getUserInfo(options?: { [key: string]: any }) {
+    return request<Models.UserInfoVo1>({
+      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/user/info/',
+      method: 'GET',
+      ...(options || {}),
+    });
+  }
 }

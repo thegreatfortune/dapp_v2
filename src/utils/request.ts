@@ -29,7 +29,7 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
       return response
 
     if (responseData.code === HttpCode.RE_LOGIN) {
-      useUserStore.getState().clear()
+      useUserStore.getState().userLogout()
       window.location.href = '/'
     }
 
@@ -89,8 +89,8 @@ async function handleRetry<T>(config: AxiosRequestConfig): Promise<T> {
 axios.interceptors.request.use((config) => {
   const headers = config.headers || {}
   headers['Content-Type'] = headers['Content-Type'] || 'application/json'
-  headers['Chain-Id'] = useUserStore.getState().activeUser.chainId
-  headers.Authorization = headers.Authorization || useUserStore.getState().activeUser.accessToken
+  headers['Chain-Id'] = useUserStore.getState().currentUser.chainId
+  headers.Authorization = headers.Authorization || useUserStore.getState().currentUser.accessToken
   config.headers = headers
   return config
 })

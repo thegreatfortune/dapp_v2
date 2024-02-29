@@ -18,8 +18,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm",
-    "dop":"doppler run -p core -c dev --command 'pnpm gen:abi && vite --open'",
-    "dop:prd":"doppler run -p core -c prd --command 'pnpm gen:abi && vite --open'"
+    "dop": "doppler run -p core -c dev --command 'pnpm gen:abi && vite --open'",
+    "dop:prd": "doppler run -p core -c prd --command 'pnpm gen:abi && vite --open'"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",

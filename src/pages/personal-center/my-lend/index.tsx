@@ -10,7 +10,7 @@ import useUserStore from '@/store/userStore'
 import { MarketBalanceService } from '@/.generated/api'
 
 const MyLend = () => {
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const { t } = useTranslation()
 
@@ -30,7 +30,7 @@ const MyLend = () => {
 
     setLoading(true)
 
-    if (!activeUser.id)
+    if (!currentUser.userId)
       return
 
     const params = new Models.ApiMarketBalancePageMyFollowGETParams()
@@ -38,7 +38,7 @@ const MyLend = () => {
     params.limit = 16
     params.page = page + 1
 
-    params.userId = BigNumber(activeUser.id).toNumber()
+    params.userId = BigNumber(currentUser.userId).toNumber()
     params.loanId = undefined
 
     try {
@@ -68,7 +68,7 @@ const MyLend = () => {
 
   useEffect(() => {
     loadMoreData()
-  }, [activeUser.id])
+  }, [currentUser.userId])
 
   return (
     <div>

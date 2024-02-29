@@ -1,13 +1,10 @@
 import Avatar from 'antd/es/avatar'
-import Button from 'antd/es/button'
 import BigNumber, { } from 'bignumber.js'
 import { Image, Tooltip } from 'antd'
 import type { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
-import logo from '@/assets/images/portalImages/logo.png'
-import cardPic from '@/assets/images/default.png'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
 
 interface CardProps {

@@ -3,7 +3,6 @@ import React, { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import type { IRouter } from '..'
 import BasicLayout from '@/layouts/BasicLayout'
-import PortalLayout from '@/layouts/PortalLayout'
 
 const Market = lazy(() => import('../../pages/market'))
 const Portal = lazy(() => import('../../pages/Portal'))

@@ -96,9 +96,9 @@ root.render(
   }}>
     <BrowserRouter>
       <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
-          <App />
-        </RainbowKitProvider>
+          <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
+            <App />
+          </RainbowKitProvider>
       </WagmiConfig>
     </BrowserRouter>
   </ConfigProvider>,

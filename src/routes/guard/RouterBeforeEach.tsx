@@ -22,12 +22,12 @@ export const RouterBeforeEach = ({ children }: any) => {
   const location = useLocation()
   const navigator = useNavigate()
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   useEffect(() => {
     const router = getCurrentRouterMap(routes, location.pathname)
 
-    if (!activeUser.accessToken && !whiteList.map(e => e.path).includes(location.pathname))
+    if (!currentUser.accessToken && !whiteList.map(e => e.path).includes(location.pathname))
       navigator('/market')
   }, [location.pathname])
 

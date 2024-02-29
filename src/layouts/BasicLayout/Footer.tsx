@@ -12,10 +12,10 @@ const Footer = () => {
             <div className='bottom-0 mb-48 mt-59 flex justify-between'>
                 <div className='flex justify-around'>
                     <Avatar src="/src/assets/images/market/logo.png" className="h-60 w-60"></Avatar>
-                    <div className="ml-33 mt-12 h-40 w-90 text-center text-40 font-400 lh-40 c-#fff">{`${t('Footer.div.title.footerLogo')}`}</div>
+                    <div className="ml-33 mt-12 h-40 w-90 text-center text-40 c-#fff font-400 lh-40">{`${t('Footer.div.title.footerLogo')}`}</div>
                 </div>
                 <div>
-                    <div className='m-auto mt-12 text-center lh-34 c-#fff'>
+                    <div className='m-auto mt-12 text-center c-#fff lh-34'>
                         {`${t('Footer.div.title.footerProfile')}`}
                     </div>
                     <div className='mt-34 flex justify-center'>

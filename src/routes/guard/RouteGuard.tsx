@@ -9,10 +9,10 @@ interface RouteGuardProps {
 const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   const navigate = useNavigate()
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   useEffect(() => {
-    const isAuthenticated = activeUser.accessToken
+    const isAuthenticated = currentUser.accessToken
 
     if (!isAuthenticated)
       navigate('/market')

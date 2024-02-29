@@ -12,12 +12,12 @@ import type { User } from '@/models/User'
 interface IProps {
   renderItem: (params: any, index: number) => React.ReactNode
   tradeId: number
-  activeUser: User
+  currentUser: User
   grid?: ListGridType
   containerId: string
 }
 
-const SorterScrollableList: React.FC<IProps> = ({ grid, activeUser, renderItem, tradeId, containerId }) => {
+const SorterScrollableList: React.FC<IProps> = ({ grid, currentUser, renderItem, tradeId, containerId }) => {
   const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, orderItemList: 'price=false', state: 'ToBeTraded', tradeId, loanId: undefined, marketId: undefined })
 
   const quantitySorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
@@ -56,7 +56,7 @@ const SorterScrollableList: React.FC<IProps> = ({ grid, activeUser, renderItem, 
     const checked = state.target.checked
 
     if (checked) {
-      const filteredData = originalData.filter(item => item.userId === activeUser.id)
+      const filteredData = originalData.filter(item => item.userId === currentUser.userId)
       columnRenderCallback(filteredData)
     }
     else {

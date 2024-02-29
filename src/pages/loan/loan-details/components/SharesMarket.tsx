@@ -17,7 +17,7 @@ const SharesMarket = () => {
 
   const [tradeId] = searchParams.getAll('tradeId')
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -55,7 +55,7 @@ const SharesMarket = () => {
                 // 用户已连接钱包
                 <>
                   {
-                    activeUser.id === item.userId
+                    currentUser.userId === item.userId
                       ? (
                         <Button className='h30 w100 items-center b-rd-30' onClick={() => {
                           setCurrentItem(item)
@@ -167,7 +167,7 @@ const SharesMarket = () => {
       <SorterScrollableList
         grid={{ gutter: 16, column: 6 }}
         containerId={'SharesMarketContainerId'}
-        activeUser={activeUser}
+        currentUser={currentUser}
         renderItem={renderItem}
         tradeId={Number(tradeId)}
       />

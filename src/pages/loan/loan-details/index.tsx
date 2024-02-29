@@ -28,7 +28,7 @@ const LoanDetails = () => {
 
   const navigate = useNavigate()
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -144,7 +144,7 @@ const LoanDetails = () => {
     else {
       async function fetchSharesData() {
         const erc3525Contract = await browserContractService?.getERC3525Contract()
-        const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(activeUser.address!, tradeId!)
+        const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(currentUser.address, tradeId!)
         const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
         setTotalShares(Number.parseInt(shares!.toString()))
       }
@@ -247,7 +247,7 @@ const LoanDetails = () => {
       if (prePage === 'my-lend' && loanInfo.state === 'PaidOff')
         return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
 
-      if (activeUser.id === loanInfo.userId) {
+      if (currentUser.userId === loanInfo.userId) {
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
       }
       else {

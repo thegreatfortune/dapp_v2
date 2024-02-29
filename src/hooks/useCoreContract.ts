@@ -12,7 +12,7 @@ import tradeService from '@/api/tradeService'
 
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const initializeContracts = async () => {
     const provider = new ethers.BrowserProvider(window.ethereum)
@@ -607,11 +607,11 @@ const useCoreContract = () => {
 
   useEffect(() => {
     initializeContracts()
-  }, [activeUser])
+  }, [currentUser])
 
-  useEffect(() => {
-    initializeContracts()
-  }, [])
+  // useEffect(() => {
+  //   initializeContracts()
+  // }, [])
 
   const resetProvider = () => {
     setCoreContracts(undefined)

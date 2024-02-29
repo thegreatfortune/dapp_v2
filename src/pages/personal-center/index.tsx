@@ -37,7 +37,7 @@ const PersonalCenter = () => {
 
   const [activeKey, setActiveKey] = useState('1')
 
-  const { activeUser, setUserInfo, clear } = useUserStore()
+  const { currentUser, userLogout } = useUserStore()
 
   const [totalScoreVo, setTotalScoreVo] = useState(new Models.TotalScoreVo())
 
@@ -78,7 +78,7 @@ const PersonalCenter = () => {
         // })
         setBindModalOpen(true)
         // const user = await UserInfoService.ApiUserInfo_GET()
-        // setUserInfo({ ...activeUser, ...user, id: user.userId })
+        // setUserInfo({ ...currentUser, ...user, id: user.userId })
       }
     }
     // location.pathname === '/personal-center' && getUserInfo()
@@ -105,13 +105,6 @@ const PersonalCenter = () => {
       children: <PointsDetail />,
     },
   ]
-
-  // useEffect(() => {
-  //   if (!activeUser.accessToken) {
-  //     navigate(-1)
-  //     message.warning('not logged in')
-  //   }
-  // }, [activeUser])
 
   const checkLoanOrderAndUserState = async () => {
     // navigate('/apply-loan')
@@ -255,7 +248,7 @@ const PersonalCenter = () => {
         <Modal open={bindModalOpen}
           okText={'OK'}
           onOk={() => {
-            clear()
+            userLogout()
             disconnect()
             navigate('/')
           }}
@@ -300,27 +293,27 @@ const PersonalCenter = () => {
           <div className="w-full">
             <div className='relative'>
               <div className="absolute left-10 top--80 rounded-100 bg-#171822">
-                <Avatar className='' shape="circle" size={140} src={activeUser.pictureUrl ?? defaultAvatar} />
+                <Avatar className='' shape="circle" size={140} src={currentUser.pictureUrl ?? defaultAvatar} />
               </div>
             </div>
             <div className="user-basic-box items-center">
               <div className='user-basic-info'>
                 <div className=''>
                   <div className='ml-25 mt-20 text-20'>
-                    {activeUser.nickName ?? 'Not Bound'}
+                    {currentUser.nickName ?? 'Not Bound'}
                   </div>
                   <div className='flex items-center'>
                     <div className="ml-25 mt-20">
                       {
-                        activeUser.platformName
-                          ? <Link className='text-18' to={`https://twitter.com/${activeUser.platformName}`}>@{activeUser.platformName}</Link>
+                        currentUser.platformName
+                          ? <Link className='text-18' to={`https://twitter.com/${currentUser.platformName}`}>@{currentUser.platformName}</Link>
                           : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
                       }
                     </div>
                     <div className='ml-20 mt-20'>
-                      <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`} onCopy={() => message.success('Copied')} >
+                      <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`} onCopy={() => message.success('Copied')} >
                         <div className='flex cursor-pointer'>
-                          <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${activeUser.inviteCode}`}>Invitation Link</a>
+                          <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`}>Invitation Link</a>
                           <Image preview={false} width={16} height={16} className='ml-6' src={copyImg} />
                         </div>
                       </CopyToClipboard>
@@ -328,7 +321,7 @@ const PersonalCenter = () => {
                   </div>
                   {/* <div className="mt-20">
                   {
-                    activeUser.address ? <Address address={activeUser.address} /> : null
+                    currentUser.address ? <Address address={currentUser.address} /> : null
                   }
                 </div> */}
                 </div>

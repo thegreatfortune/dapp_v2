@@ -12,11 +12,11 @@ interface IProps {
 }
 
 const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
   const [params] = useState({
     ...new Models.ApiLoanPageLoanContractGETParams(),
     state: 'PaidOff,PaidButArrears,Blacklist',
-    borrowUserId: activeUser.userId,
+    borrowUserId: currentUser.userId,
     tradeId,
     limit: 10,
     page: 0,

@@ -1,103 +1,109 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
-import { disconnect } from 'wagmi/actions'
-import { ethers } from 'ethers'
-import { User } from '@/models/User'
+import { ZeroAddress, ethers } from 'ethers'
+import type { User } from '@/models/User'
 
 interface IUserState {
-  activeUser: User
-  userList: Array<User>
-  setActiveUser(user: User): void
-  addUser(user: User): void
+  // activeUser: User
+  // userList: Array<User>
+  // getToken: string | undefined
+  // setActiveUser(user: User): void
+  // unSetActiveUser(): void
+  // unSetUserList(): void
+  // addUser(user: User): void
+  // setUserInfo(user: User): void
+  // clear(): void
+  // signIn(user: User): void
+  // signOut(): void
 
-  setUserInfo(user: User): void
+  currentUser: User
 
-  signIn(user: User): void
+  users: User[]
 
-  signOut(): void
+  userLogin(user: User): void
 
-  clear(): void
+  userLogout(): void
 
-  switchActiveUser(user: User): void
+  addUserV1(user: User): void
 
-  getToken: string | undefined
-
+  updateUser(user: User): void
 }
 
 const useUserStore = create<IUserState>()(
   devtools(
     persist(
-      (set, get) => ({
-        activeUser: new User(),
-        userList: [],
-        get getToken(): string | undefined {
-          return this.activeUser.accessToken
-        },
-        setActiveUser: user => set(state => ({ activeUser: user })),
+      set => ({
+        // activeUser: new User(),
+        // userList: [],
+        // get getToken(): string | undefined {
+        //   return this.activeUser.accessToken
+        // },
+        // setActiveUser: user => set(() => ({ activeUser: user })),
+        // unSetActiveUser: () => set(() => ({ activeUser: new User() })),
 
-        setUserInfo: (user) => {
-          set((state) => {
-            const updateUser = { ...get().activeUser, ...user }
+        // unSetUserList: () => set(() => ({ userList: [] })),
 
-            let updateUserList = [...get().userList]
+        // setUserInfo: (user) => {
+        //   set(() => {
+        //     const updateUser = { ...get().activeUser, ...user }
 
-            const index = updateUserList.findIndex(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? ''))
+        //     let updateUserList = [...get().userList]
 
-            if (index > -1)
-              updateUserList[index] = user
-            else updateUserList = [...get().userList, user]
+        //     const index = updateUserList.findIndex(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? ''))
 
-            return ({
-              activeUser: updateUser,
-              userList: updateUserList,
-            })
-          })
-        },
+        //     if (index > -1)
+        //       updateUserList[index] = user
+        //     else updateUserList = [...get().userList, user]
 
-        addUser: user => set(state => ({ userList: [...get().userList, user] })),
+        //     return ({
+        //       activeUser: updateUser,
+        //       userList: updateUserList,
+        //     })
+        //   })
+        // },
 
-        signIn(user: User) {
-          set((state) => {
-            if (!get().userList.find(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? '')) && user?.id)
-              get().addUser(user)
+        // addUser: user => set(() => ({ userList: [...get().userList, user] })),
 
-            get().setActiveUser(user)
+        // signIn(user: User) {
+        //   set(() => {
+        //     if (!get().userList.find(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? '')) && user?.id)
+        //       get().addUser(user)
+        //     get().setActiveUser(user)
+        //     return ({ activeUser: user })
+        //   })
+        // },
 
-            return ({ activeUser: user })
-          })
-        },
+        // clear: () => {
+        //   get().unSetActiveUser()
+        //   get().unSetUserList()
+        // },
 
-        clear: () => {
-          set(state => ({ activeUser: new User() }))
+        // signOut: async () => {
+        //   set(() => ({ activeUser: new User() }))
+        // },
 
-          set(state => ({ userList: [] }))
+        currentUser: { address: ZeroAddress },
+        users: [],
+        userLogin: user => set((state) => {
+          state.updateUser(user)
+          const updatedUser = state.users.find(e => e.address === ethers.getAddress(user.address))
+          return ({ currentUser: updatedUser! })
+        }),
+        userLogout: () => set(() => ({ currentUser: { address: ZeroAddress } })),
+        addUserV1: user => set((state) => {
+          if (state.users.find(e => e.address === ethers.getAddress(user.address)))
+            return { users: state.users }
+          return { users: [...state.users, { ...user, address: ethers.getAddress(user.address) }] }
+        }),
+        updateUser: user => set((state) => {
+          const userIndex = state.users.findIndex(e => e.address === ethers.getAddress(user.address))
+          if (userIndex !== -1)
+            state.users[userIndex] = { ...state.users[userIndex], ...user }
+          else
+            state.users.push(user)
+          return { users: state.users }
+        }),
 
-          // localStorage.removeItem('persist:userStore')
-          // localStorage.removeItem('userStore')
-          // localStorage.clear()
-        },
-
-        signOut: async () => {
-          set(state => ({ activeUser: new User() }))
-
-          await disconnect()
-
-          // localStorage.removeItem('persist:userStore')
-        },
-
-        switchActiveUser(user: User) {
-          get().signIn(user)
-
-          // set((state) => {
-          //   const localUser = get().userList.find(e => e.address === user.address)
-
-          //   // if (!state.userList.find(e => e.address === user.address))
-          //   //   state.addUser(user)
-
-          //   // state.setActiveUser(user)
-          //   return ({ activeUser: user })
-          // })
-        },
       }),
       { name: 'userStore' },
     ),

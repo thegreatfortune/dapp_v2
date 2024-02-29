@@ -8,7 +8,7 @@ interface IProps extends TextAreaProps {
 const SInput: React.FC<IProps> = (props) => {
   return (
     <div className={props.className}>
-      <span className='text-24 font-400 c-#FFFFFF'>Title</span>
+      <span className='text-24 c-#FFFFFF font-400'>Title</span>
       <TextArea
         style={{ height: 102, resize: 'none' }}
         {...props}

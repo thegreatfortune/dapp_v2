@@ -9,7 +9,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 const useInviteCode = () => {
   const { setUserInfo, signIn } = useUserStore()
 
-  const { activeUser } = useUserStore()
+  const { currentUser } = useUserStore()
 
   const { resetProvider, setNewProvider } = useBrowserContract()
 
@@ -24,8 +24,8 @@ const useInviteCode = () => {
   }, [location])
 
   async function login() {
-    if (activeUser.address) {
-      const isInvited = await UserInviteService.ApiUserInviteInvitedOrNot_GET({ address: activeUser.address })
+    if (currentUser.address) {
+      const isInvited = await UserInviteService.ApiUserInviteInvitedOrNot_GET({ address: currentUser.address })
       if (isInvited)
         return
     }
@@ -41,13 +41,14 @@ const useInviteCode = () => {
 
       const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
       const signature = await signer?.signMessage(nonce)
+      console.log('nonce2:', nonce)
 
       if (!signature) {
         message.error('signature cannot be empty')
         return
       }
 
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature })
+      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, rawMessage: '' })
 
       signIn({ accessToken: res.accessToken, address })
 
