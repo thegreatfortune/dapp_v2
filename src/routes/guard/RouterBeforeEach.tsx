@@ -28,7 +28,7 @@ export const RouterBeforeEach = ({ children }: any) => {
     const router = getCurrentRouterMap(routes, location.pathname)
 
     if (!currentUser.accessToken && !whiteList.map(e => e.path).includes(location.pathname))
-      navigator('/market')
+      navigator('/follows')
   }, [location.pathname])
 
   return children

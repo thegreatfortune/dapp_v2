@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Avatar, message, notification } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
+import { getTypesForEIP712Domain, isHex, stringify } from 'viem'
 import { UserInfoService } from '../../.generated/api/UserInfo'
 import { MetamaskService } from '../../.generated/api/Metamask'
 import UserDropdown from './UserDropdown'
@@ -23,7 +24,13 @@ const CustomConnectButton = () => {
 
   const { disconnect } = useDisconnect()
 
-  const { address } = useAccount()
+  const { address } = useAccount({
+    // onConnect() { login() },
+    onDisconnect() {
+      userLogout()
+      navigator('/follows')
+    },
+  })
 
   const { signTypedDataAsync } = useSignTypedData()
 
@@ -72,7 +79,7 @@ const CustomConnectButton = () => {
   //   }
   //   catch (error) {
   //     reset()
-  //     navigator('/market')
+  //     navigator('/follows')
   //     message.error('login failed')
   //     console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
   //     throw new Error('login failed')
@@ -84,8 +91,14 @@ const CustomConnectButton = () => {
       name: string
       chainId: number
       version: string
+      // verifyingContract: string
+      // salt: string
     }
     types: {
+      EIP712Domain?: {
+        name: string
+        type: string | number
+      }[]
       Message: {
         name: string
         type: string
@@ -97,10 +110,11 @@ const CustomConnectButton = () => {
       URL: string
       Wallet: string
       Nonce: string
-      ChainId: number
+      ChainId: string
       Version: string
       Date: string
     }
+    // [key: string]: TypedDataField[] | string
   }
 
   async function login() {
@@ -108,8 +122,16 @@ const CustomConnectButton = () => {
     const now = dayjs()
     const originUser = users.find(e => e.address === address as string)
     if (originUser && originUser.nonce === nonce) {
-      const userInfo = await UserInfoService.ApiUserInfo_GET()
+      const userInfo = await UserInfoService.getUserInfo({ headers: { 'Authorization': originUser.accessToken, 'Chain-Id': originUser.chainId } })
       userLogin({ ...originUser, ...userInfo, address: address as string })
+      notification.info({
+        message: NotificationInfo.LogInSuccessfully,
+        description: 'Welcome back to Follow Finance!',
+        placement: 'bottomRight',
+      })
+      setTimeout(() => {
+        location.reload()
+      }, 3000)
     }
     else {
       const typedData: TypedData = {
@@ -117,7 +139,19 @@ const CustomConnectButton = () => {
           name: 'Follow Finance',
           chainId,
           version: '1',
+          // verifyingContract: import.meta.env.VITE_CORE_PROCESS_CENTER,
+          // salt: hashMessage('Follow Finance Dapp'),
         },
+        message: {
+          Content: 'Welcome to Follow Finance App!',
+          URL: window.location.origin,
+          Wallet: address as string,
+          Nonce: nonce,
+          ChainId: chainId.toString(),
+          Version: '1',
+          Date: now.format(),
+        },
+        primaryType: 'Message',
         types: {
           Message: [
             { name: 'Content', type: 'string' },
@@ -129,29 +163,23 @@ const CustomConnectButton = () => {
             { name: 'Date', type: 'string' },
           ],
         },
-        primaryType: 'Message',
-        message: {
-          Content: 'Welcome to Follow Finance App!',
-          URL: window.location.origin,
-          Wallet: address as string,
-          Nonce: nonce,
-          ChainId: chainId,
-          Version: '1',
-          Date: now.format(),
-        },
       }
-      try {
-        const signature = await signTypedDataAsync(typedData)
 
+      try {
+        const signature = await signTypedDataAsync({ ...typedData })
+
+        typedData.types = {
+          EIP712Domain: getTypesForEIP712Domain({ domain: typedData.domain }),
+          ...typedData.types,
+        }
         const res = await MetamaskService.ApiMetamaskLogin_POST({
           address: address as string,
           sign: signature,
-          rawMessage: JSON.stringify(typedData),
+          rawMessage: stringify(typedData, (_, value) => (isHex(value) ? value.toLowerCase() : value)),
           inviteCode,
         })
         if (res.success) {
-          // const user = { address: address as string, accessToken: res.accessToken }
-          const user = await UserInfoService.getUserInfo({ header: { Authorization: res.accessToken } })
+          const user = await UserInfoService.getUserInfo({ headers: { 'Authorization': res.accessToken, 'Chain-Id': chainId } })
           userLogin({
             ...user,
             address: address as string,
@@ -159,10 +187,12 @@ const CustomConnectButton = () => {
             chainId,
             nonce,
           })
-          console.info(`The new user ( ${address} ) logged in, navigate to personal center...`)
+          console.info(`The new user(${address}) logged in, navigate to personal center...`)
+
           notification.info({
             message: NotificationInfo.LogInSuccessfully,
             description: 'Welcome to Follow Finance!',
+            placement: 'bottomRight',
           })
           setTimeout(() => {
             if (!originUser) {
@@ -178,25 +208,26 @@ const CustomConnectButton = () => {
           userLogout()
           disconnect()
           setTimeout(() => {
-            if (location.pathname !== '/market')
-              navigator('/market')
+            if (location.pathname !== '/follows')
+              navigator('/follows')
           }, 3000)
         }
       }
       catch (error) {
+        console.error(error)
         message.error(MessageError.SiganMessageError)
         userLogout()
         disconnect()
         setTimeout(() => {
-          if (location.pathname !== '/market')
-            navigator('/market')
+          if (location.pathname !== '/follows')
+            navigator('/follows')
         }, 3000)
       }
     }
   }
 
   useEffect(() => {
-    if (address)
+    if (address && address !== currentUser.address)
       login()
   }, [address])
 

@@ -1,92 +1,123 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Image } from 'antd'
-import { LoanService } from '../../.generated/api/Loan'
-import MarketCardsContainer from './components/MarketCardsContainer'
+import { Avatar, Radio } from 'antd'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ethers } from 'ethers'
+import { InfoCircleOutlined, WarningOutlined } from '@ant-design/icons'
+import { MarketService } from '../../.generated/api/Market'
+import ScrollableList from '../components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
-import bannerImage from '@/assets/images/market/banner.png'
-import blacklist1 from '@/assets/images/market/blacklist1.png'
-import tlogo from '@/assets/images/portalImages/tLogo.png'
-
-import './ticket.scss'
+import marketBanner from '@/assets/images/market/banner.png'
+import { isContractAddress } from '@/utils/regex'
+import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import logo from '@/assets/images/portalImages/logo.png'
+import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const Market = () => {
-  const [hotStarterData, setHotStarterData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  const [params, setParams] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
 
-  const [popularToFollowData, setPopularToFollowData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  const [activeKey, setActiveKey] = useState('All')
 
-  const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  function fetchData(type?: string) {
+    setActiveKey(type ?? 'All')
 
-  const { t } = useTranslation()
+    const params = { ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 }
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'actual_share_count=false', state: 'Following' })
-      setHotStarterData(res)
-    }
-    fetchData()
-  }, [])
+    if (type === 'LowRisk')
+      params.tradingFormTypeStr = 'SpotGoods'
+    else if (type === 'HighRisk')
+      params.tradingFormTypeStr = 'Contract,Empty'
+    setParams(params)
+  }
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'total_market_trading_price=false', state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected' })
+  const navigate = useNavigate()
 
-      setPopularToFollowData(res)
-    }
-    fetchData()
-  }, [])
+  const renderItem = (item: Models.MarketLoanVo, index: number) => {
+    return (
+      <div key={index.toString()} className='s-container flex grow justify-center'
+        onClick={() => navigate(`/loan-details/?prePage=trade&tradeId=${item.tradeId}`)}>
+        <div
+          style={{
+            backgroundImage: 'linear-gradient(120deg, #171822 0%, #7e7f7d 80%, #4f504f 100%)',
+            // fontVariantNumeric: 'slashed-zero',
+          }}
+          className='card box-border h-230 w-380 flex flex-col cursor-pointer justify-between border-2 border-#303241 b-rd-6 rounded-10 border-solid bg-[#171822] shadow-2xl'
+        >
+          <div className='mt-20 flex justify-between'>
+            <div className='ml-20 h50 w50 b-rd-0'>
+              <Avatar size={50} src={item.user?.pictureUrl ? item.user?.pictureUrl : logo} />
+            </div>
+            <div className='grid mr-32 mt-5 text-right'>
+              <span className='h25 text-18 font-bold lh-20 font-mono uppercase slashed-zero'>{
+                isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'Not bound')}</span>
+              <span className='h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'Not bound'}</span>
+            </div>
+          </div>
 
-  useEffect(() => {
-    async function fetchData() {
-      const params = { ...new Models.ApiLoanPageLoanContractGETParams(), limit: 4, page: 1, state: 'Blacklist' }
+          <div className='mb-20 flex justify-between'>
+            <div className='ml-32 flex items-end text-slate-400 font-bold'>SFT</div>
+            <div className='w-150'>
+              <div className='mr-32 flex justify-between font-bold font-mono slashed-zero'>
+                <div>Price: </div>
+                <div>${toCurrencyString(Number(ethers.formatUnits(String(item.price), BigInt(18))))}</div>
+              </div>
+              <div className='mr-32 flex justify-between text-12 font-mono slashed-zero'>
+                <div className=''>Volume: </div>
+                <div>${item.totalTradingCompleted}</div>
+              </div>
+            </div>
+          </div>
 
-      const res = await LoanService.ApiLoanPageLoanContract_GET(params)
-
-      setBlacklist(res)
-    }
-    fetchData()
-  }, [])
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="">
-      <div className='w-full' >
-        <img
-          src={bannerImage}
-          alt='Image 2'
-          className='banner w-full b-rd-20 object-cover'
-        />
-      </div>
-      <div className="h44" />
-      {/* <div className='flex justify-around'>
-        <div className='relative h-241 min-w-380 w-380 flex flex-col rounded-15 bg-#141d29'>
-          <div className='absolute left--40 top--20 h-280 w-280 flex items-center justify-center opacity-5'>
-            <Image preview={false} src={tlogo}></Image>
-          </div>
-
-          <div className='absolute bottom-5 right-20 z-10 opacity-90'>
-            <span className='from-[#5eb6d2] to-[#8029e8] bg-gradient-to-r bg-clip-text text-12 text-transparent font-bold' style={{
-              filter: 'drop-shadow(0.5mm 0.5mm 1mm #5eb6d2)',
-            }}>FOLLOW FINANCE</span>
-          </div>
+    <div className='m-auto'>
+      <img src={marketBanner} alt="" className='banner w-full b-rd-20 object-cover' />
+      <div className='h30 w-full'></div>
+      <div className='page-title-box'>
+        <div className='my-20'>
+          <span className='page-title'>
+            Trending Loans
+          </span>
         </div>
-      </div> */}
+        <div className='my-20'>
+          <Radio.Group defaultValue='All' className='flex' onChange={e => fetchData(e.target.value)} buttonStyle='solid'>
+            {/* <Radio.Button value="All" className='m-a h48 w100 items-center text-center text-18 font-500 lh-48 c-#fff'>All</Radio.Button> */}
+            <Radio.Button
+              value="All"
+              className='radio-btn-all'>
+              All
+            </Radio.Button>
+            <Radio.Button
+              value="LowRisk"
+              className={`radio-btn-other ${activeKey === 'LowRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <InfoCircleOutlined className='mr-4 text-slate-500' /> Low Risk
+              </div>
+            </Radio.Button>
+            <Radio.Button
+              value="HighRisk"
+              className={`radio-btn-other ${activeKey === 'HighRisk' && 'bg-gradient-to-r from-[#0154fa] to-[#11b5dd]'}`}>
+              <div className='flex justify-center'>
+                <WarningOutlined className='mr-4 text-red-500' /> High Risk
+              </div>
+            </Radio.Button>
 
-      {
-        (hotStarterData.records && hotStarterData.records.length > 0)
-        && <MarketCardsContainer image='' key='HotStarter' title={`🔥${t('market.CardsContainer1.title')}`} records={hotStarterData.records} to='/view-all?title=🔥Hot starter&category=HotStarter' />
-      }
-      {
-        (popularToFollowData.records && popularToFollowData.records.length > 0)
-        && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={popularToFollowData.records} to='/view-all?title=💥Popular to follow&category=PopularToFollow' />
-      }
+          </Radio.Group>
+        </div>
+      </div>
 
-      {/* {
-        (blacklist.total && blacklist.total > 0)
-          ? <MarketCardsContainer image={blacklist1} key='Blacklist' title={`${t('market.CardsContainer3.title')}`} records={blacklist.records ?? []} to='/view-all?title=Blacklist&category=Blacklist' />
-          : null
-      } */}
+      <div className='h80 w-full'></div>
 
-    </div >
+      <ScrollableList
+        grid={{ gutter: 16 }}
+        api={MarketService.ApiMarketPageTradingLoan_GET}
+        params={params}
+        containerId='TradeScrollable'
+        renderItem={renderItem} />
+    </div>
   )
 }
 

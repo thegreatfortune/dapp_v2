@@ -32,9 +32,9 @@ const PortalLayout: React.FC<IProps> = (props) => {
                         <div className='m-auto ml-12 w-115 text-center text-22 font-normal lh-52 font-mono c-#fff'>{`${t('portal.layout.title')}`}</div>
                     </div>
                     <div className='flex justify-between'>
-                        <NavLink to="/portal"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu1')}`}</div></NavLink>
-                        <NavLink to="/market"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu2')}`}</div></NavLink>
-                        <NavLink to="/trade"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 font-400 font-normal lh-52 font-mono c-#CECECE transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu3')}`}</div></NavLink>
+                        <NavLink to="/portal"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 c-#CECECE font-400 font-normal lh-52 font-mono transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu1')}`}</div></NavLink>
+                        <NavLink to="/follows"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 c-#CECECE font-400 font-normal lh-52 font-mono transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu2')}`}</div></NavLink>
+                        <NavLink to="/market"><div className='m-auto mt-4 h-52 w-115 w-87 transform b-rd-0 text-center text-21 c-#CECECE font-400 font-normal lh-52 font-mono transition-transform active:scale-95 hover:scale-105 hover:c-#fff'>{`${t('portal.layout.menu3')}`}</div></NavLink>
                     </div>
 
                 </div>

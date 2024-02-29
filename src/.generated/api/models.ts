@@ -414,6 +414,7 @@ Canceled :订单取消 */
     address: string;
     /** 签名 */
     sign: string;
+
     /** 原始数据 */
     rawMessage: string
     /** 用户邀请码 */

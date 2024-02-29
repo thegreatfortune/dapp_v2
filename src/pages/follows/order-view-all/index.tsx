@@ -78,13 +78,13 @@ const OrderViewAll = () => {
       <div className='h60 w-full'></div>
 
       {
-        category === 'HotStarter'
+        category === 'TrendingLoans'
         && <ScrollableList
           // grid={{ gutter: 16, column: 4 }}
           grid={{ gutter: 16 }}
           api={LoanService.ApiLoanPageLoanContract_GET}
           params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }}
-          containerId='HotStarterContainer'
+          containerId='TrendingLoansContainer'
           renderItem={(item: Models.LoanOrderVO) => <div onClick={() => {
             navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
           }
@@ -92,15 +92,15 @@ const OrderViewAll = () => {
       }
 
       {
-        category === 'PopularToFollow'
+        category === 'AllLoans'
         && <ScrollableList
           // grid={{ gutter: 16, column: 4 }}
           grid={{ gutter: 12 }}
           api={LoanService.ApiLoanPageLoanContract_GET}
           params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
-          containerId='PopularToFollow'
+          containerId='AllLoansContainer'
           renderItem={(item: Models.LoanOrderVO) =>
-            <div className="grow flex justify-center my-10" onClick={() => {
+            <div className="my-10 flex grow justify-center" onClick={() => {
               navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
             }} >
               <TransparentCard key={item.tradeId} item={item} />
@@ -111,7 +111,7 @@ const OrderViewAll = () => {
 
       {
         category === 'Blacklist'
-        && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='HotStarterContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
+        && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='TrendingLoansContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
       }
 
     </div >

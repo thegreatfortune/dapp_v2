@@ -753,7 +753,7 @@ const LoanDetails = () => {
           </Button>
         </div>
         <div className='flex justify-end'>
-          {copies} Copies = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
+          {copies} Share = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
         </div>
         <div className='mt-30'>
           {
@@ -858,7 +858,7 @@ const LoanDetails = () => {
                     loanInfo.state !== 'CloseByUncollected'
                     && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
                   }
-                  <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+                  <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
                 </div>
               }
 
@@ -872,7 +872,7 @@ const LoanDetails = () => {
                 {
                   prePage === 'loan'
                   && <div>
-                    <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Extract</Button>
+                    <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
                   </div>
                 }
                 {

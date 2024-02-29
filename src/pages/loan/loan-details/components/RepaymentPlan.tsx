@@ -228,7 +228,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       <div className='max-md:hidden'>
         <ul className='grid grid-cols-6 list-none ps-0 c-#666873 lg:px-20'>
           <li>Time</li>
-          <li>Repayment Amount</li>
+          <li>Installment amount</li>
           <li>Status</li>
           <li>Overdue Days</li>
           <li className='col-span-2 flex justify-center'>Action</li>
@@ -297,7 +297,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                       <div>{item.repayTime}</div>
                     </div>
                     <div className='my-4 flex grow justify-between'>
-                      <div className='text-left'>Repayment Amount:</div>
+                      <div className='text-left'>Installment amount:</div>
                       <div className='text-right'>${item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</div>
                     </div>
                     <div className='my-4 flex grow justify-between'>

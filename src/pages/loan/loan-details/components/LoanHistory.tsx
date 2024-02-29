@@ -57,7 +57,7 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
               <div className='text-right'>$ {toCurrencyString(Number(ethers.formatUnits(BigInt(item.loanMoney ?? 0))))}</div>
             </div>
             <div className='my-4 flex grow justify-between'>
-              <div className='text-left'>Debt Status:</div>
+              <div className='text-left'>Status:</div>
               <div className='text-right'>{item.state === 'PaidButArrears'
                 ? <span className='text-16 text-red-500 font-extrabold'>Arrear</span>
                 : <span className='text-green'>Paid Off</span>
@@ -82,7 +82,7 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
         {/* <li className='flex justify-center text-16'>SN</li> */}
         <li>Time</li>
         <li>Loan Amount</li>
-        <li>Debt Status</li>
+        <li>Status</li>
         <li>Loan Period</li>
         {/* <li className='flex justify-center text-18'>Amount Due</li> */}
       </ul>

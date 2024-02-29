@@ -69,11 +69,11 @@ const Navbar: React.FC<NavbarProps> = () => {
       key: t('nav.follow'),
       label: (
         <NavLink
-          to="/market"
+          to="/follows"
           target="_self"
           // className={`text-white hover:c-#5ec1d0 ${['/market', '/market-token'].includes(location.pathname) && 'c-#5ec1d0'}`}>
           className="nav-bar-dropdown-item">
-          Market
+          Follows
         </NavLink>
       ),
     },
@@ -81,11 +81,11 @@ const Navbar: React.FC<NavbarProps> = () => {
       key: t('nav.market'),
       label: (
         <NavLink
-          to="/trade"
+          to="/market"
           target="_self"
           // className={`text-white  hover:c-#5ec1d0 ${['/tokens', '/my-glyph', '/token-detail'].includes(location.pathname) && 'c-#5ec1d0'}`}>
           className="nav-bar-dropdown-item">
-          Tokens
+          Share Market
         </NavLink>
       ),
     },
@@ -130,12 +130,12 @@ const Navbar: React.FC<NavbarProps> = () => {
             </NavLink>
           </li>
           <li className="nav-bar-item">
-            <NavLink to="/market" target='_self' className='c-white hover:c-#5ec1d0' >
+            <NavLink to="/follows" target='_self' className='c-white hover:c-#5ec1d0' >
               {t('nav.follow')}
             </NavLink>
           </li>
           <li className="nav-bar-item">
-            <NavLink to="/trade" target='_self' className='c-white hover:c-#5ec1d0'>
+            <NavLink to="/market" target='_self' className='c-white hover:c-#5ec1d0'>
               {t('nav.market')}
             </NavLink>
           </li>

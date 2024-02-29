@@ -4,17 +4,17 @@ import { Navigate } from 'react-router-dom'
 import type { IRouter } from '..'
 import BasicLayout from '@/layouts/BasicLayout'
 
-const Market = lazy(() => import('../../pages/market'))
+const Follows = lazy(() => import('../../pages/follows'))
 const Portal = lazy(() => import('../../pages/Portal'))
-const Trade = lazy(() => import('../../pages/trade'))
+const Market = lazy(() => import('../../pages/market'))
 const LoanDetails = lazy(() => import('../../pages/loan/loan-details'))
-const OrderViewAll = lazy(() => import('../../pages/market/order-view-all'))
+const OrderViewAll = lazy(() => import('../../pages/follows/order-view-all'))
 const NotFound = lazy(() => import('../../pages/NotFound'))
 
 export const whiteList: IRouter[] = [
   {
     path: '/',
-    element: <Navigate to="/market" replace={true} />,
+    element: <Navigate to="/follows" replace={true} />,
   },
   // {
   //   path: '/portal',
@@ -27,25 +27,25 @@ export const whiteList: IRouter[] = [
   //   ),
   // },
   {
-    path: '/market',
+    path: '/follows',
     index: true,
     element: (
-          <BasicLayout showInput={true}>
-            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-              <Market />
-            </React.Suspense>
-          </BasicLayout>
+      <BasicLayout showInput={true}>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <Follows />
+        </React.Suspense>
+      </BasicLayout>
     ),
   },
   {
-    path: '/trade',
+    path: '/market',
     index: true,
     element: (
-          <BasicLayout>
-            <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-              <Trade />
-            </React.Suspense>
-          </BasicLayout>
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <Market />
+        </React.Suspense>
+      </BasicLayout>
     ),
   },
   {

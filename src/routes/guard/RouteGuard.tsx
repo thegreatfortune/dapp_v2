@@ -15,7 +15,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
     const isAuthenticated = currentUser.accessToken
 
     if (!isAuthenticated)
-      navigate('/market')
+      navigate('/follows')
   }, [navigate])
 
   return <>{children}</>
