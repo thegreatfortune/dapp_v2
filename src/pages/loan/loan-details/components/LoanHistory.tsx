@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { ethers } from 'ethers'
+import { useChainId } from 'wagmi'
 import { LoanService } from '@/.generated/api/Loan'
 import ScrollableList from '@/pages/components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
@@ -12,6 +13,7 @@ interface IProps {
 }
 
 const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
+  const chainId = useChainId()
   const { currentUser } = useUserStore()
   const [params] = useState({
     ...new Models.ApiLoanPageLoanContractGETParams(),
@@ -88,12 +90,14 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
       </ul>
       <ScrollableList
         api={LoanService.ApiLoanPageLoanContract_GET}
+        chainId={chainId}
         params={params}
         containerId='LoanHistoryScrollable' renderItem={renderItem} />
     </div>
     <div className='md:hidden'>
       <ScrollableList
         api={LoanService.ApiLoanPageLoanContract_GET}
+        chainId={chainId}
         params={params}
         containerId='LoanHistoryScrollable' renderItem={renderItem} grid={{ column: 1, gutter: 4 }} />
     </div>

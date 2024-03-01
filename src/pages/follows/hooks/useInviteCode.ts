@@ -2,12 +2,13 @@ import { message } from 'antd'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useChainId } from 'wagmi'
 import { MetamaskService, UserInfoService, UserInviteService } from '@/.generated/api'
 import useUserStore from '@/store/userStore'
 import useBrowserContract from '@/hooks/useBrowserContract'
 
 const useInviteCode = () => {
-  const { setUserInfo, signIn } = useUserStore()
+  const chainId = useChainId()
 
   const { currentUser } = useUserStore()
 
@@ -25,7 +26,7 @@ const useInviteCode = () => {
 
   async function login() {
     if (currentUser.address) {
-      const isInvited = await UserInviteService.ApiUserInviteInvitedOrNot_GET({ address: currentUser.address })
+      const isInvited = await UserInviteService.ApiUserInviteInvitedOrNot_GET(chainId, { address: currentUser.address })
       if (isInvited)
         return
     }
@@ -39,7 +40,7 @@ const useInviteCode = () => {
 
       const address = await signer.getAddress()
 
-      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
+      const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST(chainId, { address })
       const signature = await signer?.signMessage(nonce)
       console.log('nonce2:', nonce)
 
@@ -48,15 +49,15 @@ const useInviteCode = () => {
         return
       }
 
-      const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, rawMessage: '' })
+      const res = await MetamaskService.ApiMetamaskLogin_POST(chainId, { address, sign: signature, rawMessage: '' })
 
-      signIn({ accessToken: res.accessToken, address })
+      // signIn({ accessToken: res.accessToken, address })
 
       if (res.success) {
-        const user = await UserInfoService.ApiUserInfo_GET()
+        const user = await UserInfoService.ApiUserInfo_GET(chainId)
         console.log('%c [ user ]-60', 'font-size:13px; background:#c0ecf2; color:#ffffff;', user)
 
-        setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
+        // setUserInfo({ accessToken: res.accessToken, ...user, id: user.userId })
       }
 
       setNewProvider(newProvider)

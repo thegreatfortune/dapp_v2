@@ -3,6 +3,7 @@ import { Checkbox } from 'antd'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import { orderBy } from 'lodash-es'
 import type { ListGridType } from 'antd/es/list'
+import { useChainId } from 'wagmi'
 import { Models } from '@/.generated/api/models'
 import type { IColumn } from '@/pages/components/ScrollabletList'
 import ScrollableList from '@/pages/components/ScrollabletList'
@@ -18,6 +19,7 @@ interface IProps {
 }
 
 const SorterScrollableList: React.FC<IProps> = ({ grid, currentUser, renderItem, tradeId, containerId }) => {
+  const chainId = useChainId()
   const [params] = useState({ ...new Models.ApiMarketPageInfoGETParams(), ...{ limit: 8, page: 1 }, orderItemList: 'price=false', state: 'ToBeTraded', tradeId, loanId: undefined, marketId: undefined })
 
   const quantitySorter = (imageIndex: number, data: Models.TokenMarketVo[]): Models.TokenMarketVo[] => {
@@ -106,6 +108,7 @@ const SorterScrollableList: React.FC<IProps> = ({ grid, currentUser, renderItem,
       // grid={grid}
       columns={columns}
       api={MarketService.ApiMarketPageInfo_GET}
+      chainId={chainId}
       params={params}
       containerId={containerId}
       renderItem={renderItem}

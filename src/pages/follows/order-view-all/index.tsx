@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Image, Radio } from 'antd'
 import { InfoCircleOutlined, WarningOutlined } from '@ant-design/icons'
+import { useChainId } from 'wagmi'
 import { Models } from '@/.generated/api/models'
 import { LoanService } from '@/.generated/api/Loan'
 import useNavbarQueryStore from '@/store/useNavbarQueryStore'
@@ -11,6 +12,8 @@ import blacklist1 from '@/assets/images/market/blacklist1.png'
 
 const OrderViewAll = () => {
   const [params] = useSearchParams()
+
+  const chainId = useChainId()
 
   const [title] = params.getAll('title')
 
@@ -83,6 +86,7 @@ const OrderViewAll = () => {
           // grid={{ gutter: 16, column: 4 }}
           grid={{ gutter: 16 }}
           api={LoanService.ApiLoanPageLoanContract_GET}
+          chainId={chainId}
           params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }}
           containerId='TrendingLoansContainer'
           renderItem={(item: Models.LoanOrderVO) => <div onClick={() => {
@@ -97,6 +101,7 @@ const OrderViewAll = () => {
           // grid={{ gutter: 16, column: 4 }}
           grid={{ gutter: 12 }}
           api={LoanService.ApiLoanPageLoanContract_GET}
+          chainId={chainId}
           params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
           containerId='AllLoansContainer'
           renderItem={(item: Models.LoanOrderVO) =>
@@ -111,7 +116,17 @@ const OrderViewAll = () => {
 
       {
         category === 'Blacklist'
-        && <ScrollableList grid={{ gutter: 16, column: 4 }} api={LoanService.ApiLoanPageLoanContract_GET} params={{ ...apiParams, state: 'Blacklist' }} containerId='TrendingLoansContainer' renderItem={(item: Models.LoanOrderVO) => <div onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)} className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} /></div>} />
+        && <ScrollableList
+          grid={{ gutter: 16, column: 4 }}
+          api={LoanService.ApiLoanPageLoanContract_GET}
+          chainId={chainId}
+          params={{ ...apiParams, state: 'Blacklist' }}
+          containerId='TrendingLoansContainer'
+          renderItem={(item: Models.LoanOrderVO) =>
+            <div
+              onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)}
+              className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} />
+            </div>} />
       }
 
     </div >

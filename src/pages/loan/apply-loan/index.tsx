@@ -13,6 +13,7 @@ import Modal from 'antd/es/modal'
 import { Divider, Switch, Tooltip, Upload, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
+import { useChainId } from 'wagmi'
 import airplane from '@/assets/images/apply-loan/airplane.png'
 import jmtzDown from '@/assets/images/apply-loan/jmtz_down.png'
 import { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
@@ -44,6 +45,8 @@ import { MessageError } from '@/enums/error'
 
 const ApplyLoan = () => {
   /* #region  */
+
+  const chainId = useChainId()
 
   const { canCreateNewLoan, inBlacklist, coreContracts } = useCoreContract()
 
@@ -260,13 +263,13 @@ const ApplyLoan = () => {
         if (!newFile)
           throw new Error('Image upload failed')
 
-        const url = await FileService.ApiFileUpload_POST({ file: newFile })
+        const url = await FileService.ApiFileUpload_POST(chainId, { file: newFile })
 
         setLoanRequisitionEditModel(preState => ({ ...preState, imageUrl: url }))
         return url
       }
       else {
-        const url = await FileService.ApiFileUpload_POST({ file })
+        const url = await FileService.ApiFileUpload_POST(chainId, { file })
 
         setLoanRequisitionEditModel(preState => ({ ...preState, projectImageFile: file, imageUrl: url }))
         return url

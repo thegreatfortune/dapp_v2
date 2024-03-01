@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useChainId } from 'wagmi'
 import { LoanService } from '../../.generated/api/Loan'
 import MarketCardsContainer from './components/MarketCardsContainer'
 import { Models } from '@/.generated/api/models'
 import bannerImage from '@/assets/images/market/banner.png'
-
-// import { Image } from 'antd'
-// import blacklist1 from '@/assets/images/market/blacklist1.png'
-// import tlogo from '@/assets/images/portalImages/tLogo.png'
-
 import './ticket.scss'
 
 const Follows = () => {
+  const chainId = useChainId()
+
   const [trendingLoansData, setTrendingLoansData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
 
   const [allLoansData, setAllLoansData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
@@ -22,7 +20,7 @@ const Follows = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'actual_share_count=false', state: 'Following' })
+      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, { page: 1, limit: 8, orderItemList: 'actual_share_count=false', state: 'Following' })
       setTrendingLoansData(res)
     }
     fetchData()
@@ -30,7 +28,7 @@ const Follows = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET({ page: 1, limit: 8, orderItemList: 'total_market_trading_price=false', state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected' })
+      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, { page: 1, limit: 8, orderItemList: 'total_market_trading_price=false', state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected' })
 
       setAllLoansData(res)
     }
@@ -41,7 +39,7 @@ const Follows = () => {
     async function fetchData() {
       const params = { ...new Models.ApiLoanPageLoanContractGETParams(), limit: 4, page: 1, state: 'Blacklist' }
 
-      const res = await LoanService.ApiLoanPageLoanContract_GET(params)
+      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, params)
 
       setBlacklist(res)
     }

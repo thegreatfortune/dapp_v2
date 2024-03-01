@@ -3,12 +3,14 @@ import { Button, Divider, List, Skeleton } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useChainId } from 'wagmi'
 import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
 import TransparentCard from '@/pages/components/TransparentCard'
 
 const MyLoan = () => {
+  const chainId = useChainId()
   const { currentUser } = useUserStore()
 
   const navigate = useNavigate()
@@ -40,7 +42,7 @@ const MyLoan = () => {
     params.borrowUserId = String(currentUser.userId)
 
     try {
-      const res = await LoanService.ApiLoanPageLoanContract_GET(params)
+      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, params)
 
       if (res?.records && res.records.length > 0) {
         setTotal(res.total)

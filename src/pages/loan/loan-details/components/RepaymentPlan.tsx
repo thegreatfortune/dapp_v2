@@ -3,6 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button, InputNumber, List, Skeleton, message } from 'antd'
 import { ethers } from 'ethers'
 import dayjs from 'dayjs'
+import { useChainId } from 'wagmi'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
 import Address from './Address'
 import { Models } from '@/.generated/api/models'
@@ -34,6 +35,8 @@ function calculateOverdueDays(startTime: string): number {
 }
 
 const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
+  const chainId = useChainId()
+
   const { browserContractService } = useBrowserContract()
 
   const [pagination, setPagination] = useState<Models.ApiRepayPlanPageInfoGETParams>({
@@ -67,7 +70,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     setLoading(true)
 
     try {
-      const res = await RepayPlanService.ApiRepayPlanPageInfo_GET({
+      const res = await RepayPlanService.ApiRepayPlanPageInfo_GET(chainId, {
         ...pagination,
         page: (pagination.page ?? 0) + 1,
         tradeId: Number(tradeId),

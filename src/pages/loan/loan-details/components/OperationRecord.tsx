@@ -3,11 +3,13 @@ import BigNumber from 'bignumber.js'
 import { useSearchParams } from 'react-router-dom'
 
 import dayjs from 'dayjs'
+import { useChainId } from 'wagmi'
 import { LoanTokenSwapService } from '../../../../.generated/api/LoanTokenSwap'
 import ScrollableList from '@/pages/components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
 
 const OperationRecord = () => {
+  const chainId = useChainId()
   const [searchParams] = useSearchParams()
   const tradeId = searchParams.get('tradeId')
 
@@ -40,7 +42,7 @@ const OperationRecord = () => {
         <li>Volume</li>
       </ul>
 
-      <ScrollableList api={LoanTokenSwapService.ApiLoanTokenSwapPageInfo_GET} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
+      <ScrollableList api={LoanTokenSwapService.ApiLoanTokenSwapPageInfo_GET} chainId={chainId} params={params} containerId='RoomTradeScrollable' renderItem={renderItem} />
     </div>
   )
 }

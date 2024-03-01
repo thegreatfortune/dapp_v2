@@ -22,7 +22,8 @@ export interface IColumn<T> {
 }
 
 export interface IScrollableListProps {
-  api: (params: IPaged) => Promise<Models.PageResult<any>>
+  api: (chainId: number, params: IPaged) => Promise<Models.PageResult<any>>
+  chainId: number
   params: IPaged & any
   renderItem: (item: any, index: number) => React.ReactNode
   containerId: string
@@ -64,7 +65,7 @@ interface DataType {
   'isConfirm': boolean
 }
 
-const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, params, renderItem, containerId = 'containerId', grid }) => {
+const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, api, chainId, params, renderItem, containerId = 'containerId', grid }) => {
   const [originalData, setOriginalData] = useState<DataType[]>(
     // {
     // const [originalData, setOriginalData] = useState<Models.PageResult<{ total: number; records: any[] }>>({
@@ -91,7 +92,7 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
   const fetchData = async (cPage: number = 1) => {
     try {
       // setLoading(true)
-      const res = await api({ ...params, page: cPage })
+      const res = await api(chainId, { ...params, page: cPage })
 
       if (res.current! * res.size! < res.total!)
         console.log(true)

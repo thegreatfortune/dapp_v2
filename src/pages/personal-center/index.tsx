@@ -93,7 +93,7 @@ const PersonalCenter = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await UserInfoService.ApiUserInfoTotalScoreInfo_GET()
+      const res = await UserInfoService.ApiUserInfoTotalScoreInfo_GET(chainId)
       setTotalScoreVo(res)
     }
     fetchData()
@@ -177,7 +177,7 @@ const PersonalCenter = () => {
 
   async function onBindX() {
     setBindXLoading(true)
-    const authLink = await TwitterService.ApiTwitterBindTwitterRequiredLogin_GET()
+    const authLink = await TwitterService.ApiTwitterBindTwitterRequiredLogin_GET(chainId)
 
     setBindXLoading(false)
 

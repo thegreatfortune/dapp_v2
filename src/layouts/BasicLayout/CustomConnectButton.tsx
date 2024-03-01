@@ -121,11 +121,11 @@ const CustomConnectButton = () => {
   }
 
   async function login() {
-    const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address: address as string })
+    const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST(chainId, { address: address as string })
     const now = dayjs()
     const originUser = users.find(e => e.address === address as string)
     if (originUser && originUser.nonce === nonce) {
-      const userInfo = await UserInfoService.getUserInfo({ headers: { 'Authorization': originUser.accessToken, 'Chain-Id': originUser.chainId } })
+      const userInfo = await UserInfoService.getUserInfo(chainId, { headers: { 'Authorization': originUser.accessToken, 'Chain-Id': originUser.chainId } })
       userLogin({ ...originUser, ...userInfo, address: address as string })
       notification.info({
         message: NotificationInfo.LogInSuccessfully,
@@ -175,14 +175,14 @@ const CustomConnectButton = () => {
           EIP712Domain: getTypesForEIP712Domain({ domain: typedData.domain }),
           ...typedData.types,
         }
-        const res = await MetamaskService.ApiMetamaskLogin_POST({
+        const res = await MetamaskService.ApiMetamaskLogin_POST(chainId, {
           address: address as string,
           sign: signature,
           rawMessage: stringify(typedData, (_, value) => (isHex(value) ? value.toLowerCase() : value)),
           inviteCode,
         })
         if (res.success) {
-          const user = await UserInfoService.getUserInfo({ headers: { 'Authorization': res.accessToken, 'Chain-Id': chainId } })
+          const user = await UserInfoService.getUserInfo(chainId, { headers: { 'Authorization': res.accessToken, 'Chain-Id': chainId } })
           userLogin({
             ...user,
             address: address as string,

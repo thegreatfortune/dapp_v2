@@ -4,6 +4,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import * as dayjs from 'dayjs'
+import { useChainId } from 'wagmi'
 import { PortfolioService } from '@/.generated/api'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 
@@ -13,11 +14,12 @@ interface balanceType {
 }
 
 export default function BalanceChart() {
+    const chainId = useChainId()
     const [balanceData, setBalanceData] = useState<balanceType[]>([])
 
     useEffect(() => {
         async function getData() {
-            const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET()
+            const res = await PortfolioService.ApiPortfolioUserTotalInfo_GET(chainId)
             return res
         }
         const list: balanceType[] = []

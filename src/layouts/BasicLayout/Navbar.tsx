@@ -5,6 +5,7 @@ import Image from 'antd/es/image'
 import type { MenuProps } from 'antd'
 import { AutoComplete, Dropdown } from 'antd'
 import BigNumber from 'bignumber.js'
+import { useChainId } from 'wagmi'
 import CustomConnectButton from './CustomConnectButton'
 import logo from '@/assets/images/LOGO.svg'
 import searchImg from '@/assets/images/search.png'
@@ -22,7 +23,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-
+  const chainId = useChainId()
   const [options, setOptions] = useState<{ value: string }[]>([])
 
   const handleSearch = async (value: string) => {
@@ -46,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     else
       params.loanName = searchText
 
-    return LoanService.ApiLoanPageLoanContract_GET(params)
+    return LoanService.ApiLoanPageLoanContract_GET(chainId, params)
   }
 
   function onSelect(value: string) {

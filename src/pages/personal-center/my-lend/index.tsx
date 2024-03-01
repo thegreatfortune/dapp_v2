@@ -4,12 +4,14 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
+import { useChainId } from 'wagmi'
 import LendTransparentCard from './components/LendTransparentCard'
 import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
 import { MarketBalanceService } from '@/.generated/api'
 
 const MyLend = () => {
+  const chainId = useChainId()
   const { currentUser } = useUserStore()
 
   const { t } = useTranslation()
@@ -42,7 +44,7 @@ const MyLend = () => {
     params.loanId = undefined
 
     try {
-      const res = await MarketBalanceService.ApiMarketBalancePageMyFollow_GET(params)
+      const res = await MarketBalanceService.ApiMarketBalancePageMyFollow_GET(chainId, params)
 
       if (res?.records && res.records.length > 0) {
         setTotal(res.total)
