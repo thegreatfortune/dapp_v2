@@ -4,7 +4,6 @@ import { RouterBeforeEach } from './routes/guard/RouterBeforeEach'
 
 const App = () => {
   const ElementRouter = useRoutes(routes)
-
   return (
     <div>
       <RouterBeforeEach>

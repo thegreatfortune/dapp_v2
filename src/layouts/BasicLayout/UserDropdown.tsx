@@ -23,7 +23,7 @@ const UserDropdown: React.FC<IProps> = ({ children }) => {
       key: '1',
       label: (
         <Link className='flex items-center c-#fff' to={'/my-loan'} key='myLoan'>
-          <img src={myLoanImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.loan')}
+          <img src={myLoanImg} alt="" className='mr-9 h15 w15' /> {t('nav.userMenu.myLoan')}
         </Link>
 
       ),
@@ -31,8 +31,8 @@ const UserDropdown: React.FC<IProps> = ({ children }) => {
     {
       key: '2',
       label: (
-        <Link className='flex items-center c-#fff' to='/my-lend'>
-          <img src={myFollowImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.follow')}
+        <Link className='flex items-center c-#fff' to='/my-follow'>
+          <img src={myFollowImg} alt="" className='mr-9 h15 w15' /> {t('nav.userMenu.myFollow')}
         </Link>
 
       ),
@@ -41,7 +41,7 @@ const UserDropdown: React.FC<IProps> = ({ children }) => {
       key: 'personalCenter',
       label: (
         <Link className='flex items-center c-#fff' to='/personal-center'>
-          <img src={personalImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.personalCenter')}
+          <img src={personalImg} alt="" className='mr-9 h15 w15' /> {t('nav.userMenu.personalCenter')}
         </Link>
 
       ),
@@ -53,7 +53,7 @@ const UserDropdown: React.FC<IProps> = ({ children }) => {
       key: 'signOut',
       label: (
         <a className='flex items-center c-#fff' onClick={openAccountModal}>
-          <img src={disconnectImg} alt="" className='mr-9 h15 w15' /> {t('nav.menu.signOut')}
+          <img src={disconnectImg} alt="" className='mr-9 h15 w15' /> {t('nav.userMenu.signOut')}
         </a>
       ),
     },

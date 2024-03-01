@@ -1,8 +1,8 @@
 // import the original type declarations
 import "i18next";
 // import all namespaces (for the default language, only)
-import ns1 from "@/locale/locales/en-US.json";
-import ns2 from "@/locale/locales/zh-CN.json";
+import ns1 from "@/locale/resources/en-US.json";
+import ns2 from "@/locale/resources/zh-CN.json";
 
 declare module "i18next" {
   // Extend CustomTypeOptions

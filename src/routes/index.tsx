@@ -6,10 +6,11 @@ import BasicLayout from '@/layouts/BasicLayout'
 
 import Test from '@/pages/Test'
 
-const PersonalCenter = lazy(() => import('../pages/personal-center'))
-const ApplyLoan = lazy(() => import('../pages/loan/apply-loan/index'))
-const MyLoan = lazy(() => import('../pages/personal-center/my-loan'))
-const MyLend = lazy(() => import('../pages/personal-center/my-lend'))
+const ApplyLoan = lazy(() => import('../pages/user/personal-center/apply-loan/index'))
+
+const MyLoan = lazy(() => import('../pages/user/my-loan'))
+const MyFollow = lazy(() => import('../pages/user/my-follow'))
+const PersonalCenter = lazy(() => import('../pages/user/personal-center'))
 
 interface IRouterMeta {
   title?: string
@@ -43,11 +44,11 @@ const routes: IRouter[] = [
     ),
   },
   {
-    path: '/my-lend',
+    path: '/my-follow',
     element: (
       <BasicLayout showInput={true}>
         <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
-          <MyLend />
+          <MyFollow />
         </React.Suspense>
       </BasicLayout>
     ),

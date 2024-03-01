@@ -10,7 +10,7 @@ import { Models } from '@/.generated/api/models'
 import useUserStore from '@/store/userStore'
 import { MarketBalanceService } from '@/.generated/api'
 
-const MyLend = () => {
+const MyFollow = () => {
   const chainId = useChainId()
   const { currentUser } = useUserStore()
 
@@ -109,4 +109,4 @@ const MyLend = () => {
   )
 }
 
-export default MyLend
+export default MyFollow

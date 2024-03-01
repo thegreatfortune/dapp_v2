@@ -65,6 +65,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           Home
         </NavLink>
       ),
+      type: 'group',
     },
     {
       key: t('nav.follow'),
@@ -77,6 +78,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           Follows
         </NavLink>
       ),
+      type: 'group',
     },
     {
       key: t('nav.market'),
@@ -89,6 +91,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           Share Market
         </NavLink>
       ),
+      type: 'group',
     },
     {
       key: t('nav.glyph'),
@@ -101,6 +104,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           Glyph
         </NavLink>
       ),
+      type: 'group',
     },
   ]
 

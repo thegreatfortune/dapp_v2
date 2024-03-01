@@ -4,10 +4,11 @@ import { Navigate } from 'react-router-dom'
 import type { IRouter } from '..'
 import BasicLayout from '@/layouts/BasicLayout'
 
-const Follows = lazy(() => import('../../pages/follows'))
 const Portal = lazy(() => import('../../pages/Portal'))
+
+const Follows = lazy(() => import('../../pages/follows'))
 const Market = lazy(() => import('../../pages/market'))
-const LoanDetails = lazy(() => import('../../pages/loan/loan-details'))
+const LoanDetails = lazy(() => import('../../pages/follows/loan-details'))
 const OrderViewAll = lazy(() => import('../../pages/follows/order-view-all'))
 const NotFound = lazy(() => import('../../pages/NotFound'))
 

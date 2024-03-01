@@ -592,7 +592,7 @@ const ApplyLoan = () => {
               rules={projectImageFileRule}
             >
               {/* <div className="item-center relative m0 box-border h453 w-453 border-1 border-#303241 rounded-20 border-solid bg-#171822"> */}
-              <div className="item-center my-20 mx-10 flex justify-end text-14">
+              <div className="item-center mx-10 my-20 flex justify-end text-14">
                 <div className='mx-8'>
                   Use default image
                 </div>
@@ -1115,7 +1115,7 @@ const ApplyLoan = () => {
             loading={publishBtnLoading}
             className="h65 w200 b-rd-10 text-18 primary-btn"
           >
-            {t('applyLoan.btn.submit')}
+            {t('applyLoan.submitBtn')}
           </Button>
         </Form.Item>
       </Form >

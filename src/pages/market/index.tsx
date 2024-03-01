@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { InfoCircleOutlined, WarningOutlined } from '@ant-design/icons'
+import { useChainId } from 'wagmi'
 import { MarketService } from '../../.generated/api/Market'
 import ScrollableList from '../components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
@@ -13,6 +14,7 @@ import logo from '@/assets/images/portalImages/logo.png'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 
 const Market = () => {
+  const chainId = useChainId()
   const [params, setParams] = useState({ ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 })
 
   const [activeKey, setActiveKey] = useState('All')
@@ -114,6 +116,7 @@ const Market = () => {
       <ScrollableList
         grid={{ gutter: 16 }}
         api={MarketService.ApiMarketPageTradingLoan_GET}
+        chainId={chainId}
         params={params}
         containerId='TradeScrollable'
         renderItem={renderItem} />

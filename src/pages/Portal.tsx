@@ -27,9 +27,9 @@ const Portal = () => {
         <div>
             <div className="h-20rem w-full"></div>
             <div className="relative flex justify-between">
-                <div className="absolute z-3 pt-5rem text-16rem font-500 lh-21rem not-italic c-#fff">{`${t('portal.title.theme1')}`}</div>
+                <div className="absolute z-3 pt-5rem text-16rem c-#fff font-500 lh-21rem not-italic">{`${t('portal.title.theme1')}`}</div>
                 <div className="float-left mt-12.5rem">
-                    <div className="z-2 mt-12.5rem h-81 w-753 flex-content-between pt-12.5rem text-26 font-400 lh-34 c-gray opacity-100">{`${t('portal.title.annotate1')}`}</div>
+                    <div className="z-2 mt-12.5rem h-81 w-753 flex-content-between pt-12.5rem text-26 c-gray font-400 lh-34 opacity-100">{`${t('portal.title.annotate1')}`}</div>
                     <NavLink to="/market" ><button className="mt-100 h-92 w-324 justify-between b-rd-8 text-24 c-#fff primary-btn" >{`${t('portal.login.button')}`}</button></NavLink>
 
                 </div>
@@ -51,9 +51,9 @@ const Portal = () => {
                     </div>
                 </div>
                 <div className="">
-                    <div className="mr-auto h-192 w-440 text-64 font-500 lh-96 c-#fff">{`${t('portal.title.theme2')}`}</div>
+                    <div className="mr-auto h-192 w-440 text-64 c-#fff font-500 lh-96">{`${t('portal.title.theme2')}`}</div>
                     <div className="h-10rem"></div>
-                    <div className="mr-1 h-103 w-515 text-26 font-400 lh-8.55rem c-gray opacity-100">{`${t('portal.title.annotate2')}`}</div>
+                    <div className="mr-1 h-103 w-515 text-26 c-gray font-400 lh-8.55rem opacity-100">{`${t('portal.title.annotate2')}`}</div>
                     <div className="h-12.5rem"></div>
                     <NavLink to="/market"><button className="ml-30 h-92 w-324 b-rd-8 text-24 c-#fff primary-btn">{`${t('portal.login.button')}`}</button></NavLink>
                 </div>
