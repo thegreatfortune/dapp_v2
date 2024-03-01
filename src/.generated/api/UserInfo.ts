@@ -16,7 +16,7 @@ export class UserInfoService {
 
   /** 整合的计分信息 GET /api/user/info/totalScoreInfo */
   static async ApiUserInfoTotalScoreInfo_GET(chainId: number, options?: { [key: string]: any }) {
-    return request<Models.TotalScoreVo>({
+    return request<Models.UserScore>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
       method: 'GET',
       ...(options || {}),
@@ -33,6 +33,15 @@ export class UserInfoService {
       url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/',
       method: 'GET',
       ...options,
+    });
+  }
+
+  /** 整合的计分信息 GET /api/user/info/totalScoreInfo */
+  static async getUserScore(chainId: number, options?: { [key: string]: any }) {
+    return request<Models.UserScore>({
+      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
+      method: 'GET',
+      ...(options || {}),
     });
   }
 }

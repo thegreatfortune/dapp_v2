@@ -82,5 +82,7 @@
   "portal.layout.menu2": "Market",
   "portal.layout.menu3": "Trade",
   "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management.",
-  "basicLayout.navBar.placeholder": "Search name, user, address"
+  "basicLayout.navBar.placeholder": "Search name, user, address",
+  "faucet.title":"Faucet",
+  "faucet.addToWallet":"添加至钱包"
 }

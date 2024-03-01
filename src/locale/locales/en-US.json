@@ -81,5 +81,10 @@
   "portal.layout.menu2": "Follows",
   "portal.layout.menu3": "Share Market",
   "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management.",
-  "basicLayout.navBar.placeholder": "Search name, user, address"
+  "basicLayout.navBar.placeholder": "Search name, user, address",
+  "faucet.title":"Faucet",
+  "faucet.addToWallet":"Add to wallet",
+  "faucet.claimText":"You will receive 2,000 USDC on ",
+  "claim":"Claim",
+  "completed":"Completed"
 }

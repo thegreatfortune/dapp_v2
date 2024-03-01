@@ -1,5 +1,5 @@
 import type { TabsProps } from 'antd'
-import { Avatar, Button, Divider, Image, Modal, Select, Tabs, message } from 'antd'
+import { Avatar, Button, Divider, Image, Modal, Select, Tabs, message, notification } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
@@ -9,8 +9,8 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
-import { formatUnits } from 'ethers'
-import { useChainId, useDisconnect } from 'wagmi'
+import { ethers, formatUnits } from 'ethers'
+import { useChainId, useDisconnect, useNetwork } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -21,8 +21,9 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
-import { MessageError } from '@/enums/error'
+import { MessageError, NotificationError } from '@/enums/error'
 import { chainAddressEnums } from '@/enums/chain'
+import { NotificationInfo } from '@/enums/info'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -31,9 +32,7 @@ const PersonalCenter = () => {
 
   const { browserContractService } = useBrowserContract()
 
-  const { canCreateNewLoan, inBlacklist } = useCoreContract()
-
-  const { canClaimTokenFromFaucet, claimTokenFromFaucet } = useCoreContract()
+  const { coreContracts, getFofBalance, canCreateNewLoan, inBlacklist, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
 
   const [applyLoanLoading, setApplyLoanLoading] = useState(false)
 
@@ -43,31 +42,15 @@ const PersonalCenter = () => {
 
   const { currentUser, userLogout } = useUserStore()
 
-  const [totalScoreVo, setTotalScoreVo] = useState(new Models.TotalScoreVo())
-
   const location = useLocation()
-
-  const [fofBalance, setFofBalance] = useState(0)
 
   const { disconnect } = useDisconnect()
 
   const [bindModalOpen, setBindModalOpen] = useState(false)
 
-  const [canClaimText, setCanClaimText] = useState('You will receive 2,000 USDC on Polygon mumbai!')
-
-  const [claimOkBtnDisabled, setClaimOkBtnDisabled] = useState(false)
-
   const chainId = useChainId()
 
-  const setBalance = async () => {
-    const fofBalance = await browserContractService?.getFofBalance()
-    const result = formatUnits(fofBalance ?? 0, 18)
-    setFofBalance(Number(result))
-  }
-
-  useEffect(() => {
-    setBalance()
-  }, [browserContractService])
+  const { chain } = useNetwork()
 
   const searchParams = new URLSearchParams(location.search)
   const isBind = searchParams.get('bind') || undefined
@@ -90,14 +73,6 @@ const PersonalCenter = () => {
     // location.pathname === '/personal-center' && getUserInfo()
     getUserInfo()
   }, [location])
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await UserInfoService.ApiUserInfoTotalScoreInfo_GET(chainId)
-      setTotalScoreVo(res)
-    }
-    fetchData()
-  }, [])
 
   const items: TabsProps['items'] = [
     {
@@ -152,29 +127,6 @@ const PersonalCenter = () => {
     }
   }
 
-  /**
-   * check if the signer is not in blacklist, and can create a loan
-   */
-  const preCheckState = async () => {
-    setApplyLoanLoading(true)
-    const inBL = await inBlacklist()
-    if (inBL) {
-      message.error(MessageError.InBlacklist)
-      return Promise.reject(MessageError.InBlacklist)
-    }
-    else {
-      const canCreate = await canCreateNewLoan()
-      if (canCreate) {
-        navigate('/apply-loan')
-      }
-      else {
-        message.error(MessageError.CanNotCreateDuplicateLoan)
-        return Promise.reject(MessageError.CanNotCreateDuplicateLoan)
-      }
-    }
-    setApplyLoanLoading(false)
-  }
-
   async function onBindX() {
     setBindXLoading(true)
     const authLink = await TwitterService.ApiTwitterBindTwitterRequiredLogin_GET(chainId)
@@ -193,87 +145,123 @@ const PersonalCenter = () => {
     </div>)
   }
 
-  const [usdcModelOpen, setUsdcModelOpen] = useState(false)
-  const [faucetText, setFaucetText] = useState('Claim')
-  const [hiddenCancel, setHiddenCancel] = useState(false)
-  const [executing, setExecuting] = useState(false)
+  const [userScore, setUserScore] = useState(new Models.UserScore())
+  const [fofAmount, setFofAmount] = useState(0)
+
+  const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [claimOkButtonDisabled, setClaimOkButtonDisabled] = useState(false)
+  const [claimOkButtonText, setClaimOkButtonText] = useState(t('claim'))
+  const [claimCancelButtonHidden, setClaimCancelButtonHidden] = useState(false)
+  const [claiming, setClaiming] = useState(false)
+  const [claimText, setClaimText] = useState(`${t('faucet.claimText')}`)
+
+  /**
+   * check if the signer is not in blacklist, and can create a loan
+   */
+  const preCheckState = async () => {
+    setApplyLoanLoading(true)
+    const inBL = await inBlacklist()
+    if (inBL) {
+      message.error(MessageError.InBlacklist)
+      return Promise.reject(MessageError.InBlacklist)
+    }
+    else {
+      const canCreate = await canCreateNewLoan()
+      if (canCreate) {
+        navigate('/apply-loan')
+      }
+      else {
+        notification.error({
+          message: NotificationError.CannotApplyLoan,
+          description: NotificationError.CannotApplyLoanDesc,
+          placement: 'bottomRight',
+        })
+        setApplyLoanLoading(false)
+        return Promise.reject(MessageError.CanNotCreateDuplicateLoan)
+      }
+    }
+  }
 
   const addUsdcToWallet = async () => {
-    const signer = browserContractService?.getSigner
-
-    await signer?.provider.send('wallet_watchAsset', {
+    const provider = new ethers.BrowserProvider(window.ethereum)
+    await provider.send('wallet_watchAsset', {
       type: 'ERC20',
       options: {
-        address: '0x8f78aAF91dea7D38acF813c9C121F648d20c1c0F',
+        address: chainAddressEnums[chainId].usdc,
         symbol: 'USDC',
         decimals: 18,
         // "image": "https://foo.io/token-image.svg"
       },
     })
   }
-
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
-      const canClaim = await canClaimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
+      const canClaim = await claimStatusFromFaucet(chainAddressEnums[chain?.id as number].usdc)
       if (!canClaim) {
-        setCanClaimText('You have claimed the test $USDC token.')
-        setClaimOkBtnDisabled(true)
+        setClaimText('You have claimed the test $USDC token.')
+        setClaimOkButtonDisabled(true)
       }
-
-      setUsdcModelOpen(true)
+      setClaimModalOpen(true)
       return true
     }
     else {
-      window.open('https://mumbaifaucet.com/', '_blank')
+      window.open(chainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
     }
     return true
   }
-
-  async function claimUsdc() {
-    if (faucetText === 'Completed!') {
-      setFaucetText('Claim')
-      setExecuting(false)
-      setHiddenCancel(false)
-      setClaimOkBtnDisabled(false)
-      setUsdcModelOpen(false)
+  const claim = async () => {
+    if (claimOkButtonText === t('completed')) {
+      setClaimOkButtonText(t('claim'))
+      setClaiming(false)
+      setClaimOkButtonDisabled(false)
+      setClaimCancelButtonHidden(true)
+      setClaimModalOpen(false)
       return true
     }
 
-    setClaimOkBtnDisabled(true)
-    setExecuting(true)
-    setHiddenCancel(true)
+    setClaiming(true)
+    setClaimOkButtonDisabled(true)
+    setClaimCancelButtonHidden(true)
 
     try {
       await claimTokenFromFaucet(chainAddressEnums[chainId].usdc)
+      setClaimOkButtonText(t('completed'))
+      setClaiming(false)
+      setClaimOkButtonDisabled(false)
+      notification.info({
+        message: NotificationInfo.ClaimInSuccessfully,
+        description: NotificationInfo.ClaimInSuccessfullyDESC,
+        placement: 'bottomRight',
+      })
       setTimeout(() => {
-        setExecuting(false)
-        setFaucetText('Completed!')
-        setClaimOkBtnDisabled(false)
-        setHiddenCancel(false)
+        setClaimCancelButtonHidden(true)
+        setClaimOkButtonText(t('claim'))
+        setClaimModalOpen(false)
       }, 3000)
     }
     catch (error) {
-      setExecuting(false)
-      setHiddenCancel(false)
-      setClaimOkBtnDisabled(false)
+      setClaiming(false)
+      setClaimOkButtonDisabled(false)
+      setClaimCancelButtonHidden(false)
     }
-
-    // const res = await browserContractService?.followFaucetClaim(import.meta.env.VITE_TOKEN_USDC)
-
-    // try {
-    //   if (res?.status === 1) {
-    //     ///
-    //     setTimeout(() => {
-    //       setFaucetText('Completed!')
-    //       setHiddenCancel(true)
-    //       setExecuting(false)
-    //     }, 3000)
-    //   }
-    // }
-    // catch {
-    //   message.error('Transaction failed')
-    // }
   }
+
+  const setFofBalance = async () => {
+    const fofBalance = await getFofBalance()
+    const result = formatUnits(fofBalance, 18)
+    setFofAmount(Number(result))
+  }
+
+  useEffect(() => {
+    if (coreContracts) {
+      async function setData() {
+        const result = await UserInfoService.getUserScore(chainId)
+        setUserScore(result)
+      }
+      setData()
+      setFofBalance()
+    }
+  }, [coreContracts])
 
   return (
     isBind === 'true'
@@ -288,31 +276,30 @@ const PersonalCenter = () => {
           cancelButtonProps={{ disabled: true }}
         >
           <div>
-            <h3>Your X acount binds successfully, please re-login!</h3>
+            <h3>Your X acount has been bound successfully, please re-login!</h3>
           </div>
         </Modal>
       </div >
       : <div className="flex justify-center">
         <div className='w-full'>
-          <Modal open={usdcModelOpen}
+          <Modal open={claimModalOpen}
             onCancel={() => {
-              setCanClaimText('You will receive 2,000 USDC on Polygon mumbai!')
-              setClaimOkBtnDisabled(false)
-              setFaucetText('Claim')
-              setExecuting(false)
-              setHiddenCancel(false)
-              setUsdcModelOpen(false)
+              setClaimText(t('faucet.claimText'))
+              setClaiming(false)
+              setClaimOkButtonDisabled(false)
+              setClaimCancelButtonHidden(false)
+              setClaimModalOpen(false)
             }}
-            okText={faucetText}
-            onOk={claimUsdc}
-            okButtonProps={{ disabled: claimOkBtnDisabled, className: 'primary-btn', loading: executing }}
-            cancelButtonProps={{ hidden: hiddenCancel }}
+            okText={claimOkButtonText}
+            onOk={claim}
+            okButtonProps={{ disabled: claimOkButtonDisabled, className: 'primary-btn', loading: claiming }}
+            cancelButtonProps={{ hidden: claimCancelButtonHidden }}
             className='rounded-20'
           >
             <div>
-              <h2>Faucet</h2>
+              <h2>{t('faucet.title')}</h2>
               <div className='mb-30 flex items-center justify-between'>
-                <div>{canClaimText}</div>
+                <div>{claimText}{chain?.name}</div>
                 <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
               </div>
             </div>
@@ -322,7 +309,6 @@ const PersonalCenter = () => {
             style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
           >
           </div>
-
           <div className="w-full">
             <div className='relative'>
               <div className="absolute left-10 top--80 rounded-100 bg-#171822">
@@ -368,9 +354,9 @@ const PersonalCenter = () => {
                   <Select
                     className='h40 w120'
                     size='large'
-                    defaultValue='Faucet'
+                    defaultValue={t('faucet.title')}
                     options={[
-                      { label: 'Claim Matic', value: 'Matic' },
+                      { label: `Claim ${chain?.nativeCurrency.symbol}`, value: `${chain?.nativeCurrency.symbol}` },
                       { label: 'Claim USDC', value: 'USDC' },
                     ]}
                     onSelect={faucetSelect}
@@ -385,23 +371,23 @@ const PersonalCenter = () => {
               <div className='point-box'>
                 <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
                   <span>$FOF</span>
-                  <span>{toCurrencyString(fofBalance)}</span>
+                  <span>{toCurrencyString(fofAmount)}</span>
                 </div>
                 <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
                   <span>Points</span>
-                  <span>{((totalScoreVo.integral?.points ?? 0) / 100).toFixed(2)}</span>
+                  <span>{((userScore.integral?.points ?? 0) / 100).toFixed(2)}</span>
                 </div>
                 <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
                   <span className='text-16'>Credit score</span>
-                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.totalPoints ?? 0) / 100}</span>
+                  <span className='flex justify-center text-16'>{(userScore.credit?.totalPoints ?? 0) / 100}</span>
                 </div>
                 <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
                   <span className='text-16'>Initial Points</span>
-                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.initialPoints ?? 0) / 100}</span>
+                  <span className='flex justify-center text-16'>{(userScore.credit?.initialPoints ?? 0) / 100}</span>
                 </div>
                 <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
                   <span className='text-16'>Additional Points</span>
-                  <span className='flex justify-center text-16'>{(totalScoreVo.credit?.additionalPoints ?? 0) / 100}</span>
+                  <span className='flex justify-center text-16'>{(userScore.credit?.additionalPoints ?? 0) / 100}</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,9 @@
 export enum NotificationError {
     TransactionFailed = 'Transaction failed.',
     TransactionError = 'Transaction error.',
+
+    CannotApplyLoan = 'Can not apply a loan.',
+    CannotApplyLoanDesc = 'You have a un-liquidate loan, or you\'re in Blacklist.',
 }
 
 export enum MessageError {

@@ -477,7 +477,7 @@ const useCoreContract = () => {
    * check if the token has been claimed
    * @param token
    */
-  const canClaimTokenFromFaucet = async (token: string) => {
+  const claimStatusFromFaucet = async (token: string) => {
     const task = async (coreContracts: CoreContracts) => {
       try {
         await coreContracts.faucetContract.faucet.staticCall(token)
@@ -639,6 +639,10 @@ const useCoreContract = () => {
     initializeContracts()
   }, [currentUser, chainId])
 
+  // useEffect(() => {
+  //   initializeContracts()
+  // }, [])
+
   const resetProvider = () => {
     setCoreContracts(undefined)
     initializeContracts()
@@ -677,7 +681,7 @@ const useCoreContract = () => {
     checkClaimableFoF,
     claimFoF,
     hasWithdrawn,
-    canClaimTokenFromFaucet,
+    claimStatusFromFaucet,
     claimTokenFromFaucet,
 
     approveUsdc,

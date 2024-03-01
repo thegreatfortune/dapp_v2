@@ -26,6 +26,7 @@ interface IChainAddresses {
     refundPool: string
     faucet: string
     liquidity: string
+    nativeFaucetUrl: string
 }
 
 const chainAddressEnums: { [key: number]: IChainAddresses } = {
@@ -54,6 +55,7 @@ const chainAddressEnums: { [key: number]: IChainAddresses } = {
         refundPool: ZeroAddress,
         faucet: import.meta.env.VITE_OPSEPOLIA_CORE_FAUCET as string,
         liquidity: import.meta.env.VITE_OPSEPOLIA_LIQUIDITY as string,
+        nativeFaucetUrl: 'https://mumbaifaucet.com/',
     },
     80001: {
         apiEndpoint: import.meta.env.VITE_MUMBAI_API_ENDPOINT,
@@ -80,6 +82,7 @@ const chainAddressEnums: { [key: number]: IChainAddresses } = {
         refundPool: ZeroAddress,
         faucet: import.meta.env.VITE_MUMBAI_CORE_FAUCET as string,
         liquidity: import.meta.env.VITE_MUMBAI_LIQUIDITY as string,
+        nativeFaucetUrl: 'https://mumbaifaucet.com/',
     },
 }
 

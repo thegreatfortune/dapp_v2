@@ -604,7 +604,7 @@ Canceled :订单取消 */
     userInfo?: UserInfoVo1 = undefined;
   }
 
-  export class TotalScoreVo {
+  export class UserScore {
     /** com.sszh.modules.score.integral.IntegralVo */
     integral?: IntegralVo = undefined;
     credit?: CreditScoreVo = undefined;
