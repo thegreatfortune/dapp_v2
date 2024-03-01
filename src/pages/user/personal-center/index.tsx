@@ -54,6 +54,7 @@ const PersonalCenter = () => {
   const { chain } = useNetwork()
 
   const searchParams = new URLSearchParams(window.location.search)
+  console.log(searchParams)
   const isBind = searchParams.get('bind') || undefined
   console.log(isBind)
   // setBindModalOpen(isBind === 'true')
