@@ -12,7 +12,6 @@ import useUserStore from '@/store/userStore'
 import logo from '@/assets/images/portalImages/logo.png'
 import { MessageError } from '@/enums/error'
 import { NotificationInfo } from '@/enums/info'
-import useCoreContract from '@/hooks/useCoreContract'
 
 const CustomConnectButton = () => {
   const { userLogin, userLogout, currentUser, users } = useUserStore()
@@ -20,8 +19,6 @@ const CustomConnectButton = () => {
   const navigator = useNavigate()
 
   const [inviteCode, setInviteCode] = useState<string>()
-
-  const { initPoolContracts } = useCoreContract()
 
   const chainId = useChainId()
 
@@ -36,58 +33,6 @@ const CustomConnectButton = () => {
   })
 
   const { signTypedDataAsync } = useSignTypedData()
-
-  // async function login_old(address?: string) {
-  //   try {
-  //     if (!address)
-  //       return
-
-  //     resetProvider()
-
-  //     const newProvider = new ethers.BrowserProvider(window.ethereum)
-
-  //     // await initializeProvider (newProvider)
-
-  //     const signer = await newProvider.getSigner()
-
-  //     const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
-
-  //     const signature = await signer?.signMessage(nonce)
-
-  //     console.log('nonce:', nonce)
-
-  //     if (!signature) {
-  //       message.error('signature cannot be empty')
-  //       return
-  //     }
-
-  //     const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode, rawMessage: '' })
-  //     // const res = await UserService.ApiUserLogin_POST({ address })
-
-  //     // const res = await UserService.ApiUserLogin_POST({ address })
-
-  //     signIn({ accessToken: res.accessToken, address, chainId: chain?.id })
-
-  //     if (res.success) {
-  //       const user = await UserInfoService.ApiUserInfo_GET()
-
-  //       console.log('The user logged in:', user)
-
-  //       setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
-  //     }
-
-  //     setNewProvider(newProvider)
-
-  //     // await initializeProvider (newProvider)
-  //   }
-  //   catch (error) {
-  //     reset()
-  //     navigator('/follows')
-  //     message.error('login failed')
-  //     console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
-  //     throw new Error('login failed')
-  //   }
-  // }
 
   interface TypedData {
     domain: {
@@ -120,7 +65,17 @@ const CustomConnectButton = () => {
     // [key: string]: TypedDataField[] | string
   }
 
-  async function login() {
+  const login = async () => {
+    console.info('Logging in....')
+    // const navigator = useNavigate()
+    // const chainId = useChainId()
+    // const { disconnect } = useDisconnect()
+    // const { address } = useAccount()
+    // const { signTypedDataAsync } = useSignTypedData()
+    // const { userLogin, userLogout, currentUser, users } = useUserStore()
+    // const [inviteCode, setInviteCode] = useState<string>()
+
+    console.log('111', address, currentUser.address)
     const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST(chainId, { address: address as string })
     const now = dayjs()
     const originUser = users.find(e => e.address === address as string)
@@ -228,7 +183,60 @@ const CustomConnectButton = () => {
     }
   }
 
+  // async function login_old(address?: string) {
+  //   try {
+  //     if (!address)
+  //       return
+
+  //     resetProvider()
+
+  //     const newProvider = new ethers.BrowserProvider(window.ethereum)
+
+  //     // await initializeProvider (newProvider)
+
+  //     const signer = await newProvider.getSigner()
+
+  //     const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST({ address })
+
+  //     const signature = await signer?.signMessage(nonce)
+
+  //     console.log('nonce:', nonce)
+
+  //     if (!signature) {
+  //       message.error('signature cannot be empty')
+  //       return
+  //     }
+
+  //     const res = await MetamaskService.ApiMetamaskLogin_POST({ address, sign: signature, inviteCode, rawMessage: '' })
+  //     // const res = await UserService.ApiUserLogin_POST({ address })
+
+  //     // const res = await UserService.ApiUserLogin_POST({ address })
+
+  //     signIn({ accessToken: res.accessToken, address, chainId: chain?.id })
+
+  //     if (res.success) {
+  //       const user = await UserInfoService.ApiUserInfo_GET()
+
+  //       console.log('The user logged in:', user)
+
+  //       setUserInfo({ accessToken: res.accessToken, chainId: chain?.id, ...user, id: user.userId })
+  //     }
+
+  //     setNewProvider(newProvider)
+
+  //     // await initializeProvider (newProvider)
+  //   }
+  //   catch (error) {
+  //     reset()
+  //     navigator('/follows')
+  //     message.error('login failed')
+  //     console.log('%c [ error ]-21', 'font-size:13px; background:#b7001f; color:#fb4463;', error)
+  //     throw new Error('login failed')
+  //   }
+  // }
+
   useEffect(() => {
+    console.log(address, currentUser.address)
     if (address && address !== currentUser.address)
       login()
   }, [address])

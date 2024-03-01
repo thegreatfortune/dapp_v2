@@ -9,7 +9,7 @@ import { NotificationInfo } from '@/enums/info'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { tokenList } from '@/contract/tradingPairTokenMap'
 import { Models } from '@/.generated/api/models'
-import tradeService from '@/api/tradeService'
+import tradeService from '@/services/tradeService'
 
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
