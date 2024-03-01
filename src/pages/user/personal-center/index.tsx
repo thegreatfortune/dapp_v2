@@ -55,24 +55,24 @@ const PersonalCenter = () => {
   const searchParams = new URLSearchParams(location.search)
   const isBind = searchParams.get('bind') || undefined
 
-  useEffect(() => {
-    async function getUserInfo() {
-      if (isBind) {
-        // clear()
-        // disconnect()
-        // countDown()
-        // console.log(searchParams)
-        // modal.success({
-        //   title: 'This is a notification message',
-        // })
-        setBindModalOpen(true)
-        // const user = await UserInfoService.ApiUserInfo_GET()
-        // setUserInfo({ ...currentUser, ...user, id: user.userId })
-      }
-    }
-    // location.pathname === '/personal-center' && getUserInfo()
-    getUserInfo()
-  }, [location])
+  // useEffect(() => {
+  //   async function getUserInfo() {
+  //     if (isBind) {
+  //       // clear()
+  //       // disconnect()
+  //       // countDown()
+  //       // console.log(searchParams)
+  //       // modal.success({
+  //       //   title: 'This is a notification message',
+  //       // })
+  //       setBindModalOpen(true)
+  //       // const user = await UserInfoService.ApiUserInfo_GET()
+  //       // setUserInfo({ ...currentUser, ...user, id: user.userId })
+  //     }
+  //   }
+  //   // location.pathname === '/personal-center' && getUserInfo()
+  //   getUserInfo()
+  // }, [location])
 
   const items: TabsProps['items'] = [
     {
@@ -264,142 +264,143 @@ const PersonalCenter = () => {
   }, [coreContracts])
 
   return (
-    isBind === 'true'
-      ? <div>
-        <Modal open={bindModalOpen}
-          okText={'OK'}
-          onOk={() => {
-            userLogout()
-            disconnect()
-            navigate('/')
+    // isBind === 'true'
+    //   ? <div>
+    //     <Modal open={bindModalOpen}
+    //       okText={'OK'}
+    //       onOk={() => {
+    //         userLogout()
+    //         disconnect()
+    //         navigate('/')
+    //       }}
+    //       cancelButtonProps={{ disabled: true }}
+    //     >
+    //       <div>
+    //         <h3>Your X acount has been bound successfully, please re-login!</h3>
+    //       </div>
+    //     </Modal>
+    //   </div >
+    //   :
+    <div className="flex justify-center">
+      <div className='w-full'>
+        <Modal open={claimModalOpen}
+          onCancel={() => {
+            setClaimText(t('faucet.claimText'))
+            setClaiming(false)
+            setClaimOkButtonDisabled(false)
+            setClaimCancelButtonHidden(false)
+            setClaimModalOpen(false)
           }}
-          cancelButtonProps={{ disabled: true }}
+          okText={claimOkButtonText}
+          onOk={claim}
+          okButtonProps={{ disabled: claimOkButtonDisabled, className: 'primary-btn', loading: claiming }}
+          cancelButtonProps={{ hidden: claimCancelButtonHidden }}
+          className='rounded-20'
         >
           <div>
-            <h3>Your X acount has been bound successfully, please re-login!</h3>
+            <h2>{t('faucet.title')}</h2>
+            <div className='mb-30 flex items-center justify-between'>
+              <div>{claimText}{chain?.name}</div>
+              <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
+            </div>
           </div>
         </Modal>
-      </div >
-      : <div className="flex justify-center">
-        <div className='w-full'>
-          <Modal open={claimModalOpen}
-            onCancel={() => {
-              setClaimText(t('faucet.claimText'))
-              setClaiming(false)
-              setClaimOkButtonDisabled(false)
-              setClaimCancelButtonHidden(false)
-              setClaimModalOpen(false)
-            }}
-            okText={claimOkButtonText}
-            onOk={claim}
-            okButtonProps={{ disabled: claimOkButtonDisabled, className: 'primary-btn', loading: claiming }}
-            cancelButtonProps={{ hidden: claimCancelButtonHidden }}
-            className='rounded-20'
-          >
-            <div>
-              <h2>{t('faucet.title')}</h2>
-              <div className='mb-30 flex items-center justify-between'>
-                <div>{claimText}{chain?.name}</div>
-                <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
-              </div>
+        <div
+          className="personal-banner"
+          style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
+        >
+        </div>
+        <div className="w-full">
+          <div className='relative'>
+            <div className="absolute left-10 top--80 rounded-100 bg-#171822">
+              <Avatar className='' shape="circle" size={140} src={currentUser.pictureUrl ?? defaultAvatar} />
             </div>
-          </Modal>
-          <div
-            className="personal-banner"
-            style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
-          >
           </div>
-          <div className="w-full">
-            <div className='relative'>
-              <div className="absolute left-10 top--80 rounded-100 bg-#171822">
-                <Avatar className='' shape="circle" size={140} src={currentUser.pictureUrl ?? defaultAvatar} />
-              </div>
-            </div>
-            <div className="user-basic-box items-center">
-              <div className='user-basic-info'>
-                <div className=''>
-                  <div className='ml-25 mt-20 text-20'>
-                    {currentUser.nickName ?? 'Not Bound'}
+          <div className="user-basic-box items-center">
+            <div className='user-basic-info'>
+              <div className=''>
+                <div className='ml-25 mt-20 text-20'>
+                  {currentUser.nickName ?? 'Not Bound'}
+                </div>
+                <div className='flex items-center'>
+                  <div className="ml-25 mt-20">
+                    {
+                      currentUser.platformName
+                        ? <Link className='text-18' to={`https://twitter.com/${currentUser.platformName}`}>@{currentUser.platformName}</Link>
+                        : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
+                    }
                   </div>
-                  <div className='flex items-center'>
-                    <div className="ml-25 mt-20">
-                      {
-                        currentUser.platformName
-                          ? <Link className='text-18' to={`https://twitter.com/${currentUser.platformName}`}>@{currentUser.platformName}</Link>
-                          : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
-                      }
-                    </div>
-                    <div className='ml-20 mt-20'>
-                      <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`} onCopy={() => message.success('Copied')} >
-                        <div className='flex cursor-pointer'>
-                          <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`}>Invitation Link</a>
-                          <Image preview={false} width={16} height={16} className='ml-6' src={copyImg} />
-                        </div>
-                      </CopyToClipboard>
-                    </div>
+                  <div className='ml-20 mt-20'>
+                    <CopyToClipboard text={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`} onCopy={() => message.success('Copied')} >
+                      <div className='flex cursor-pointer'>
+                        <a className='text-14 c-#307DF5' href={`${window.location.origin}/market?inviteCode=${currentUser.inviteCode}`}>Invitation Link</a>
+                        <Image preview={false} width={16} height={16} className='ml-6' src={copyImg} />
+                      </div>
+                    </CopyToClipboard>
                   </div>
-                  {/* <div className="mt-20">
+                </div>
+                {/* <div className="mt-20">
                   {
                     currentUser.address ? <Address address={currentUser.address} /> : null
                   }
                 </div> */}
-                </div>
-              </div>
-              <div className='mt-65 items-center max-md:mt-30'>
-                <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
-                  <Button
-                    loading={applyLoanLoading}
-                    onClick={preCheckState}
-                    className='h40 rounded-30 primary-btn'>Apply a loan</Button>
-                  <Select
-                    className='h40 w120'
-                    size='large'
-                    defaultValue={t('faucet.title')}
-                    options={[
-                      { label: `Claim ${chain?.nativeCurrency.symbol}`, value: `${chain?.nativeCurrency.symbol}` },
-                      { label: 'Claim USDC', value: 'USDC' },
-                    ]}
-                    onSelect={faucetSelect}
-                  ></Select>
-                </div>
-              </div>
-
-            </div>
-
-            <Divider></Divider>
-            <div className='mt-30 box-border items-center'>
-              <div className='point-box'>
-                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
-                  <span>$FOF</span>
-                  <span>{toCurrencyString(fofAmount)}</span>
-                </div>
-                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
-                  <span>Points</span>
-                  <span>{((userScore.integral?.points ?? 0) / 100).toFixed(2)}</span>
-                </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                  <span className='text-16'>Credit score</span>
-                  <span className='flex justify-center text-16'>{(userScore.credit?.totalPoints ?? 0) / 100}</span>
-                </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                  <span className='text-16'>Initial Points</span>
-                  <span className='flex justify-center text-16'>{(userScore.credit?.initialPoints ?? 0) / 100}</span>
-                </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
-                  <span className='text-16'>Additional Points</span>
-                  <span className='flex justify-center text-16'>{(userScore.credit?.additionalPoints ?? 0) / 100}</span>
-                </div>
               </div>
             </div>
+            <div className='mt-65 items-center max-md:mt-30'>
+              <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
+                <Button
+                  loading={applyLoanLoading}
+                  onClick={preCheckState}
+                  className='h40 rounded-30 primary-btn'>Apply a loan</Button>
+                <Select
+                  className='h40 w120'
+                  size='large'
+                  defaultValue={t('faucet.title')}
+                  options={[
+                    { label: `Claim ${chain?.nativeCurrency.symbol}`, value: `${chain?.nativeCurrency.symbol}` },
+                    { label: 'Claim USDC', value: 'USDC' },
+                  ]}
+                  onSelect={faucetSelect}
+                ></Select>
+              </div>
+            </div>
+
           </div>
-          <Divider></Divider>
-          <div className="h30" />
 
-          <div className='m-x-a'>
-            <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
+          <Divider></Divider>
+          <div className='mt-30 box-border items-center'>
+            <div className='point-box'>
+              <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span>$FOF</span>
+                <span>{toCurrencyString(fofAmount)}</span>
+              </div>
+              <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span>Points</span>
+                <span>{((userScore.integral?.points ?? 0) / 100).toFixed(2)}</span>
+              </div>
+              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span className='text-16'>Credit score</span>
+                <span className='flex justify-center text-16'>{(userScore.credit?.totalPoints ?? 0) / 100}</span>
+              </div>
+              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span className='text-16'>Initial Points</span>
+                <span className='flex justify-center text-16'>{(userScore.credit?.initialPoints ?? 0) / 100}</span>
+              </div>
+              <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <span className='text-16'>Additional Points</span>
+                <span className='flex justify-center text-16'>{(userScore.credit?.additionalPoints ?? 0) / 100}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div >
+        <Divider></Divider>
+        <div className="h30" />
+
+        <div className='m-x-a'>
+          <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
+        </div>
+      </div>
+    </div >
 
   )
 }
