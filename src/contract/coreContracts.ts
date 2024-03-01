@@ -1,5 +1,4 @@
 import { Contract, ZeroAddress, ethers } from 'ethers'
-import { message } from 'antd'
 import BigNumber from 'bignumber.js'
 import type {
   FollowFiERC1155 as ERC1155,
@@ -31,43 +30,52 @@ import ERC3525_ABI from '@/abis/ERC3525.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
-import { MessageError } from '@/enums/error'
+import { chainAddressEnums } from '@/enums/chain'
 
 function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.Interface, signer: ethers.Signer): T {
   return new Contract(address, abi, signer) as T
 }
 
 export class CoreContracts {
-  constructor(private _signer: ethers.JsonRpcSigner) {
-    this._capitalFactoryContract = createContract(import.meta.env.VITE_CORE_CAPITAL_FACTORY, capitalFactoryABI, this.signer)
-    this._refundFactoryContract = createContract(import.meta.env.VITE_CORE_REFUND_FACTORY, refundFactoryABI, this.signer)
-    this._processCenterContract = createContract(import.meta.env.VITE_CORE_PROCESS_CENTER, processCenterABI, this.signer)
-    this._manageContract = createContract(import.meta.env.VITE_CORE_MANAGE, manageABI, this.signer)
-    this._marketContract = createContract(import.meta.env.VITE_CORE_MARKET, marketABI, this.signer)
-    this._routerContract = createContract(import.meta.env.VITE_CORE_ROUTER, routerABI, this.signer)
-    this._handleContract = createContract(import.meta.env.VITE_CORE_HANDLE, handleABI, this.signer)
-    this._sharesContract = createContract(import.meta.env.VITE_CORE_SHARES, ERC3525_ABI, this.signer)
-    this._fofContract = createContract(import.meta.env.VITE_CORE_FOF, ERC20_ABI, this.signer)
-    this._usdcContract = createContract(import.meta.env.VITE_TOKEN_USDC, ERC20_ABI, this.signer)
-    this._nftContract = createContract(import.meta.env.VITE_CORE_NFT, ERC1155_ABI, this.signer)
+  constructor(private _signer: ethers.JsonRpcSigner, private _chainId: number) {
+    const chainAddresses = chainAddressEnums[this._chainId]
+    this._capitalFactoryContract = createContract(chainAddresses.capitalFactory, capitalFactoryABI, this.signer)
+    this._refundFactoryContract = createContract(chainAddresses.refundFactory, refundFactoryABI, this.signer)
+    this._processCenterContract = createContract(chainAddresses.processCenter, processCenterABI, this.signer)
+    this._manageContract = createContract(chainAddresses.manage, manageABI, this.signer)
+    this._marketContract = createContract(chainAddresses.market, marketABI, this.signer)
+    this._routerContract = createContract(chainAddresses.router, routerABI, this.signer)
+    this._handleContract = createContract(chainAddresses.handle, handleABI, this.signer)
+    this._sharesContract = createContract(chainAddresses.shares, ERC3525_ABI, this.signer)
+    this._fofContract = createContract(chainAddresses.fof, ERC20_ABI, this.signer)
+    this._nftContract = createContract(chainAddresses.nft, ERC1155_ABI, this.signer)
+    this._usdcContract = createContract(chainAddresses.usdc, ERC20_ABI, this.signer)
     this._capitalPoolAddress = ZeroAddress
     this._refundPoolAddress = ZeroAddress
-    this._faucetContract = createContract(import.meta.env.VITE_CORE_FAUCET, faucetABI, this.signer)
+    this._faucetContract = createContract(chainAddresses.faucet, faucetABI, this.signer)
   }
 
   private static _instance: CoreContracts
-  public static getCoreContractsInstance(signer: ethers.JsonRpcSigner) {
-    if (!CoreContracts._instance)
-      CoreContracts._instance = new CoreContracts(signer)
+  public static getCoreContractsInstance(signer: ethers.JsonRpcSigner, chainId: number) {
+    if (!CoreContracts._instance || CoreContracts._instance.chainId !== chainId)
+      return CoreContracts._instance = new CoreContracts(signer, chainId)
+    if (CoreContracts._instance.signer.address !== signer.address) {
+      CoreContracts._instance._capitalPoolContract = undefined
+      CoreContracts._instance._capitalPoolAddress = ZeroAddress
+
+      CoreContracts._instance._refundPoolContract = undefined
+      CoreContracts._instance._refundPoolAddress = ZeroAddress
+      CoreContracts._instance._signer = signer
+    }
     return CoreContracts._instance
+  }
+
+  get chainId(): number {
+    return this._chainId
   }
 
   get signer(): ethers.JsonRpcSigner {
     return this._signer
-  }
-
-  set signer(signer: ethers.JsonRpcSigner) {
-    this._signer = signer
   }
 
   /**
@@ -208,11 +216,8 @@ export class CoreContracts {
    */
   async getUserCapitalPoolAddress(): Promise<string> {
     const capitalPoolAddress = await this.processCenterContract._userToCatpitalPool(this.signer)
-    if (capitalPoolAddress === ZeroAddress) {
-      // message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
-      // return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+    if (capitalPoolAddress === ZeroAddress)
       return this._capitalPoolAddress
-    }
     this._capitalPoolAddress = capitalPoolAddress
     this._capitalPoolContract = createContract<capitalPool>(this._capitalPoolAddress, capitalPoolABI, this.signer)
     return this._capitalPoolAddress
@@ -225,11 +230,8 @@ export class CoreContracts {
     if (this.capitalPoolAddress === ZeroAddress)
       await this.getUserCapitalPoolAddress()
     const refundPoolAddress = await this.processCenterContract._getRefundPool(this.capitalPoolAddress)
-    if (refundPoolAddress === ZeroAddress) {
-      // message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
-      // return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+    if (refundPoolAddress === ZeroAddress)
       return this._refundPoolAddress
-    }
     this._refundPoolAddress = refundPoolAddress
     this._refundPoolContract = createContract<refundPool>(this._refundPoolAddress, refundPoolABI, this.signer)
     return this._refundPoolAddress

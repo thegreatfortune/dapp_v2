@@ -22,42 +22,71 @@ import './index.css'
 import '@/locale/i18n.ts'
 import App from './App.tsx'
 import { getLanguageLib } from './utils/getLanguageLib.ts'
+import { Base } from './enums/base.ts'
 
 dayjs.extend(relativeTime)
 
 const chainList: Chain[] = []
 
-if (import.meta.env.VITE_TESTNET === 'true') {
-  const polygonMumbai = {
-    id: 80001,
-    name: 'Polygon Mumbai',
-    network: 'Polygon Mumbai',
-    nativeCurrency: {
-      name: 'MATIC',
-      symbol: 'MATIC',
-      decimals: 18,
+const polygonMumbai = {
+  id: 80001,
+  name: 'Polygon Mumbai',
+  network: 'Polygon Mumbai',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: [import.meta.env.VITE_MUMBAI_RPC],
     },
-    rpcUrls: {
-      default: {
-        http: [import.meta.env.VITE_MUMBAI_RPC],
-      },
-      public: {
-        http: [import.meta.env.VITE_MUMBAI_RPC],
-      },
+    public: {
+      http: [import.meta.env.VITE_MUMBAI_RPC],
     },
-    blockExplorers: {
-      default: {
-        name: 'PolygonScan',
-        url: 'https://mumbai.polygonscan.com',
-      },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Polygon Mumbai Scan',
+      // url: 'https://mumbai.polygonscan.com',
+      url: import.meta.env.VITE_MUMBAI_BLOCKEXPLORER,
     },
-    testnet: true,
-  }
-  chainList.push(polygonMumbai)
+  },
+  testnet: true,
 }
-else {
+
+export const opSepolia = {
+  id: 11155420,
+  name: 'Op Sepolia',
+  network: 'Op Sepolia',
+  nativeCurrency: {
+    name: 'ETH',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  iconUrl: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+  iconBackground: '#FF0000',
+  rpcUrls: {
+    default: {
+      http: [import.meta.env.VITE_OPSEPOLIA_RPC],
+    },
+    public: {
+      http: [import.meta.env.VITE_OPSEPOLIA_RPC],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Op Sepolia Scan',
+      url: import.meta.env.VITE_OPSEPOLIA_BLOCKEXPLORER,
+    },
+  },
+  testnet: true,
+}
+
+if (import.meta.env.VITE_GENERAL_TESTNET === 'true')
+  chainList.push(polygonMumbai, opSepolia)
+else
   chainList.push(arbitrum)
-}
 
 // if (import.meta.env.DEV)
 //   chainList.push(localhost as any)
@@ -70,8 +99,8 @@ const { chains, publicClient } = configureChains(
 )
 
 const { connectors } = getDefaultWallets({
-  appName: import.meta.env.VITE_CORE_DAPP_TITLE,
-  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
+  appName: Base.DAppTitle,
+  projectId: Base.WalletConnectProjectId,
   chains,
 })
 
@@ -96,9 +125,9 @@ root.render(
   }}>
     <BrowserRouter>
       <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
-            <App />
-          </RainbowKitProvider>
+        <RainbowKitProvider chains={chains} theme={darkTheme()} locale={browserLanguageLib.browserLanguage as Locale} >
+          <App />
+        </RainbowKitProvider>
       </WagmiConfig>
     </BrowserRouter>
   </ConfigProvider>,

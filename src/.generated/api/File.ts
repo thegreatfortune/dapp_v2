@@ -2,10 +2,11 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
+import { chainAddressEnums } from '@/enums/chain';
 
 export class FileService {
   /** uploadFile POST /api/file/upload */
-  static async ApiFileUpload_POST(body: {}, file?: File, options?: { [key: string]: any }) {
+  static async ApiFileUpload_POST(chainId: number, body: {}, file?: File, options?: { [key: string]: any }) {
     const formData = new FormData();
 
     if (file) {
@@ -29,7 +30,7 @@ export class FileService {
     });
 
     return request<string>({
-      url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/file/upload',
+      url: chainAddressEnums[chainId].apiEndpoint + 'api/file/upload',
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },

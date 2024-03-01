@@ -22,6 +22,7 @@ import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
 import { tokenList } from '@/contract/tradingPairTokenMap'
+import { chainAddressEnums } from '@/enums/chain'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -85,7 +86,8 @@ async function handleTransaction(
 }
 
 export class BrowserContractService {
-  constructor(private signer: ethers.JsonRpcSigner) {
+  constructor(private signer: ethers.JsonRpcSigner, private _chainId: number) {
+    this._chainAddresses = chainAddressEnums[this._chainId]
   }
 
   /**
@@ -98,6 +100,12 @@ export class BrowserContractService {
   get getSigner(): ethers.JsonRpcSigner {
     return this.signer
   }
+
+  get chainId(): number {
+    return this._chainId
+  }
+
+  private _chainAddresses: { [key: string]: string }
 
   /**
    *资金池
@@ -203,19 +211,8 @@ export class BrowserContractService {
    */
 
   async getERC20Contract(token?: string) {
-    // if (this._ERC20Contract && !token)
-    //   return this._ERC20Contract
-
-    // if (LocalEnv) {
-    //   return createContract<LocalContractType<typeof LocalEnv, LocalERC20>>(
-    //     token ?? import.meta.env.VITE_TOKEN_USDC,
-    //     LocalERC20_ABI,
-    //     this.signer,
-    //   )
-    // }
-
     return createContract<LocalContractType<typeof LocalEnv, ERC20>>(
-      token ?? import.meta.env.VITE_TOKEN_USDC,
+      token ?? this._chainAddresses.usdc,
       ERC20_ABI,
       this.signer,
     )
@@ -233,7 +230,7 @@ export class BrowserContractService {
     //   return this._ERC20Contract
 
     return createContract<UniswapV3>(
-      token ?? import.meta.env.VITE_CORE_LIQUIDITY,
+      token ?? this._chainAddresses.liquidity,
       TEST_LIQUIDITY_ABI,
       this.signer,
     )
@@ -247,7 +244,7 @@ export class BrowserContractService {
    */
   async getFollowMarketContract(marketId?: bigint) {
     const contract = createContract<FollowMarket>(
-      import.meta.env.VITE_CORE_MARKET,
+      this._chainAddresses.market,
       FollowMarket_ABI,
       this.signer,
     )
@@ -268,7 +265,7 @@ export class BrowserContractService {
    */
   async getFollowHandleContract() {
     return createContract<FollowHandle>(
-      import.meta.env.VITE_CORE_HANDLE,
+      this._chainAddresses.handle,
       FollowHandle_ABI,
       this.signer,
     )
@@ -282,7 +279,7 @@ export class BrowserContractService {
    */
   async getFollowRouterContract() {
     return createContract<FollowRouter>(
-      import.meta.env.VITE_CORE_ROUTER,
+      this._chainAddresses.router,
       FollowRouter_ABI,
       this.signer,
     )
@@ -317,7 +314,7 @@ export class BrowserContractService {
     //   return this._FollowFactoryContract
 
     return this._FollowFactoryContract = createContract<FollowFactory>(
-      import.meta.env.VITE_CORE_CAPITAL_FACTORY,
+      this._chainAddresses.capitalFactory,
       followFactory_ABI,
       this.signer,
     )
@@ -377,7 +374,7 @@ export class BrowserContractService {
       return this._refundFactoryContract
 
     return this._refundFactoryContract = createContract<FollowRefundFactory>(
-      import.meta.env.VITE_CORE_REFUND_FACTORY,
+      this._chainAddresses.refundFactory,
       followRefundFactory_ABI,
       this.signer,
     )
@@ -394,7 +391,7 @@ export class BrowserContractService {
       return this._processCenterContract
 
     return this._processCenterContract = createContract<ProcessCenter>(
-      import.meta.env.VITE_CORE_PROCESS_CENTER,
+      this._chainAddresses.processCenter,
       processCenter_ABI,
       this.signer,
     )
@@ -415,7 +412,7 @@ export class BrowserContractService {
     // return new Contract(import.meta.env.VITE_CORE_MANAGE, followManage_ABI, provider) as unknown as FollowManage
 
     return this._followManageContract = createContract<FollowManage>(
-      import.meta.env.VITE_CORE_MANAGE,
+      this._chainAddresses.manage,
       followManage_ABI,
       this.signer,
     )
@@ -429,7 +426,7 @@ export class BrowserContractService {
    */
   async getERC3525Contract() {
     return createContract<ERC3525>(
-      import.meta.env.VITE_CORE_SHARES,
+      this._chainAddresses.shares,
       ERC3525_ABI,
       this.signer,
     )
@@ -443,7 +440,7 @@ export class BrowserContractService {
    */
   async getERC1155Contract() {
     return createContract<FollowFiERC1155>(
-      import.meta.env.VITE_CORE_NFT,
+      this._chainAddresses.nft,
       ERC1155_ABI,
       this.signer,
     )
@@ -457,7 +454,7 @@ export class BrowserContractService {
    */
   async getERC20FOFContract() {
     return createContract<ERC20>(
-      import.meta.env.VITE_CORE_FOF,
+      this._chainAddresses.fof,
       ERC20_ABI,
       this.signer,
     )
@@ -471,7 +468,7 @@ export class BrowserContractService {
       return this._faucetContract
 
     return this._faucetContract = createContract<FollowFaucet>(
-      import.meta.env.VITE_CORE_FAUCET,
+      this._chainAddresses.faucet,
       FollowFaucet_ABI,
       this.signer,
     )
@@ -585,6 +582,7 @@ export class BrowserContractService {
     //   return true
 
     const followFactoryContract = await this.getFollowFactoryContract()
+
     console.log('%c [ followFactoryContract ]-528', 'font-size:13px; background:#62793f; color:#a6bd83;', followFactoryContract)
 
     const state = await followFactoryContract.getIfCreate(this.getSigner.address)
@@ -1323,7 +1321,7 @@ export class BrowserContractService {
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(
-      import.meta.env.VITE_TOKEN_USDC,
+      this._chainAddresses.usdc,
       swapToken,
       fee,
       ethers.parseEther(String(1)),

@@ -14,7 +14,7 @@ async function submitTradeDetail(
     options?: { [key: string]: any },
 ) {
     return request<boolean>({
-        url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/loan/confirm',
+        url: import.meta.env.VITE_GENERAL_API_ENDPOINT + 'api/loan/confirm',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ async function getTradeDetail(
     options?: { [key: string]: any },
 ) {
     return request<Models.LoanOrderVO>({
-        url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/loan/loanInfo',
+        url: import.meta.env.VITE_GENERAL_API_ENDPOINT + 'api/loan/loanInfo',
         method: 'GET',
         params: {
             ...params,
@@ -51,7 +51,7 @@ async function getTradeList(
     options?: { [key: string]: any },
 ) {
     return request<Models.PageResult<Models.LoanOrderVO>>({
-        url: import.meta.env.VITE_CORE_API_ENDPOINT + 'api/loan/pageLoanContract',
+        url: import.meta.env.VITE_GENERAL_API_ENDPOINT + 'api/loan/pageLoanContract',
         method: 'GET',
         params: {
             ...params,

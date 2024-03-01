@@ -1,6 +1,7 @@
 import { ZeroAddress, ethers, parseUnits } from 'ethers'
 import { useEffect, useState } from 'react'
 import { message, notification } from 'antd'
+import { useChainId } from 'wagmi'
 import useUserStore from '@/store/userStore'
 import { CoreContracts } from '@/contract/coreContracts'
 import { MessageError, NotificationError } from '@/enums/error'
@@ -13,12 +14,12 @@ import tradeService from '@/api/tradeService'
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
   const { currentUser } = useUserStore()
+  const chainId = useChainId()
 
   const initializeContracts = async () => {
     const provider = new ethers.BrowserProvider(window.ethereum)
     const signer = await provider.getSigner()
-    const coreContracts = CoreContracts.getCoreContractsInstance(signer)
-    coreContracts.signer = signer
+    const coreContracts = CoreContracts.getCoreContractsInstance(signer, chainId)
     setCoreContracts(() => coreContracts)
   }
 
@@ -636,11 +637,7 @@ const useCoreContract = () => {
 
   useEffect(() => {
     initializeContracts()
-  }, [currentUser])
-
-  // useEffect(() => {
-  //   initializeContracts()
-  // }, [])
+  }, [currentUser, chainId])
 
   const resetProvider = () => {
     setCoreContracts(undefined)

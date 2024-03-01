@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
 import { formatUnits } from 'ethers'
-import { useDisconnect } from 'wagmi'
+import { useChainId, useDisconnect } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -22,6 +22,7 @@ import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
 import { MessageError } from '@/enums/error'
+import { chainAddressEnums } from '@/enums/chain'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -55,6 +56,8 @@ const PersonalCenter = () => {
   const [canClaimText, setCanClaimText] = useState('You will receive 2,000 USDC on Polygon mumbai!')
 
   const [claimOkBtnDisabled, setClaimOkBtnDisabled] = useState(false)
+
+  const chainId = useChainId()
 
   const setBalance = async () => {
     const fofBalance = await browserContractService?.getFofBalance()
@@ -241,7 +244,7 @@ const PersonalCenter = () => {
     setHiddenCancel(true)
 
     try {
-      await claimTokenFromFaucet(import.meta.env.VITE_TOKEN_USDC)
+      await claimTokenFromFaucet(chainAddressEnums[chainId].usdc)
       setTimeout(() => {
         setExecuting(false)
         setFaucetText('Completed!')

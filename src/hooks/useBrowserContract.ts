@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
+import { useChainId } from 'wagmi'
 import { BrowserContractService } from '../contract/browserContractService'
 import useUserStore from '@/store/userStore'
 
@@ -8,6 +9,7 @@ const useBrowserContract = () => {
   const [signer, setSigner] = useState<ethers.JsonRpcSigner>()
   const [browserContractService, setBrowserContractService] = useState<BrowserContractService>()
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false)
+  const chainId = useChainId()
 
   const { currentUser } = useUserStore()
 
@@ -29,7 +31,8 @@ const useBrowserContract = () => {
   const initializeSigner = async () => {
     if (!signer && provider) {
       const newSigner = await provider.getSigner()
-      const newBrowserContractService = new BrowserContractService(newSigner)
+      const newBrowserContractService = new BrowserContractService(newSigner, chainId)
+
       setBrowserContractService(() => newBrowserContractService)
       setSigner(newSigner)
 
@@ -50,7 +53,7 @@ const useBrowserContract = () => {
 
   const setNewSigner = async (newSigner: ethers.JsonRpcSigner) => {
     setSigner(newSigner)
-    const newBrowserContractService = new BrowserContractService(newSigner)
+    const newBrowserContractService = new BrowserContractService(newSigner, chainId)
     setBrowserContractService(() => newBrowserContractService)
 
     const connected = await checkWalletConnection(newSigner)
@@ -72,6 +75,16 @@ const useBrowserContract = () => {
     initializeProvider()
     initializeSigner()
   }, [provider, signer, currentUser])
+
+  useEffect(() => {
+    if (!browserContractService || !signer)
+      return
+    if (browserContractService.chainId !== chainId) {
+      const newBrowserContractService = new BrowserContractService(signer, chainId)
+      setBrowserContractService(() => newBrowserContractService)
+      console.log(newBrowserContractService)
+    }
+  }, [chainId])
 
   const resetProvider = () => {
     setProvider(undefined)
