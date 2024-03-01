@@ -39,9 +39,14 @@ import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import useUserStore from '@/store/userStore'
+import useCoreContract from '@/hooks/useCoreContract'
+import { MessageError } from '@/enums/error'
 
 const ApplyLoan = () => {
   /* #region  */
+
+  const { canCreateNewLoan, inBlacklist, coreContracts } = useCoreContract()
+
   const [form] = Form.useForm()
 
   const { t } = useTranslation()
@@ -152,6 +157,46 @@ const ApplyLoan = () => {
   /**
    *  加载页面之后检查 检查订单是否可创建
    */
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     if (!browserContractService)
+  //       return
+
+  //     const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
+
+  //     if (!orderCanCreatedAgain) {
+  //       message.warning('Order can not be created: There is an un-liquidate order!')
+  //       navigate(-1)
+  //     }
+  //   }
+  //   fetchData()
+  // }, [browserContractService])
+
+  /**
+   * pre-check if the signer is not in blacklist, and can create a loan
+   */
+  useEffect(() => {
+    const preCheckState = async () => {
+      const inBL = await inBlacklist()
+      if (inBL) {
+        message.error(MessageError.InBlacklist)
+        return Promise.reject(MessageError.InBlacklist)
+      }
+      else {
+        const canCreate = await canCreateNewLoan()
+        if (canCreate) {
+          navigate('/apply-loan')
+        }
+        else {
+          message.error(MessageError.CanNotCreateDuplicateLoan)
+          return Promise.reject(MessageError.CanNotCreateDuplicateLoan)
+        }
+      }
+    }
+    if (coreContracts)
+      preCheckState()
+  }, [coreContracts])
+
   useEffect(() => {
     async function fetchData() {
       if (!browserContractService)
@@ -164,9 +209,8 @@ const ApplyLoan = () => {
         navigate(-1)
       }
     }
-
     fetchData()
-  }, [browserContractService])
+  }, [])
 
   useEffect(() => {
     async function fetchData() {

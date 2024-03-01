@@ -21,6 +21,7 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
+import { MessageError } from '@/enums/error'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -28,6 +29,8 @@ const PersonalCenter = () => {
   const navigate = useNavigate()
 
   const { browserContractService } = useBrowserContract()
+
+  const { canCreateNewLoan, inBlacklist } = useCoreContract()
 
   const { canClaimTokenFromFaucet, claimTokenFromFaucet } = useCoreContract()
 
@@ -116,6 +119,10 @@ const PersonalCenter = () => {
 
       setApplyLoanLoading(true)
 
+      // console.log('ccno:')
+      // const ccno = await canCreateNewOrder()
+      // console.log('ccno:', ccno)
+
       const processCenterContract = await browserContractService?.getProcessCenterContract()
 
       const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
@@ -140,6 +147,29 @@ const PersonalCenter = () => {
     finally {
       setApplyLoanLoading(false)
     }
+  }
+
+  /**
+   * check if the signer is not in blacklist, and can create a loan
+   */
+  const preCheckState = async () => {
+    setApplyLoanLoading(true)
+    const inBL = await inBlacklist()
+    if (inBL) {
+      message.error(MessageError.InBlacklist)
+      return Promise.reject(MessageError.InBlacklist)
+    }
+    else {
+      const canCreate = await canCreateNewLoan()
+      if (canCreate) {
+        navigate('/apply-loan')
+      }
+      else {
+        message.error(MessageError.CanNotCreateDuplicateLoan)
+        return Promise.reject(MessageError.CanNotCreateDuplicateLoan)
+      }
+    }
+    setApplyLoanLoading(false)
   }
 
   async function onBindX() {
@@ -330,8 +360,8 @@ const PersonalCenter = () => {
                 <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
                   <Button
                     loading={applyLoanLoading}
-                    onClick={checkLoanOrderAndUserState}
-                    className='h40 w130 rounded-30 primary-btn'>Apply for a loan</Button>
+                    onClick={preCheckState}
+                    className='h40 rounded-30 primary-btn'>Apply a loan</Button>
                   <Select
                     className='h40 w120'
                     size='large'

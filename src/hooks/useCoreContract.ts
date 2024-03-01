@@ -99,7 +99,7 @@ const useCoreContract = () => {
   /**
    * if true, the user can create new order
    */
-  const canCreateNewOrder = async () => {
+  const canCreateNewLoan = async () => {
     const task = async (coreContracts: CoreContracts) => {
       const capitalFactoryContract = coreContracts.capitalFactoryContract
       const state = await capitalFactoryContract.getIfCreate(coreContracts.signer.address)
@@ -113,9 +113,31 @@ const useCoreContract = () => {
   }
 
   /**
-   * Order State
+   * check if the signer is in Blacklist
    */
-  const getOrderState = async () => {
+  const inBlacklist = async () => {
+    const task = async (coreContracts: CoreContracts) => {
+      return coreContracts.processCenterContract._getIfBlackList(coreContracts.signer.address)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * init the capital/refund pool contract and address, maybe undefined
+   */
+  const initPoolContracts = async () => {
+    const task = async (coreContracts: CoreContracts) => {
+      await coreContracts.getUserCapitalPoolAddress()
+      await coreContracts.getUserRefundPoolAddress()
+      return Promise.resolve(true)
+    }
+    return executeTask(task)
+  }
+
+  /**
+   * Loan State
+   */
+  const getLoanState = async () => {
     const task = async (coreContracts: CoreContracts) => {
       if (coreContracts.capitalPoolAddress === ZeroAddress)
         await coreContracts.getUserCapitalPoolAddress()
@@ -250,7 +272,10 @@ const useCoreContract = () => {
     const task = async (coreContracts: CoreContracts) => {
       if (coreContracts.capitalPoolAddress === ZeroAddress)
         await coreContracts.getUserCapitalPoolAddress()
-      return coreContracts.capitalPoolContract!.getLastId()
+      if (coreContracts.capitalPoolContract)
+        return coreContracts.capitalPoolContract.getLastId()
+      else
+        return Promise.reject(MessageError.PoolsDoNotExist)
     }
     return executeTask(task)
   }
@@ -260,7 +285,7 @@ const useCoreContract = () => {
    *
    * @param {LoanRequisitionEditModel} model
    */
-  const createOrder = async (model: LoanRequisitionEditModel) => {
+  const createLoan = async (model: LoanRequisitionEditModel) => {
     const task = async (coreContracts: CoreContracts) => {
       const decimals = await coreContracts.usdcContract.decimals()
       const res = await coreContracts.routerContract.borrowerCreateOrder(
@@ -311,7 +336,7 @@ const useCoreContract = () => {
    * @param tradeId
    * @param shares share count or copies
    */
-  const followOrder = async (tradeId: bigint, shares: bigint) => {
+  const followLoan = async (tradeId: bigint, shares: bigint) => {
     const task = async (coreContracts: CoreContracts) => {
       const res = await coreContracts.routerContract.lendMoney(tradeId, shares)
       return handleTransactionResponse(res)
@@ -336,26 +361,30 @@ const useCoreContract = () => {
    * @param tradeId
    * @param installment
    */
-  const liquidateOrder = async (tradeId: bigint, installment: boolean) => {
+  const liquidateLoan = async (tradeId: bigint, installment: boolean) => {
     const task = async (coreContracts: CoreContracts) => {
-      if (coreContracts.capitalPoolAddress === ZeroAddress) {
+      if (coreContracts.capitalPoolAddress === ZeroAddress)
         await coreContracts.getUserCapitalPoolAddress()
-        await coreContracts.getUserRefundPoolAddress()
-      }
-      if (installment) {
-        const res = await coreContracts.capitalPoolContract!.multiLiquidate(tradeId, 3000)
-        return handleTransactionResponse(res)
+
+      if (coreContracts.capitalPoolContract) {
+        if (installment) {
+          const res = await coreContracts.capitalPoolContract.multiLiquidate(tradeId, 3000)
+          return handleTransactionResponse(res)
+        }
+        else {
+          const res = await coreContracts.capitalPoolContract.singleLiquidate(tradeId, 3000)
+          return handleTransactionResponse(res)
+        }
       }
       else {
-        const res = await coreContracts.capitalPoolContract!.singleLiquidate(tradeId, 3000)
-        return handleTransactionResponse(res)
+        return Promise.reject(MessageError.PoolsDoNotExist)
       }
     }
     return executeTask(task)
   }
 
   /**
-   * repay the order
+   * repay the loan
    * @param tradeId
    * @param amount
    */
@@ -622,20 +651,22 @@ const useCoreContract = () => {
     coreContracts,
     resetProvider,
     getShareProfitByUser,
-    canCreateNewOrder,
-    getOrderState,
+    canCreateNewLoan,
+    inBlacklist,
+    initPoolContracts,
+    getLoanState,
     getAllowanceOfShares,
     approveShares,
     listShares,
     unlistShares,
     buyShares,
     createPools,
-    createOrder,
+    createLoan,
     getLatestTradeIdByUser,
     getAmountForShares,
-    followOrder,
+    followLoan,
     recoverPrincipal,
-    liquidateOrder,
+    liquidateLoan,
     repay,
     getHandleIndex,
     swapUniV3,

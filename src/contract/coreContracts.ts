@@ -209,8 +209,9 @@ export class CoreContracts {
   async getUserCapitalPoolAddress(): Promise<string> {
     const capitalPoolAddress = await this.processCenterContract._userToCatpitalPool(this.signer)
     if (capitalPoolAddress === ZeroAddress) {
-      message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
-      return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+      // message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
+      // return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+      return this._capitalPoolAddress
     }
     this._capitalPoolAddress = capitalPoolAddress
     this._capitalPoolContract = createContract<capitalPool>(this._capitalPoolAddress, capitalPoolABI, this.signer)
@@ -225,8 +226,9 @@ export class CoreContracts {
       await this.getUserCapitalPoolAddress()
     const refundPoolAddress = await this.processCenterContract._getRefundPool(this.capitalPoolAddress)
     if (refundPoolAddress === ZeroAddress) {
-      message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
-      return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+      // message.error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable)
+      // return Promise.reject(new Error(MessageError.CapitalPoolOrRefundPoolAddressIsUnavailable))
+      return this._refundPoolAddress
     }
     this._refundPoolAddress = refundPoolAddress
     this._refundPoolContract = createContract<refundPool>(this._refundPoolAddress, refundPoolABI, this.signer)

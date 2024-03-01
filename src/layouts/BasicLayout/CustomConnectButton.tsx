@@ -12,6 +12,7 @@ import useUserStore from '@/store/userStore'
 import logo from '@/assets/images/portalImages/logo.png'
 import { MessageError } from '@/enums/error'
 import { NotificationInfo } from '@/enums/info'
+import useCoreContract from '@/hooks/useCoreContract'
 
 const CustomConnectButton = () => {
   const { userLogin, userLogout, currentUser, users } = useUserStore()
@@ -19,6 +20,8 @@ const CustomConnectButton = () => {
   const navigator = useNavigate()
 
   const [inviteCode, setInviteCode] = useState<string>()
+
+  const { initPoolContracts } = useCoreContract()
 
   const chainId = useChainId()
 
@@ -187,7 +190,6 @@ const CustomConnectButton = () => {
             chainId,
             nonce,
           })
-          console.info(`The new user(${address}) logged in, navigate to personal center...`)
 
           notification.info({
             message: NotificationInfo.LogInSuccessfully,

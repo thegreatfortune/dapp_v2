@@ -14,6 +14,9 @@ export enum MessageError {
 
     AllowanceIsNotEnough = 'Error Code: 2001', // The allowance is not enough, please approve it
     CapitalPoolOrRefundPoolAddressIsUnavailable = 'Error Code: 2002', // Capital Pool or Refund Pool address is unavailable, please create it.
-    PoolsExist = 'Error Code: 2003', // The Pools exist.
-    TokenIdIsNotFound = 'Error Code: 2004', // TokenId is not Found
+    TokenIdIsNotFound = 'Error Code: 2003', // TokenId is not Found
+    PoolsExist = 'Error Code: 2004', // The Pools exist.
+    PoolsDoNotExist = 'Error Code: 2005', // The Pools exist.
+    InBlacklist = 'Error Code: 2006',
+    CanNotCreateDuplicateLoan = 'Error Code: 2007',
 }
