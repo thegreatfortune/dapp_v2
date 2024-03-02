@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 
 // import Address from '../loan/loan-details/components/Address'
 import { ethers, formatUnits } from 'ethers'
-import { useChainId, useDisconnect, useNetwork } from 'wagmi'
+import { useChainId, useNetwork } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
 import useBrowserContract from '@/hooks/useBrowserContract'
@@ -24,7 +24,6 @@ import useCoreContract from '@/hooks/useCoreContract'
 import { MessageError, NotificationError } from '@/enums/error'
 import { chainAddressEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
-import { login } from '@/services/account'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -41,11 +40,9 @@ const PersonalCenter = () => {
 
   const [activeKey, setActiveKey] = useState('1')
 
-  const { currentUser, userLogout } = useUserStore()
+  const { currentUser, userLogin } = useUserStore()
 
   const location = useLocation()
-
-  const { disconnect } = useDisconnect()
 
   const [bindModalOpen, setBindModalOpen] = useState(false)
 
@@ -54,27 +51,16 @@ const PersonalCenter = () => {
   const { chain } = useNetwork()
 
   const searchParams = new URLSearchParams(window.location.search)
-  console.log(searchParams)
   const isBind = searchParams.get('bind') || undefined
-  console.log(isBind)
-  // setBindModalOpen(isBind === 'true')
 
   useEffect(() => {
     async function getUserInfo() {
       if (isBind) {
-        // clear()
-        // disconnect()
-        // countDown()
-        // console.log(searchParams)
-        // modal.success({
-        //   title: 'This is a notification message',
-        // })
         setBindModalOpen(true)
-        // const user = await UserInfoService.ApiUserInfo_GET()
-        // setUserInfo({ ...currentUser, ...user, id: user.userId })
+        const userInfo = await UserInfoService.getUserInfo(chainId)
+        userLogin({ ...currentUser, ...userInfo })
       }
     }
-    // location.pathname === '/personal-center' && getUserInfo()
     getUserInfo()
   }, [location])
 
@@ -131,7 +117,7 @@ const PersonalCenter = () => {
     }
   }
 
-  async function onBindX() {
+  async function onBind() {
     setBindXLoading(true)
 
     const authLink = await TwitterService.ApiTwitterBindTwitterRequiredLogin_GET(chainId)
@@ -152,7 +138,6 @@ const PersonalCenter = () => {
 
   const [userScore, setUserScore] = useState(new Models.UserScore())
   const [fofAmount, setFofAmount] = useState(0)
-
   const [claimModalOpen, setClaimModalOpen] = useState(false)
   const [claimOkButtonDisabled, setClaimOkButtonDisabled] = useState(false)
   const [claimOkButtonText, setClaimOkButtonText] = useState(t('claim'))
@@ -199,6 +184,7 @@ const PersonalCenter = () => {
       },
     })
   }
+
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
       const canClaim = await claimStatusFromFaucet(chainAddressEnums[chain?.id as number].usdc)
@@ -214,6 +200,7 @@ const PersonalCenter = () => {
     }
     return true
   }
+
   const claim = async () => {
     if (claimOkButtonText === t('completed')) {
       setClaimOkButtonText(t('claim'))
@@ -271,19 +258,6 @@ const PersonalCenter = () => {
   return (
     isBind === 'true'
       ? <div>
-        {/* <Modal open={bindModalOpen}
-          okText={'OK'}
-          onOk={() => {
-            userLogout()
-            disconnect()
-            navigate('/')
-          }}
-          cancelButtonProps={{ disabled: true }}
-        >
-          <div>
-            <h3>Your X acount has been bound successfully, please re-login!</h3>
-          </div>
-        </Modal> */}
         <Modal open={bindModalOpen}
           okText={'OK'}
           onOk={() => {
@@ -322,19 +296,6 @@ const PersonalCenter = () => {
               </div>
             </div>
           </Modal>
-          <Modal open={bindModalOpen}
-            okText={'OK'}
-            onOk={() => {
-              login()
-              setBindModalOpen(false)
-            }}
-            cancelButtonProps={{ hidden: true }}
-          >
-            <div>
-              <h2>Congratulations!</h2>
-              <h3>Your X acount has been bound successfully.</h3>
-            </div>
-          </Modal>
           <div
             className="personal-banner"
             style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
@@ -357,7 +318,7 @@ const PersonalCenter = () => {
                       {
                         currentUser.platformName
                           ? <Link className='text-18' to={`https://twitter.com/${currentUser.platformName}`}>@{currentUser.platformName}</Link>
-                          : <Button loading={bindXLoading} onClick={onBindX} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
+                          : <Button loading={bindXLoading} onClick={onBind} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
                       }
                     </div>
                     <div className='ml-20 mt-20'>

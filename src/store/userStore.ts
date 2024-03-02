@@ -86,8 +86,8 @@ const useUserStore = create<IUserState>()(
         users: [],
         userLogin: user => set((state) => {
           state.updateUser(user)
-          const updatedUser = state.users.find(e => e.address === ethers.getAddress(user.address))
-          return ({ currentUser: updatedUser! })
+          // const updatedUser = state.users.find(e => e.address === ethers.getAddress(user.address))
+          return ({ currentUser: user })
         }),
         userLogout: () => set(() => ({ currentUser: { address: ZeroAddress } })),
         addUserV1: user => set((state) => {
@@ -103,7 +103,6 @@ const useUserStore = create<IUserState>()(
             state.users.push(user)
           return { users: state.users }
         }),
-
       }),
       { name: 'userStore' },
     ),

@@ -74,22 +74,21 @@ const CustomConnectButton = () => {
     // const { signTypedDataAsync } = useSignTypedData()
     // const { userLogin, userLogout, currentUser, users } = useUserStore()
     // const [inviteCode, setInviteCode] = useState<string>()
-
-    console.log('111', address, currentUser.address)
     const nonce = await MetamaskService.ApiMetamaskGetVerifyNonce_POST(chainId, { address: address as string })
     const now = dayjs()
     const originUser = users.find(e => e.address === address as string)
     if (originUser && originUser.nonce === nonce) {
       const userInfo = await UserInfoService.getUserInfo(chainId, { headers: { 'Authorization': originUser.accessToken, 'Chain-Id': originUser.chainId } })
+      console.log('userInfo:', userInfo)
       userLogin({ ...originUser, ...userInfo, address: address as string })
       notification.info({
         message: NotificationInfo.LogInSuccessfully,
         description: 'Welcome back to Follow Finance!',
         placement: 'bottomRight',
       })
-      setTimeout(() => {
-        location.reload()
-      }, 3000)
+      // setTimeout(() => {
+      //   location.reload()
+      // }, 3000)
     }
     else {
       const typedData: TypedData = {
