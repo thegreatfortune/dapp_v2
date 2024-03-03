@@ -21,7 +21,7 @@ const Follows = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const trendingLoansRes = await loanService.getLoanList(
+      const trendingLoansPromise = loanService.getLoanList(
         chainId,
         {
           page: 1,
@@ -29,9 +29,8 @@ const Follows = () => {
           orderItemList: 'actual_share_count=false',
           state: 'Following',
         })
-      setTrendingLoansData(trendingLoansRes)
 
-      const allLoansRes = await loanService.getLoanList(
+      const allLoansPromise = loanService.getLoanList(
         chainId,
         {
           page: 1,
@@ -40,7 +39,10 @@ const Follows = () => {
           state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected',
         })
 
-      setAllLoansData(allLoansRes)
+      const result = await Promise.all([trendingLoansPromise, allLoansPromise])
+
+      setTrendingLoansData(result[0])
+      setAllLoansData(result[1])
     }
     fetchData()
   }, [])
