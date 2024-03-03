@@ -7,8 +7,8 @@ import { MessageError } from '@/enums/error'
 import type { LoanForm } from '@/models/LoanForm'
 import { tokenList } from '@/contract/tradingPairTokenMap'
 import type { Models } from '@/.generated/api/models'
-import loan from '@/services/loan'
-import handleTransactionResponse from '@/helpers/handleTransactionResponse'
+import loanService from '@/services/loanService'
+import { handleTransactionResponse } from '@/helpers/helpers'
 
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
@@ -286,7 +286,7 @@ const useCoreContract = () => {
         tradingPlatformType: model.specifiedPlatformType,
         transactionPairs: model.specifiedPairs,
       }
-      return loan.submitTradeDetail(tradeDetail)
+      return loanService.submitLoanDetail(tradeDetail)
     }
     return executeTask(task)
   }
@@ -625,8 +625,6 @@ const useCoreContract = () => {
     coreContracts,
     resetProvider,
     getShareProfitByUser,
-    canCreateNewLoan,
-    inBlacklist,
     initPoolContracts,
     getLoanState,
     getAllowanceOfShares,
@@ -634,8 +632,6 @@ const useCoreContract = () => {
     listShares,
     unlistShares,
     buyShares,
-    createPools,
-    createLoan,
     getLatestTradeIdByUser,
     getAmountForShares,
     followLoan,
@@ -646,8 +642,6 @@ const useCoreContract = () => {
     swapUniV3,
     withdrawProfit,
     deposit,
-    getFofBalance,
-    getNftBalance,
     checkNftWhitelist,
     approveFof,
     mintNft,
@@ -656,6 +650,12 @@ const useCoreContract = () => {
     hasWithdrawn,
     claimStatusFromFaucet,
     claimTokenFromFaucet,
+    canCreateNewLoan,
+    inBlacklist,
+    createPools,
+    createLoan,
+    getFofBalance,
+    getNftBalance,
 
     approveUsdc,
     approveErc20,

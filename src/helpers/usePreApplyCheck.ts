@@ -2,7 +2,7 @@
 
 import { message } from 'antd'
 import { useEffect, useState } from 'react'
-import { executeTask } from './helper'
+import { executeTask } from './helpers'
 import { MessageError } from '@/enums/error'
 import useCoreContract from '@/hooks/useCoreContract'
 

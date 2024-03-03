@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { message } from 'antd'
 import useCoreContract from './useCoreContract'
-import { executeTask } from '@/helpers/helper'
+import { executeTask } from '@/helpers/helpers'
 import { MessageError } from '@/enums/error'
 
 const useNftWhitelist = () => {

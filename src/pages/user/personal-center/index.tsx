@@ -21,8 +21,8 @@ import useCoreContract from '@/hooks/useCoreContract'
 import { chainAddressEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
-import handlePreCheckState from '@/helpers/handlePreCheckState'
 import useTokenBalance from '@/hooks/useTokenBalance'
+import { handlePreCheckState } from '@/helpers/helpers'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()

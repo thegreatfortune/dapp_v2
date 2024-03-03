@@ -1,39 +1,24 @@
+import { Divider, Switch, Tooltip, Upload, message } from 'antd'
 import Select from 'antd/es/select'
 import Form from 'antd/es/form'
 import Dragger from 'antd/es/upload/Dragger'
 import TextArea from 'antd/es/input/TextArea'
 import Button from 'antd/es/button'
 import Image from 'antd/es/image'
-import './style.css'
-import { useTranslation } from 'react-i18next'
 import InputNumber from 'antd/es/input-number'
-import { BorderOutlined, CheckOutlined, CloseOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
-import { useEffect, useState } from 'react'
-import Modal from 'antd/es/modal'
-import { Divider, Switch, Tooltip, Upload, message } from 'antd'
-import { useNavigate } from 'react-router-dom'
 import type { RcFile } from 'antd/es/upload'
+import { BorderOutlined, CheckOutlined, CloseOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
+import Modal from 'antd/es/modal'
+import './style.css'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { useChainId } from 'wagmi'
 import { ZeroAddress } from 'ethers'
 import { LoanForm } from '@/models/LoanForm'
 import { Models } from '@/.generated/api/models'
 import airplane from '@/assets/images/apply-loan/airplane.png'
 import downIcon from '@/assets/images/apply-loan/down.png'
-
-// import followIcon from '@/assets/images/apply-loan/token-icons/usdc.png'
-// import bitcoinIcon from '@/assets/images/apply-loan/token-icons/BTC.png'
-// import ethereumIcon from '@/assets/images/apply-loan/token-icons/ETH.png'
-// import arbitrumIcon from '@/assets/images/apply-loan/token-icons/ARB.png'
-// import chainlinkIcon from '@/assets/images/apply-loan/token-icons/LINK.png'
-// import uniswapIcon from '@/assets/images/apply-loan/token-icons/UNI.png'
-// import lidofiIcon from '@/assets/images/apply-loan/token-icons/LDO.png'
-// import aaveIcon from '@/assets/images/apply-loan/token-icons/AAVE.png'
-// import solanaIcon from '@/assets/images/apply-loan/token-icons/SOL.png'
-// import dogecoinIcon from '@/assets/images/apply-loan/token-icons/DOGE.png'
-// import rippleIcon from '@/assets/images/apply-loan/token-icons/XRP.png'
-// import litecoinIcon from '@/assets/images/apply-loan/token-icons/LTC.png'
-// import xGenalIcon from '@/assets/images/apply-loan/xGenal.png'
-// import xFloatIcon from '@/assets/images/apply-loan/xFloat.png'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
@@ -41,14 +26,13 @@ import { handleImageCanvas } from '@/utils/handleImageCanvas'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import useUserStore from '@/store/userStore'
 import useCoreContract from '@/hooks/useCoreContract'
-import { MessageError } from '@/enums/error'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
-import handlePreCheckState from '@/helpers/handlePreCheckState'
+import { MessageError } from '@/enums/error'
 import { NotificationInfo } from '@/enums/info'
-import handleTransactionResponse from '@/helpers/handleTransactionResponse'
-import { executeTask } from '@/helpers/helper'
-import loan from '@/services/loan'
+import { executeTask, handlePreCheckState, handleTransactionResponse } from '@/helpers/helpers'
+
 import usePoolCreationState from '@/helpers/usePoolCreationState'
+import loanService from '@/services/loanService'
 
 const ApplyLoan = () => {
   // const [tradingPair] = useState([
@@ -413,7 +397,7 @@ const ApplyLoan = () => {
             setPoolCreated(4)
           }
           else {
-            const res = await coreContracts!.routerContract.createPool(coreContracts!.signer.address)
+            const res = await coreContracts.routerContract.createPool(coreContracts.signer.address)
             await handleTransactionResponse(res,
               NotificationInfo.CreatePoolSuccessful,
               NotificationInfo.CreatePoolSuccessfulDesc,
@@ -472,7 +456,7 @@ const ApplyLoan = () => {
           transactionPairs: loanForm.specifiedPairs,
         }
 
-        await loan.submitTradeDetail(loanDetail)
+        await loanService.submitLoanDetail(loanDetail)
         setOrderCreated(2)
         setApplyOkButtonText(`${t('completed')}`)
         setApplyOkButtonDisabled(false)
@@ -1115,7 +1099,11 @@ const ApplyLoan = () => {
                     onMouseLeave={() => setIsHovered(false)}
                   /> */}
                     <CloseOutlined
-                      onClick={() => setLoanForm((prevLoanForm) => { return { ...prevLoanForm, specifiedPairs: loanForm.specifiedPairs } })}
+                      onClick={() => setLoanForm((prevLoanForm) => {
+                        prevLoanForm.specifiedPairs.splice(i, 1)
+                        return { ...prevLoanForm }
+                      })
+                      }
                       width={18} height={18} />
                     {/* </div> */}
                   </div>

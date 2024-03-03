@@ -9,8 +9,8 @@ import type { Models } from '../.generated/api/models'
  * @param body
  * @param options
  */
-async function submitTradeDetail(
-    body: Models.LoanConfirmParams,
+async function submitLoanDetail(
+    body: Models.ILoanConfirmParams,
     options?: { [key: string]: any },
 ) {
     return request<boolean>({
@@ -25,7 +25,7 @@ async function submitTradeDetail(
 }
 
 /** 获取订单的详情信息 GET /api/loan/loanInfo */
-async function getTradeDetail(
+async function getLoanDetail(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiLoanLoanInfoGETParams,
     options?: { [key: string]: any },
@@ -45,7 +45,7 @@ async function getTradeDetail(
  * @param params
  * @param options
  */
-async function getTradeList(
+async function getLoanList(
     // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
     params: Models.ApiLoanPageLoanContractGETParams,
     options?: { [key: string]: any },
@@ -61,7 +61,7 @@ async function getTradeList(
 }
 
 export default {
-    getTradeDetail,
-    getTradeList,
-    submitTradeDetail,
+    getLoanDetail,
+    getLoanList,
+    submitLoanDetail,
 }
