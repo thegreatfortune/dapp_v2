@@ -41,7 +41,6 @@ function handleResponse(response: AxiosResponse): AxiosResponse {
 }
 
 async function request<T>(config: AxiosRequestConfig): Promise<T> {
-  console.log(config)
   try {
     const result = await axios.request<T>({ headers: { 'Content-Type': 'application/json', ...config.headers }, ...config })
 
