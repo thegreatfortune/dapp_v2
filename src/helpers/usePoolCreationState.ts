@@ -1,0 +1,32 @@
+import { useEffect, useState } from 'react'
+import { executeTask } from './helper'
+import { MessageError } from '@/enums/error'
+import useCoreContract from '@/hooks/useCoreContract'
+
+/* eslint-disable @typescript-eslint/indent */
+const usePoolCreationState = () => {
+    const [captialPoolCreationState, setCapitalPoolCreationState] = useState(false)
+    const [refundPoolCreationState, setRefundPoolCreationState] = useState(false)
+    const { coreContracts } = useCoreContract()
+    const task = async () => {
+        if (coreContracts) {
+            const capitalPoolState = await coreContracts.routerContract.getCreateCapitalState(coreContracts.signer.address)
+            const refundPoolState = await coreContracts.routerContract.getCreateRefundState(coreContracts.signer.address)
+            setCapitalPoolCreationState(capitalPoolState)
+            setRefundPoolCreationState(refundPoolState)
+        }
+        else {
+            return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+        }
+    }
+    useEffect(() => {
+        executeTask(task)
+    }, [coreContracts])
+
+    return {
+        captialPoolCreationState,
+        refundPoolCreationState,
+    }
+}
+
+export default usePoolCreationState

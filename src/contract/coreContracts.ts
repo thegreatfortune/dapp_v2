@@ -32,6 +32,15 @@ import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
 import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
 import { chainAddressEnums } from '@/enums/chain'
 
+import BTCLogo from '@/assets/images/apply-loan/token-icons/BTC.png'
+import ETHLogo from '@/assets/images/apply-loan/token-icons/ETH.png'
+import ARBLogo from '@/assets/images/apply-loan/token-icons/ARB.png'
+import LINKLogo from '@/assets/images/apply-loan/token-icons/LINK.png'
+import UNILogo from '@/assets/images/apply-loan/token-icons/UNI.png'
+import LDOLogo from '@/assets/images/apply-loan/token-icons/LDO.png'
+import AAVELogo from '@/assets/images/apply-loan/token-icons/AAVE.png'
+import SOLLogo from '@/assets/images/apply-loan/token-icons/SOL.png'
+
 function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.Interface, signer: ethers.Signer): T {
   return new Contract(address, abi, signer) as T
 }
@@ -53,6 +62,41 @@ export class CoreContracts {
     this._capitalPoolAddress = ZeroAddress
     this._refundPoolAddress = ZeroAddress
     this._faucetContract = createContract(chainAddresses.faucet, faucetABI, this.signer)
+    this._specifiedTradingPairsOfSpot = [
+      {
+        logo: BTCLogo,
+        name: 'BTC',
+      },
+      {
+        logo: SOLLogo,
+        name: 'SOL',
+      },
+      {
+        logo: ETHLogo,
+        name: 'ETH',
+      },
+      {
+        logo: ARBLogo,
+        name: 'ARB',
+      },
+      {
+        logo: LINKLogo,
+        name: 'LINK',
+      },
+      {
+        logo: UNILogo,
+        name: 'UNI',
+      },
+      {
+        logo: LDOLogo,
+        name: 'LDO',
+      },
+      {
+        logo: AAVELogo,
+        name: 'AAVE',
+      },
+    ]
+    this._specifiedTradingPairsOfFuture = []
   }
 
   private static _instance: CoreContracts
@@ -78,59 +122,26 @@ export class CoreContracts {
     return this._signer
   }
 
-  /**
-   * Capital Pool
-   */
   private _capitalPoolContract: capitalPool | undefined
 
-  /**
-   * Capital Pool Address
-   */
   private _capitalPoolAddress: string
 
-  /**
-   * Refund Pool
-   */
   private _refundPoolContract: refundPool | undefined
 
-  /**
-   * Refund Pool Address
-   */
   private _refundPoolAddress: string
 
-  /**
-   * Capital Factory
-   */
   private _capitalFactoryContract: capitalFactory
 
-  /**
-   * Refund Factory
-   */
   private _refundFactoryContract: refundFactory
 
-  /**
-   * Process Center
-   */
   private _processCenterContract: processCenter
 
-  /**
-   * Router
-   */
   private _routerContract: router
 
-  /**
-   * Manage
-   */
   private _manageContract: manage
 
-  /**
-   * Market
-   */
   private _marketContract: market
 
-  /**
-   * Handle
-   */
   private _handleContract: handle
 
   private _fofContract: ERC20
@@ -146,6 +157,10 @@ export class CoreContracts {
   private _ERC1155Contract: ERC1155 | undefined
 
   private _faucetContract: faucet
+
+  private _specifiedTradingPairsOfSpot: { logo: string; name: string }[]
+
+  private _specifiedTradingPairsOfFuture: { logo: string; name: string }[]
 
   get capitalFactoryContract(): capitalFactory {
     return this._capitalFactoryContract
@@ -209,6 +224,14 @@ export class CoreContracts {
 
   get faucetContract() {
     return this._faucetContract
+  }
+
+  get specifiedTradingPairsOfSpot() {
+    return this._specifiedTradingPairsOfSpot
+  }
+
+  get specifiedTradingPairsOfFuture() {
+    return this._specifiedTradingPairsOfFuture
   }
 
   /**

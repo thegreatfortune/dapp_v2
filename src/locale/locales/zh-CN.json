@@ -20,7 +20,7 @@
   "applyLoan.formItem.cycle.label": "Cycle (day)",
   "applyLoan.formItem.period.label": "Period",
   "applyLoan.formItem.numberOfCopies.label": "Number of copies",
-  "applyLoan.formItem.minimumRequiredCopies.label": "Minimum required copies",
+  "applyLoan.formItem.minimumRequiredCopies.label": "Minimum required shares",
   "applyLoan.formItem.interest.label": "Interest",
   "applyLoan.formItem.dividend.label": "Dividend",
   "applyLoan.formItem.raisingTime.label": "Raising time (day)",
@@ -83,6 +83,11 @@
   "portal.layout.menu3": "Trade",
   "portal.layout.illustrate": "One stop P2P market, secure loans, and secure financial management.",
   "basicLayout.navBar.placeholder": "Search name, user, address",
-  "faucet.title":"Faucet",
-  "faucet.addToWallet":"添加至钱包"
+  "faucet.title": "Faucet",
+  "faucet.addToWallet": "添加至钱包",
+  "faucet.claimText": "你可以领取 2000 USDC, 网络: ",
+  "faucet.claimedText": "你已经领取过 2000 USDC, 网络: ",
+  "claim": "领取",
+  "completed": "完成",
+  "applyLoan.modal.okButton.text": "申请"
 }

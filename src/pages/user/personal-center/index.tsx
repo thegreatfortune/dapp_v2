@@ -7,13 +7,10 @@ import { useEffect, useState } from 'react'
 // @ts-expect-error
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
-
-// import Address from '../loan/loan-details/components/Address'
 import { ethers, formatUnits } from 'ethers'
 import { useChainId, useNetwork } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
-import useBrowserContract from '@/hooks/useBrowserContract'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
 import copyImg from '@/assets/images/loan-details/copy.svg'
 import { TwitterService, UserInfoService } from '@/.generated/api'
@@ -21,20 +18,19 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
-import { MessageError, NotificationError } from '@/enums/error'
 import { chainAddressEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
+import usePreApplyCheck from '@/helpers/usePreApplyCheck'
+import handlePreCheckState from '@/helpers/handlePreCheckState'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
 
-  const { browserContractService } = useBrowserContract()
+  const { coreContracts, getFofBalance, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
 
-  const { coreContracts, getFofBalance, canCreateNewLoan, inBlacklist, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
-
-  const [applyLoanLoading, setApplyLoanLoading] = useState(false)
+  // const [applyLoanLoading, setApplyLoanLoading] = useState(false)
 
   const [bindXLoading, setBindXLoading] = useState(false)
 
@@ -77,46 +73,6 @@ const PersonalCenter = () => {
     },
   ]
 
-  const checkLoanOrderAndUserState = async () => {
-    // navigate('/apply-loan')
-    // return
-
-    try {
-      if (!browserContractService)
-        return
-
-      setApplyLoanLoading(true)
-
-      // console.log('ccno:')
-      // const ccno = await canCreateNewOrder()
-      // console.log('ccno:', ccno)
-
-      const processCenterContract = await browserContractService?.getProcessCenterContract()
-
-      const orderCanCreatedAgain = await browserContractService?.checkOrderCanCreateAgain()
-
-      const isBlack = await processCenterContract?._getIfBlackList(browserContractService?.getSigner.address)
-
-      console.log('%c [ isBlack ]-45', 'font-size:13px; background:#fde876; color:#ffffba;', isBlack)
-
-      if (isBlack)
-        message.error('You must be not black list to continue processing your order')
-
-      if (!isBlack && orderCanCreatedAgain)
-        navigate('/apply-loan')
-      // navigate('/trade')
-      else
-        message.warning('Order can not be created: There is an un-liquidate order!')
-    }
-    catch (error) {
-      message.error('Error: order status error')
-      console.log('%c [ error ]-15', 'font-size:13px; background:#eccc7f; color:#ffffc3;', error)
-    }
-    finally {
-      setApplyLoanLoading(false)
-    }
-  }
-
   async function onBind() {
     setBindXLoading(true)
 
@@ -140,36 +96,19 @@ const PersonalCenter = () => {
   const [fofAmount, setFofAmount] = useState(0)
   const [claimModalOpen, setClaimModalOpen] = useState(false)
   const [claimOkButtonDisabled, setClaimOkButtonDisabled] = useState(false)
-  const [claimOkButtonText, setClaimOkButtonText] = useState(t('claim'))
+  const [claimOkButtonText, setClaimOkButtonText] = useState(`${t('claim')}`)
   const [claimCancelButtonHidden, setClaimCancelButtonHidden] = useState(false)
   const [claiming, setClaiming] = useState(false)
   const [claimText, setClaimText] = useState(`${t('faucet.claimText')}`)
 
+  const { inBlacklist, canCreateLoan, checked } = usePreApplyCheck()
+  const [applyed, setApplyed] = useState(false)
   /**
    * check if the signer is not in blacklist, and can create a loan
    */
   const preCheckState = async () => {
-    setApplyLoanLoading(true)
-    const inBL = await inBlacklist()
-    if (inBL) {
-      message.error(MessageError.InBlacklist)
-      return Promise.reject(MessageError.InBlacklist)
-    }
-    else {
-      const canCreate = await canCreateNewLoan()
-      if (canCreate) {
-        navigate('/apply-loan')
-      }
-      else {
-        notification.error({
-          message: NotificationError.CannotApplyLoan,
-          description: NotificationError.CannotApplyLoanDesc,
-          placement: 'bottomRight',
-        })
-        setApplyLoanLoading(false)
-        return Promise.reject(MessageError.CanNotCreateDuplicateLoan)
-      }
-    }
+    if (handlePreCheckState(inBlacklist, canCreateLoan))
+      navigate('/apply-loan')
   }
 
   const addUsdcToWallet = async () => {
@@ -189,16 +128,14 @@ const PersonalCenter = () => {
     if (value === 'USDC') {
       const canClaim = await claimStatusFromFaucet(chainAddressEnums[chain?.id as number].usdc)
       if (!canClaim) {
-        setClaimText('You have claimed the test $USDC token.')
+        setClaimText(t('faucet.claimedText'))
         setClaimOkButtonDisabled(true)
       }
       setClaimModalOpen(true)
-      return true
     }
     else {
       window.open(chainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
     }
-    return true
   }
 
   const claim = async () => {
@@ -222,7 +159,7 @@ const PersonalCenter = () => {
       setClaimOkButtonDisabled(false)
       notification.info({
         message: NotificationInfo.ClaimInSuccessfully,
-        description: NotificationInfo.ClaimInSuccessfullyDESC,
+        description: NotificationInfo.ClaimInSuccessfullyDesc,
         placement: 'bottomRight',
       })
       setTimeout(() => {
@@ -255,6 +192,13 @@ const PersonalCenter = () => {
     }
   }, [coreContracts])
 
+  useEffect(() => {
+    if (checked && applyed) {
+      preCheckState()
+      setApplyed(false)
+    }
+  }, [checked, applyed])
+
   return (
     isBind === 'true'
       ? <div>
@@ -272,7 +216,7 @@ const PersonalCenter = () => {
           </div>
         </Modal>
       </div >
-      : <div className="flex justify-center">
+      : (<div className="flex justify-center">
         <div className='w-full'>
           <Modal open={claimModalOpen}
             onCancel={() => {
@@ -292,7 +236,7 @@ const PersonalCenter = () => {
               <h2>{t('faucet.title')}</h2>
               <div className='mb-30 flex items-center justify-between'>
                 <div>{claimText}{chain?.name}</div>
-                <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>Add to wallet</button>
+                <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>{t('faucet.addToWallet')}</button>
               </div>
             </div>
           </Modal>
@@ -340,13 +284,15 @@ const PersonalCenter = () => {
               <div className='mt-65 items-center max-md:mt-30'>
                 <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
                   <Button
-                    loading={applyLoanLoading}
-                    onClick={preCheckState}
+                    loading={applyed}
+                    onClick={() => {
+                      setApplyed(true)
+                    }}
                     className='h40 rounded-30 primary-btn'>Apply a loan</Button>
                   <Select
                     className='h40 w120'
                     size='large'
-                    defaultValue={t('faucet.title')}
+                    defaultValue={`${t('faucet.title')}`}
                     options={[
                       { label: `Claim ${chain?.nativeCurrency.symbol}`, value: `${chain?.nativeCurrency.symbol}` },
                       { label: 'Claim USDC', value: 'USDC' },
@@ -391,7 +337,7 @@ const PersonalCenter = () => {
             <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
           </div>
         </div>
-      </div >
+      </div >)
 
   )
 }

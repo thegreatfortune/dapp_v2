@@ -1,7 +1,7 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import enResource from './locales/en-US.json'
-import zhResource from './locales/zh-CN.json'
+import en from './locales/en-US.json'
+import zh from './locales/zh-CN.json'
 
 const browserLanguage = window.navigator.language
 
@@ -10,10 +10,10 @@ i18n
   .init({
     resources: {
       en: {
-        translation: enResource,
+        translation: en,
       },
       zh: {
-        translation: zhResource,
+        translation: zh,
       },
     },
     lng: 'en',

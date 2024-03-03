@@ -1,19 +1,18 @@
 import { ZeroAddress, ethers, parseUnits } from 'ethers'
 import { useEffect, useState } from 'react'
-import { message, notification } from 'antd'
-import { useChainId } from 'wagmi'
-import useUserStore from '@/store/userStore'
+import { message } from 'antd'
+import { useAccount, useChainId } from 'wagmi'
 import { CoreContracts } from '@/contract/coreContracts'
-import { MessageError, NotificationError } from '@/enums/error'
-import { NotificationInfo } from '@/enums/info'
-import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
+import { MessageError } from '@/enums/error'
+import type { LoanForm } from '@/models/LoanForm'
 import { tokenList } from '@/contract/tradingPairTokenMap'
-import { Models } from '@/.generated/api/models'
-import tradeService from '@/services/tradeService'
+import type { Models } from '@/.generated/api/models'
+import loan from '@/services/loan'
+import handleTransactionResponse from '@/helpers/handleTransactionResponse'
 
 const useCoreContract = () => {
   const [coreContracts, setCoreContracts] = useState<CoreContracts>()
-  const { currentUser } = useUserStore()
+  const { address } = useAccount()
   const chainId = useChainId()
 
   const initializeContracts = async () => {
@@ -52,36 +51,6 @@ const useCoreContract = () => {
     }
   }
 
-  const handleTransactionResponse = async (
-    transactionResponse: ethers.ContractTransactionResponse,
-    successNotification: NotificationInfo = NotificationInfo.TransactionSuccessful,
-    failureNotification: NotificationError = NotificationError.TransactionFailed,
-  ) => {
-    const receipt = await transactionResponse.wait()
-
-    if (!receipt) {
-      notification.error({
-        message: NotificationError.TransactionError,
-      })
-      throw new Error(MessageError.NullReceipt)
-    }
-
-    if (receipt.status === 1) {
-      // Transaction successful
-      notification.success({
-        message: successNotification,
-      })
-    }
-    else {
-      // Transaction failed
-      notification.error({
-        message: failureNotification,
-      })
-      throw new Error(MessageError.TransactionFailed)
-    }
-    return Promise.resolve(receipt)
-  }
-
   /**
    * get Share Profit by user
    * @param tradeId
@@ -98,6 +67,7 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * if true, the user can create new order
    */
   const canCreateNewLoan = async () => {
@@ -114,6 +84,7 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * check if the signer is in Blacklist
    */
   const inBlacklist = async () => {
@@ -249,8 +220,8 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * create capital pool and refund pool
-   *
    */
   const createPools = async () => {
     const task = async (coreContracts: CoreContracts) => {
@@ -282,40 +253,40 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * create order
    *
    * @param {LoanRequisitionEditModel} model
    */
-  const createLoan = async (model: LoanRequisitionEditModel) => {
+  const createLoan = async (model: LoanForm) => {
     const task = async (coreContracts: CoreContracts) => {
       const decimals = await coreContracts.usdcContract.decimals()
       const res = await coreContracts.routerContract.borrowerCreateOrder(
         {
-          _timePeriod: BigInt(model.cycle),
-          _repayTimes: BigInt(model.period),
+          _timePeriod: BigInt(model.duration),
+          _repayTimes: BigInt(model.installments),
           _interestRate: BigInt(model.interest * 100),
           _shareRate: BigInt((model.dividend ?? 0) * 100),
-          _goalShareCount: BigInt(model.numberOfCopies),
-          _minShareCount: BigInt(model.minimumRequiredCopies ?? 0),
+          _goalShareCount: BigInt(model.numberOfShares),
+          _minShareCount: BigInt(model.minimumRequiredRaisingShares ?? 0),
           _collectEndTime: BigInt(model.raisingTime!) * BigInt(86400), // seconds
-          _goalMoney: BigInt(model.applyLoan!) * (BigInt(10) ** decimals), // decimals token for usdc
+          _goalMoney: BigInt(model.loanAmount!) * (BigInt(10) ** decimals), // decimals token for usdc
           uri: model.imageUrl!,
-          name: model.itemTitle!,
+          name: model.name!,
         },
       )
       await handleTransactionResponse(res)
       const latestTradeId = await getLatestTradeIdByUser()
-      const tradeDetail = {
-        ...new Models.LoanConfirmParam(),
+      const tradeDetail: Models.ILoanConfirmParams = {
         tradeId: Number(latestTradeId),
         loanPicUrl: model.imageUrl,
-        loanName: model.itemTitle ?? '',
+        loanName: model.name ?? '',
         loanIntro: model.description ?? '',
-        transactionPairs: model.transactionPairs,
-        tradingFormType: model.tradingFormType,
-        tradingPlatformType: model.tradingPlatformType,
+        tradingFormType: model.specifiedTradingType,
+        tradingPlatformType: model.specifiedPlatformType,
+        transactionPairs: model.specifiedPairs,
       }
-      return tradeService.submitTradeDetail(tradeDetail)
+      return loan.submitTradeDetail(tradeDetail)
     }
     return executeTask(task)
   }
@@ -637,7 +608,7 @@ const useCoreContract = () => {
 
   useEffect(() => {
     initializeContracts()
-  }, [currentUser, chainId])
+  }, [address, chainId])
 
   // useEffect(() => {
   //   initializeContracts()

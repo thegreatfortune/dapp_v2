@@ -8,7 +8,7 @@ export class User_Old extends Models.UserInfoVo1 {
   chainId?: number = 1
 }
 
-export interface User extends Models.UserInfo {
+export interface IUser extends Models.IUserInfo {
 
   accessToken?: string
 

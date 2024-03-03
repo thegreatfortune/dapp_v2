@@ -243,28 +243,28 @@ Canceled :订单取消 */
     marketBalance?: MarketBalanceVo = undefined;
   }
 
-  export class LoanConfirmParam {
-    wallet?: IUserWallet = undefined;
+  export interface ILoanConfirmParams {
     /** 借款订单id */
-    tradeId?: number = 0;
+    tradeId: number
     /** 名称 */
-    loanName?: string = undefined;
+    loanName: string
     /** 简介 */
-    loanIntro?: string = undefined;
+    loanIntro: string
     /** 借款订单展示用的图片url地址 */
-    loanPicUrl?: string = undefined;
+    loanPicUrl: string
     /** 交易形式 */
-    tradingFormType?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
+    tradingFormType: SpecifiedTradingType
     /** 交易平台 */
-    tradingPlatformType?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
-    /** 展示的平台账号 */
-    showPlatforms?: 'Twitter'[] = undefined;
+    tradingPlatformType: SpecifiedTradingPlatformType
     /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
-    transactionPairs?: string[] = undefined;
+    transactionPairs: string[]
+    /** 展示的平台账号 */
+    showPlatforms?: 'Twitter'[]
   }
 
   export class LoanContractVO {
     id?: number = 0;
+
     userId?: number = 0;
     /** 生效状态 */
     state?: 'Following' | 'Trading' | 'PaidOff' | 'Blacklist' = undefined;
@@ -610,11 +610,21 @@ Canceled :订单取消 */
     credit?: CreditScoreVo = undefined;
   }
 
-  export enum TradingFormType {
-    'Empty' = 'Empty',
-    'SpotGoods' = 'SpotGoods',
-    'Contract' = 'Contract',
+  export enum SpecifiedTradingTypeEnum {
+    Other = 'Other',
+    Spot = 'Spot',
+    Future = 'Future',
   }
+
+  export enum SpecifiedTradingPlatformTypeEnum {
+    Other = 'Other',
+    Uniswap = 'Uniswap',
+    GMX = 'GMX',
+  }
+
+  export type SpecifiedTradingType = 'Spot' | 'Future' | 'Other'
+
+  export type SpecifiedTradingPlatformType = 'Uniswap' | 'GMX' | 'Other'
 
   export class TwitterVo {
     /** 请求url */
@@ -645,7 +655,7 @@ Canceled :订单取消 */
     creditScore?: number = 0;
   }
 
-  export interface UserInfo {
+  export interface IUserInfo {
     userId?: string
 
     address: string

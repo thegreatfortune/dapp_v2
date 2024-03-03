@@ -10,7 +10,7 @@ import type { Models } from '../.generated/api/models'
  * @param options
  */
 async function submitTradeDetail(
-    body: Models.LoanConfirmParam,
+    body: Models.LoanConfirmParams,
     options?: { [key: string]: any },
 ) {
     return request<boolean>({

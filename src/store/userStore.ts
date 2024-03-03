@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { ZeroAddress, ethers } from 'ethers'
-import type { User } from '@/models/User'
+import type { IUser } from '@/models/User'
 
 interface IUserState {
   // activeUser: User
@@ -16,72 +16,23 @@ interface IUserState {
   // signIn(user: User): void
   // signOut(): void
 
-  currentUser: User
+  currentUser: IUser
 
-  users: User[]
+  users: IUser[]
 
-  userLogin(user: User): void
+  userLogin(user: IUser): void
 
   userLogout(): void
 
-  addUserV1(user: User): void
+  addUserV1(user: IUser): void
 
-  updateUser(user: User): void
+  updateUser(user: IUser): void
 }
 
 const useUserStore = create<IUserState>()(
   devtools(
     persist(
       set => ({
-        // activeUser: new User(),
-        // userList: [],
-        // get getToken(): string | undefined {
-        //   return this.activeUser.accessToken
-        // },
-        // setActiveUser: user => set(() => ({ activeUser: user })),
-        // unSetActiveUser: () => set(() => ({ activeUser: new User() })),
-
-        // unSetUserList: () => set(() => ({ userList: [] })),
-
-        // setUserInfo: (user) => {
-        //   set(() => {
-        //     const updateUser = { ...get().activeUser, ...user }
-
-        //     let updateUserList = [...get().userList]
-
-        //     const index = updateUserList.findIndex(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? ''))
-
-        //     if (index > -1)
-        //       updateUserList[index] = user
-        //     else updateUserList = [...get().userList, user]
-
-        //     return ({
-        //       activeUser: updateUser,
-        //       userList: updateUserList,
-        //     })
-        //   })
-        // },
-
-        // addUser: user => set(() => ({ userList: [...get().userList, user] })),
-
-        // signIn(user: User) {
-        //   set(() => {
-        //     if (!get().userList.find(e => ethers.getAddress(e.address ?? '') === ethers.getAddress(user.address ?? '')) && user?.id)
-        //       get().addUser(user)
-        //     get().setActiveUser(user)
-        //     return ({ activeUser: user })
-        //   })
-        // },
-
-        // clear: () => {
-        //   get().unSetActiveUser()
-        //   get().unSetUserList()
-        // },
-
-        // signOut: async () => {
-        //   set(() => ({ activeUser: new User() }))
-        // },
-
         currentUser: { address: ZeroAddress },
         users: [],
         userLogin: user => set((state) => {

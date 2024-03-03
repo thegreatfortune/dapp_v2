@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 export enum NotificationError {
     TransactionFailed = 'Transaction failed.',
+    TransactionFailedDesc = 'Your transaction cannot be confirmed.',
     TransactionError = 'Transaction error.',
 
     CannotApplyLoan = 'Can not apply a loan.',
@@ -22,4 +23,7 @@ export enum MessageError {
     PoolsDoNotExist = 'Error Code: 2005', // The Pools exist.
     InBlacklist = 'Error Code: 2006',
     CanNotCreateDuplicateLoan = 'Error Code: 2007',
+
+    InvalidFormData = 'Invalid form data, Please check your input!',
+    NotLoggedIn = 'Please log in first.',
 }
