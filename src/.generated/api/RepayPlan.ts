@@ -12,7 +12,7 @@ export class RepayPlanService {
     params: Models.ApiRepayPlanPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.RepayPlanVo>>({
+    return request<Models.IPageResult<Models.RepayPlanVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/repayPlan/pageInfo',
       method: 'GET',
       params: {

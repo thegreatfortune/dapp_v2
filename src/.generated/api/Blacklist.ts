@@ -12,7 +12,7 @@ export class BlacklistService {
     params: Models.ApiBlacklistPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.BlacklistVo>>({
+    return request<Models.IPageResult<Models.BlacklistVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/blacklist/pageInfo',
       method: 'GET',
       params: {

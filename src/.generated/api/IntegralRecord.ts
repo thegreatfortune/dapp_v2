@@ -12,7 +12,7 @@ export class IntegralRecordService {
     params: Models.ApiIntegralRecordPageGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.IntegralVo>>({
+    return request<Models.IPageResult<Models.IntegralVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/integralRecord/page',
       method: 'GET',
       params: {

@@ -44,7 +44,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     limit: 10,
     page: 0,
   })
-  const [result, setResult] = useState(new Models.PageResult<Models.RepayPlanVo>())
+  // const [result, setResult] = useState(new Models.PageResult<Models.RepayPlanVo>())
+  const [result, setResult] = useState<Models.IPageResult<Models.RepayPlanVo>>()
   const [loading, setLoading] = useState(false)
 
   const [modalLoading, setModalLoading] = useState(false)
@@ -79,7 +80,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
       if (res) {
         setResult(prevResult => ({
           ...res,
-          records: [...(prevResult.records || []), ...(res.records || [])],
+          records: [...(prevResult?.records || []), ...(res.records || [])],
         }))
 
         setPagination(prevPagination => ({
@@ -251,7 +252,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             scrollableTarget="scrollableDivPlan"
           >
             <List
-              dataSource={result.records}
+              dataSource={result?.records}
               split={false}
               renderItem={(item, index) => (
                 <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
@@ -289,7 +290,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             scrollableTarget="scrollableDivPlan"
           >
             <List
-              dataSource={result.records}
+              dataSource={result?.records}
               split={false}
               renderItem={(item, index) => (
                 <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>

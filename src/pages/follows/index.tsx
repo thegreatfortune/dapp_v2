@@ -1,51 +1,60 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useChainId } from 'wagmi'
-import { LoanService } from '../../.generated/api/Loan'
 import MarketCardsContainer from './components/MarketCardsContainer'
-import { Models } from '@/.generated/api/models'
+import type { Models } from '@/.generated/api/models'
 import bannerImage from '@/assets/images/market/banner.png'
 
 import './ticket.scss'
+import loanService from '@/services/loanService'
 
 const Follows = () => {
   const chainId = useChainId()
 
-  const [trendingLoansData, setTrendingLoansData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  const [trendingLoansData, setTrendingLoansData] = useState<Models.IPageResult<Models.LoanOrderVO>>()
 
-  const [allLoansData, setAllLoansData] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  const [allLoansData, setAllLoansData] = useState<Models.IPageResult<Models.LoanOrderVO>>()
 
-  const [blacklist, setBlacklist] = useState<Models.PageResult<Models.LoanOrderVO>>(new Models.PageResult())
+  // const [blacklist, setBlacklist] = useState<Models.IPageResult<Models.LoanOrderVO>>()
 
   const { t } = useTranslation()
 
   useEffect(() => {
     async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, { page: 1, limit: 8, orderItemList: 'actual_share_count=false', state: 'Following' })
-      setTrendingLoansData(res)
+      const trendingLoansRes = await loanService.getLoanList(
+        chainId,
+        {
+          page: 1,
+          limit: 8,
+          orderItemList: 'actual_share_count=false',
+          state: 'Following',
+        })
+      setTrendingLoansData(trendingLoansRes)
+
+      const allLoansRes = await loanService.getLoanList(
+        chainId,
+        {
+          page: 1,
+          limit: 8,
+          orderItemList: 'total_market_trading_price=false',
+          state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected',
+        })
+
+      setAllLoansData(allLoansRes)
     }
     fetchData()
   }, [])
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, { page: 1, limit: 8, orderItemList: 'total_market_trading_price=false', state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected' })
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const params = { ...new Models.ApiLoanPageLoanContractGETParams(), limit: 4, page: 1, state: 'Blacklist' }
 
-      setAllLoansData(res)
-    }
-    fetchData()
-  }, [])
+  //     const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, params)
 
-  useEffect(() => {
-    async function fetchData() {
-      const params = { ...new Models.ApiLoanPageLoanContractGETParams(), limit: 4, page: 1, state: 'Blacklist' }
-
-      const res = await LoanService.ApiLoanPageLoanContract_GET(chainId, params)
-
-      setBlacklist(res)
-    }
-    fetchData()
-  }, [])
+  //     setBlacklist(res)
+  //   }
+  //   fetchData()
+  // }, [])
 
   return (
     <div className="">
@@ -72,12 +81,14 @@ const Follows = () => {
       </div> */}
 
       {
-        (trendingLoansData.records && trendingLoansData.records.length > 0)
-        && <MarketCardsContainer image='' key='TrendingLoans' title={`${t('market.CardsContainer1.title')}`} records={trendingLoansData.records} to='/view-all?title=Trending Loans&category=TrendingLoans' />
+        (trendingLoansData && trendingLoansData.records.length > 0)
+        && <MarketCardsContainer image='' key='TrendingLoans' title={`${t('market.CardsContainer1.title')}`}
+          records={trendingLoansData.records} to='/view-all?title=Trending Loans&category=TrendingLoans' />
       }
       {
-        (allLoansData.records && allLoansData.records.length > 0)
-        && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`} records={allLoansData.records} to='/view-all?title=All Loans&category=AllLoans' />
+        (allLoansData && allLoansData.records.length > 0)
+        && <MarketCardsContainer image='' key='PopularToFollow' title={`💥${t('market.CardsContainer2.title')}`}
+          records={allLoansData.records} to='/view-all?title=All Loans&category=AllLoans' />
       }
 
       {/* {

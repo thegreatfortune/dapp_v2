@@ -446,7 +446,7 @@ const ApplyLoan = () => {
         )
 
         const latestLoanId = await getLatestLoanIdByUser()
-        const loanDetail: Models.ILoanConfirmParams = {
+        const loanDetail: Models.ISubmitNewLoanParams = {
           tradeId: Number(latestLoanId),
           loanName: loanForm.name,
           loanIntro: loanForm.description,
@@ -456,7 +456,7 @@ const ApplyLoan = () => {
           transactionPairs: loanForm.specifiedPairs,
         }
 
-        await loanService.submitLoanDetail(loanDetail)
+        await loanService.submitNewLoan(chainId, loanDetail)
         setOrderCreated(2)
         setApplyOkButtonText(`${t('completed')}`)
         setApplyOkButtonDisabled(false)

@@ -7,18 +7,21 @@ import BigNumber from 'bignumber.js'
 import { ethers, formatUnits } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import Image from 'antd/es/image'
+import { useChainId } from 'wagmi'
 import InfoCard from './components/InfoCard'
 import Countdown from './components/Countdown'
 import Pool from './components/Pool'
 import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
-import { LoanService } from '@/.generated/api/Loan'
+
+// import { LoanService } from '@/.generated/api/Loan'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import toCurrencyString from '@/utils/convertToCurrencyString'
+import loanService from '@/services/loanService'
 
 const LoanDetails = () => {
   const [searchParams] = useSearchParams()
@@ -88,6 +91,8 @@ const LoanDetails = () => {
   const [followed, setFollowed] = useState(0)
 
   const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
+
+  const chainId = useChainId()
 
   const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
     Invalid: <div className='loan-detail-status bg-yellow'>Invalid</div>,
@@ -177,7 +182,8 @@ const LoanDetails = () => {
   useEffect(() => {
     async function fetchData() {
       if (tradeId) {
-        const res = await LoanService.ApiLoanLoanInfo_GET({ tradeId: Number(tradeId) })
+        // const res = await LoanService.ApiLoanLoanInfo_GET(chainId, { tradeId: Number(tradeId) })
+        const res = await loanService.getLoanDetail(chainId, { tradeId: Number(tradeId) })
         console.log(res)
 
         setLoanInfo(preState => ({ ...preState, ...res }))

@@ -12,7 +12,7 @@ export class CreditRecordService {
     params: Models.ApiCreditRecordPageGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.CreditRecordVo>>({
+    return request<Models.IPageResult<Models.CreditRecordVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/creditRecord/page',
       method: 'GET',
       params: {

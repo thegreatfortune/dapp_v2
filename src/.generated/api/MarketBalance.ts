@@ -12,7 +12,7 @@ export class MarketBalanceService {
     params: Models.ApiMarketBalancePageMyFollowGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.MyFollowVo>>({
+    return request<Models.IPageResult<Models.MyFollowVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/market/balance/pageMyFollow',
       method: 'GET',
       params: {

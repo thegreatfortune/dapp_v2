@@ -12,7 +12,7 @@ export class LoanTokenSwapService {
     params: Models.ApiLoanTokenSwapPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.LoanTokenSwapVo>>({
+    return request<Models.IPageResult<Models.LoanTokenSwapVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'loan/tokenSwap/pageInfo',
       method: 'GET',
       params: {

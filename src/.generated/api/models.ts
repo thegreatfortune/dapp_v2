@@ -52,6 +52,10 @@ export namespace Models {
     tradeId?: number = 0;
   }
 
+  export interface IGetLoanDetailParams {
+    tradeId: number
+  }
+
   export class ApiLoanPageLoanContractGETParams {
     /** 分页查询页码 */
     page?: number = 0;
@@ -92,6 +96,48 @@ Twitter :推特 */
     platformType?: string = undefined;
     /** 根据借款订单名称筛选 */
     loanName?: string = undefined;
+  }
+
+  export interface IGetLoanListParams {
+    /** 分页查询页码 */
+    page: number
+    /** 分页查询每页数量 */
+    limit: number
+    /** 排序字段, 规则: price=false,id=true
+<p>true == asc, false == desc</p> */
+    orderItemList?: string
+    /** 筛选出贷款金额大于该值的 */
+    minLoanPrice?: string
+    /** 筛选出贷款金额小于该值的 */
+    maxLoanPrice?: string
+    /** 交易形式, 风险评估筛选, 逗号拼接; example: Spot,Future */
+    tradingFormTypeList?: string
+    /** 借款用户id筛选 */
+    borrowUserId?: string
+    /** 借款订单状态
+Invalid :订单无效
+Following :跟随中, 正在筹款
+Trading :交易中, 已筹完
+PaidOff :已还清, 借款订单结束
+PaidButArrears :支付部分, 但是还有欠款
+CloseByUncollected :筹集不成功
+Blacklist :黑名单
+Fail :Fail
+ClearingFail :清算失败 */
+    state?: string
+    /** 逗号拼接, 见state选项 */
+    stateList?: string
+    /** 根据用户昵称筛选 */
+    userNickname?: string
+    /** 根据绑定平台名称筛选 */
+    bindPlatform?: string
+    /** 资金池地址 */
+    capitalPoolContract?: string
+    /** 根据绑定平台昵称筛选
+Twitter :推特 */
+    platformType?: string
+    /** 根据借款订单名称筛选 */
+    loanName?: string
   }
 
   export class ApiLoanTokenSwapPageInfoGETParams {
@@ -243,7 +289,7 @@ Canceled :订单取消 */
     marketBalance?: MarketBalanceVo = undefined;
   }
 
-  export interface ILoanConfirmParams {
+  export interface ISubmitNewLoanParams {
     /** 借款订单id */
     tradeId: number
     /** 名称 */
@@ -359,6 +405,63 @@ Canceled :订单取消 */
     isConfirm?: number = 0;
   }
 
+  export interface ILoanOrderVO {
+    showPlatformUserList?: PlatformUserVo[]
+    /** 已筹集份数 */
+    collectCopies: number
+    /** 借款单的用户信息 */
+    userInfo?: UserInfoVo1
+    /** 借方id */
+    userId: string
+    /** 在合约中的订单id */
+    tradeId: number
+    /** 生效状态 */
+    state?:
+    | 'Invalid'
+    | 'Following'
+    | 'Trading'
+    | 'PaidOff'
+    | 'PaidButArrears'
+    | 'CloseByUncollected'
+    | 'Blacklist'
+    | 'Fail'
+    | 'ClearingFail'
+    /** 交易平台, 如果trading_form不指定则不需要指定这里 */
+    tradingPlatform: SpecifiedTradingPlatformType
+    /** 交易形式, 或者不指定 */
+    tradingForm?: SpecifiedTradingType
+    /** 借款订单名称 */
+    loanName: string
+    /** 展示图片地址 */
+    picUrl?: string
+    /** 贷款金额 */
+    loanMoney: string
+    /** 利息 */
+    interest: number
+    /** 总还款次数 */
+    repayCount: number
+    /** 还款天数, 比如180天内还完 */
+    periods: number
+    /** 目标份数 */
+    goalCopies: number
+    /** 填写份数后该字段必填，要求最小达到多少份，借方用户才可以领取贷款资金，借款成功 */
+    minGoalQuantity: number
+    /** 筹集时间(天), <br/> 设定筹集借款的时间，时间下拉选择1,3,7,14,20天，提交申请开始计时，筹集结束时间未达到，已经筹集够，最后存入资金池的操作开始计时借款 */
+    collectEndTime: number
+    /** 设置分红比例，收益的分红，设置了分红比例合约到期自动按比例分发给贷方用户 */
+    dividendRatio: number
+    /** json: LIst<String> <br/> 配置指定资金用途只做某些代币交易对，系统提供主流交易代币的合约交易对给于选择，借方选择后，借款资金只能用来做指定交易对的交易 */
+    transactionPairs: string[];
+    /** 用途介绍 */
+    usageIntro?: string
+
+    createDate: string
+    /** 订单结束时间(清算时间) */
+    endTime: number
+
+    isConfirm: number
+  }
+
   export class LoanTokenSwapVo {
     /** token地址 */
     tokenAddr?: string = undefined;
@@ -451,15 +554,15 @@ Canceled :订单取消 */
     asc?: boolean = false;
   }
 
-  export class PageResult<T> {
+  export interface IPageResult<T> {
     /** 数据列表 */
-    records?: T[] = undefined;
+    records: T[]
     /** 总数 */
-    total?: number = 0;
+    total: number
     /** 每页数量 */
-    size?: number = 0;
+    size: number
     /** 当前页 */
-    current?: number = 0;
+    current: number
   }
 
   export enum PlatformType {

@@ -12,7 +12,7 @@ export class LendingService {
     params: Models.ApiLendingPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.LendingLoanVo>>({
+    return request<Models.IPageResult<Models.LendingLoanVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/lending/pageInfo',
       method: 'GET',
       params: {

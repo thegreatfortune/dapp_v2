@@ -277,7 +277,7 @@ const useCoreContract = () => {
       )
       await handleTransactionResponse(res)
       const latestTradeId = await getLatestTradeIdByUser()
-      const tradeDetail: Models.ILoanConfirmParams = {
+      const tradeDetail: Models.ISubmitNewLoanParams = {
         tradeId: Number(latestTradeId),
         loanPicUrl: model.imageUrl,
         loanName: model.name ?? '',
@@ -286,7 +286,7 @@ const useCoreContract = () => {
         tradingPlatformType: model.specifiedPlatformType,
         transactionPairs: model.specifiedPairs,
       }
-      return loanService.submitLoanDetail(tradeDetail)
+      return loanService.submitNewLoan(chainId, tradeDetail)
     }
     return executeTask(task)
   }

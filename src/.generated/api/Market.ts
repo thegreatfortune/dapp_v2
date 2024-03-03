@@ -12,7 +12,7 @@ export class MarketService {
     params: Models.ApiMarketPageInfoGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.TokenMarketVo>>({
+    return request<Models.IPageResult<Models.TokenMarketVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/market/pageInfo',
       method: 'GET',
       params: {
@@ -29,7 +29,7 @@ export class MarketService {
     params: Models.ApiMarketPageTradingLoanGETParams,
     options?: { [key: string]: any },
   ) {
-    return request<Models.PageResult<Models.MarketLoanVo>>({
+    return request<Models.IPageResult<Models.MarketLoanVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/market/pageTradingLoan',
       method: 'GET',
       params: {

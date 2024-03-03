@@ -16,7 +16,7 @@ export class PortfolioService {
 
   /** 查询当前登录用户历史资产价值 GET /api/portfolio/userTotalInfo */
   static async ApiPortfolioUserTotalInfo_GET(chainId: number, options?: { [key: string]: any }) {
-    return request<Models.PageResult<Models.UserPortfolioVo>>({
+    return request<Models.IPageResult<Models.UserPortfolioVo>>({
       url: chainAddressEnums[chainId].apiEndpoint + 'api/portfolio/userTotalInfo',
       method: 'GET',
       ...(options || {}),
