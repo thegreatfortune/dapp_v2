@@ -87,7 +87,10 @@
   "faucet.claimText": "You will receive 2,000 USDC on ",
   "faucet.claimedText": "You have claimed test $USDC on ",
   "claim": "Claim",
+  "mint": "Mint",
   "completed": "Completed",
   "applyLoan.modal.okButton.text": "Apply",
-  "applyLoan.modal.okButton.text.applying": "Applying"
+  "applyLoan.modal.okButton.text.applying": "Applying",
+  "nft.mint.text.success": "Congratulations!!! You are in the whitelist of ",
+  "nft.mint.text.fail": "Sorry!!! You are not in the whitelist of "
 }

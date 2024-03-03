@@ -5,6 +5,7 @@ import { LoanService } from '../../.generated/api/Loan'
 import MarketCardsContainer from './components/MarketCardsContainer'
 import { Models } from '@/.generated/api/models'
 import bannerImage from '@/assets/images/market/banner.png'
+
 import './ticket.scss'
 
 const Follows = () => {

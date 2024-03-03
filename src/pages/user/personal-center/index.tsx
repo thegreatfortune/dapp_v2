@@ -22,13 +22,15 @@ import { chainAddressEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
 import handlePreCheckState from '@/helpers/handlePreCheckState'
+import useTokenBalance from '@/hooks/useTokenBalance'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
 
-  const { coreContracts, getFofBalance, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
+  const { coreContracts, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
+  const { fofBalance } = useTokenBalance()
 
   // const [applyLoanLoading, setApplyLoanLoading] = useState(false)
 
@@ -175,11 +177,15 @@ const PersonalCenter = () => {
     }
   }
 
-  const setFofBalance = async () => {
-    const fofBalance = await getFofBalance()
-    const result = formatUnits(fofBalance, 18)
-    setFofAmount(Number(result))
-  }
+  // const setFofBalance = async () => {
+  //   const fofBalance = await getFofBalance()
+  //   const result = formatUnits(fofBalance, 18)
+  //   setFofAmount(Number(result))
+  // }
+
+  useEffect(() => {
+    setFofAmount(Number(formatUnits(fofBalance, 18)))
+  }, [fofBalance])
 
   useEffect(() => {
     if (coreContracts) {
@@ -188,7 +194,7 @@ const PersonalCenter = () => {
         setUserScore(result)
       }
       setData()
-      setFofBalance()
+      // setFofBalance()
     }
   }, [coreContracts])
 

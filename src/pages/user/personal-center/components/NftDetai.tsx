@@ -1,70 +1,55 @@
 /* eslint-disable @typescript-eslint/indent */
 import { useEffect, useState } from 'react'
-
-// import { IntegralRecordService } from '@/.generated/api'
-import { Badge, Button, Image, Modal, message } from 'antd'
+import { Badge, Button, Image, Modal } from 'antd'
 import { formatUnits } from 'ethers'
-
-// import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
+import { t } from 'i18next'
 import octopus from '@/assets/images/nft/octopus.png'
 import dolphin from '@/assets/images/nft/dolphin.png'
 import shark from '@/assets/images/nft/shark.png'
 import whale from '@/assets/images/nft/whale.png'
-import useBrowserContract from '@/hooks/useBrowserContract'
+import useTokenBalance from '@/hooks/useTokenBalance'
+import useNftWhitelist from '@/hooks/useNftWhitelist'
+import handleTransactionResponse from '@/helpers/handleTransactionResponse'
+import useCoreContract from '@/hooks/useCoreContract'
+import { NotificationInfo } from '@/enums/info'
+import { NFT } from '@/enums/nft'
 
 const NftDetail = () => {
-    const { browserContractService } = useBrowserContract()
-
-    const [nftBalances, setNftBalances] = useState<bigint[]>([0n, 0n, 0n, 0n])
-    const [mintModalOpen, setMintModalOpen] = useState(false)
-    const [okText, setOkText] = useState('Mint')
-    const [loading, setLoading] = useState(false)
-    const [fofChecking, setFofChecking] = useState(false)
-    const [mintWithoutWhitelist, setMintWithoutWhitelist] = useState(false)
-    const [refresh, setRefresh] = useState(false)
-    const [disableMintButton, setDisableMintButton] = useState(true)
-    const [loadingBtnDisable, setLoadingBtnDisable] = useState(false)
-    const [fofCheckingBtnDisable, setFofCheckingBtnDisable] = useState(false)
+    const { fofBalance, nftBalance, isFinished: tokenBalanceIsChecked } = useTokenBalance()
+    const { inWhitelist, isFinished: nftWhitelistIsChecked } = useNftWhitelist()
 
     const [id, setId] = useState(0)
 
-    const [whitelistResult, setWhitelistResult] = useState('')
     const [fofAmountResult, setFofAmountResult] = useState('')
 
-    const setNftBalance = async () => {
-        if (!browserContractService)
-            return
-        const nftBalances = await browserContractService?.getNftBalance()
-        if (nftBalances)
-            setNftBalances(nftBalances)
-    }
-    useEffect(() => {
-        setNftBalance()
-    }, [browserContractService, refresh])
+    const { coreContracts } = useCoreContract()
 
-    const checkWhitelist = async (id: number) => {
-        setLoading(true)
-        const inWhitelist = await browserContractService!.checkWhitelist(id)
-        if (inWhitelist) {
-            setWhitelistResult('Congratulations!!! You are in the whitelist!')
-            setDisableMintButton(false)
-            setLoadingBtnDisable(true)
-        }
-        else {
-            setWhitelistResult('Sorry!!! You are not in the whitelist!')
-            setMintWithoutWhitelist(true)
-            setLoadingBtnDisable(true)
-        }
-        setLoading(false)
+    const [minting, setMinting] = useState(false)
+
+    const [mintModalOpen, setMintModalOpen] = useState(false)
+
+    const [mintOkButtonText, setMintOkButtonText] = useState(`${t('mint')}`)
+    const [mintOkButtonDisabled, setMintOkButtonDisabled] = useState(false)
+    const [mintOkButtonLoading, setMintOkButtonLoading] = useState(false)
+    const [mintCancelButtonHidden, setMintCancalButtonHidden] = useState(false)
+
+    const resetMintModal = () => {
+        setMinting(false)
+        setId(0)
+
+        setMintOkButtonText(`${t('mint')}`)
+        setMintOkButtonDisabled(false)
+        setMintOkButtonLoading(false)
+        setMintCancalButtonHidden(false)
+
+        setFofAmountResult('')
+        setMintModalOpen(false)
     }
-    const checkFofAmount = async (id: number) => {
-        setFofChecking(true)
-        const fofBalance = await browserContractService?.getFofBalance()
-        // const fofBalance = BigInt('800000000000000000000001')
+    const checkIfFofEnough = async (id: number) => {
         switch (id) {
             case 1:
                 if ((fofBalance ?? 0) >= BigInt('200000000000000000000000')) {
-                    setDisableMintButton(false)
+                    setMintOkButtonDisabled(false)
                     setFofAmountResult('Congratulations!!! You can mint Dolphin NFT!')
                 }
                 else {
@@ -73,7 +58,7 @@ const NftDetail = () => {
                 break
             case 2:
                 if ((fofBalance ?? 0) >= BigInt('400000000000000000000000')) {
-                    setDisableMintButton(false)
+                    setMintOkButtonDisabled(false)
                     setFofAmountResult('Congratulations!!! You can mint Shark NFT!')
                 }
                 else {
@@ -82,7 +67,7 @@ const NftDetail = () => {
                 break
             case 3:
                 if ((fofBalance ?? 0) >= BigInt('800000000000000000000000')) {
-                    setDisableMintButton(false)
+                    setMintOkButtonDisabled(false)
                     setFofAmountResult('Congratulations!!! You can mint Whale NFT!')
                 }
                 else {
@@ -92,7 +77,7 @@ const NftDetail = () => {
             case 0:
             default:
                 if ((fofBalance ?? 0) >= BigInt('100000000000000000000000')) {
-                    setDisableMintButton(false)
+                    setMintOkButtonDisabled(false)
                     setFofAmountResult('Congratulations!!! You can mint Octopus NFT!')
                 }
                 else {
@@ -100,104 +85,90 @@ const NftDetail = () => {
                 }
                 break
         }
-        setFofCheckingBtnDisable(true)
-        setFofChecking(false)
-    }
-
-    const refreshNFT = () => {
-        if (refresh)
-            setRefresh(false)
-        else
-            setRefresh(true)
     }
 
     const doMint = async () => {
-        setDisableMintButton(true)
-        try {
-            const mintRes = await browserContractService?.mintNft(BigInt(id))
-            if (mintRes?.status === 1) {
-                setOkText('Finished')
+        if (mintOkButtonText === t('completed')) {
+            resetMintModal()
+            return true
+        }
+        setMintOkButtonDisabled(true)
+        setMintOkButtonLoading(true)
+        if (coreContracts) {
+            try {
+                const res = await coreContracts.nftContract.doMint(id, 1)
+                await handleTransactionResponse(res, NotificationInfo.MintSuccessfully, NotificationInfo.MintSuccessfullyDesc)
+                setMintOkButtonText(`${t('completed')}`)
                 setTimeout(() => {
-                    setMintModalOpen(false)
-                    setWhitelistResult('')
-                    setMintWithoutWhitelist(false)
-                    setId(0)
-                    setFofAmountResult('')
-                    setDisableMintButton(true)
-                    setLoading(false)
-                    setFofChecking(false)
-                    refreshNFT()
+                    resetMintModal()
                 }, 3000)
                 return true
             }
-            else {
-                throw new Error('Mint Failed!')
+            catch (error) {
+                setMintOkButtonText(`${t('mint')}`)
+                setMintOkButtonDisabled(false)
+                setMintOkButtonLoading(false)
+                setMintCancalButtonHidden(false)
             }
         }
-        catch (error) {
-            setDisableMintButton(false)
-            message.error('Transaction Failed')
-            return false
-        }
+        return false
     }
 
-    return (<div className='grid grid-cols-1 mt-50 gap-20 lg:grid-cols-4 md:grid-cols-2'>
+    useEffect(() => {
+        if (minting && tokenBalanceIsChecked && nftWhitelistIsChecked)
+            setMintModalOpen(true)
+    }, [minting, tokenBalanceIsChecked, nftWhitelistIsChecked])
 
+    return (<div className='grid grid-cols-1 mt-50 gap-20 lg:grid-cols-4 md:grid-cols-2'>
         <Modal open={mintModalOpen}
             width={700}
-            okText={okText}
-            onOk={doMint}
-            onCancel={() => {
-                setWhitelistResult('')
-                setMintModalOpen(false)
-                setMintWithoutWhitelist(false)
-                setId(0)
-                setFofAmountResult('')
-                setDisableMintButton(true)
-                setLoading(false)
-                setFofChecking(false)
-                setLoadingBtnDisable(false)
-                setFofCheckingBtnDisable(false)
-            }}
-            okButtonProps={{ disabled: disableMintButton, className: 'primary-btn w-100' }}
-            cancelButtonProps={{ className: 'w-100' }}
+            okText={mintOkButtonText}
+            onOk={() => doMint()}
+            onCancel={() => resetMintModal()}
+            okButtonProps={{ disabled: mintOkButtonDisabled, className: 'primary-btn w-100', loading: mintOkButtonLoading }}
+            cancelButtonProps={{ hidden: mintCancelButtonHidden, className: 'w-100' }}
         >
             <div>
                 <h2>Mint</h2>
                 <div className='my-30 flex justify-between text-18'>
-                    <div>{whitelistResult}</div>
-                    <Button className='w-180 primary-btn' onClick={() => checkWhitelist(id)} loading={loading} disabled={loadingBtnDisable}>Check Whitelist</Button>
+                    <div>{inWhitelist[id] ? `${t('nft.mint.text.success')}${NFT[id]} card!` : `${t('nft.mint.text.fail')}${NFT[id]} card!`}</div>
+                    {/* <Button className='w-180 primary-btn' onClick={() => checkWhitelist(id)} loading={loading} disabled={loadingBtnDisable}>Check Whitelist</Button> */}
                 </div>
-                <div className='mb-40 mt-30 flex justify-between text-18' hidden={!mintWithoutWhitelist}>
+                <div className='mb-40 mt-30 flex justify-between text-18' hidden={inWhitelist[id]}>
                     <div>{fofAmountResult}</div>
-                    <Button className='w-180 primary-btn' onClick={() => checkFofAmount(id)} loading={fofChecking} disabled={fofCheckingBtnDisable}>Check $FOF Amount</Button>
+                    <Button className='w-180 primary-btn' onClick={() => checkIfFofEnough(id)} >Check $FOF Amount</Button>
                 </div>
             </div>
         </Modal>
 
         <div className='flex flex-col items-center justify-center'>
             <div className='card max-w-300 flex items-center justify-center rounded-10'>
-                <Badge count={formatUnits(nftBalances[0], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
+                <Badge count={formatUnits(nftBalance[0], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
                     <Image src={octopus} preview={false} className='rounded-10'></Image>
                 </Badge>
             </div>
             <div className='m-20 flex justify-center'>
-                <Button className='w-120 primary-btn' onClick={() => {
-                    setId(0)
-                    setMintModalOpen(true)
-                }}>Mint</Button>
+                <Button className='w-120 primary-btn'
+                    loading={minting}
+                    onClick={() => {
+                        setId(0)
+                        setMintOkButtonDisabled(!inWhitelist[0])
+                        setMinting(true)
+                        // setMintModalOpen(true)
+                    }}>Mint</Button>
             </div>
         </div>
 
         <div className='flex flex-col items-center justify-center'>
             <div className='card max-w-300 flex items-center justify-center rounded-10'>
-                <Badge count={formatUnits(nftBalances[1], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
+                <Badge count={formatUnits(nftBalance[1], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
                     <Image src={dolphin} preview={false} className='rounded-10'></Image>
                 </Badge>
             </div>
             <div className='m-20 flex justify-center'>
                 <Button className='w-120 primary-btn' onClick={() => {
                     setId(1)
+                    setMintOkButtonDisabled(!inWhitelist[1])
                     setMintModalOpen(true)
                 }}>Mint</Button>
             </div>
@@ -205,13 +176,14 @@ const NftDetail = () => {
 
         <div className='flex flex-col items-center justify-center'>
             <div className='card max-w-300 flex items-center justify-center rounded-10'>
-                <Badge count={formatUnits(nftBalances[2], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
+                <Badge count={formatUnits(nftBalance[2], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
                     <Image src={shark} preview={false} className='rounded-10'></Image>
                 </Badge>
             </div>
             <div className='m-20 flex justify-center'>
                 <Button className='w-120 primary-btn' onClick={() => {
                     setId(2)
+                    setMintOkButtonDisabled(!inWhitelist[2])
                     setMintModalOpen(true)
                 }}>Mint</Button>
             </div>
@@ -219,18 +191,19 @@ const NftDetail = () => {
 
         <div className='flex flex-col items-center justify-center'>
             <div className='card max-w-300 flex items-center justify-center rounded-10'>
-                <Badge count={formatUnits(nftBalances[3], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
+                <Badge count={formatUnits(nftBalance[3], 0)} showZero size="default" style={{ backgroundColor: '#5eb6d2' }}>
                     <Image src={whale} preview={false} className='rounded-10'></Image>
                 </Badge>
             </div>
             <div className='m-20 flex justify-center'>
                 <Button className='w-120 primary-btn' onClick={() => {
                     setId(3)
+                    setMintOkButtonDisabled(!inWhitelist[3])
                     setMintModalOpen(true)
                 }}>Mint</Button>
             </div>
         </div>
-    </div>)
+    </div >)
 }
 
 export default NftDetail

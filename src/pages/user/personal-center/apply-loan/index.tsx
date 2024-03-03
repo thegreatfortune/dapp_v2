@@ -540,7 +540,7 @@ const ApplyLoan = () => {
         setProjectImageFileRule([
           {
             required: false,
-            message: 'Please upload your loan image!',
+            message: 'Please upload your loan image!?',
           },
         ])
       }

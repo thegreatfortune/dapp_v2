@@ -493,6 +493,7 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * get FOF Balance
    */
   const getFofBalance = async () => {
@@ -503,6 +504,7 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * get NFT Balance
    */
   const getNftBalance = async () => {
