@@ -840,7 +840,7 @@ export class BrowserContractService {
 
     console.log('%c [ tid, price, amount ]-616', 'font-size:13px; background:#8d01d2; color:#d145ff;', tid, price, amount)
 
-    const decimals = await this.ERC20_decimals(import.meta.env.VITE_TOKEN_USDC)
+    const decimals = await this.ERC20_decimals(ChainAddressEnums[80001].USDC)
     console.log('%c [ decimals ]-630', 'font-size:13px; background:#7c3b4e; color:#c07f92;', decimals)
 
     const wei = ethers.parseUnits(String(price), decimals)
@@ -869,7 +869,7 @@ export class BrowserContractService {
     console.log('%c [ marketId ]-654', 'font-size:13px; background:#8e6612; color:#d2aa56;', marketId)
     const marketContract = await this.getFollowMarketContract(marketId)
 
-    const state = await this.ERC20_approve(import.meta.env.VITE_TOKEN_USDC, await marketContract.getAddress(), amount)
+    const state = await this.ERC20_approve(ChainAddressEnums[80001].USDC, await marketContract.getAddress(), amount)
 
     if (!state)
       throw new Error(' approval failed ')
@@ -1531,14 +1531,14 @@ export class BrowserContractService {
 
     const processCenterAddress = await processCenterContract.getAddress()
 
-    const approve = await this.ERC20_approve(import.meta.env.VITE_TOKEN_USDC, processCenterAddress, amount)
+    const approve = await this.ERC20_approve(ChainAddressEnums[80001].USDC, processCenterAddress, amount)
 
     if (!approve) {
       message.error('approve is error')
       throw new Error('approve is error')
     }
 
-    const transaction = await processCenterContract.supply(import.meta.env.VITE_TOKEN_USDC, amount, tradeId)
+    const transaction = await processCenterContract.supply(ChainAddressEnums[80001].USDC, amount, tradeId)
     return handleTransaction(transaction)
   }
 
@@ -1607,7 +1607,7 @@ export class BrowserContractService {
   async approveBeforeFollow(amount: bigint) {
     const routerContract = await this.getFollowRouterContract()
 
-    const ERC20Contract = await this?.getERC20Contract(import.meta.env.VITE_TOKEN_USDC)
+    const ERC20Contract = await this?.getERC20Contract(ChainAddressEnums[80001].USDC)
 
     const approveRes = await ERC20Contract?.approve(routerContract.getAddress(), amount)
 
@@ -1617,7 +1617,7 @@ export class BrowserContractService {
   async checkUsdcAllowance() {
     const routerContract = await this.getFollowRouterContract()
 
-    const ERC20Contract = await this?.getERC20Contract(import.meta.env.VITE_TOKEN_USDC)
+    const ERC20Contract = await this?.getERC20Contract(ChainAddressEnums[80001].USDC)
 
     const allowance = await ERC20Contract?.allowance(this.signer, routerContract.getAddress())
 
