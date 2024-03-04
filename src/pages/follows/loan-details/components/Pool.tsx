@@ -208,7 +208,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   function onOpenModal(item: TokenInfo) {
-    console.log(222, item)
     setCurrentTokenInfo(item)
     setSetIsModalOpen(true)
   }

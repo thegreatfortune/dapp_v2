@@ -45,6 +45,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     page: 0,
   })
   // const [result, setResult] = useState(new Models.PageResult<Models.RepayPlanVo>())
+
   const [result, setResult] = useState<Models.IPageResult<Models.RepayPlanVo>>()
   const [loading, setLoading] = useState(false)
 
@@ -76,6 +77,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         page: (pagination.page ?? 0) + 1,
         tradeId: Number(tradeId),
       })
+
+      console.log('RepaymentPlanData:', res)
 
       if (res) {
         setResult(prevResult => ({
@@ -184,6 +187,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
     }
   }
 
+  dayjs()
+
   return (
     <div>
       <SModal open={isModalOpen} content={
@@ -254,24 +259,43 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             <List
               dataSource={result?.records}
               split={false}
-              renderItem={(item, index) => (
-                <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
-                  <ul className='grid grid-cols-6 h68 w-full list-none items-center rounded-11 bg-#171822 ps-0 lg:px-20'>
-                    <li>{index + 1}. {item.repayTime}</li>
-                    <li>$ {item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</li>
-                    <li className='truncate'>{item.state === 'OVERDUE_ARREARS' ? 'Arrears' : item.state}</li>
-                    <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
-                    <li className='col-span-2 flex flex justify-center'>
-                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
-                        className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button>
-                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
-                        className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>}
-                      {/* <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
-                        className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button> */}
-                    </li>
-                  </ul>
-                </List.Item>
-              )}
+              renderItem={
+                (item, index) => (
+                  <List.Item key={item.loanId} style={{ paddingTop: 3, paddingBottom: 3 }}>
+                    <ul className='grid grid-cols-6 h68 w-full list-none items-center rounded-11 bg-#171822 ps-0 lg:px-20'>
+
+                      <li>{index + 1}. {item.repayTime}</li>
+
+                      <li>$ {item.repayFee && toCurrencyString(Number(ethers.formatUnits(item.repayFee)))}</li>
+
+                      {/* <li className='truncate'>{item.state === 'OVERDUE_ARREARS' ? 'Arrears' : item.state}</li> */}
+                      <li className='truncate'>{
+                        dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID'
+                          ? 'Not Due'
+                          : item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'
+                            ? 'Repaid'
+                            : item.state === 'OVERDUE_ARREARS'
+                              ? 'Arrears'
+                              : 'Overdue'
+                      }</li>
+
+                      <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
+
+                      <li className='col-span-2 flex flex justify-center'>
+                        <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
+                          disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                          className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button>
+                        {/* {
+                          item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                            className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>
+                        } */}
+                        <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                          disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                          className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>
+                      </li>
+                    </ul>
+                  </List.Item>
+                )}
             />
           </InfiniteScroll>
         </div>

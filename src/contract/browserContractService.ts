@@ -71,7 +71,6 @@ async function handleTransaction(
       throw new Error('HandleTransaction: Your transaction failed. Please try again.')
     }
 
-    console.log('Receipt Info', receipt)
     return receipt
   }
   catch (error) {
@@ -753,8 +752,6 @@ export class BrowserContractService {
 
     const capitalPoolContract = await this.getCapitalPoolContract(cp)
     const getList = await capitalPoolContract?.getList(tradeId)
-
-    console.log('%c [ getList ]-269', 'font-size:13px; background:#64b998; color:#a8fddc;', getList)
 
     return capitalPoolContract
   }
