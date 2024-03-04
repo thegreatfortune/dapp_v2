@@ -4,7 +4,10 @@ import type { FollowCapitalPool, FollowFactory } from '@/abis/types'
 import followCapitalPool_ABI from '@/abis/FollowCapitalPool.json'
 import followFactory_ABI from '@/abis/FollowFactory.json'
 
-export default function useContracts() {
+/**
+ * @deprecated
+ */
+function useContracts() {
   function jsonFollowCapitalPoolContract() {
     return useJsonContract<FollowCapitalPool>(import.meta.env.VITE_FOLLOW_CAPITAL_POOL_ADDRESS, followCapitalPool_ABI)
   }

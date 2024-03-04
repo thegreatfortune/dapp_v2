@@ -335,6 +335,9 @@ const ApplyLoan = () => {
   const onFinish = async () => {
     try {
       await form.validateFields()
+      //   let url
+      //   if (useDiagram === true)
+      //     url = await uploadFile()
     }
     catch (error) {
       message.error(MessageError.InvalidFormData)
@@ -371,12 +374,13 @@ const ApplyLoan = () => {
     setApplyOkButtonText(`${t('applyLoan.modal.okButton.text')}`)
     setApplyOkButtonDisabled(false)
     setApplyCancelButtonHidden(false)
-    setApplying(false)
     setPoolCreated(0)
     setOrderCreated(0)
   }
 
   async function apply() {
+    console.log(loanForm)
+    // return
     if (applyOkButtonText === t('completed')) {
       resetApplyModal()
       navigate('/my-loan')
@@ -385,11 +389,10 @@ const ApplyLoan = () => {
       setApplyOkButtonText(`${t('applyLoan.modal.okButton.text.applying')}`)
       setApplyOkButtonDisabled(true)
       setApplyCancelButtonHidden(true)
-      setApplying(true)
       // Step 1. create pools
-      setPoolCreated(1)
       try {
         if (poolCreated !== 4) {
+          setPoolCreated(1)
           const capitalPoolState = await coreContracts.routerContract.getCreateCapitalState(coreContracts.signer.address)
           const refundPoolState = await coreContracts.routerContract.getCreateRefundState(coreContracts.signer.address)
           if (capitalPoolState && refundPoolState) {
@@ -415,16 +418,14 @@ const ApplyLoan = () => {
       }
 
       // Step 2. create loan
-
       setOrderCreated(1)
       try {
         // const model = { ...value, ...loanRequisitionEditModel }
-        await form.validateFields()
+        // await form.validateFields()
 
         let url
         if (useDiagram === true)
           url = await uploadFile()
-
         const decimals = await coreContracts.usdcContract.decimals()
         const res = await coreContracts.routerContract.borrowerCreateOrder(
           {
@@ -440,6 +441,18 @@ const ApplyLoan = () => {
             name: loanForm.name,
           },
         )
+        console.log({
+          _timePeriod: BigInt(loanForm.duration),
+          _repayTimes: BigInt(loanForm.installments),
+          _interestRate: BigInt(loanForm.interest * 100),
+          _shareRate: BigInt((loanForm.dividend ?? 0) * 100),
+          _goalShareCount: BigInt(loanForm.numberOfShares),
+          _minShareCount: BigInt(loanForm.minimumRequiredRaisingShares ?? 0),
+          _collectEndTime: BigInt(loanForm.raisingTime!) * BigInt(86400), // seconds
+          _goalMoney: BigInt(loanForm.loanAmount) * (BigInt(10) ** decimals), // decimals token for usdc
+          uri: url ?? loanForm.imageUrl,
+          name: loanForm.name,
+        })
         await handleTransactionResponse(res,
           NotificationInfo.CreateLoanSuccessfully,
           NotificationInfo.CreateLoanSuccessfullyDesc,
@@ -455,7 +468,7 @@ const ApplyLoan = () => {
           tradingPlatformType: loanForm.specifiedPlatformType,
           transactionPairs: loanForm.specifiedPairs,
         }
-
+        console.log(loanDetail)
         await loanService.submitNewLoan(chainId, loanDetail)
         setOrderCreated(2)
         setApplyOkButtonText(`${t('completed')}`)
@@ -713,11 +726,16 @@ const ApplyLoan = () => {
                     },
                   ]}
                   style={{ margin: 0 }}
+
                 >
                   <TextArea
                     className="s-container text-14"
                     placeholder={t('applyLoan.formItem.item.placeholder')}
                     style={{ height: 102, resize: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.value)
+                        setLoanForm((loanForm) => { return { ...loanForm, description: e.target.value } })
+                    }}
                   />
                 </Form.Item>
               </div>
@@ -750,6 +768,10 @@ const ApplyLoan = () => {
                   )}
                   // style={{ height: 269, resize: 'none' }}
                   style={{ height: 280 }}
+                  onChange={(e) => {
+                    if (e.target.value)
+                      setLoanForm((loanForm) => { return { ...loanForm, description: e.target.value } })
+                  }}
                 />
               </Form.Item>
             </div>
@@ -784,6 +806,10 @@ const ApplyLoan = () => {
                   // className="s-container box-border h50 w412 items-center px-30 pr-106 text-14"
                   className="apply-option-item-input"
                   suffix={<div className="px-20 text-14">USDC</div>}
+                  onChange={(value) => {
+                    if (value)
+                      setLoanForm((loanForm) => { return { ...loanForm, loanAmount: value } })
+                  }}
                 />
               </Form.Item>
             </div>
@@ -810,6 +836,7 @@ const ApplyLoan = () => {
                   suffixIcon={
                     <img src={downIcon} alt="downIcon" className="px-20" />
                   }
+                  defaultValue={0}
                   options={[
                     { value: 0, label: 10 },
                     { value: 1, label: 20 },
@@ -818,6 +845,7 @@ const ApplyLoan = () => {
                     { value: 4, label: 90 },
                     { value: 5, label: 180 },
                   ]}
+                  onChange={value => setLoanForm((loanForm) => { return { ...loanForm, duration: value } })}
                 />
               </Form.Item>
             </div>
@@ -843,12 +871,14 @@ const ApplyLoan = () => {
                   suffixIcon={
                     <img src={downIcon} alt="downIcon" className="px-20" />
                   }
+                  defaultValue={1}
                   options={[
                     { value: 1, label: 1 },
                     { value: 2, label: 2 },
                     { value: 5, label: 5 },
                     { value: 10, label: 10 },
                   ]}
+                  onChange={value => setLoanForm((loanForm) => { return { ...loanForm, installments: value } })}
                 />
               </Form.Item>
             </div>
@@ -873,6 +903,10 @@ const ApplyLoan = () => {
                   step={0.01}
                   className="apply-option-item-input"
                   suffix={<div className="px-20 text-14">%</div>}
+                  onChange={(value) => {
+                    if (value)
+                      setLoanForm((loanForm) => { return { ...loanForm, dividend: value } })
+                  }}
                 />
               </Form.Item>
             </div>
@@ -902,6 +936,10 @@ const ApplyLoan = () => {
                   step={0.01}
                   className="apply-option-item-input"
                   suffix={<div className="px-20 text-14">%</div>}
+                  onChange={(value) => {
+                    if (value)
+                      setLoanForm((loanForm) => { return { ...loanForm, interest: value } })
+                  }}
                 />
               </Form.Item>
             </div>
@@ -926,6 +964,7 @@ const ApplyLoan = () => {
                   suffixIcon={
                     <img src={downIcon} alt="downIcon" className="px-20" />
                   }
+                  defaultValue={1}
                   options={[
                     { value: 1, label: 1 },
                     { value: 3, label: 3 },
@@ -933,6 +972,7 @@ const ApplyLoan = () => {
                     { value: 14, label: 14 },
                     { value: 20, label: 20 },
                   ]}
+                  onChange={value => setLoanForm((loanForm) => { return { ...loanForm, raisingTime: value } })}
                 />
               </Form.Item>
             </div>
@@ -945,12 +985,17 @@ const ApplyLoan = () => {
                     {t('applyLoan.formItem.numberOfCopies.label')}
                   </span>
                 }
+
               >
                 <InputNumber
                   min={1}
                   max={10000}
                   className="apply-option-item-input"
                   suffix={<div className="px-20 text-14">shares</div>}
+                  onChange={(value) => {
+                    if (value)
+                      setLoanForm((loanForm) => { return { ...loanForm, numberOfShares: value } })
+                  }}
                 />
               </Form.Item>
             </div>
@@ -969,6 +1014,10 @@ const ApplyLoan = () => {
                   max={loanForm.numberOfShares}
                   className="apply-option-item-input"
                   suffix={<div className="px-20 text-14">shares</div>}
+                  onChange={(value) => {
+                    if (value)
+                      setLoanForm((loanForm) => { return { ...loanForm, minimumRequiredRaisingShares: value } })
+                  }}
                 />
               </Form.Item>
             }

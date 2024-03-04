@@ -22,14 +22,19 @@ import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import loanService from '@/services/loanService'
+import NotFound from '@/pages/NotFound'
 
 const LoanDetails = () => {
+  const navigate = useNavigate()
+
   const [searchParams] = useSearchParams()
+
   const tradeId = searchParams.get('tradeId')
 
-  const prePage = searchParams.get('prePage')
+  if (!tradeId)
+    setTimeout(() => navigate('/follows'), 3000)
 
-  const navigate = useNavigate()
+  const prePage = searchParams.get('prePage')
 
   const { currentUser } = useUserStore()
 
@@ -144,7 +149,7 @@ const LoanDetails = () => {
 
   useEffect(() => {
     if (!tradeId) {
-      message.error('Operation Failed')
+      message.error('Not Found Loan!')
     }
     else {
       async function fetchSharesData() {
@@ -467,509 +472,514 @@ const LoanDetails = () => {
     </div>)
   }
 
-  return (<div className='w-full'>
+  return (!tradeId
+    ? (<div>
+      <NotFound />
+    </div>)
+    : (<div className='w-full'>
 
-    <Modal open={sellIsModalOpen}
-      // centered={true}
-      className='h238 w464 b-rd-8'
-      okText="Sell"
-      // onOk={() => sellConfirm()}
-      onOk={() => setSellConfirmModalOpen(true)}
-      onCancel={() => setSellIsModalOpen(false)}
-      okButtonProps={{
-        type: 'primary',
-        className: 'primary-btn w-100',
-        disabled: Number.parseInt(sellAmount) > totalShares || sellConfirmModalOpen,
-      }}
-      cancelButtonProps={{
-        className: 'w-100',
-      }}
-    >
-      <div>
-        <h2>Sell Shares</h2>
-        <div className='h-50 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            My shares:
+      <Modal open={sellIsModalOpen}
+        // centered={true}
+        className='h238 w464 b-rd-8'
+        okText="Sell"
+        // onOk={() => sellConfirm()}
+        onOk={() => setSellConfirmModalOpen(true)}
+        onCancel={() => setSellIsModalOpen(false)}
+        okButtonProps={{
+          type: 'primary',
+          className: 'primary-btn w-100',
+          disabled: Number.parseInt(sellAmount) > totalShares || sellConfirmModalOpen,
+        }}
+        cancelButtonProps={{
+          className: 'w-100',
+        }}
+      >
+        <div>
+          <h2>Sell Shares</h2>
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              My shares:
+            </div>
+            <div className='text-18'>
+              {totalShares}
+            </div>
           </div>
-          <div className='text-18'>
-            {totalShares}
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Sell Quantity:
+            </div>
+            <div className='flex justify-end'>
+              <InputNumber
+                className='w-170'
+                min={'1'}
+                max={totalShares.toString()}
+                placeholder="Enter Quantity value"
+                value={sellAmount}
+                defaultValue={'1'}
+                onChange={(value) => {
+                  setSellAmount(value!)
+                  setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
+                }
+                }
+              />
+              <Button
+                className='mx-12'
+                type='primary'
+                // loading={checkMaxLoading}
+                onClick={() => {
+                  setSellAmount(totalShares.toString())
+                  setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
+                }}
+                disabled={sellModalLoading}>
+                Max
+              </Button>
+              <div className='text-18'>
+                Shares
+              </div>
+            </div>
+          </div>
+          <div className='h-50 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Unit Price:
+            </div>
+            <div className='flex justify-end'>
+              <InputNumber
+                className='mx-10 w-260'
+                min={'0.01'}
+                placeholder="Enter Unit Price"
+                step="0.10"
+                precision={2}
+                defaultValue='1.00'
+                value={sellUnitPrice}
+                onChange={(value) => {
+                  const processedValue = value!.toString().includes('.')
+                    ? value!.toString().slice(0, value!.toString().indexOf('.') + 3)
+                    : value!.toString()
+                  setSellUnitPrice(processedValue)
+                  setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
+                }}
+              />
+              <div className='text-18'>
+                USD
+              </div>
+            </div>
+          </div>
+          <div className='mt-10 h-60 flex items-center justify-between'>
+            <div className='w-120 text-22'>
+              Total Price:
+            </div>
+            <div className='text-22'>
+              {totalPrice}
+            </div>
           </div>
         </div>
-        <div className='h-50 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            Sell Quantity:
+      </Modal>
+
+      <Modal open={sellConfirmModalOpen}
+        className='h238 w464 b-rd-8'
+        onOk={() => sellConfirm()}
+        okText={okText}
+        onCancel={() => {
+          setOkText('Confirm')
+          setExecuting(false)
+          setSellConfirmModalOpen(false)
+        }}
+        okButtonProps={{
+          type: 'primary',
+          className: 'primary-btn w-100',
+          disabled: executing,
+        }}
+        cancelButtonProps={{
+          className: 'w-100',
+        }}
+      >
+        <div>
+          <h2>Confirm to Sell</h2>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Shares:
+            </div>
+            <div className='text-18'>
+              {sellAmount}
+            </div>
           </div>
-          <div className='flex justify-end'>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Unit Price:
+            </div>
+            <div className='text-18'>
+              {sellUnitPrice}
+            </div>
+
+          </div>
+          <div className='h-40 flex items-center justify-between'>
+            <div className='w-120 text-18'>
+              Total Price:
+            </div>
+            <div className='text-18'>
+              {totalPrice}
+            </div>
+
+          </div>
+
+          {/* <div hidden={!sellModalLoading}> */}
+          <div className='mt-20'>
+            <div className='h40 flex justify-between text-18'>
+              <div className='flex'>
+                <div className='mr-8'>
+                  1.
+                </div>
+                <div>
+                  {approved === 0
+                    ? 'Approve your shares'
+                    : approved === 1
+                      ? 'Approving...'
+                      : approved === 2
+                        ? 'Approved!'
+                        : 'Approval failed!'
+                  }
+                </div>
+              </div>
+              <div className='mr-8'>
+                {approved === 0
+                  ? <BorderOutlined />
+                  : approved === 1
+                    ? <LoadingOutlined />
+                    : approved === 2
+                      ? <CheckOutlined className='text-green-500' />
+                      : <CloseSquareOutlined className='text-red-500' />
+                }
+              </div>
+
+            </div>
+            <div className='h40 flex justify-between text-18'>
+              <div className='flex'>
+                <div className='mr-8'>
+                  2.
+                </div>
+                <div>
+                  {sold === 0
+                    ? 'Sell to market'
+                    : sold === 1
+                      ? 'Selling...'
+                      : sold === 2
+                        ? 'Sold!'
+                        : 'Sale failed!'
+                  }
+                </div>
+              </div>
+              <div className='mr-8'>
+                {sold === 0
+                  ? <BorderOutlined />
+                  : sold === 1
+                    ? <LoadingOutlined />
+                    : sold === 2
+                      ? <CheckOutlined className='text-green-500' />
+                      : <CloseSquareOutlined className='text-red-500' />
+                }
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal open={extractIsModalOpen}
+        className='h238 w464 b-rd-8'
+        maskClosable={false}
+        okText="Confirm"
+        onOk={() => extractConfirm()}
+        onCancel={() => {
+          setExtractIsModalOpen(false)
+        }}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
+      >
+        <div>
+          <h2>
+            Extract: {extractMoney}
+          </h2>
+        </div>
+      </Modal>
+
+      <Modal open={claimModalOpen}
+        className='h238 w464 b-rd-8'
+        maskClosable={false}
+        okText="Claim"
+        onOk={claim}
+        onCancel={() => {
+          setClaimBtndisable(true)
+          setClaimModalOpen(false)
+          setClaimAmount(0)
+        }}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: claimBtndisable }}
+      >
+        <div>
+          <h2>
+            Claim:
+          </h2>
+          <div>
+            You can claim {toCurrencyString(claimAmount)} $FOF!
+          </div>
+        </div>
+      </Modal>
+
+      <Modal open={followModalOpen}
+        className='h238 w464 b-rd-8'
+        okText={followModalBtnText}
+        onOk={() => handleFollow()}
+        onCancel={() => {
+          setCopies(1)
+          setUsdcApproved(0)
+          setFollowed(0)
+          setExecuting(false)
+          setFollowModalOpen(false)
+        }}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
+      >
+        <div>
+          <h2 className='font-b m-10 w40 flex items-center text-20 c-#fff lh-21'>
+            {lendingState ? 'Processing' : 'Share'}
+          </h2>
+          <div className='w-full flex content-center items-center justify-end'>
             <InputNumber
-              className='w-170'
-              min={'1'}
-              max={totalShares.toString()}
-              placeholder="Enter Quantity value"
-              value={sellAmount}
-              defaultValue={'1'}
-              onChange={(value) => {
-                setSellAmount(value!)
-                setTotalPrice((Number.parseFloat(value!) * Number.parseFloat(sellUnitPrice)).toFixed(2))
-              }
-              }
-            />
-            <Button
-              className='mx-12'
-              type='primary'
-              // loading={checkMaxLoading}
-              onClick={() => {
-                setSellAmount(totalShares.toString())
-                setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
+              size='large'
+              value={copies}
+              className='m-10 w-full w150 b-#808080 text-center'
+              min={1}
+              onChange={async (v) => {
+                if (!browserContractService?.getSigner.address)
+                  return
+                if (v) {
+                  if (v > maxCopies) {
+                    message.error('You can not follow over max shares!')
+                    v = maxCopies
+                  }
+                  else {
+                    const amount = await browserContractService.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(v))
+                    setFollowUSDCAmount(amount)
+                  }
+                }
+                setCopies(v)
               }}
-              disabled={sellModalLoading}>
+              disabled={executing}
+            />
+            <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
               Max
             </Button>
-            <div className='text-18'>
-              Shares
-            </div>
-          </div>
-        </div>
-        <div className='h-50 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            Unit Price:
           </div>
           <div className='flex justify-end'>
-            <InputNumber
-              className='mx-10 w-260'
-              min={'0.01'}
-              placeholder="Enter Unit Price"
-              step="0.10"
-              precision={2}
-              defaultValue='1.00'
-              value={sellUnitPrice}
-              onChange={(value) => {
-                const processedValue = value!.toString().includes('.')
-                  ? value!.toString().slice(0, value!.toString().indexOf('.') + 3)
-                  : value!.toString()
-                setSellUnitPrice(processedValue)
-                setTotalPrice((Number.parseFloat(sellAmount) * Number.parseFloat(processedValue)).toFixed(2))
-              }}
-            />
-            <div className='text-18'>
-              USD
-            </div>
+            {copies} Share = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
           </div>
-        </div>
-        <div className='mt-10 h-60 flex items-center justify-between'>
-          <div className='w-120 text-22'>
-            Total Price:
-          </div>
-          <div className='text-22'>
-            {totalPrice}
-          </div>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal open={sellConfirmModalOpen}
-      className='h238 w464 b-rd-8'
-      onOk={() => sellConfirm()}
-      okText={okText}
-      onCancel={() => {
-        setOkText('Confirm')
-        setExecuting(false)
-        setSellConfirmModalOpen(false)
-      }}
-      okButtonProps={{
-        type: 'primary',
-        className: 'primary-btn w-100',
-        disabled: executing,
-      }}
-      cancelButtonProps={{
-        className: 'w-100',
-      }}
-    >
-      <div>
-        <h2>Confirm to Sell</h2>
-        <div className='h-40 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            Shares:
-          </div>
-          <div className='text-18'>
-            {sellAmount}
-          </div>
-        </div>
-        <div className='h-40 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            Unit Price:
-          </div>
-          <div className='text-18'>
-            {sellUnitPrice}
-          </div>
-
-        </div>
-        <div className='h-40 flex items-center justify-between'>
-          <div className='w-120 text-18'>
-            Total Price:
-          </div>
-          <div className='text-18'>
-            {totalPrice}
-          </div>
-
-        </div>
-
-        {/* <div hidden={!sellModalLoading}> */}
-        <div className='mt-20'>
-          <div className='h40 flex justify-between text-18'>
-            <div className='flex'>
-              <div className='mr-8'>
-                1.
-              </div>
-              <div>
-                {approved === 0
-                  ? 'Approve your shares'
-                  : approved === 1
-                    ? 'Approving...'
-                    : approved === 2
-                      ? 'Approved!'
-                      : 'Approval failed!'
-                }
-              </div>
-            </div>
-            <div className='mr-8'>
-              {approved === 0
-                ? <BorderOutlined />
-                : approved === 1
-                  ? <LoadingOutlined />
-                  : approved === 2
-                    ? <CheckOutlined className='text-green-500' />
-                    : <CloseSquareOutlined className='text-red-500' />
-              }
-            </div>
-
-          </div>
-          <div className='h40 flex justify-between text-18'>
-            <div className='flex'>
-              <div className='mr-8'>
-                2.
-              </div>
-              <div>
-                {sold === 0
-                  ? 'Sell to market'
-                  : sold === 1
-                    ? 'Selling...'
-                    : sold === 2
-                      ? 'Sold!'
-                      : 'Sale failed!'
-                }
-              </div>
-            </div>
-            <div className='mr-8'>
-              {sold === 0
-                ? <BorderOutlined />
-                : sold === 1
-                  ? <LoadingOutlined />
-                  : sold === 2
-                    ? <CheckOutlined className='text-green-500' />
-                    : <CloseSquareOutlined className='text-red-500' />
-              }
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal open={extractIsModalOpen}
-      className='h238 w464 b-rd-8'
-      maskClosable={false}
-      okText="Confirm"
-      onOk={() => extractConfirm()}
-      onCancel={() => {
-        setExtractIsModalOpen(false)
-      }}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: extraModalLoading }}
-    >
-      <div>
-        <h2>
-          Extract: {extractMoney}
-        </h2>
-      </div>
-    </Modal>
-
-    <Modal open={claimModalOpen}
-      className='h238 w464 b-rd-8'
-      maskClosable={false}
-      okText="Claim"
-      onOk={claim}
-      onCancel={() => {
-        setClaimBtndisable(true)
-        setClaimModalOpen(false)
-        setClaimAmount(0)
-      }}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: claimBtndisable }}
-    >
-      <div>
-        <h2>
-          Claim:
-        </h2>
-        <div>
-          You can claim {toCurrencyString(claimAmount)} $FOF!
-        </div>
-      </div>
-    </Modal>
-
-    <Modal open={followModalOpen}
-      className='h238 w464 b-rd-8'
-      okText={followModalBtnText}
-      onOk={() => handleFollow()}
-      onCancel={() => {
-        setCopies(1)
-        setUsdcApproved(0)
-        setFollowed(0)
-        setExecuting(false)
-        setFollowModalOpen(false)
-      }}
-      okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
-    >
-      <div>
-        <h2 className='font-b m-10 w40 flex items-center text-20 c-#fff lh-21'>
-          {lendingState ? 'Processing' : 'Share'}
-        </h2>
-        <div className='w-full flex content-center items-center justify-end'>
-          <InputNumber
-            size='large'
-            value={copies}
-            className='m-10 w-full w150 b-#808080 text-center'
-            min={1}
-            onChange={async (v) => {
-              if (!browserContractService?.getSigner.address)
-                return
-              if (v) {
-                if (v > maxCopies) {
-                  message.error('You can not follow over max shares!')
-                  v = maxCopies
-                }
-                else {
-                  const amount = await browserContractService.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(v))
-                  setFollowUSDCAmount(amount)
-                }
-              }
-              setCopies(v)
-            }}
-            disabled={executing}
-          />
-          <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
-            Max
-          </Button>
-        </div>
-        <div className='flex justify-end'>
-          {copies} Share = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
-        </div>
-        <div className='mt-30'>
-          {
-            usdcApproved === 0
-              ? <div className='flex items-center justify-between'>
-                <div className='flex'>
-                  <div className='mr-8'>1.</div>Approve your USDC for Follow Finance Protocol</div>
-                <div className='m-8'><BorderOutlined /></div>
-              </div>
-              : usdcApproved === 1
+          <div className='mt-30'>
+            {
+              usdcApproved === 0
                 ? <div className='flex items-center justify-between'>
                   <div className='flex'>
-                    <div className='mr-8'>1.</div>Approve...</div>
-                  <div className='m-8'><LoadingOutlined /></div>
+                    <div className='mr-8'>1.</div>Approve your USDC for Follow Finance Protocol</div>
+                  <div className='m-8'><BorderOutlined /></div>
                 </div>
-                : usdcApproved === 2
+                : usdcApproved === 1
                   ? <div className='flex items-center justify-between'>
                     <div className='flex'>
-                      <div className='mr-8'>1.</div>Approved successfully!</div>
-                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                      <div className='mr-8'>1.</div>Approve...</div>
+                    <div className='m-8'><LoadingOutlined /></div>
                   </div>
-                  : <div className='flex items-center justify-between'>
-                    <div className='flex'>
-                      <div className='mr-8'>1.</div>Approval failed!</div>
-                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                  </div>
-          }
-          {
-            followed === 0
-              ? <div className='flex items-center justify-between'>
-                <div className='flex'>
-                  <div className='mr-8'>2.</div>Follow this loan</div>
-                <div className='m-8'><BorderOutlined /></div>
-              </div>
-              : followed === 1
+                  : usdcApproved === 2
+                    ? <div className='flex items-center justify-between'>
+                      <div className='flex'>
+                        <div className='mr-8'>1.</div>Approved successfully!</div>
+                      <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                    </div>
+                    : <div className='flex items-center justify-between'>
+                      <div className='flex'>
+                        <div className='mr-8'>1.</div>Approval failed!</div>
+                      <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                    </div>
+            }
+            {
+              followed === 0
                 ? <div className='flex items-center justify-between'>
                   <div className='flex'>
-                    <div className='mr-8'>2.</div>Following...</div>
-                  <div className='m-8'><LoadingOutlined /></div>
+                    <div className='mr-8'>2.</div>Follow this loan</div>
+                  <div className='m-8'><BorderOutlined /></div>
                 </div>
-                : followed === 2
+                : followed === 1
                   ? <div className='flex items-center justify-between'>
                     <div className='flex'>
-                      <div className='mr-8'>2.</div>Followed successfully!</div>
-                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                      <div className='mr-8'>2.</div>Following...</div>
+                    <div className='m-8'><LoadingOutlined /></div>
                   </div>
-                  : <div className='flex items-center justify-between'>
-                    <div className='flex'>
-                      <div className='mr-8'>2.</div>Follow failed!</div>
-                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                  </div>
-          }
+                  : followed === 2
+                    ? <div className='flex items-center justify-between'>
+                      <div className='flex'>
+                        <div className='mr-8'>2.</div>Followed successfully!</div>
+                      <div className='m-8'><CheckOutlined className='text-green-500' /></div>
+                    </div>
+                    : <div className='flex items-center justify-between'>
+                      <div className='flex'>
+                        <div className='mr-8'>2.</div>Follow failed!</div>
+                      <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
+                    </div>
+            }
+          </div>
         </div>
-      </div>
-    </Modal >
+      </Modal >
 
-    <div className='loan-detail-info'>
-      <InfoCard item={loanInfo} />
-      {/* <div className="w-32"></div> */}
-      <div className='ml-30 grow max-md:ml-0'>
-        <div className='flex flex-col max-md:mt-30 md:min-h-420'>
-          <div className='mb-20 flex items-center'>
-            <div className='loan-detail-title mr-30'>
-              {loanInfo.loanName}
-            </div>
-            <div>
-              {
-                // Loan status && countdown
-                loanInfo.state === 'Following'
-                  ? <div className='items-center lg:flex'>
-                    {loanStateELMap[loanInfo.state]}
-                    <div className='flex items-center lg:mx-10' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</div>
-                  </div>
-                  : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
-              }
-            </div>
-          </div>
-          <div className='mb20 grow'>
-            <div>
-              <Tooltip title={loanInfo.usageIntro}>
-                {loanInfo.usageIntro}
-              </Tooltip>
-            </div>
-          </div>
-          <div className='lg:flex'>
-            <div className='flex'>
-              {
-                prePage === 'market' && loanInfo.state === 'Following'
-                && <div className='flex'>
-                  {/* <div className='m-8 w180'></div> */}
-                  {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-                  <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
-                  {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
-
-                </div>
-              }
-
-              {
-                prePage === 'lend'
-                && <div className='flex'>
-                  {
-                    loanInfo.state !== 'CloseByUncollected'
-                    && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
-                  }
-                  <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
-                </div>
-              }
-
-              <div className='flex flex-wrap' hidden={prePage === 'lend' || prePage === 'market'}>
+      <div className='loan-detail-info'>
+        <InfoCard item={loanInfo} />
+        {/* <div className="w-32"></div> */}
+        <div className='ml-30 grow max-md:ml-0'>
+          <div className='flex flex-col max-md:mt-30 md:min-h-420'>
+            <div className='mb-20 flex items-center'>
+              <div className='loan-detail-title mr-30'>
+                {loanInfo.loanName}
+              </div>
+              <div>
                 {
-                  (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
-                  && <div>
-                    <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
+                  // Loan status && countdown
+                  loanInfo.state === 'Following'
+                    ? <div className='items-center lg:flex'>
+                      {loanStateELMap[loanInfo.state]}
+                      <div className='flex items-center lg:mx-10' > {<Countdown targetTimestamp={Number(loanInfo.collectEndTime)} />}</div>
+                    </div>
+                    : <> {loanInfo.state && loanStateELMap[loanInfo.state]}</>
+                }
+              </div>
+            </div>
+            <div className='mb20 grow'>
+              <div>
+                <Tooltip title={loanInfo.usageIntro}>
+                  {loanInfo.usageIntro}
+                </Tooltip>
+              </div>
+            </div>
+            <div className='lg:flex'>
+              <div className='flex'>
+                {
+                  prePage === 'market' && loanInfo.state === 'Following'
+                  && <div className='flex'>
+                    {/* <div className='m-8 w180'></div> */}
+                    {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+                    <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
+                    {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+
                   </div>
                 }
+
                 {
-                  prePage === 'loan'
-                  && <div>
+                  prePage === 'lend'
+                  && <div className='flex'>
+                    {
+                      loanInfo.state !== 'CloseByUncollected'
+                      && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
+                    }
                     <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
                   </div>
                 }
-                {
-                  // Income calculate
-                  loanInfo.state !== 'Invalid'
-                  && <div>
-                    {(prePage === 'loan' || prePage === 'lend')
-                      && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
-                    }
-                  </div>
-                }
 
+                <div className='flex flex-wrap' hidden={prePage === 'lend' || prePage === 'market'}>
+                  {
+                    (prePage === 'lend' || prePage === 'loan') && loanInfo.state === 'CloseByUncollected'
+                    && <div>
+                      <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
+                    </div>
+                  }
+                  {
+                    prePage === 'loan'
+                    && <div>
+                      <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
+                    </div>
+                  }
+                  {
+                    // Income calculate
+                    loanInfo.state !== 'Invalid'
+                    && <div>
+                      {(prePage === 'loan' || prePage === 'lend')
+                        && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                      }
+                    </div>
+                  }
+
+                </div>
+                <div>
+                  <Button className='loan-detail-btn' onClick={() => {
+                    checkFofAmount()
+                    setClaimModalOpen(true)
+                  }}>Claim $FOF</Button>
+                </div>
               </div>
-              <div>
-                <Button className='loan-detail-btn' onClick={() => {
-                  checkFofAmount()
-                  setClaimModalOpen(true)
-                }}>Claim $FOF</Button>
+              <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>
+                <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
               </div>
-            </div>
-            <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>
-              <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <Divider></Divider>
+      <Divider></Divider>
 
-    <div className='loan-detail-option'>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Loan Amount</li>
-          <li className='loan-detail-option-content'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
+      <div className='loan-detail-option'>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Loan Amount</li>
+            <li className='loan-detail-option-content'>${Number(Number(ethers.formatUnits(BigInt(loanInfo.loanMoney ?? 0))).toFixed(2)).toLocaleString()}</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Installments
+              <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
+                title="Repaid / Total">
+                <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+              </Tooltip>
+            </li>
+            <li className='loan-detail-option-content'> {loanInfo.repayCount} / {loanInfo.periods}</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Interest</li>
+            <li className='loan-detail-option-content'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Dividend</li>
+            <li className='loan-detail-option-content'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Risk Level</li>
+            <li className='loan-detail-option-content'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>Total Shares</li>
+            <li className='loan-detail-option-content'>{loanInfo.goalCopies}</li>
+          </div>
+        </div>
+        <div className='flex justify-center'>
+          <div className='loan-detail-option-item'>
+            <li className='loan-detail-option-title'>MRS
+              <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
+                title="Minimum Required Shares">
+                <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
+              </Tooltip>
+            </li>
+            <li className='loan-detail-option-content'>{loanInfo.minGoalQuantity}</li>
+          </div>
         </div>
       </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Installments
-            <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
-              title="Repaid / Total">
-              <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
-            </Tooltip>
-          </li>
-          <li className='loan-detail-option-content'> {loanInfo.repayCount} / {loanInfo.periods}</li>
-        </div>
-      </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Interest</li>
-          <li className='loan-detail-option-content'>{BigNumber(loanInfo.interest ?? 0).div(100).toFixed(2)}%</li>
-        </div>
-      </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Dividend</li>
-          <li className='loan-detail-option-content'>{BigNumber(loanInfo.dividendRatio ?? 0).div(100).toFixed(2)}%</li>
-        </div>
-      </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Risk Level</li>
-          <li className='loan-detail-option-content'> {loanInfo.tradingForm === 'SpotGoods' ? 'Low' : 'High'}</li>
-        </div>
-      </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>Total Shares</li>
-          <li className='loan-detail-option-content'>{loanInfo.goalCopies}</li>
-        </div>
-      </div>
-      <div className='flex justify-center'>
-        <div className='loan-detail-option-item'>
-          <li className='loan-detail-option-title'>MRS
-            <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
-              title="Minimum Required Shares">
-              <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
-            </Tooltip>
-          </li>
-          <li className='loan-detail-option-content'>{loanInfo.minGoalQuantity}</li>
-        </div>
-      </div>
-    </div>
-    <Divider></Divider>
-    <Tabs
-      defaultActiveKey="1"
-      items={items}
-      activeKey={activeKey}
-      onChange={key => setActiveKey(key)}
-      renderTabBar={renderTabBar} />
-  </div >)
+      <Divider></Divider>
+      <Tabs
+        defaultActiveKey="1"
+        items={items}
+        activeKey={activeKey}
+        onChange={key => setActiveKey(key)}
+        renderTabBar={renderTabBar} />
+    </div >)
+  )
 }
 
 export default LoanDetails
