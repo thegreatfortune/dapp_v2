@@ -80,7 +80,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       return null
     }).filter(Boolean) as TokenInfo[]
-    console.log('tokenInfos & uniqueTokenInfos', tokenInfos, uniqueTokenInfos)
+    // console.log('tokenInfos & uniqueTokenInfos', tokenInfos, uniqueTokenInfos)
 
     const a = uniqueTokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
     setTokenTotals(a ?? '0')
@@ -144,7 +144,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       // console.log(proList)
 
       Promise.all(proList).then((res) => {
-        console.log('res', res)
+        // console.log('res', res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
         throw new Error(err)
@@ -318,11 +318,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     if (coreContracts)
       getTokenState()
   }, [coreContracts])
-
-  useEffect(() => {
-    if (tokenStates.length > 0)
-      console.log('tokenStates:', tokenStates)
-  }, [tokenStates])
 
   return (
     <div className='w-full'>

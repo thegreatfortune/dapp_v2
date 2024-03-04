@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ZeroAddress } from 'ethers'
 
-import USDCLogo from '@/assets/images/loan-details/usdc.png'
+// import USDCLogo from '@/assets/images/loan-details/usdc.png'
+
 import BTCLogo from '@/assets/images/apply-loan/token-icons/BTC.png'
 import ETHLogo from '@/assets/images/apply-loan/token-icons/ETH.png'
 import ARBLogo from '@/assets/images/apply-loan/token-icons/ARB.png'

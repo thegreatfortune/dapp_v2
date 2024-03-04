@@ -213,7 +213,7 @@ export class BrowserContractService {
 
   async getERC20Contract(token?: string) {
     return createContract<LocalContractType<typeof LocalEnv, ERC20>>(
-      token ?? this._chainAddresses.usdc,
+      token ?? this._chainAddresses.USDC,
       ERC20_ABI,
       this.signer,
     )
