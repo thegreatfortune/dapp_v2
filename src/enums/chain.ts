@@ -27,6 +27,7 @@ interface IChainAddresses {
     faucet: string
     liquidity: string
     nativeFaucetUrl: string
+    [key: string]: string
 }
 
 const chainAddressEnums: { [key: number]: IChainAddresses } = {

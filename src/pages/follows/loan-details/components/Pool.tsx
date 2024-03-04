@@ -12,6 +12,9 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
+import { chainAddressEnums } from '@/enums/chain'
+import { useChainId } from 'wagmi'
+import useCoreContract from '@/hooks/useCoreContract'
 
 // import { PortfolioService } from '@/.generated/api'
 
@@ -38,6 +41,8 @@ export class TokenInfo {
 const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
   const { browserContractService } = useBrowserContract()
 
+  const { coreContracts } = useCoreContract()
+
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>([])
 
   const [uniqueTokenInfos, setUniqueTokenInfos] = useState<TokenInfo[]>([])
@@ -59,6 +64,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const [kLineCreated, setKLineCreated] = useState(false)
 
   const [topUpTitle, setTopUpTitle] = useState('Deposit')
+  const chainId = useChainId()
 
   useEffect(() => {
     // if (tokenInfos.length <= 1)
@@ -94,10 +100,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   useEffect(() => {
     getBalanceByTokens()
-  }, [browserContractService, transactionPair, tradeId])
+  }, [coreContracts, transactionPair, tradeId])
 
   async function getBalanceByTokens() {
-    if (!browserContractService || !tradeId)
+    if (!coreContracts || !tradeId)
       return
     setLoadTokenInfoLoading(true)
     try {
@@ -105,21 +111,39 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       const proList: Promise<TokenInfo>[] = []
       // if (proList.length === 0 && tokenInfos.length === 0) {
-      const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
+      const pro = getBalanceByToken(chainAddressEnums[chainId].usdc, tradeId, 'USDC')
+      // const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
       pro && proList.push(pro as Promise<TokenInfo>)
       // }
+      // for (let i = 0; i < transactionPair.length; i++) {
+      //   const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
+      //   if (coin in tradingPairTokenMap) {
+      //     // console.log(tradingPairTokenMap[coin], tradeId, coin)
+      //     const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
+      //     pro && proList.push(pro as Promise<TokenInfo>)
+      //   }
+      // }
+
       for (let i = 0; i < transactionPair.length; i++) {
-        const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
-        if (coin in tradingPairTokenMap) {
-          // console.log(tradingPairTokenMap[coin], tradeId, coin)
-          const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
-          pro && proList.push(pro as Promise<TokenInfo>)
-        }
+        // const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
+        const coin = transactionPair[i]
+        // if (coin in tradingPairTokenMap) {
+        coreContracts.specifiedTradingPairsOfSpot.forEach((pairs) => {
+          if (coin === pairs.name) {
+            // console.log(tradingPairTokenMap[coin], tradeId, coin)
+            const pro = getBalanceByToken(chainAddressEnums[chainId][coin.toLowerCase()], tradeId, coin)
+            // console.log(coin, chainAddressEnums[chainId][coin.toLowerCase()], pro)
+            pro && proList.push(pro as Promise<TokenInfo>)
+          }
+        })
       }
+      console.log(proList)
 
       Promise.all(proList).then((res) => {
+        console.log(res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
+        console.log(err)
         throw new Error(err)
       })
     }
@@ -132,9 +156,11 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
-    const ERC20Contract = await browserContractService?.getERC20Contract(token)
+    // const ERC20Contract = await browserContractService?.getERC20Contract(token)
+    const ERC20Contract = await coreContracts?.getERC20Contract(token)
 
-    const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
+    // const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
+    const cp = await coreContracts?.manageContract.getTradeIdToCapitalPool(tradeId)
 
     if (!cp)
       return
@@ -151,7 +177,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     let ratio
 
     if (tokenName !== 'USDC')
-      ratio = await browserContractService?.testLiquidity_calculateSwapRatio(address)
+      ratio = await browserContractService?.testLiquidity_calculateSwapRatio(token)
+    // ratio = await browserContractService?.testLiquidity_calculateSwapRatio(address)
 
     const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
 
