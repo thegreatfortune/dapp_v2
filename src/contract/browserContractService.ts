@@ -908,13 +908,17 @@ export class BrowserContractService {
     const cp = await followManageContract?.getTradeIdToCapitalPool(BigInt(tradeId))
     console.log('%c [approve cp ]-817', 'font-size:13px; background:#c57017; color:#ffb45b;', cp)
 
+    const processCenterContract = await this?.getProcessCenterContract()
+
+    const count = await processCenterContract.getOrderReapyMoney(tradeId)
+
     if (!cp)
       return false
     // TODO
     const allowance = await ERC20Contract?.allowance(this?.getSigner.address, cp)
     console.log('%c [ capitalPool_approve ]-418', 'font-size:13px; background:#3174f1; color:#75b8ff;', allowance)
 
-    if ((allowance ?? BigInt(0)) <= BigInt(0)) {
+    if (allowance < count) {
       const approveRes = await ERC20Contract?.approve(cp, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
       if (!approveRes)
         return false

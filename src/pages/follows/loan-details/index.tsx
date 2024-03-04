@@ -155,10 +155,12 @@ const LoanDetails = () => {
     }
     else {
       async function fetchSharesData() {
-        const erc3525Contract = await browserContractService?.getERC3525Contract()
-        const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(currentUser.address, tradeId!)
-        const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
-        setTotalShares(Number.parseInt(shares!.toString()))
+        if (browserContractService) {
+          const erc3525Contract = await browserContractService?.getERC3525Contract()
+          const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(currentUser.address, tradeId!)
+          const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
+          setTotalShares(Number.parseInt(shares!.toString()))
+        }
       }
       fetchSharesData()
     }

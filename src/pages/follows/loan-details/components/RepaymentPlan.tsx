@@ -266,6 +266,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                         className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button>
                       {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
                         className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>}
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                        className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>
                     </li>
                   </ul>
                 </List.Item>
