@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -13,7 +13,7 @@ export class RepayPlanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.RepayPlanVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/repayPlan/pageInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/repayPlan/pageInfo',
       method: 'GET',
       params: {
         ...params,

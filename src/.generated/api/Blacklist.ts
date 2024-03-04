@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class BlacklistService {
   /** 分页查询黑名单 GET /api/blacklist/pageInfo */
@@ -13,7 +13,7 @@ export class BlacklistService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.BlacklistVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/blacklist/pageInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/blacklist/pageInfo',
       method: 'GET',
       params: {
         ...params,

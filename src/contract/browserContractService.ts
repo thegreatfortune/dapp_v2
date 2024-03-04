@@ -22,7 +22,7 @@ import { Models } from '@/.generated/api/models'
 import type { LoanRequisitionEditModel } from '@/models/LoanRequisitionEditModel'
 import { LoanService } from '@/.generated/api/Loan'
 import { tokenList } from '@/contract/tradingPairTokenMap'
-import { chainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums } from '@/enums/chain'
 
 const BLACK_HOLE_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -87,7 +87,7 @@ async function handleTransaction(
 
 export class BrowserContractService {
   constructor(private signer: ethers.JsonRpcSigner, private _chainId: number) {
-    this._chainAddresses = chainAddressEnums[this._chainId]
+    this._chainAddresses = ChainAddressEnums[this._chainId]
   }
 
   /**
@@ -1321,7 +1321,7 @@ export class BrowserContractService {
     const contract = await this.getTestLiquidityContract()
 
     const price = await contract?.getTokenPrice(
-      this._chainAddresses.usdc,
+      this._chainAddresses.USDC,
       swapToken,
       fee,
       ethers.parseEther(String(1)),

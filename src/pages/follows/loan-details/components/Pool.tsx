@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Button, Divider, Image, Input, Tabs, message } from 'antd'
 import { ethers } from 'ethers'
+import { useChainId } from 'wagmi'
 import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import RepaymentPlan from './RepaymentPlan'
 import SwapModal from './SwapModal'
@@ -12,9 +13,10 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
-import { chainAddressEnums } from '@/enums/chain'
-import { useChainId } from 'wagmi'
+import { ChainAddressEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
+import USDCLogo from '@/assets/images/loan-details/usdc.png'
+import { executeTask } from '@/helpers/helpers'
 
 // import { PortfolioService } from '@/.generated/api'
 
@@ -77,6 +79,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       return null
     }).filter(Boolean) as TokenInfo[]
+    console.log(tokenInfos, uniqueTokenInfos)
 
     const a = uniqueTokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
     setTokenTotals(a ?? '0')
@@ -100,7 +103,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   useEffect(() => {
     getBalanceByTokens()
-  }, [coreContracts, transactionPair, tradeId])
+  }, [browserContractService, transactionPair, tradeId])
 
   async function getBalanceByTokens() {
     if (!coreContracts || !tradeId)
@@ -111,7 +114,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       const proList: Promise<TokenInfo>[] = []
       // if (proList.length === 0 && tokenInfos.length === 0) {
-      const pro = getBalanceByToken(chainAddressEnums[chainId].usdc, tradeId, 'USDC')
+      const pro = getBalanceByToken(ChainAddressEnums[chainId].USDC, tradeId, 'USDC')
       // const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
       pro && proList.push(pro as Promise<TokenInfo>)
       // }
@@ -131,19 +134,18 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         coreContracts.specifiedTradingPairsOfSpot.forEach((pairs) => {
           if (coin === pairs.name) {
             // console.log(tradingPairTokenMap[coin], tradeId, coin)
-            const pro = getBalanceByToken(chainAddressEnums[chainId][coin.toLowerCase()], tradeId, coin)
-            // console.log(coin, chainAddressEnums[chainId][coin.toLowerCase()], pro)
+            const pro = getBalanceByToken(ChainAddressEnums[chainId][coin], tradeId, coin)
+            // console.log(coin, ChainAddressEnums[chainId][coin.toLowerCase()], pro)
             pro && proList.push(pro as Promise<TokenInfo>)
           }
         })
       }
-      console.log(proList)
+      // console.log(proList)
 
       Promise.all(proList).then((res) => {
-        console.log(res)
+        console.log('res', res)
         setTokenInfos(preState => ([...preState, ...res]))
       }).catch((err) => {
-        console.log(err)
         throw new Error(err)
       })
     }
@@ -156,12 +158,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
+    console.log(token, tradeId, name)
     // const ERC20Contract = await browserContractService?.getERC20Contract(token)
     const ERC20Contract = await coreContracts?.getERC20Contract(token)
 
     // const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
     const cp = await coreContracts?.manageContract.getTradeIdToCapitalPool(tradeId)
-
     if (!cp)
       return
 
@@ -172,7 +174,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
     const tokenName = name ?? symbol
 
-    const address = tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap]
+    // const address = tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap]
+    const address = ChainAddressEnums[chainId][tokenName!]
 
     let ratio
 
@@ -191,7 +194,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       address,
       ratio: ratio ? String(ratio) : '0',
       dollars,
-      icon: tokenList.find(token => token.address === address)?.icon,
+      // icon: tokenList.find(token => token.address === address)?.icon,
+      icon: tokenName === 'USDC'
+        ? USDCLogo
+        : coreContracts!.specifiedTradingPairsOfSpot.find(pair => pair.address === address)?.logo,
     }
   }
 
@@ -240,6 +246,79 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   // const renderTabBar: TabsProps['renderTabBar'] = (props, DefaultTabBar) => (
   //   <DefaultTabBar {...props} className='h1 text-white' />
   // )
+
+  interface ITokenState {
+    address: string
+    name: string
+    decimals: number
+    balance: string
+    ratio: string
+    usd: string
+    icon: string
+  }
+
+  const [tokenStates, setTokenStates] = useState<ITokenState[]>([])
+
+  const getTokenState = async () => {
+    const task = async () => {
+      if (coreContracts && tradeId) {
+        const tokenStates: ITokenState[] = []
+
+        const capitalPoolAddressOfTradeId = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
+
+        const usdcDecimals = await coreContracts.usdcContract.decimals()
+        const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfTradeId)
+
+        // get USDC state
+        const usdtState = {
+          name: 'USDC',
+          balance: ethers.formatUnits(usdcBalance ?? 0, usdcDecimals),
+          decimals: Number(usdcDecimals),
+          address: ChainAddressEnums[chainId].USDC,
+          ratio: '0',
+          usd: ethers.formatUnits(usdcBalance ?? 0, usdcDecimals),
+          icon: USDCLogo
+        }
+        tokenStates.push(usdtState)
+
+        // get all others token state
+
+        for (let i = 0; i < coreContracts.specifiedTradingPairsOfSpot.length; i++) {
+          const pairs = coreContracts.specifiedTradingPairsOfSpot[i]
+          const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][pairs.name])
+          const decimals = await tokenContract.decimals()
+          const balance = await tokenContract.balanceOf(capitalPoolAddressOfTradeId)
+
+          const liquidityContract = await coreContracts.getTestLiquidityContract()
+          const ratio = await liquidityContract.getTokenPrice(
+            ChainAddressEnums[chainId].USDC,
+            ChainAddressEnums[chainId][pairs.name],
+            3000,
+            ethers.parseEther(String(1)),
+          )
+          const tokenState = {
+            name: pairs.name,
+            balance: ethers.formatUnits(balance ?? 0, decimals),
+            decimals: Number(decimals),
+            address: ChainAddressEnums[chainId][pairs.name],
+            ratio: ratio.toString(),
+            usd: String(Number(ethers.formatUnits(balance ?? 0, decimals)) / (Number(ratio))),
+            icon: pairs.logo,
+          }
+          tokenStates.push(tokenState)
+        }
+
+        setTokenStates(tokenStates)
+      }
+    }
+    executeTask(task)
+  }
+
+  useEffect(() => {
+    if (coreContracts)
+      getTokenState()
+  }, [coreContracts])
+
   return (
     <div className='w-full'>
       <SwapModal
@@ -340,7 +419,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                       >
                         <div className="flex grow items-center justify-between px-10 text-center xl:px-1">
                           <div className='flex items-center'>
-                            <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} />
+                            <Image preview={false} width={24} height={24} src={item.icon} />
+                            {/* <Image preview={false} width={24} height={24} src={tokenList.find(e => e.address === item.address)?.icon} /> */}
                             <div className='ml-10 flex items-center text-20 c-#fff md:text-16'>
                               {item.name} ({
                                 // 如果余额大于零，则计算比例并显示结果

@@ -2,13 +2,13 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class UserInfoService {
   /** 获取当前登录用户的信息 GET /api/user/info/ */
   static async ApiUserInfo_GET(chainId: number, options?: { [key: string]: any }) {
     return request<Models.UserInfoVo1>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/user/info/',
       method: 'GET',
       ...(options || {}),
     });
@@ -17,7 +17,7 @@ export class UserInfoService {
   /** 整合的计分信息 GET /api/user/info/totalScoreInfo */
   static async ApiUserInfoTotalScoreInfo_GET(chainId: number, options?: { [key: string]: any }) {
     return request<Models.UserScore>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
       method: 'GET',
       ...(options || {}),
     });
@@ -30,7 +30,7 @@ export class UserInfoService {
    */
   static async getUserInfo(chainId: number, options?: { [key: string]: any }) {
     return request<Models.UserInfoVo1>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/user/info/',
       method: 'GET',
       ...options,
     });
@@ -39,7 +39,7 @@ export class UserInfoService {
   /** 整合的计分信息 GET /api/user/info/totalScoreInfo */
   static async getUserScore(chainId: number, options?: { [key: string]: any }) {
     return request<Models.UserScore>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/user/info/totalScoreInfo',
       method: 'GET',
       ...(options || {}),
     });

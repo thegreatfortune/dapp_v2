@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class TwitterNotifyControllerService {
   /** oauth GET /oauth/callback/twitter */
@@ -13,7 +13,7 @@ export class TwitterNotifyControllerService {
     options?: { [key: string]: any },
   ) {
     return request<Models.RedirectView>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'oauth/callback/twitter',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'oauth/callback/twitter',
       method: 'GET',
       params: {
         ...params,

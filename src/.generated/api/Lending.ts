@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class LendingService {
   /** 分页查询自己的借出记录, 强制登录 GET /api/lending/pageInfo */
@@ -13,7 +13,7 @@ export class LendingService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.LendingLoanVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/lending/pageInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/lending/pageInfo',
       method: 'GET',
       params: {
         ...params,

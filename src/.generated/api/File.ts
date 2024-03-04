@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class FileService {
   /** uploadFile POST /api/file/upload */
@@ -30,7 +30,7 @@ export class FileService {
     });
 
     return request<string>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/file/upload',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/file/upload',
       method: 'POST',
       data: formData,
       headers: { 'Content-Type': 'multipart/form-data' },

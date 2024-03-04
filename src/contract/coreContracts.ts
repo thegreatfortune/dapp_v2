@@ -1,5 +1,5 @@
-import { Contract, ZeroAddress, ethers } from 'ethers'
-import BigNumber from 'bignumber.js'
+import type { ethers } from 'ethers'
+import { Contract, ZeroAddress } from 'ethers'
 import type {
   FollowFiERC1155 as ERC1155,
   ERC20,
@@ -29,9 +29,10 @@ import handleABI from '@/abis/FollowHandle.json'
 import ERC3525_ABI from '@/abis/ERC3525.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
-import TEST_LIQUIDITY_ABI from '@/abis/UniswapV3.json'
-import { chainAddressEnums } from '@/enums/chain'
+import TESTLIQUIDITY_ABI from '@/abis/UniswapV3.json'
+import { ChainAddressEnums } from '@/enums/chain'
 
+// import USDCLogo from '@/assets/images/loan-details/usdc.png'
 import BTCLogo from '@/assets/images/apply-loan/token-icons/BTC.png'
 import ETHLogo from '@/assets/images/apply-loan/token-icons/ETH.png'
 import ARBLogo from '@/assets/images/apply-loan/token-icons/ARB.png'
@@ -47,7 +48,7 @@ function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.In
 
 export class CoreContracts {
   constructor(private _signer: ethers.JsonRpcSigner, private _chainId: number) {
-    const chainAddresses = chainAddressEnums[this._chainId]
+    const chainAddresses = ChainAddressEnums[this._chainId]
     this._capitalFactoryContract = createContract(chainAddresses.capitalFactory, capitalFactoryABI, this.signer)
     this._refundFactoryContract = createContract(chainAddresses.refundFactory, refundFactoryABI, this.signer)
     this._processCenterContract = createContract(chainAddresses.processCenter, processCenterABI, this.signer)
@@ -58,7 +59,7 @@ export class CoreContracts {
     this._sharesContract = createContract(chainAddresses.shares, ERC3525_ABI, this.signer)
     this._fofContract = createContract(chainAddresses.fof, ERC20_ABI, this.signer)
     this._nftContract = createContract(chainAddresses.nft, ERC1155_ABI, this.signer)
-    this._usdcContract = createContract(chainAddresses.usdc, ERC20_ABI, this.signer)
+    this._usdcContract = createContract(chainAddresses.USDC, ERC20_ABI, this.signer)
     this._capitalPoolAddress = ZeroAddress
     this._refundPoolAddress = ZeroAddress
     this._faucetContract = createContract(chainAddresses.faucet, faucetABI, this.signer)
@@ -66,37 +67,47 @@ export class CoreContracts {
       {
         logo: BTCLogo,
         name: 'BTC',
+        address: chainAddresses.BTC,
       },
       {
         logo: SOLLogo,
         name: 'SOL',
+        address: chainAddresses.SOL,
       },
       {
         logo: ETHLogo,
         name: 'ETH',
+        address: chainAddresses.ETH,
       },
       {
         logo: ARBLogo,
         name: 'ARB',
+        address: chainAddresses.ARB,
       },
       {
         logo: LINKLogo,
         name: 'LINK',
+        address: chainAddresses.LINK,
       },
       {
         logo: UNILogo,
         name: 'UNI',
+        address: chainAddresses.UNI,
       },
       {
         logo: LDOLogo,
         name: 'LDO',
+        address: chainAddresses.LDO,
       },
       {
         logo: AAVELogo,
         name: 'AAVE',
+        address: chainAddresses.AAVE,
       },
     ]
     this._specifiedTradingPairsOfFuture = []
+    this._liquidityContract = createContract(chainAddresses.liquidity, TESTLIQUIDITY_ABI, this.signer,
+    )
   }
 
   private static _instance: CoreContracts
@@ -158,9 +169,11 @@ export class CoreContracts {
 
   private _faucetContract: faucet
 
-  private _specifiedTradingPairsOfSpot: { logo: string; name: string }[]
+  private _specifiedTradingPairsOfSpot: { logo: string; name: string; address: string }[]
 
-  private _specifiedTradingPairsOfFuture: { logo: string; name: string }[]
+  private _specifiedTradingPairsOfFuture: { logo: string; name: string; address: string }[]
+
+  private _liquidityContract: UniswapV3
 
   get capitalFactoryContract(): capitalFactory {
     return this._capitalFactoryContract
@@ -288,31 +301,7 @@ export class CoreContracts {
    * @return {*}  {(Promise<UniswapV3 | undefined>)}
    * @memberof BrowserContractService
    */
-  async getTestLiquidityContract(token?: string): Promise<UniswapV3 | undefined> {
-    // if (this._ERC20Contract && !token)
-    //   return this._ERC20Contract
-
-    return createContract<UniswapV3>(
-      token ?? import.meta.env.VITE_CORE_LIQUIDITY,
-      TEST_LIQUIDITY_ABI,
-      this.signer,
-    )
-  }
-
-  async testLiquidity_calculateSwapRatio(swapToken: string, fee = BigInt(3000)): Promise<string> {
-    const contract = await this.getTestLiquidityContract()
-
-    const price = await contract?.getTokenPrice(
-      import.meta.env.VITE_TOKEN_USDC,
-      swapToken,
-      fee,
-      ethers.parseEther(String(1)),
-    )
-    // console.log('%c [ price ]-1227', 'font-size:13px; background:#f1ca51; color:#ffff95;', price)
-
-    const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
-    // console.log('%c [ ratio ]-1235', 'font-size:13px; background:#cea8a4; color:#ffece8;', ratio)
-
-    return ratio
+  async getTestLiquidityContract() {
+    return this._liquidityContract
   }
 }

@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class MarketService {
   /** 分页查询所有挂单 GET /api/market/pageInfo */
@@ -13,7 +13,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.TokenMarketVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/market/pageInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/market/pageInfo',
       method: 'GET',
       params: {
         ...params,
@@ -30,7 +30,7 @@ export class MarketService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.MarketLoanVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/market/pageTradingLoan',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/market/pageTradingLoan',
       method: 'GET',
       params: {
         ...params,

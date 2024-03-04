@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -13,7 +13,7 @@ export class UserInviteService {
     options?: { [key: string]: any },
   ) {
     return request<boolean>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/user/invite/invitedOrNot',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/user/invite/invitedOrNot',
       method: 'GET',
       params: {
         ...params,

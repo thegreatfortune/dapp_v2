@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -13,7 +13,7 @@ export class MarketBalanceService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.MyFollowVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/market/balance/pageMyFollow',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/market/balance/pageMyFollow',
       method: 'GET',
       params: {
         ...params,

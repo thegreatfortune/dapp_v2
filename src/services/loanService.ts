@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import request from '../utils/request'
 import type { Models } from '../.generated/api/models'
-import { chainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums } from '@/enums/chain'
 
 /**
  * submit trade detail to backend api, backend will confirm it and save to DB.
@@ -16,7 +16,7 @@ async function submitNewLoan(
     options?: { [key: string]: any },
 ) {
     return request<boolean>({
-        url: chainAddressEnums[chainId].apiEndpoint + 'api/loans',
+        url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ async function getLoanDetail(
     options?: { [key: string]: any },
 ) {
     return request<Models.ILoanOrderVO>({
-        url: chainAddressEnums[chainId].apiEndpoint + 'api/loans/' + params.tradeId,
+        url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans/' + params.tradeId,
         method: 'GET',
         // params: {
         //     ...params,
@@ -61,7 +61,7 @@ async function getLoanList(
     options?: { [key: string]: any },
 ) {
     return request<Models.IPageResult<Models.LoanOrderVO>>({
-        url: chainAddressEnums[chainId].apiEndpoint + 'api/loans',
+        url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans',
         method: 'GET',
         params: {
             ...params,

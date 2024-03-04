@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from '../../utils/request';
 import { Models } from './models';
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 
 export class LoanService {
   /** 接受借款申请通知 <p>接受借款申请接口</p> POST /api/loan/confirm */
@@ -12,7 +12,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<boolean>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/loans',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export class LoanService {
   /** 查询跟随中状态的订单信息 GET /api/loan/homeInfo */
   static async ApiLoanHomeInfo_GET(chainId: number, options?: { [key: string]: any }) {
     return request<Models.LoanOrderVO[]>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/loans/follows',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans/follows',
       method: 'GET',
       ...(options || {}),
     });
@@ -39,7 +39,7 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.LoanOrderVO>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/loans/' + params.tradeId,
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans/' + params.tradeId,
       method: 'GET',
       params: {
         ...params,
@@ -56,8 +56,8 @@ export class LoanService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.LoanOrderVO>>({
-      // url: chainAddressEnums[chainId].apiEndpoint + 'api/loans/pageLoanContract',
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/loans',
+      // url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans/pageLoanContract',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/loans',
       method: 'GET',
       params: {
         ...params,

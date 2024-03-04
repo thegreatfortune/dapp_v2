@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -12,7 +12,7 @@ export class MetamaskService {
     options?: { [key: string]: any },
   ) {
     return request<string>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/metamask/getVerifyNonce',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/metamask/getVerifyNonce',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export class MetamaskService {
     options?: { [key: string]: any },
   ) {
     return request<Models.AuthResult>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/metamask/login',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/metamask/login',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

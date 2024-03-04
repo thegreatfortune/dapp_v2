@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -14,7 +14,7 @@ export class UserInviteRedirectService {
   ) {
     const { inviteCode: param0, ...queryParams } = params;
     return request<Models.RedirectView>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'invite/${param0}',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'invite/${param0}',
       method: 'GET',
       params: { ...queryParams },
       ...(options || {}),

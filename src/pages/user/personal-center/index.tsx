@@ -18,7 +18,7 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
-import { chainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
 import useTokenBalance from '@/hooks/useTokenBalance'
@@ -118,7 +118,7 @@ const PersonalCenter = () => {
     await provider.send('wallet_watchAsset', {
       type: 'ERC20',
       options: {
-        address: chainAddressEnums[chainId].usdc,
+        address: ChainAddressEnums[chainId].USDC,
         symbol: 'USDC',
         decimals: 18,
         // "image": "https://foo.io/token-image.svg"
@@ -128,7 +128,7 @@ const PersonalCenter = () => {
 
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
-      const canClaim = await claimStatusFromFaucet(chainAddressEnums[chain?.id as number].usdc)
+      const canClaim = await claimStatusFromFaucet(ChainAddressEnums[chain?.id as number].usdc)
       if (!canClaim) {
         setClaimText(t('faucet.claimedText'))
         setClaimOkButtonDisabled(true)
@@ -136,7 +136,7 @@ const PersonalCenter = () => {
       setClaimModalOpen(true)
     }
     else {
-      window.open(chainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
+      window.open(ChainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
     }
   }
 
@@ -155,7 +155,7 @@ const PersonalCenter = () => {
     setClaimCancelButtonHidden(true)
 
     try {
-      await claimTokenFromFaucet(chainAddressEnums[chainId].usdc)
+      await claimTokenFromFaucet(ChainAddressEnums[chainId].USDC)
       setClaimOkButtonText(t('completed'))
       setClaiming(false)
       setClaimOkButtonDisabled(false)

@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -13,7 +13,7 @@ export class LoanTokenSwapService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.LoanTokenSwapVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'loan/tokenSwap/pageInfo',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'loan/tokenSwap/pageInfo',
       method: 'GET',
       params: {
         ...params,

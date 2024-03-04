@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import { chainAddressEnums } from '@/enums/chain';
+import { ChainAddressEnums } from '@/enums/chain';
 import request from '../../utils/request';
 import { Models } from './models';
 
@@ -13,7 +13,7 @@ export class IntegralRecordService {
     options?: { [key: string]: any },
   ) {
     return request<Models.IPageResult<Models.IntegralVo>>({
-      url: chainAddressEnums[chainId].apiEndpoint + 'api/integralRecord/page',
+      url: ChainAddressEnums[chainId].apiEndpoint + 'api/integralRecord/page',
       method: 'GET',
       params: {
         ...params,
