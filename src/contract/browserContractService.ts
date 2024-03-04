@@ -1296,18 +1296,27 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async followRouter_doRepay(tradeId: bigint) {
-    const approve = await this.ERC20_capitalPool_approve(tradeId)
+    const processCenterContract = await this?.getProcessCenterContract()
+    const repayCount = await processCenterContract.getOrderReapyMoney(tradeId)
 
-    console.log('%c [ approve ]-1197', 'font-size:13px; background:#751462; color:#b958a6;', approve)
+    const ERC20Contract = await this.getERC20Contract()
+    const routerContract = await this.getFollowRouterContract()
+    const routeAddress = await routerContract.getAddress()
 
-    if (!approve) {
-      message.error('approve is error')
-      throw new Error('approve is error')
+    const allowance = await ERC20Contract?.allowance(this?.getSigner.address, routeAddress)
+
+    if (allowance < repayCount) {
+      const approveRes = await ERC20Contract?.approve(routeAddress, BigInt(200 * 10 ** 6) * BigInt(10 ** 18))
+
+      const approveResult = await approveRes?.wait()
+
+      if (approveResult?.status !== 1) {
+        message.error('approve is error')
+        throw new Error('approve is error')
+      }
     }
 
-    const followRouterContract = await this.getFollowRouterContract()
-
-    const transaction = await followRouterContract.doRepay(tradeId)
+    const transaction = await routerContract.doRepay(tradeId)
 
     return handleTransaction(transaction)
 
