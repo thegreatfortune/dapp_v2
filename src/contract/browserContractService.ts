@@ -1381,14 +1381,15 @@ export class BrowserContractService {
   //   return true
   // }
 
-  async followRouter_doV3Swap(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+  // async followRouter_doV3Swap(tradeId: bigint, swapToken: string, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
+  async followRouter_doV3Swap(tradeId: bigint, tIndex: number, buyOrSell: bigint, amount: bigint, fee: bigint = BigInt(3000)) {
     const followRouterContract = await this.getFollowRouterContract()
 
-    const tIndex = tokenList.findIndex(e => e.address === swapToken)
+    // const tIndex = tokenList.findIndex(e => e.address === swapToken)
 
     const hIndex = await this.getHIndex()
 
-    const res = await followRouterContract.doV3Swap(tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
+    const res = await followRouterContract.doV3Swap(tradeId, BigInt(tIndex + 1), hIndex, buyOrSell, amount, fee)
     console.log('%c [ tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee ]-1281', 'font-size:13px; background:#b5288d; color:#f96cd1;', tradeId, BigInt(tIndex), hIndex, buyOrSell, amount, fee)
     return handleTransaction(res)
   }

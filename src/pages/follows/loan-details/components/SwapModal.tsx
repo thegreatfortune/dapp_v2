@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import { SyncOutlined } from '@ant-design/icons'
+import { useChainId } from 'wagmi'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import { ChainAddressEnums } from '@/enums/chain'
-import { useChainId } from 'wagmi'
+import useCoreContract from '@/hooks/useCoreContract'
 
 // import exChange from '@/assets/images/loan-details/exchange.png'
 // import FolCoin from '@/assets/images/loan-details/FolCoin.png'
@@ -135,7 +136,7 @@ const SwapModal: React.FC<IProps> = (props) => {
       ...tempYouPay,
     })
   }
-
+  const { coreContracts } = useCoreContract()
   async function enterAnAmount() {
     if (!props.tradeId)
       return
@@ -171,9 +172,10 @@ const SwapModal: React.FC<IProps> = (props) => {
       message.error('address is undefined')
       return
     }
+    const tIndex = coreContracts!.specifiedTradingPairsOfSpot.findIndex(pair => pair.address === tokenInformation.address)
 
     try {
-      const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tokenInformation.address, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
+      const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tIndex, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
       if (res?.status === 1)
         await props.resetSwapTokenInfo()
     }
