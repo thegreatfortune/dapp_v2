@@ -70,14 +70,14 @@ export class CoreContracts {
         address: chainAddresses.BTC,
       },
       {
-        logo: SOLLogo,
-        name: 'SOL',
-        address: chainAddresses.SOL,
-      },
-      {
         logo: ETHLogo,
         name: 'ETH',
         address: chainAddresses.ETH,
+      },
+      {
+        logo: SOLLogo,
+        name: 'SOL',
+        address: chainAddresses.SOL,
       },
       {
         logo: ARBLogo,
