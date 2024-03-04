@@ -427,6 +427,20 @@ const ApplyLoan = () => {
         if (useDiagram === true)
           url = await uploadFile()
         const decimals = await coreContracts.usdcContract.decimals()
+
+        console.log({
+          _timePeriod: BigInt(loanForm.duration),
+          _repayTimes: BigInt(loanForm.installments),
+          _interestRate: BigInt(loanForm.interest * 100),
+          _shareRate: BigInt((loanForm.dividend ?? 0) * 100),
+          _goalShareCount: BigInt(loanForm.numberOfShares),
+          _minShareCount: BigInt(loanForm.minimumRequiredRaisingShares ?? 0),
+          _collectEndTime: BigInt(loanForm.raisingTime!) * BigInt(86400), // seconds
+          _goalMoney: BigInt(loanForm.loanAmount) * (BigInt(10) ** decimals), // decimals token for usdc
+          uri: url ?? loanForm.imageUrl,
+          name: loanForm.name,
+        })
+
         const res = await coreContracts.routerContract.borrowerCreateOrder(
           {
             _timePeriod: BigInt(loanForm.duration),

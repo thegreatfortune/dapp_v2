@@ -26,7 +26,7 @@ export class LoanForm {
     this.imageUrl = ''
     this.projectImagePreViewUrl = ''
     this.loanAmount = 1000
-    this.duration = 10
+    this.duration = 0
     this.installments = 1
     this.numberOfShares = 1
     this.minimumRequiredRaisingShares = 1

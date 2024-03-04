@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ZeroAddress } from 'ethers'
 
+import USDCLogo from '@/assets/images/loan-details/usdc.png'
+import BTCLogo from '@/assets/images/apply-loan/token-icons/BTC.png'
+import ETHLogo from '@/assets/images/apply-loan/token-icons/ETH.png'
+import ARBLogo from '@/assets/images/apply-loan/token-icons/ARB.png'
+import LINKLogo from '@/assets/images/apply-loan/token-icons/LINK.png'
+import UNILogo from '@/assets/images/apply-loan/token-icons/UNI.png'
+import LDOLogo from '@/assets/images/apply-loan/token-icons/LDO.png'
+import AAVELogo from '@/assets/images/apply-loan/token-icons/AAVE.png'
+import SOLLogo from '@/assets/images/apply-loan/token-icons/SOL.png'
+
 interface IChainAddresses {
     apiEndpoint: string
     capitalFactory: string
@@ -87,6 +97,19 @@ const ChainAddressEnums: { [key: number]: IChainAddresses } = {
     },
 }
 
+const TokenLogo: { [key: string]: string } = {
+    USDC: UNILogo,
+    BTC: BTCLogo,
+    SOL: SOLLogo,
+    ETH: ETHLogo,
+    ARB: ARBLogo,
+    LINK: LINKLogo,
+    UNI: UNILogo,
+    LDO: LDOLogo,
+    AAVE: AAVELogo,
+}
+
 export {
     ChainAddressEnums,
+    TokenLogo,
 }

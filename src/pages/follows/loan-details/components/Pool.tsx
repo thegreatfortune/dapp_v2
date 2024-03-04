@@ -13,7 +13,7 @@ import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
-import { ChainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums, TokenLogo } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import USDCLogo from '@/assets/images/loan-details/usdc.png'
 import { executeTask } from '@/helpers/helpers'
@@ -79,7 +79,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       return null
     }).filter(Boolean) as TokenInfo[]
-    console.log(tokenInfos, uniqueTokenInfos)
+    console.log('tokenInfos & uniqueTokenInfos', tokenInfos, uniqueTokenInfos)
 
     const a = uniqueTokenInfos.map(e => e.dollars).reduce((pre, cur) => BigNumber(pre ?? 0).plus(cur ?? 0).toString(), '0')
     setTokenTotals(a ?? '0')
@@ -158,7 +158,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
-    console.log(token, tradeId, name)
     // const ERC20Contract = await browserContractService?.getERC20Contract(token)
     const ERC20Contract = await coreContracts?.getERC20Contract(token)
 
@@ -277,33 +276,33 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
           address: ChainAddressEnums[chainId].USDC,
           ratio: '0',
           usd: ethers.formatUnits(usdcBalance ?? 0, usdcDecimals),
-          icon: USDCLogo
+          icon: TokenLogo.USDC,
         }
         tokenStates.push(usdtState)
 
         // get all others token state
 
-        for (let i = 0; i < coreContracts.specifiedTradingPairsOfSpot.length; i++) {
-          const pairs = coreContracts.specifiedTradingPairsOfSpot[i]
-          const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][pairs.name])
+        for (let i = 0; i < transactionPair.length; i++) {
+          const name = transactionPair[i]
+          const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][name])
           const decimals = await tokenContract.decimals()
           const balance = await tokenContract.balanceOf(capitalPoolAddressOfTradeId)
 
           const liquidityContract = await coreContracts.getTestLiquidityContract()
           const ratio = await liquidityContract.getTokenPrice(
             ChainAddressEnums[chainId].USDC,
-            ChainAddressEnums[chainId][pairs.name],
+            ChainAddressEnums[chainId][name],
             3000,
             ethers.parseEther(String(1)),
           )
           const tokenState = {
-            name: pairs.name,
+            name,
             balance: ethers.formatUnits(balance ?? 0, decimals),
             decimals: Number(decimals),
-            address: ChainAddressEnums[chainId][pairs.name],
+            address: ChainAddressEnums[chainId][name],
             ratio: ratio.toString(),
             usd: String(Number(ethers.formatUnits(balance ?? 0, decimals)) / (Number(ratio))),
-            icon: pairs.logo,
+            icon: TokenLogo[name],
           }
           tokenStates.push(tokenState)
         }
@@ -318,6 +317,11 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     if (coreContracts)
       getTokenState()
   }, [coreContracts])
+
+  useEffect(() => {
+    if (tokenStates.length > 0)
+      console.log('tokenStates:', tokenStates)
+  }, [tokenStates])
 
   return (
     <div className='w-full'>
