@@ -22,7 +22,7 @@ interface IProps {
   refundPoolAddress: string | undefined
   lendState: 'Processing' | 'Success' | undefined
   prePage: string | null
-  loanInfo: Models.LoanOrderVO
+  loanInfo: Models.ILoanOrderVO
 }
 
 export class TokenInfo {

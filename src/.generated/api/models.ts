@@ -319,9 +319,9 @@ Canceled :订单取消 */
     /** 获取接收贷款的地址 */
     receiveAddress?: string = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
-    tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
+    tradingPlatform?: SpecifiedTradingPlatformTypeEnum = undefined;
     /** 交易形式, 或者不指定 */
-    tradingForm?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
+    tradingForm?: SpecifiedTradingTypeEnum = undefined;
     /** 借款合同名称 */
     loanName?: string = undefined;
     /** 贷款金额 */
@@ -405,6 +405,17 @@ Canceled :订单取消 */
     isConfirm?: number = 0;
   }
 
+  export type LoanState = 'Invalid'
+    | 'Following'
+    | 'Trading'
+    | 'PaidOff'
+    | 'PaidButArrears'
+    | 'CloseByUncollected'
+    | 'Blacklist'
+    | 'Fail'
+    | 'ClearingFail'
+
+
   export interface ILoanOrderVO {
     showPlatformUserList?: PlatformUserVo[]
     /** 已筹集份数 */
@@ -416,16 +427,7 @@ Canceled :订单取消 */
     /** 在合约中的订单id */
     tradeId: number
     /** 生效状态 */
-    state?:
-    | 'Invalid'
-    | 'Following'
-    | 'Trading'
-    | 'PaidOff'
-    | 'PaidButArrears'
-    | 'CloseByUncollected'
-    | 'Blacklist'
-    | 'Fail'
-    | 'ClearingFail'
+    state?: LoanState
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
     tradingPlatform: SpecifiedTradingPlatformType
     /** 交易形式, 或者不指定 */
@@ -646,9 +648,9 @@ Canceled :订单取消 */
       | 'Fail'
       | 'ClearingFail' = undefined;
     /** 交易平台, 如果trading_form不指定则不需要指定这里 */
-    tradingPlatform?: 'Empty' | 'Uniswap' | 'GMX' = undefined;
+    tradingPlatform?: SpecifiedTradingPlatformTypeEnum = undefined;
     /** 交易形式, 或者不指定 */
-    tradingForm?: 'Empty' | 'SpotGoods' | 'Contract' = undefined;
+    tradingForm?: SpecifiedTradingTypeEnum = undefined;
     /** 借款订单名称 */
     loanName?: string = undefined;
     /** 展示图片地址 */

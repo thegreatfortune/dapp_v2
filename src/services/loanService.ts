@@ -38,7 +38,7 @@ async function getLoanDetail(
     params: Models.IGetLoanDetailParams,
     options?: { [key: string]: any },
 ) {
-    return request<Models.LoanOrderVO>({
+    return request<Models.ILoanOrderVO>({
         url: chainAddressEnums[chainId].apiEndpoint + 'api/loans/' + params.tradeId,
         method: 'GET',
         // params: {

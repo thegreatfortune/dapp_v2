@@ -5,7 +5,7 @@ import { isContractAddress } from '@/utils/regex'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
 
 interface CardProps {
-  item: Models.LoanOrderVO
+  item: Models.ILoanOrderVO
 }
 
 const InfoCard: React.FC<CardProps> = ({ item }) => {

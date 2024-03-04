@@ -25,9 +25,9 @@ const Market = () => {
     const params = { ...new Models.ApiMarketPageTradingLoanGETParams(), limit: 8, page: 1 }
 
     if (type === 'LowRisk')
-      params.tradingFormTypeStr = 'SpotGoods'
+      params.tradingFormTypeStr = 'Spot'
     else if (type === 'HighRisk')
-      params.tradingFormTypeStr = 'Contract,Empty'
+      params.tradingFormTypeStr = 'Future,Other'
     setParams(params)
   }
 

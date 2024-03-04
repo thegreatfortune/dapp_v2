@@ -22,7 +22,7 @@ export interface IColumn<T> {
 }
 
 export interface IScrollableListProps {
-  api: (chainId: number, params: IPaged) => Promise<Models.PageResult<any>>
+  api: (chainId: number, params: IPaged) => Promise<Models.IPageResult<any>>
   chainId: number
   params: IPaged & any
   renderItem: (item: any, index: number) => React.ReactNode

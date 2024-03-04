@@ -33,9 +33,9 @@ const OrderViewAll = () => {
       params.state = 'Blacklist'
 
     if (type === 'LowRisk')
-      params.tradingFormTypeList = 'SpotGoods'
+      params.tradingFormTypeList = 'Spot'
     else if (type === 'HighRisk')
-      params.tradingFormTypeList = 'Contract,Empty'
+      params.tradingFormTypeList = 'Future,Other'
 
     setApiParams(params)
   }
@@ -89,7 +89,7 @@ const OrderViewAll = () => {
           chainId={chainId}
           params={{ ...apiParams, state: 'Following', orderItemList: 'actual_share_count=false' }}
           containerId='TrendingLoansContainer'
-          renderItem={(item: Models.LoanOrderVO) => <div onClick={() => {
+          renderItem={(item: Models.ILoanOrderVO) => <div onClick={() => {
             navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
           }
           } ><TransparentCard key={item.tradeId} item={item} /></div>} />
@@ -104,7 +104,7 @@ const OrderViewAll = () => {
           chainId={chainId}
           params={{ ...apiParams, state: 'Trading,PaidOff,PaidButArrears,CloseByUncollected', orderItemList: 'total_market_trading_price=false' }}
           containerId='AllLoansContainer'
-          renderItem={(item: Models.LoanOrderVO) =>
+          renderItem={(item: Models.ILoanOrderVO) =>
             <div className="my-10 flex grow justify-center" onClick={() => {
               navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
             }} >
@@ -122,7 +122,7 @@ const OrderViewAll = () => {
           chainId={chainId}
           params={{ ...apiParams, state: 'Blacklist' }}
           containerId='TrendingLoansContainer'
-          renderItem={(item: Models.LoanOrderVO) =>
+          renderItem={(item: Models.ILoanOrderVO) =>
             <div
               onClick={() => navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)}
               className='grid grid-cols-4 w-full'><TransparentCard key={item.tradeId} item={item} />

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { Image } from 'antd'
-import type { Models } from '@/.generated/api/models'
+import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
 
@@ -50,8 +50,8 @@ const LendTransparentCard: React.FC<CardProps> = ({ item, copies }) => {
             <li className='h18 flex flex-col text-14 c-#999999'>
               {copies ? `Share ${copies}` : 'Risk level'}
             </li>
-            <li className='h29 text-16 c-#FFFFFF' style={{ color: item.loan?.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
-              {item.loan?.tradingForm === 'SpotGoods' ? 'Low' : 'Hight'}
+            <li className='h29 text-16 c-#FFFFFF' style={{ color: item.loan?.tradingForm !== Models.SpecifiedTradingTypeEnum.Spot ? 'red' : '#FFFFFF' }}>
+              {item.loan?.tradingForm === Models.SpecifiedTradingTypeEnum.Spot ? 'Low' : 'Hight'}
             </li>
             {/* <li>
               <Button className='mt-4 h30 w-110 text-14 primary-btn' >Extract</Button>

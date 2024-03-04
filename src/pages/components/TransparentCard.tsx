@@ -1,14 +1,14 @@
 import Avatar from 'antd/es/avatar'
 import BigNumber, { } from 'bignumber.js'
 import { Image, Tooltip } from 'antd'
-import type { Models } from '@/.generated/api/models'
+import { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
 
 interface CardProps {
-  item: Models.LoanOrderVO
+  item: Models.ILoanOrderVO
   children?: React.ReactNode
   btnText?: string
   copies?: number
@@ -98,8 +98,8 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
             <li className='h18 flex flex-col text-14 c-#999999'>
               {copies ? `Share ${copies}` : 'Risk Level'}
             </li>
-            <li className='h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== 'SpotGoods' ? 'red' : '#FFFFFF' }}>
-              {item.tradingForm === 'SpotGoods' ? 'Low' : 'High'}
+            <li className='h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== Models.SpecifiedTradingTypeEnum.Spot ? 'red' : '#FFFFFF' }}>
+              {item.tradingForm === Models.SpecifiedTradingTypeEnum.Spot ? 'Low' : 'High'}
               <Tooltip color='#303241' overlayInnerStyle={{ padding: 25, width: 349 }}
                 title={
                   <div>
