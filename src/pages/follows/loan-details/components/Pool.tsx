@@ -327,7 +327,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         currentTokenInfo={currentTokenInfo}
         open={isSwapModalOpen}
         onCancel={() => setSetIsModalOpen(false)} >
-
       </SwapModal>
       <SModal
         open={isDepositModalOpen}

@@ -6,6 +6,8 @@ import { ethers } from 'ethers'
 import { SyncOutlined } from '@ant-design/icons'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
+import { ChainAddressEnums } from '@/enums/chain'
+import { useChainId } from 'wagmi'
 
 // import exChange from '@/assets/images/loan-details/exchange.png'
 // import FolCoin from '@/assets/images/loan-details/FolCoin.png'
@@ -24,6 +26,8 @@ class SwapInfo {
 
 const SwapModal: React.FC<IProps> = (props) => {
   // console.log(111, props.currentTokenInfo)
+  const chainId = useChainId()
+
   const { browserContractService } = useBrowserContract()
 
   const [loading, setLoading] = useState(false)
@@ -34,7 +38,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
   const [youPay, setYouPay] = useState<SwapInfo>({
     token: 'USDC',
-    address: import.meta.env.VITE_TOKEN_USDC,
+    address: ChainAddressEnums[chainId].USDC,
     amount: '',
   })
 
@@ -55,7 +59,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
       setYouPay(() => ({
         token: 'USDC',
-        address: import.meta.env.VITE_TOKEN_USDC,
+        address: ChainAddressEnums[chainId].USDC,
         amount: '',
       }))
 
