@@ -964,9 +964,9 @@ const LoanDetails = () => {
           </div>
           <div className='flex justify-center'>
             <div className='loan-detail-option-item'>
-              <li className='loan-detail-option-title'>MRS
+              <li className='loan-detail-option-title'>MRRS
                 <Tooltip color='#303241' overlayInnerStyle={{ padding: 10 }}
-                  title="Minimum Required Shares">
+                  title="Minimum Required Raising Shares">
                   <Image className='ml-5 cursor-help' src={infoIconIcon} preview={false} />
                 </Tooltip>
               </li>
@@ -988,7 +988,7 @@ const LoanDetails = () => {
                 lendState={lentState ? 'Success' : 'Processing'}
                 refundPoolAddress={refundPoolAddress}
                 repayCount={loanInfo!.repayCount ?? 0}
-                tradeId={tradeId ? BigInt(tradeId) : null}
+                tradeId={BigInt(tradeId)}
                 transactionPair={loanInfo!.transactionPairs ?? []}
               />,
             },

@@ -784,5 +784,14 @@ Canceled :订单取消 */
     // createDate?: number = 0;
   }
 
+  export interface ITokenState {
+    address: string
+    name: string
+    decimals: number
+    balance: string
+    ratio: string
+    usd: string
+    icon: string
+  }
 
 }

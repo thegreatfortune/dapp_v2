@@ -24,7 +24,6 @@ export default function BalanceChart() {
         }
         const list: balanceType[] = []
         getData().then((res) => {
-            console.log('0000', res.records)
             if (res.records) {
                 res.records.sort((a, b) => {
                     if (a.createDate > b.createDate)

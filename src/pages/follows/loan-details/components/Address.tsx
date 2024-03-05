@@ -8,8 +8,7 @@ import { CopyOutlined } from '@ant-design/icons'
 import { maskWeb3Address } from '@/utils/maskWeb3Address'
 
 interface IProps {
-  address: string
-
+  address: string | undefined
 }
 const text = <span>Copy to Clipboard</span>
 

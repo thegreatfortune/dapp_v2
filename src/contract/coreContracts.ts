@@ -248,6 +248,7 @@ export class CoreContracts {
   }
 
   /**
+   * @deprecated
    * get Capital Pool Address and assign Capital Pool Contract
    */
   async getUserCapitalPoolAddress(): Promise<string> {
@@ -260,6 +261,7 @@ export class CoreContracts {
   }
 
   /**
+   * @deprecated
    * get Refund Pool Contract and assign Refund Pool Address
    */
   async getUserRefundPoolAddress(): Promise<string> {

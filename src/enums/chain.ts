@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import { ZeroAddress } from 'ethers'
 
-// import USDCLogo from '@/assets/images/loan-details/usdc.png'
-
+import USDCLogo from '@/assets/images/loan-details/usdc.png'
 import BTCLogo from '@/assets/images/apply-loan/token-icons/BTC.png'
 import ETHLogo from '@/assets/images/apply-loan/token-icons/ETH.png'
 import ARBLogo from '@/assets/images/apply-loan/token-icons/ARB.png'
@@ -41,6 +40,13 @@ interface IChainAddresses {
     [key: string]: string
 }
 
+interface ITokenEnums {
+    [key: string]: {
+        name: string
+        address: string
+        logo: string
+    }
+}
 const ChainAddressEnums: { [key: number]: IChainAddresses } = {
     11155420: {
         apiEndpoint: import.meta.env.VITE_OPSEPOLIA_API_ENDPOINT,
@@ -68,6 +74,7 @@ const ChainAddressEnums: { [key: number]: IChainAddresses } = {
         faucet: import.meta.env.VITE_OPSEPOLIA_CORE_FAUCET as string,
         liquidity: import.meta.env.VITE_OPSEPOLIA_CORE_LIQUIDITY as string,
         nativeFaucetUrl: 'https://mumbaifaucet.com/',
+
     },
     80001: {
         apiEndpoint: import.meta.env.VITE_MUMBAI_API_ENDPOINT,
@@ -98,8 +105,25 @@ const ChainAddressEnums: { [key: number]: IChainAddresses } = {
     },
 }
 
+const TokenEnums: { [key: number]: ITokenEnums } = {
+    11155420: {
+        USDC: {
+            name: 'USDC',
+            address: import.meta.env.VITE_MUMBAI_TOKEN_USDC as string as string,
+            logo: USDCLogo,
+        },
+    },
+    80001: {
+        USDC: {
+            name: 'USDC',
+            address: import.meta.env.VITE_MUMBAI_TOKEN_USDC as string as string,
+            logo: USDCLogo,
+        },
+    },
+}
+
 const TokenLogo: { [key: string]: string } = {
-    USDC: UNILogo,
+    USDC: USDCLogo,
     BTC: BTCLogo,
     SOL: SOLLogo,
     ETH: ETHLogo,
@@ -113,4 +137,5 @@ const TokenLogo: { [key: string]: string } = {
 export {
     ChainAddressEnums,
     TokenLogo,
+    TokenEnums,
 }

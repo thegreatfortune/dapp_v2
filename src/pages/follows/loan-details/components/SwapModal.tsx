@@ -7,15 +7,17 @@ import { SyncOutlined } from '@ant-design/icons'
 import { useChainId } from 'wagmi'
 import type { TokenInfo } from './Pool'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import { ChainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
+import type { Models } from '@/.generated/api/models'
 
 // import exChange from '@/assets/images/loan-details/exchange.png'
 // import FolCoin from '@/assets/images/loan-details/FolCoin.png'
 
 interface IProps extends ModalProps {
   currentTokenInfo: TokenInfo
-  tradeId: bigint | null
+  tokenState?: Models.ITokenState
+  tradeId: bigint
   resetSwapTokenInfo: () => Promise<void>
 }
 
@@ -25,8 +27,14 @@ class SwapInfo {
   amount: string = ''
 }
 
+interface IToken {
+  name: string
+  address: string
+  amount: string
+}
+
 const SwapModal: React.FC<IProps> = (props) => {
-  // console.log(111, props.currentTokenInfo)
+  console.log(props.currentTokenInfo)
   const chainId = useChainId()
 
   const { browserContractService } = useBrowserContract()
@@ -81,7 +89,6 @@ const SwapModal: React.FC<IProps> = (props) => {
 
   const onSetYouPay = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
-
     const isValidNumber
       = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
 
@@ -137,9 +144,26 @@ const SwapModal: React.FC<IProps> = (props) => {
     })
   }
   const { coreContracts } = useCoreContract()
+
+  // const [usdc, setUsdc] = useState<IToken>({
+  //   name: TokenEnums[chainId].USDC.name,
+  //   address: TokenEnums[chainId].USDC.address,
+  //   amount: '0',
+  // })
+
+  // const [target, setTarget] = useState<IToken>({
+  //   name: TokenEnums[chainId][props.tokenState?.name].name,
+  //   address: TokenEnums[chainId][props.tokenState?.name].address,
+  //   amount: '0',
+  // })
+
+  const setInputToken = () => {
+
+  }
+
   async function enterAnAmount() {
-    if (!props.tradeId)
-      return
+    // if (!props.tradeId)
+    //   return
     setSwaping(true)
     setSwapBnText('swaping')
     setLoading(true)
@@ -155,18 +179,9 @@ const SwapModal: React.FC<IProps> = (props) => {
       tokenInformation.amount = youPay.amount
     }
     else {
-      // const index = tokenList.findIndex(e => e.address === youPay.address)
-
       buyOrSell = 1
-      // buyOrSell = index
       tokenInformation = youPay
-      // tokenInformation.amount = youPay.amount
     }
-
-    // console.log(buyOrSell, tokenInformation, youPay, youReceiver)
-
-    // console.log(333, youPay)
-    // console.log(444, youReceiver)
 
     if (!tokenInformation?.address) {
       message.error('address is undefined')

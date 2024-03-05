@@ -205,7 +205,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
               ? <div className='flex flex-wrap gap-x-4 gap-y-16'>
                 {
                   data.map((item, index) => {
-                    return renderItem(item, index)
+                    // return renderItem(item, index)
+                    return (
+                      <div key={index}>
+                        {renderItem(item, index)}
+                      </div>)
                   })
                 }
               </div>
@@ -224,9 +228,11 @@ const ScrollableList: React.FC<IScrollableListProps> = ({ columns, className, ap
                 split={false}
                 dataSource={data}
                 renderItem={(item, index) => (
-                  <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='w-full ps-0'>
-                    {renderItem(item, index)}
-                  </List.Item>
+                  <div key={index}>
+                    <List.Item style={{ paddingTop: 3, paddingBottom: 3 }} className='w-full ps-0'>
+                      {renderItem(item, index)}
+                    </List.Item>
+                  </div>
                 )}
               />
           }
