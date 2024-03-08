@@ -785,13 +785,15 @@ Canceled :订单取消 */
   }
 
   export interface ITokenState {
+    index: number
     address: string
     name: string
+    symbol: string
     decimals: number
     balance: string
     ratio: string
     usd: string
-    icon: string
+    logo: string
   }
 
 }

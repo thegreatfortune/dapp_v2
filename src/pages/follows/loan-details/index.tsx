@@ -24,6 +24,7 @@ import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import loanService from '@/services/loanService'
 import NotFound from '@/pages/NotFound'
+import useCoreContract from '@/hooks/useCoreContract'
 
 const LoanDetails = () => {
   const navigate = useNavigate()
@@ -99,6 +100,8 @@ const LoanDetails = () => {
   const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
 
   const chainId = useChainId()
+
+  const { coreContracts } = useCoreContract()
 
   // const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
   const loanStateELMap: Record<Models.LoanState & string, ReactElement> = {
@@ -257,19 +260,27 @@ const LoanDetails = () => {
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      if (prePage === 'my-lend' && loanInfo!.state === 'PaidOff')
+      if (prePage === 'my-lend' && loanInfo!.state === 'PaidOff') {
+        console.log(1111)
         return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
+      }
 
       if (currentUser.userId === loanInfo!.userId) {
+        console.log(2222)
+
+        console.log(coreContracts?.refundPoolAddress)
         await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
       }
       else {
+        console.log(3333)
         const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
-
+        console.log(balance)
         if (balance === undefined || balance === BigInt(0)) {
           message.warning('You have no balance')
           throw new Error('You have no balance')
         }
+        // const refundPoolContract = coreContracts!.refundPoolContract
+        // console.log(refundPoolContract)
         await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
       }
     }

@@ -33,8 +33,7 @@ interface IToken {
   amount: string
 }
 
-const SwapModal: React.FC<IProps> = (props) => {
-  console.log(props.currentTokenInfo)
+const SwapModalOld: React.FC<IProps> = (props) => {
   const chainId = useChainId()
 
   const { browserContractService } = useBrowserContract()
@@ -129,6 +128,20 @@ const SwapModal: React.FC<IProps> = (props) => {
     })
   }
 
+  const { coreContracts } = useCoreContract()
+
+  const [inputToken, setInputToken] = useState<IToken>({
+    name: TokenEnums[chainId].USDC.name,
+    address: TokenEnums[chainId].USDC.address,
+    amount: '0',
+  })
+
+  const [outputToken, setOutputToken] = useState<IToken>({
+    name: props.tokenState ? props.tokenState.name : '',
+    address: props.tokenState ? props.tokenState.address : '',
+    amount: '0',
+  })
+
   const onSwap = () => {
     setActiveInput(prevInput => (prevInput === 'youPay' ? 'youReceiver' : 'youPay'))
 
@@ -142,23 +155,50 @@ const SwapModal: React.FC<IProps> = (props) => {
     setYouReceiver({
       ...tempYouPay,
     })
+
+    const tempInput = { ...inputToken }
+    const tempOutput = { ...outputToken }
+    setInputToken(tempInput)
+    setOutputToken(tempOutput)
   }
-  const { coreContracts } = useCoreContract()
 
-  // const [usdc, setUsdc] = useState<IToken>({
-  //   name: TokenEnums[chainId].USDC.name,
-  //   address: TokenEnums[chainId].USDC.address,
-  //   amount: '0',
-  // })
+  const calculateOutoutTokenValue = (value: string) => {
+    console.log(inputToken, outputToken)
+    const newValue = value.replace(/[^0-9.]/g, '')
+    const isValidNumber
+      = !Number.isNaN(Number.parseFloat(newValue)) && Number.isFinite(Number.parseFloat(newValue))
 
-  // const [target, setTarget] = useState<IToken>({
-  //   name: TokenEnums[chainId][props.tokenState?.name].name,
-  //   address: TokenEnums[chainId][props.tokenState?.name].address,
-  //   amount: '0',
-  // })
+    const inputAmount = isValidNumber ? newValue : ''
 
-  const setInputToken = () => {
+    setYouPay({
+      ...youPay,
+      amount: isValidNumber ? newValue : '',
+    })
 
+    setInputToken((prev) => {
+      return { ...prev, amount: inputAmount }
+    })
+
+    const calculatedAmount = BigNumber(isValidNumber ? newValue : '0').multipliedBy(ratio).toFixed(4)
+
+    const swapCalculatedAmount = BigNumber(isValidNumber ? newValue : '0').dividedBy(ratio).toFixed(4)
+
+    // Update the corresponding field based on the activeInput flag
+    setYouReceiver({
+      ...youReceiver,
+      amount: activeInput === 'youPay' ? calculatedAmount : swapCalculatedAmount,
+    })
+
+    setOutputToken((prev) => {
+      return {
+        ...prev,
+        name: props.tokenState ? props.tokenState.name : '',
+        address: props.tokenState ? props.tokenState.address : '',
+        amount: inputToken.name === TokenEnums[chainId].USDC.name
+          ? BigNumber(inputAmount).multipliedBy(ratio).toFixed(4)
+          : BigNumber(inputAmount).dividedBy(ratio).toFixed(4),
+      }
+    })
   }
 
   async function enterAnAmount() {
@@ -241,7 +281,7 @@ const SwapModal: React.FC<IProps> = (props) => {
 
           <span className='w120 flex items-center'>You will pay</span>
           <div className='w-auto flex items-center'>
-            <Input value={youPay.amount} className='w-full' onChange={onSetYouPay} size='large' />
+            <Input value={inputToken.amount} className='w-full' onChange={e => calculateOutoutTokenValue(e.target.value)} size='large' />
             <span className='mx-16 w50 flex items-center text-center'>{youPay.token}</span>
           </div>
 
@@ -256,7 +296,7 @@ const SwapModal: React.FC<IProps> = (props) => {
         <div className='h60 w-full flex items-center justify-between b-rd-6'>
           <span className='z-1 w120 flex items-center'>You will receive</span>
           <div className='flex items-center'>
-            <Input value={youReceiver.amount} className='w-full' onChange={onSetYouReceiver} size='large' />
+            <Input value={outputToken.amount} className='w-full' onChange={onSetYouReceiver} size='large' />
             <span className='mx-16 w50 flex items-center text-center'>{youReceiver.token}</span>
           </div>
         </div>
@@ -265,4 +305,4 @@ const SwapModal: React.FC<IProps> = (props) => {
   )
 }
 
-export default SwapModal
+export default SwapModalOld

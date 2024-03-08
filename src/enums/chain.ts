@@ -11,7 +11,7 @@ import LDOLogo from '@/assets/images/apply-loan/token-icons/LDO.png'
 import AAVELogo from '@/assets/images/apply-loan/token-icons/AAVE.png'
 import SOLLogo from '@/assets/images/apply-loan/token-icons/SOL.png'
 
-interface IChainAddresses {
+export interface IChainAddresses {
     apiEndpoint: string
     capitalFactory: string
     refundFactory: string
@@ -42,7 +42,10 @@ interface IChainAddresses {
 
 interface ITokenEnums {
     [key: string]: {
+        index: number
         name: string
+        symbol: string
+        decimals: number
         address: string
         logo: string
     }
@@ -108,16 +111,150 @@ const ChainAddressEnums: { [key: number]: IChainAddresses } = {
 const TokenEnums: { [key: number]: ITokenEnums } = {
     11155420: {
         USDC: {
-            name: 'USDC',
-            address: import.meta.env.VITE_MUMBAI_TOKEN_USDC as string as string,
+            index: 0,
+            name: 'USDC-token',
+            symbol: 'USDC',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_USDC as string,
             logo: USDCLogo,
+        },
+        BTC: {
+            index: 1,
+            name: 'Wrapped-BTC',
+            symbol: 'BTC',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_BTC as string,
+            logo: BTCLogo,
+        },
+        ETH: {
+            index: 2,
+            name: 'Wrapped-ETH',
+            symbol: 'ETH',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_ETH as string,
+            logo: ETHLogo,
+        },
+        SOL: {
+            index: 3,
+            name: 'Solana',
+            symbol: 'SOL',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_SOL as string,
+            logo: SOLLogo,
+        },
+        ARB: {
+            index: 4,
+            name: 'Arbitrum',
+            symbol: 'ARB',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_ARB as string,
+            logo: ARBLogo,
+        },
+        LINK: {
+            index: 5,
+            name: 'ChainLink',
+            symbol: 'LINK',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_LINK as string,
+            logo: LINKLogo,
+        },
+        UNI: {
+            index: 6,
+            name: 'Uniswap',
+            symbol: 'UNI',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_UNI as string,
+            logo: UNILogo,
+        },
+        LDO: {
+            index: 7,
+            name: 'LDO',
+            symbol: 'LDO',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_LDO as string,
+            logo: LDOLogo,
+        },
+        AAVE: {
+            index: 8,
+            name: 'AAVE',
+            symbol: 'AAVE',
+            decimals: 18,
+            address: import.meta.env.VITE_OPSEPOLIA_TOKEN_AAVE as string,
+            logo: AAVELogo,
         },
     },
     80001: {
         USDC: {
-            name: 'USDC',
-            address: import.meta.env.VITE_MUMBAI_TOKEN_USDC as string as string,
+            index: 0,
+            name: 'USDC-token',
+            symbol: 'USDC',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_USDC as string,
             logo: USDCLogo,
+        },
+        BTC: {
+            index: 1,
+            name: 'Wrapped-BTC',
+            symbol: 'BTC',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_BTC as string,
+            logo: BTCLogo,
+        },
+        ETH: {
+            index: 2,
+            name: 'Wrapped-ETH',
+            symbol: 'ETH',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_ETH as string,
+            logo: ETHLogo,
+        },
+        SOL: {
+            index: 3,
+            name: 'Solana',
+            symbol: 'SOL',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_SOL as string,
+            logo: SOLLogo,
+        },
+        ARB: {
+            index: 4,
+            name: 'Arbitrum',
+            symbol: 'ARB',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_ARB as string,
+            logo: ARBLogo,
+        },
+        LINK: {
+            index: 5,
+            name: 'ChainLink',
+            symbol: 'LINK',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_LINK as string,
+            logo: LINKLogo,
+        },
+        UNI: {
+            index: 6,
+            name: 'Uniswap',
+            symbol: 'UNI',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_UNI as string,
+            logo: UNILogo,
+        },
+        LDO: {
+            index: 7,
+            name: 'LDO',
+            symbol: 'LDO',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_LDO as string,
+            logo: LDOLogo,
+        },
+        AAVE: {
+            index: 8,
+            name: 'AAVE',
+            symbol: 'AAVE',
+            decimals: 18,
+            address: import.meta.env.VITE_MUMBAI_TOKEN_AAVE as string,
+            logo: AAVELogo,
         },
     },
 }

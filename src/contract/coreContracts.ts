@@ -30,6 +30,7 @@ import ERC3525_ABI from '@/abis/ERC3525.json'
 import ERC20_ABI from '@/abis/ERC20.json'
 import ERC1155_ABI from '@/abis/FollowFiERC1155.json'
 import TESTLIQUIDITY_ABI from '@/abis/UniswapV3.json'
+import type { IChainAddresses } from '@/enums/chain'
 import { ChainAddressEnums } from '@/enums/chain'
 
 // import USDCLogo from '@/assets/images/loan-details/usdc.png'
@@ -48,65 +49,65 @@ function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.In
 
 export class CoreContracts {
   constructor(private _signer: ethers.JsonRpcSigner, private _chainId: number) {
-    const chainAddresses = ChainAddressEnums[this._chainId]
-    this._capitalFactoryContract = createContract(chainAddresses.capitalFactory, capitalFactoryABI, this.signer)
-    this._refundFactoryContract = createContract(chainAddresses.refundFactory, refundFactoryABI, this.signer)
-    this._processCenterContract = createContract(chainAddresses.processCenter, processCenterABI, this.signer)
-    this._manageContract = createContract(chainAddresses.manage, manageABI, this.signer)
-    this._marketContract = createContract(chainAddresses.market, marketABI, this.signer)
-    this._routerContract = createContract(chainAddresses.router, routerABI, this.signer)
-    this._handleContract = createContract(chainAddresses.handle, handleABI, this.signer)
-    this._sharesContract = createContract(chainAddresses.shares, ERC3525_ABI, this.signer)
-    this._fofContract = createContract(chainAddresses.fof, ERC20_ABI, this.signer)
-    this._nftContract = createContract(chainAddresses.nft, ERC1155_ABI, this.signer)
-    this._usdcContract = createContract(chainAddresses.USDC, ERC20_ABI, this.signer)
+    this._chainAddresses = ChainAddressEnums[this._chainId]
+    this._capitalFactoryContract = createContract(this._chainAddresses.capitalFactory, capitalFactoryABI, this.signer)
+    this._refundFactoryContract = createContract(this._chainAddresses.refundFactory, refundFactoryABI, this.signer)
+    this._processCenterContract = createContract(this._chainAddresses.processCenter, processCenterABI, this.signer)
+    this._manageContract = createContract(this._chainAddresses.manage, manageABI, this.signer)
+    this._marketContract = createContract(this._chainAddresses.market, marketABI, this.signer)
+    this._routerContract = createContract(this._chainAddresses.router, routerABI, this.signer)
+    this._handleContract = createContract(this._chainAddresses.handle, handleABI, this.signer)
+    this._sharesContract = createContract(this._chainAddresses.shares, ERC3525_ABI, this.signer)
+    this._fofContract = createContract(this._chainAddresses.fof, ERC20_ABI, this.signer)
+    this._nftContract = createContract(this._chainAddresses.nft, ERC1155_ABI, this.signer)
+    this._usdcContract = createContract(this._chainAddresses.USDC, ERC20_ABI, this.signer)
     this._capitalPoolAddress = ZeroAddress
     this._refundPoolAddress = ZeroAddress
-    this._faucetContract = createContract(chainAddresses.faucet, faucetABI, this.signer)
+    this._faucetContract = createContract(this._chainAddresses.faucet, faucetABI, this.signer)
     this._specifiedTradingPairsOfSpot = [
       {
         logo: BTCLogo,
         name: 'BTC',
-        address: chainAddresses.BTC,
+        address: this._chainAddresses.BTC,
       },
       {
         logo: ETHLogo,
         name: 'ETH',
-        address: chainAddresses.ETH,
+        address: this._chainAddresses.ETH,
       },
       {
         logo: SOLLogo,
         name: 'SOL',
-        address: chainAddresses.SOL,
+        address: this._chainAddresses.SOL,
       },
       {
         logo: ARBLogo,
         name: 'ARB',
-        address: chainAddresses.ARB,
+        address: this._chainAddresses.ARB,
       },
       {
         logo: LINKLogo,
         name: 'LINK',
-        address: chainAddresses.LINK,
+        address: this._chainAddresses.LINK,
       },
       {
         logo: UNILogo,
         name: 'UNI',
-        address: chainAddresses.UNI,
+        address: this._chainAddresses.UNI,
       },
       {
         logo: LDOLogo,
         name: 'LDO',
-        address: chainAddresses.LDO,
+        address: this._chainAddresses.LDO,
       },
       {
         logo: AAVELogo,
         name: 'AAVE',
-        address: chainAddresses.AAVE,
+        address: this._chainAddresses.AAVE,
       },
     ]
     this._specifiedTradingPairsOfFuture = []
-    this._liquidityContract = createContract(chainAddresses.liquidity, TESTLIQUIDITY_ABI, this.signer,
+    this._liquidityContract = createContract(this._chainAddresses.liquidity, TESTLIQUIDITY_ABI, this.signer,
     )
   }
 
@@ -132,6 +133,12 @@ export class CoreContracts {
   get signer(): ethers.JsonRpcSigner {
     return this._signer
   }
+
+  get chainAddresses(): IChainAddresses {
+    return this._chainAddresses
+  }
+
+  private _chainAddresses: IChainAddresses
 
   private _capitalPoolContract: capitalPool | undefined
 

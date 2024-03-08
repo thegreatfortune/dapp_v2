@@ -192,7 +192,7 @@ h1 {
 }
 
 .balance-chart {
-  @apply w-full h-380 mb-20
+  @apply w-full h-500 mb-20
 }
 
 .balance-info {
@@ -270,7 +270,7 @@ h1 {
   }
 
   .balance-chart {
-    @apply w-1/2 h-380 mb-20
+    @apply w-1/2 h-500 mb-20
   }
 
   .token-info-box {

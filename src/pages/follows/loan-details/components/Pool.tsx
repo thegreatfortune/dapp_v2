@@ -7,15 +7,16 @@ import { useChainId } from 'wagmi'
 // import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import { LoadingOutlined } from '@ant-design/icons'
 import RepaymentPlan from './RepaymentPlan'
-import SwapModal from './SwapModal'
+import SwapModalOld from './SwapModalOld'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
 import BalanceChart from './BalanceChart'
+import Swap from './Swap'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
-import { ChainAddressEnums, TokenLogo } from '@/enums/chain'
+import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import { executeTask } from '@/helpers/helpers'
 import usePoolAddress from '@/helpers/usePoolAddress'
@@ -189,14 +190,17 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const [totalBalance, setTotalBalance] = useState(0)
   const [currentTokenState, setCurrentTokenState] = useState<Models.ITokenState>()
 
+  const [swapModalOpen, setSwapModalOpen] = useState(false)
+
   function onOpenModal(tokenState: Models.ITokenState) {
+    console.log('???????:', tokenState)
     const item = new TokenInfo()
-    item.name = tokenState.name
+    item.name = tokenState.symbol
     item.address = tokenState.address
     item.balance = tokenState.balance
     item.decimals = tokenState.decimals
     item.dollars = tokenState.usd
-    item.icon = tokenState.icon
+    item.icon = tokenState.logo
     item.ratio = tokenState.ratio
     setCurrentTokenInfo(item)
     setCurrentTokenState(tokenState)
@@ -206,53 +210,66 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const getTokenState = async () => {
     const task = async () => {
       if (coreContracts && tradeId) {
-        const tokenStates: Models.ITokenState[] = []
+        const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
 
         const capitalPoolAddressOfTradeId = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
 
         const usdcDecimals = await coreContracts.usdcContract.decimals()
+        // const usdcName = await coreContracts.usdcContract.name()
         const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfTradeId)
 
         // get USDC state
-        const usdtState = {
-          name: 'USDC',
+        const usdcState: Models.ITokenState = {
+          index: 0,
+          name: TokenEnums[chainId].USDC.name,
+          symbol: TokenEnums[chainId].USDC.symbol,
           balance: ethers.formatUnits(usdcBalance ?? 0, usdcDecimals),
           decimals: Number(usdcDecimals),
           address: ChainAddressEnums[chainId].USDC,
           ratio: '0',
           usd: ethers.formatUnits(usdcBalance ?? 0, usdcDecimals),
-          icon: TokenLogo.USDC,
+          logo: TokenEnums[chainId].USDC.logo,
         }
-        tokenStates.push(usdtState)
+        setTokenStates((prev) => {
+          const tokenStates = [...prev]
+          tokenStates[0] = usdcState
+          return tokenStates
+        })
 
-        // get all others token state
-        for (let i = 0; i < transactionPair.length; i++) {
-          const name = transactionPair[i]
-          console.log(name)
-          const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][name])
-          const decimals = await tokenContract.decimals()
-          const balance = await tokenContract.balanceOf(capitalPoolAddressOfTradeId)
-
-          const liquidityContract = await coreContracts.getTestLiquidityContract()
-          const price = await liquidityContract.getTokenPrice(
-            ChainAddressEnums[chainId].USDC,
-            ChainAddressEnums[chainId][name],
-            3000,
-            ethers.parseEther(String(1)),
-          )
-          const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
-          const tokenState = {
-            name,
-            balance: ethers.formatUnits(balance ?? 0, decimals),
-            decimals: Number(decimals),
-            address: ChainAddressEnums[chainId][name],
-            ratio: ratio.toString(),
-            usd: String(Number(ethers.formatUnits(balance ?? 0, decimals)) / (Number(ratio))),
-            icon: TokenLogo[name],
+        // get all others token state, v is token symbol
+        transactionPair.forEach((v) => {
+          const task = async () => {
+            const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][v])
+            // const name = await tokenContract.name()
+            const decimals = await tokenContract.decimals()
+            const balance = await tokenContract.balanceOf(capitalPoolAddressOfTradeId)
+            const liquidityContract = await coreContracts.getTestLiquidityContract()
+            const price = await liquidityContract.getTokenPrice(
+              ChainAddressEnums[chainId].USDC,
+              ChainAddressEnums[chainId][v],
+              3000,
+              ethers.parseEther(String(1)),
+            )
+            const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
+            const tokenState: Models.ITokenState = {
+              index: TokenEnums[chainId][v].index,
+              name: TokenEnums[chainId][v].name,
+              symbol: TokenEnums[chainId][v].symbol,
+              balance: ethers.formatUnits(balance ?? 0, decimals),
+              decimals: Number(decimals),
+              address: ChainAddressEnums[chainId][v],
+              ratio: ratio.toString(),
+              usd: String(Number(ethers.formatUnits(balance ?? 0, decimals)) / (Number(ratio))),
+              logo: TokenEnums[chainId][v].logo,
+            }
+            setTokenStates((prev) => {
+              const tokenStates = [...prev]
+              tokenStates[tokenState.index] = tokenState
+              return tokenStates
+            })
           }
-          tokenStates.push(tokenState)
-        }
-        setTokenStates(tokenStates)
+          task()
+        })
       }
     }
     executeTask(task)
@@ -262,6 +279,19 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     await getTokenState()
 
     setSetIsModalOpen(false)
+  }
+
+  function openSwapModal(tokenStates: Models.ITokenState[]) {
+    const item = new TokenInfo()
+    item.name = tokenStates[1].symbol
+    item.address = tokenStates[1].address
+    item.balance = tokenStates[1].balance
+    item.decimals = tokenStates[1].decimals
+    item.dollars = tokenStates[1].usd
+    item.icon = tokenStates[1].logo
+    item.ratio = tokenStates[1].ratio
+    setCurrentTokenInfo(item)
+    setSwapModalOpen(true)
   }
 
   useEffect(() => {
@@ -274,7 +304,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     if (tokenStates.length > 0) {
       let total = 0
       tokenStates.forEach((state) => {
-        total += Number(state.usd)
+        total += Number(state ? state.usd : 0)
       })
       setTotalBalance(total)
     }
@@ -291,16 +321,30 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   return (
     <div className='w-full'>
-      <SwapModal
+      {/* {
+        tokenStates.length >= 2
+          ? <SwapModal
+            resetSwapTokenInfo={refreshTokenState}
+            tradeId={tradeId}
+            currentTokenInfo={currentTokenInfo}
+            tokenStates={tokenStates}
+            open={swapModalOpen}
+            onCancel={() => setSwapModalOpen(false)} >
+          </SwapModal>
+          : <div></div>
+      } */}
+      {/* <>{swapModal}</> */}
+      <SwapModalOld
         resetSwapTokenInfo={refreshTokenState}
         tradeId={tradeId}
         currentTokenInfo={currentTokenInfo}
-        // tokanState={currentTokenState}
-        open={isSwapModalOpen}
-        onCancel={() => setSetIsModalOpen(false)} >
-      </SwapModal>
+        tokenState={currentTokenState}
+      // open={isSwapModalOpen}
+      // onCancel={() => setSetIsModalOpen(false)}
+      >
+      </SwapModalOld>
       <SModal
-        open={isDepositModalOpen}
+        // open={isDepositModalOpen}
         content={
           (<div>
             <h2>
@@ -318,10 +362,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
           </div>
           )
         }
-        onCancel={() => setDepositIsModalOpen(false)}
-        okText="Confirm"
-        onOk={onDepositModalConfirm}
-        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
+      // onCancel={() => setDepositIsModalOpen(false)}
+      // okText="Confirm"
+      // onOk={onDepositModalConfirm}
+      // okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
       >
 
         {/* {
@@ -350,26 +394,38 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         <div className='flex items-center justify-between'>
           <div className='w-full md:flex'>
             <div className='balance-chart'>
-              <BalanceChart />
+              <div className='h-380'>
+                <BalanceChart />
+              </div>
+              <div className='grid grid-cols-2 h-100 grow place-content-between max-md:my-30 md:ml-20 md:mt-35'>
+                <div className='flex'>
+                  <div className='mr-4 text-18 font-semibold md:mr-10 md:text-20'>Pool:</div>
+                  <div className="text-16"><Address address={capitalPoolAddress} /></div>
+                </div>
+                <div className='flex justify-end'>
+                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button>
+                </div>
+                <div className='text-24 font-semibold md:text-32'>Total:
+                </div>
+                <div className="flex items-center justify-end text-right text-24 font-semibold md:text-32">{
+                  totalBalance === 0 && tokenStates.length === 0
+                    ? <LoadingOutlined width={10} />
+                    : `$ ${Number(Number(totalBalance).toFixed(2)).toLocaleString()}`
+                }
+                </div>
+              </div>
             </div>
-            <div className='grid grid-cols-2 h-90 grow place-content-between max-md:my-30 md:ml-20 md:mt-35 md:h-350'>
-              <div className='flex'>
-                <div className='mr-4 text-18 font-semibold md:mr-10 md:text-20'>Pool:</div>
-                <div className="text-16"><Address address={capitalPoolAddress} /></div>
-              </div>
-              <div className='flex justify-end'>
-                <Button className='h30 b-rd-30 md:w120 primary-btn' type='primary' onClick={onDeposit}>Deposit</Button>
-              </div>
-              <div className='text-24 font-semibold md:text-32'>Total:
-              </div>
-              <div className="flex items-center justify-end text-right text-24 font-semibold md:text-32">{
-                totalBalance
-                  ? `$ ${Number(Number(totalBalance).toFixed(2)).toLocaleString()}`
-                  : <LoadingOutlined width={10} />
-                // <Skeleton.Button active={true} size='large' />
-              }
-              </div>
+            <div className='balance-chart md:ml-30'>
+              <Swap
+                resetSwapTokenInfo={refreshTokenState}
+                tradeId={tradeId}
+                // currentTokenInfo={currentTokenInfo}
+                tokenStates={tokenStates}
+                ownerState={prePage === 'loan' && loanInfo.state === 'Trading'}
+              >
+              </Swap>
             </div>
+
           </div>
         </div>
         <div className=''>
@@ -387,40 +443,47 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 key: (index + 1).toString(),
                 children: (
                   <div className='token-info-box'>
-                    {chunk.map((item, _index) => (
-                      <div key={item.name} className="token-info-item">
-                        <div className="flex grow items-center justify-between px-10 text-center xl:px-1">
-                          <div className='flex items-center'>
-                            <Image preview={false} width={24} height={24} src={item.icon} />
-                            <div className='ml-10 flex items-center text-20 c-#fff md:text-16'>
-                              {item.name} ({
-                                Number(item.balance) !== 0
-                                  ? BigNumber(item.usd ?? 0)
-                                    .div((totalBalance))
-                                    .times(100)
-                                    .toFixed(2)
-                                  : <span>
-                                    0
-                                  </span>
-                              }%)
+                    {chunk.map((item, _index) => {
+                      if (item) {
+                        return (
+                          <div key={item.symbol} className="token-info-item">
+                            <div className="flex grow items-center justify-between px-10 text-center xl:px-1">
+                              <div className='flex items-center'>
+                                <Image preview={false} width={24} height={24} src={item.logo} />
+                                <div className='ml-10 flex items-center text-20 c-#fff md:text-16'>
+                                  {item.symbol} ({
+                                    Number(item.balance) !== 0
+                                      ? BigNumber(item.usd ?? 0)
+                                        .div((totalBalance))
+                                        .times(100)
+                                        .toFixed(2)
+                                      : <span>
+                                        0
+                                      </span>
+                                  }%)
+                                </div>
+                              </div>
+                              <div className='flex items-center text-right text-20 c-#fff'>
+                                <span className='ml-10 mt-5 text-11 c-green lg:ml-5'>{BigNumber(item.balance).toFixed(4)} {item.symbol}</span>
+                              </div>
+                            </div>
+                            <div className='mt-20 flex grow items-center justify-end px-10 xl:px-1'>
+                              <div className='slahed-zero h30 text-24 font-mono xl:text-22'>
+                                ${toCurrencyString((item.usd ? Number(BigNumber(item.usd)) : 0))}
+                              </div>
+                              {/* {
+                                item.symbol !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
+                                  ? <Button id={item.symbol} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
+                                  : null
+                              } */}
                             </div>
                           </div>
-                          <div className='flex items-center text-right text-20 c-#fff'>
-                            <span className='ml-10 mt-5 text-11 c-green lg:ml-5'>{BigNumber(item.balance).toFixed(4)} {item.name}</span>
-                          </div>
-                        </div>
-                        <div className='mt-20 flex grow items-center justify-end px-10 xl:px-1'>
-                          <div className='slahed-zero h30 text-24 font-mono xl:text-22'>
-                            ${toCurrencyString((item.usd ? Number(BigNumber(item.usd)) : 0))}
-                          </div>
-                          {
-                            item.name !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'
-                              ? <Button id={item.name} className='ml-10 h30 w60 primary-btn' onClick={() => onOpenModal(item)}>swap</Button>
-                              : null
-                          }
-                        </div>
-                      </div>
-                    ))}
+                        )
+                      }
+                      else {
+                        return (<div></div>)
+                      }
+                    })}
                   </div>
                 ),
               }))

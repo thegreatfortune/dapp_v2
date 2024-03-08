@@ -196,7 +196,7 @@ export class BrowserContractService {
       if (tradeId) {
         const list = await c.getList(tradeId)
 
-        console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
+        // console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
       }
     }
     return this._capitalPoolAddress = cp
@@ -711,7 +711,7 @@ export class BrowserContractService {
 
       if (tradeId) {
         const list = await c.getList(tradeId)
-        console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
+        // console.log('%c [ list ]-183', 'font-size:13px; background:#bb6424; color:#ffa868;', list)
       }
     }
   }
@@ -1441,7 +1441,9 @@ export class BrowserContractService {
 
     const ERC3525Contract = await this.getERC3525Contract()
 
+    console.log(refundPoolContract)
     console.log('%c [ this.getSigner.address, tradeId ]-868', 'font-size:13px; background:#ef6ffe; color:#ffb3ff;', this.getSigner.address, tradeId)
+
     const tokenId = await ERC3525Contract.getPersonalSlotToTokenId(this.getSigner.address, tradeId)
     console.log('%c [ tokenId ]-847', 'font-size:13px; background:#ce01db; color:#ff45ff;', tokenId)
 
