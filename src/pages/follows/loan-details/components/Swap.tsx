@@ -132,7 +132,6 @@ const Swap: React.FC<IProps> = (props) => {
 
         if (isInputToken) {
             if (BigInt(parseUnits(amount, inputToken.decimals)) > BigInt(inputBalance)) {
-                console.log(BigInt(parseUnits(amount, inputToken.decimals)), BigInt(inputBalance))
                 setSwapDisabled(true)
                 setSwaping(false)
                 setOutputBalanceCalculating(false)
@@ -146,13 +145,15 @@ const Swap: React.FC<IProps> = (props) => {
                 const outputAmount = inputToken.name === TokenEnums[chainId].USDC.name
                     ? BigNumber(amount).multipliedBy(ratio).toString()
                     : BigNumber(amount).dividedBy(ratio).toString()
+
+                console.log(outputAmount, Number(outputAmount).toFixed(9))
                 setOutputToken((prev) => {
                     return {
                         ...prev,
-                        amount: outputAmount,
+                        amount: Number(outputAmount).toFixed(9),
                     }
                 })
-                setOutputAmount(outputAmount)
+                setOutputAmount(Number(outputAmount).toFixed(9))
                 setSwapDisabled(false)
                 setTimeout(() => {
                     setSwaping(false)
@@ -175,12 +176,11 @@ const Swap: React.FC<IProps> = (props) => {
             setInputToken((prev) => {
                 return {
                     ...prev,
-                    amount: inputAmount,
+                    amount: Number(inputAmount).toFixed(9),
                 }
             })
-            setInputAmount(inputAmount)
-
-            if (BigInt(parseUnits(inputAmount, inputToken.decimals)) > BigInt(inputBalance)) {
+            setInputAmount(Number(inputAmount).toFixed(9))
+            if (BigInt(parseUnits(Number(inputAmount).toFixed(18), inputToken.decimals)) > BigInt(inputBalance)) {
                 setSwapDisabled(true)
                 setSwaping(false)
                 setInputBalanceCalculating(false)
@@ -415,9 +415,10 @@ const Swap: React.FC<IProps> = (props) => {
                             name="inputTokenAmount"
                             placeholder="0"
                             value={inputBalanceCalculating ? '' : inputAmount}
-                            decimalsLimit={13}
+                            decimalsLimit={9}
                             allowNegativeValue={false}
                             onValueChange={(_value, _name, values) => {
+                                console.log(values?.value, inputAmount)
                                 if (values && values.value !== inputAmount) {
                                     calculateTokenAmount(values.value, true)
                                     setInputAmount(values.value === '' ? '' : values.value)
@@ -486,8 +487,9 @@ const Swap: React.FC<IProps> = (props) => {
                             value={outputBalanceCalculating ? '' : outputAmount}
                             name="outputTokenAmount"
                             placeholder="0"
-                            decimalsLimit={13}
+                            decimalsLimit={9}
                             onValueChange={(_value, _name, values) => {
+                                console.log(values?.value, outputAmount)
                                 if (values && values.value !== outputAmount) {
                                     calculateTokenAmount(values.value, false)
                                     setOutputAmount(values.value === '' ? '' : values.value)
