@@ -43,103 +43,14 @@ interface IToken {
 }
 
 const Swap: React.FC<IProps> = (props) => {
-    const tokenStates = props.tokenStates
-
     const chainId = useChainId()
-
+    const { coreContracts } = useCoreContract()
     const { capitalPoolAddress } = usePoolAddress()
 
-    // const { browserContractService } = useBrowserContract()
-
-    // const [loading, setLoading] = useState(false)
+    const tokenStates = props.tokenStates
 
     const [swaping, setSwaping] = useState(false)
 
-    // const [swapBnText, setSwapBnText] = useState('Enter an amount')
-
-    // const [youPay, setYouPay] = useState<SwapInfo>({
-    //     token: 'USDC',
-    //     address: ChainAddressEnums[chainId].USDC,
-    //     amount: '',
-    // })
-
-    // const [youReceiver, setYouReceiver] = useState<SwapInfo>({
-    //     token: props.currentTokenInfo.name,
-    //     address: props.currentTokenInfo.address,
-    //     amount: '',
-    // })
-
-    // const [ratio, setRatio] = useState<string>('0')
-
-    // const [activeInput, setActiveInput] = useState<'youPay' | 'youReceiver'>('youPay')
-
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         if (!browserContractService || !props.currentTokenInfo.address)
-    //             return
-
-    //         setYouPay(() => ({
-    //             token: 'USDC',
-    //             address: ChainAddressEnums[chainId].USDC,
-    //             amount: '',
-    //         }))
-
-    //         const newRatio = await browserContractService.testLiquidity_calculateSwapRatio(props.currentTokenInfo.address)
-    //         setRatio(newRatio)
-    //         setYouReceiver(() => ({
-    //             token: props.currentTokenInfo.name,
-    //             address: props.currentTokenInfo.address,
-    //             amount: BigNumber((youPay.amount || 0)).multipliedBy(newRatio).toString(),
-    //         }))
-    //         // }
-    //     }
-
-    //     fetchData()
-    // }, [browserContractService, props.currentTokenInfo])
-
-    // const onSetYouPay = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
-    //     const isValidNumber
-    //         = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
-
-    //     setYouPay({
-    //         ...youPay,
-    //         amount: isValidNumber ? newAmount : '',
-    //     })
-
-    //     const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4)
-
-    //     const swapCalculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4)
-
-    //     // Update the corresponding field based on the activeInput flag
-    //     setYouReceiver({
-    //         ...youReceiver,
-    //         amount: activeInput === 'youPay' ? calculatedAmount : swapCalculatedAmount,
-    //     })
-    // }
-
-    // const onSetYouReceiver = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const newAmount = e.target.value.replace(/[^0-9.]/g, '')
-
-    //     const isValidNumber
-    //         = !Number.isNaN(Number.parseFloat(newAmount)) && Number.isFinite(Number.parseFloat(newAmount))
-
-    //     setYouReceiver({
-    //         ...youReceiver,
-    //         amount: isValidNumber ? newAmount : '0',
-    //     })
-
-    //     const calculatedAmount = BigNumber(isValidNumber ? newAmount : '0').dividedBy(ratio).toFixed(4)
-    //     const swapCalculatedAmount = BigNumber(isValidNumber ? newAmount : '0').multipliedBy(ratio).toFixed(4)
-
-    //     // Update the corresponding field based on the activeInput flag
-    //     setYouPay({
-    //         ...youPay,
-    //         amount: activeInput === 'youReceiver' ? swapCalculatedAmount : calculatedAmount,
-    //     })
-    // }
-
-    const { coreContracts } = useCoreContract()
     const [swapDisabled, setSwapDisabled] = useState(!props.ownerState)
     const [swapLoading, setSwapLoading] = useState(false)
     const [swapButtonText, setSwapButtonText] = useState('Swap')
@@ -179,6 +90,7 @@ const Swap: React.FC<IProps> = (props) => {
         amount: '',
         logo: tokenStates[1] ? tokenStates[1].logo : '',
     })
+
     /**
      *
      * @param amount
@@ -398,7 +310,6 @@ const Swap: React.FC<IProps> = (props) => {
             if (coreContracts && capitalPoolAddress !== ZeroAddress && checkingInputBalance && !props.ownerState) {
                 await fetchTokenBalance(inputToken.address)
                 setTimeout(() => {
-                    // setSwaping(false)
                     setCheckingInputBalance(false)
                 }, 3000)
             }

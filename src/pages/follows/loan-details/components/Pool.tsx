@@ -7,11 +7,11 @@ import { useChainId } from 'wagmi'
 // import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import { LoadingOutlined } from '@ant-design/icons'
 import RepaymentPlan from './RepaymentPlan'
-import SwapModalOld from './SwapModalOld'
 import Address from './Address'
 import LoanHistory from './LoanHistory'
 import BalanceChart from './BalanceChart'
 import Swap from './Swap'
+import DepositModal from './Modals/Deposit'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
@@ -60,100 +60,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   const chainId = useChainId()
 
-  // async function getBalanceByTokens() {
-  //   if (!coreContracts || !tradeId)
-  //     return
-  //   setLoadTokenInfoLoading(true)
-  //   try {
-  //     setTokenInfos([])
-
-  //     const proList: Promise<TokenInfo>[] = []
-  //     // if (proList.length === 0 && tokenInfos.length === 0) {
-  //     const pro = getBalanceByToken(ChainAddressEnums[chainId].USDC, tradeId, 'USDC')
-  //     // const pro = getBalanceByToken(tradingPairTokenMap['USDC'], tradeId, 'USDC')
-  //     pro && proList.push(pro as Promise<TokenInfo>)
-  //     // }
-  //     // for (let i = 0; i < transactionPair.length; i++) {
-  //     //   const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
-  //     //   if (coin in tradingPairTokenMap) {
-  //     //     // console.log(tradingPairTokenMap[coin], tradeId, coin)
-  //     //     const pro = getBalanceByToken(tradingPairTokenMap[coin], tradeId, coin)
-  //     //     pro && proList.push(pro as Promise<TokenInfo>)
-  //     //   }
-  //     // }
-
-  //     for (let i = 0; i < transactionPair.length; i++) {
-  //       // const coin = transactionPair[i] as keyof typeof tradingPairTokenMap
-  //       const coin = transactionPair[i]
-  //       // if (coin in tradingPairTokenMap) {
-  //       coreContracts.specifiedTradingPairsOfSpot.forEach((pairs) => {
-  //         if (coin === pairs.name) {
-  //           // console.log(tradingPairTokenMap[coin], tradeId, coin)
-  //           const pro = getBalanceByToken(ChainAddressEnums[chainId][coin], tradeId, coin)
-  //           // console.log(coin, ChainAddressEnums[chainId][coin.toLowerCase()], pro)
-  //           pro && proList.push(pro as Promise<TokenInfo>)
-  //         }
-  //       })
-  //     }
-  //     // console.log(proList)
-
-  //     Promise.all(proList).then((res) => {
-  //       // console.log('res', res)
-  //       setTokenInfos(preState => ([...preState, ...res]))
-  //     }).catch((err) => {
-  //       throw new Error(err)
-  //     })
-  //   }
-  //   catch (error) {
-  //     console.log('%c [ error ]-65', 'font-size:13px; background:#abdc31; color:#efff75;', error)
-  //   }
-  //   finally {
-  //     setLoadTokenInfoLoading(false)
-  //   }
-  // }
-
-  // async function getBalanceByToken(token: string, tradeId: bigint, name?: string): Promise<TokenInfo | undefined> {
-  //   // const ERC20Contract = await browserContractService?.getERC20Contract(token)
-  //   const ERC20Contract = await coreContracts?.getERC20Contract(token)
-
-  //   // const cp = await browserContractService?.getCapitalPoolAddress(tradeId)
-  //   const cp = await coreContracts?.manageContract.getTradeIdToCapitalPool(tradeId)
-  //   if (!cp)
-  //     return
-
-  //   const balance = await ERC20Contract?.balanceOf(cp)
-  //   // 查询代币的符号和小数位数
-  //   const symbol = await ERC20Contract?.symbol()
-  //   const decimals = await ERC20Contract?.decimals()
-
-  //   const tokenName = name ?? symbol
-
-  //   // const address = tradingPairTokenMap[tokenName as keyof typeof tradingPairTokenMap]
-  //   const address = ChainAddressEnums[chainId][tokenName!]
-
-  //   let ratio
-
-  //   if (tokenName !== 'USDC')
-  //     ratio = await browserContractService?.testLiquidity_calculateSwapRatio(token)
-  //   // ratio = await browserContractService?.testLiquidity_calculateSwapRatio(address)
-
-  //   const trulyBalance = ethers.formatUnits(balance ?? 0, decimals)
-
-  //   const dollars = !ratio ? trulyBalance : String(Number(trulyBalance) / (Number(ratio)))
-
-  //   return {
-  //     name: tokenName,
-  //     balance: trulyBalance,
-  //     decimals: Number(decimals) ?? 0,
-  //     address,
-  //     ratio: ratio ? String(ratio) : '0',
-  //     dollars,
-  //     // icon: tokenList.find(token => token.address === address)?.icon,
-  //     icon: tokenName === 'USDC'
-  //       ? USDCLogo
-  //       : coreContracts!.specifiedTradingPairsOfSpot.find(pair => pair.address === address)?.logo,
-  //   }
-  // }
+  const [depositModalOpen, setDepositModalOpen] = useState(false)
 
   function onDeposit() {
     setDepositIsModalOpen(true)
@@ -321,51 +228,29 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   return (
     <div className='w-full'>
-      {/* {
-        tokenStates.length >= 2
-          ? <SwapModal
-            resetSwapTokenInfo={refreshTokenState}
-            tradeId={tradeId}
-            currentTokenInfo={currentTokenInfo}
-            tokenStates={tokenStates}
-            open={swapModalOpen}
-            onCancel={() => setSwapModalOpen(false)} >
-          </SwapModal>
-          : <div></div>
-      } */}
-      {/* <>{swapModal}</> */}
-      <SwapModalOld
-        resetSwapTokenInfo={refreshTokenState}
-        tradeId={tradeId}
-        currentTokenInfo={currentTokenInfo}
-        tokenState={currentTokenState}
-      // open={isSwapModalOpen}
-      // onCancel={() => setSetIsModalOpen(false)}
-      >
-      </SwapModalOld>
       <SModal
-        // open={isDepositModalOpen}
+        open={isDepositModalOpen}
         content={
           (<div>
             <h2>
               {topUpTitle}
             </h2>
             {/* <Button type='primary' onClick={onDepositModalConfirm} >
-            Confirm
-          </Button>
-          <Button onClick={() => setSetIsModalOpen(false)}>
-            Cancel
-          </Button> */}
+              Confirm
+            </Button>
+            <Button onClick={() => setSetIsModalOpen(false)}>
+              Cancel
+            </Button> */}
             <div>
               <Input onChange={onDepositValueChange} disabled={!((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed'))} />
             </div>
           </div>
           )
         }
-      // onCancel={() => setDepositIsModalOpen(false)}
-      // okText="Confirm"
-      // onOk={onDepositModalConfirm}
-      // okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
+        onCancel={() => setDepositIsModalOpen(false)}
+        okText="Confirm"
+        onOk={onDepositModalConfirm}
+        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
       >
 
         {/* {
@@ -390,6 +275,13 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         } */}
 
       </SModal>
+      <DepositModal
+        open={depositModalOpen}
+        setOpen={setDepositModalOpen}
+        title={'Deposit USDC to capital pool'}
+        tradeId={tradeId}
+      ></DepositModal>
+
       <div className="w-full">
         <div className='flex items-center justify-between'>
           <div className='w-full md:flex'>
@@ -403,7 +295,10 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                   <div className="text-16"><Address address={capitalPoolAddress} /></div>
                 </div>
                 <div className='flex justify-end'>
-                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button>
+                  {/* <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button> */}
+
+                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)}>Deposit</Button>
+
                 </div>
                 <div className='text-24 font-semibold md:text-32'>Total:
                 </div>
@@ -419,7 +314,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               <Swap
                 resetSwapTokenInfo={refreshTokenState}
                 tradeId={tradeId}
-                // currentTokenInfo={currentTokenInfo}
                 tokenStates={tokenStates}
                 ownerState={prePage === 'loan' && loanInfo.state === 'Trading'}
               >

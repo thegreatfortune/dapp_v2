@@ -9,6 +9,10 @@ export enum NotificationInfo {
     CreatePoolSuccessfulDesc = 'You have created your Pools successfully.',
     CreateLoanSuccessfully = 'Loan creation successful!',
     CreateLoanSuccessfullyDesc = 'You have created a Loan successfully.',
-    MintSuccessfully = 'Mint sucessfully!',
-    MintSuccessfullyDesc = 'You have mint a follow nft sucessfully.',
+    MintSuccessfully = 'Mint successfully!',
+    MintSuccessfullyDesc = 'You have mint a follow nft successfully.',
+    ApprovalSuccessfully = 'Approval successfully.',
+    ApprovalSuccessfullyDesc = 'You have approved successfully.',
+    DepositSuccessfully = 'Deposit successful.',
+    DepositSuccessfullyDesc = 'You have deposited successfully.',
 }
