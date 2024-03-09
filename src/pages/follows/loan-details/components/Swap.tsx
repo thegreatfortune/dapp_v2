@@ -14,6 +14,7 @@ import usePoolAddress from '@/helpers/usePoolAddress'
 
 // import type { TokenInfo } from './Pool'
 import { executeTask, handleTransactionResponse } from '@/helpers/helpers'
+import { MessageError } from '@/enums/error'
 
 // import exChange from '@/assets/images/loan-details/exchange.png'
 // import FolCoin from '@/assets/images/loan-details/FolCoin.png'
@@ -197,68 +198,40 @@ const Swap: React.FC<IProps> = (props) => {
     }
 
     async function doSwap() {
-        // if (!props.tradeId)
-        //   return
-        setSwaping(true)
-        // setSwapBnText('swaping')
-        // setLoading(true)
+        const task = async () => {
+            if (coreContracts) {
+                setSwaping(true)
+                try {
+                    const handles = await coreContracts.manageContract.getAllAllowHandle()
+                    const handleAddress = coreContracts.chainAddresses.handle
+                    const hIndex = handles.findIndex(handle => handle === handleAddress)
 
-        if (coreContracts) {
-            // let tokenInformation = new SwapInfo()
-
-            //  1为_token买入USDC操作,非1为卖出USDC换成_token
-            // 0: input is usdc; 1:output is usdc
-            // let buyOrSell = 0
-
-            // if (inputToken.name === TokenEnums[chainId].USDC.name) {
-            //     buyOrSell = 0
-            //     tokenInformation.token = youReceiver.token
-            //     tokenInformation.address = youReceiver.address
-            //     tokenInformation.amount = youPay.amount
-            // }
-            // else {
-            //     buyOrSell = 1
-            //     tokenInformation = youPay
-            // }
-
-            // if (!tokenInformation?.address) {
-            //     message.error('address is undefined')
-            //     return
-            // }
-
-            const handles = await coreContracts.manageContract.getAllAllowHandle()
-            const handleAddress = coreContracts.chainAddresses.handle
-            const hIndex = handles.findIndex(handle => handle === handleAddress)
-
-            if (inputToken.name === TokenEnums[chainId].USDC.name) {
-                console.log('USDC to ...', props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
-                const res = await coreContracts.routerContract.doV3Swap(props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
-                await handleTransactionResponse(res)
-                setSwaping(false)
+                    if (inputToken.name === TokenEnums[chainId].USDC.name) {
+                        console.log('USDC to ...', props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
+                        const res = await coreContracts.routerContract.doV3Swap(props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
+                        await handleTransactionResponse(res)
+                        setSwaping(false)
+                    }
+                    else {
+                        // const res = await coreContracts.routerContract.doV3Swap(props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
+                        console.log('... to USDC', props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
+                    }
+                    setSwaping(false)
+                }
+                catch (error) {
+                    setSwaping(false)
+                }
             }
             else {
-                // const res = await coreContracts.routerContract.doV3Swap(props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
-                console.log('... to USDC', props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
+                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
-            // try {
-            //     const res = await browserContractService?.followRouter_doV3Swap(props.tradeId, tIndex, BigInt(buyOrSell), ethers.parseEther(tokenInformation.amount))
-            //     if (res?.status === 1)
-            //         await props.resetSwapTokenInfo()
-            // }
-            // catch (error) {
-            //     console.log('%c [ error ]-152', 'font-size:13px; background:#857ff5; color:#c9c3ff;', error)
-            // }
-
-            // finally {
-            setSwaping(false)
-            //         setSwapBnText('Enter an amount')
-            // setLoading(true)
-            //     }
         }
+        executeTask(task)
     }
 
     const fetchTokenBalance = async (token: string) => {
         if (coreContracts && capitalPoolAddress !== ZeroAddress) {
+            console.log('?????')
             if (token === TokenEnums[chainId].USDC.address) {
                 const balance = await coreContracts.usdcContract.balanceOf(capitalPoolAddress)
                 if (inputToken.address === token)
@@ -301,13 +274,15 @@ const Swap: React.FC<IProps> = (props) => {
     }
 
     useEffect(() => {
-        calculateTokenAmount(inputAmount, true)
-        setChangingDirection(false)
+        if (coreContracts) {
+            calculateTokenAmount(inputAmount, true)
+            setChangingDirection(false)
+        }
     }, [changingDirection])
 
     useEffect(() => {
         const task = async () => {
-            if (coreContracts && capitalPoolAddress !== ZeroAddress && checkingInputBalance && !props.ownerState) {
+            if (coreContracts && capitalPoolAddress !== ZeroAddress && checkingInputBalance && props.ownerState) {
                 await fetchTokenBalance(inputToken.address)
                 setTimeout(() => {
                     setCheckingInputBalance(false)
@@ -318,7 +293,7 @@ const Swap: React.FC<IProps> = (props) => {
     }, [coreContracts, capitalPoolAddress, inputToken, checkingInputBalance])
 
     useEffect(() => {
-        if (coreContracts && capitalPoolAddress !== ZeroAddress && checkingOutputBalance && outputToken.index !== -1 && !props.ownerState) {
+        if (coreContracts && capitalPoolAddress !== ZeroAddress && checkingOutputBalance && outputToken.index !== -1 && props.ownerState) {
             fetchTokenBalance(outputToken.address)
             setTimeout(() => {
                 // setSwaping(false)
@@ -329,6 +304,7 @@ const Swap: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         if (tokenStates[1] && outputToken.index === -1) {
+            console.log(tokenStates[1])
             setOutputToken(() => {
                 return {
                     index: tokenStates[1].index,
@@ -343,13 +319,13 @@ const Swap: React.FC<IProps> = (props) => {
         }
     }, [tokenStates])
 
-    // useEffect(() => {
-    //     console.log('inputToken changed:', inputToken)
-    // }, [inputToken])
+    useEffect(() => {
+        console.log('inputToken changed:', inputToken)
+    }, [inputToken])
 
-    // useEffect(() => {
-    //     console.log('outputToken changed:', outputToken)
-    // }, [outputToken])
+    useEffect(() => {
+        console.log('outputToken changed:', outputToken)
+    }, [outputToken])
 
     useEffect(() => {
         if (props.ownerState) {
@@ -398,6 +374,7 @@ const Swap: React.FC<IProps> = (props) => {
                                                 amount: '0',
                                                 logo: item.logo,
                                             })
+
                                             calculateTokenAmount(inputAmount, true)
                                         }
                                         else {
@@ -410,6 +387,7 @@ const Swap: React.FC<IProps> = (props) => {
                                                 amount: '0',
                                                 logo: item.logo,
                                             })
+
                                             calculateTokenAmount(outputAmount, false)
                                         }
 

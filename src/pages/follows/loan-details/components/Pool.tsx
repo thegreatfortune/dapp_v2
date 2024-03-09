@@ -80,7 +80,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const getTokenState = async (capitalPoolAddressOfLoan: string) => {
     const task = async () => {
       if (coreContracts && tradeId) {
-        // const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
+        const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
         const usdcDecimals = await coreContracts.usdcContract.decimals()
         // const usdcName = await coreContracts.usdcContract.name()
         const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfLoan)
@@ -131,7 +131,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
             }
             setTokenStates((prev) => {
               const tokenStates = [...prev]
-              tokenStates[tokenState.index] = tokenState
+              // tokenStates[tokenState.index] = tokenState
+              tokenStates.push(tokenState)
               return tokenStates
             })
           }
