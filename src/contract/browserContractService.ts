@@ -1465,7 +1465,7 @@ export class BrowserContractService {
 
     // if (result?.status !== 1)
     //   throw new Error('approve is error')
-
+    console.log('tokenId', tokenId)
     const transaction = await refundPoolContract.lenderWithdraw(tokenId) // tokenId用户持有的ERC3525的tokenId
 
     return handleTransaction(transaction)

@@ -215,7 +215,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='flex justify-end'>
                   {/* <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button> */}
 
-                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)} disabled={capitalPoolAddressOfLoan === ZeroAddress}>Deposit</Button>
+                  <Button
+                    className='h30 b-rd-30 primary-btn md:w120' type='primary'
+                    onClick={() => setDepositModalOpen(true)}
+                    disabled={loanInfo!.state !== 'Trading' || capitalPoolAddressOfLoan === ZeroAddress}>
+                    Deposit
+                  </Button>
 
                 </div>
                 <div className='text-24 font-semibold md:text-32'>Total:

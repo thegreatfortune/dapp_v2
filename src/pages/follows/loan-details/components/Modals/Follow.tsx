@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { ModalProps } from 'antd'
 import { Button, Modal, message, notification } from 'antd'
-import { ZeroAddress, formatUnits } from 'ethers'
+import { MaxUint256, ZeroAddress, formatUnits } from 'ethers'
 import { useEffect, useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
 import { useChainId } from 'wagmi'
@@ -59,7 +59,7 @@ const FollowModal: React.FC<IProps> = (props) => {
         props.setOpen(false)
     }
 
-    const checkAllowance = async () => {
+    const checkAllowance = async (unitPrice?: bigint) => {
         if (coreContracts) {
             setApproving(true)
             setApproveButtonText('Checking...')
@@ -67,7 +67,7 @@ const FollowModal: React.FC<IProps> = (props) => {
 
             const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].processCenter)
 
-            if (allowance < followAmount) {
+            if (allowance < (unitPrice || followAmount)) {
                 setApproveButtonDisabled(false)
             }
             else {
@@ -89,7 +89,7 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setApproving(true)
                 setApproveButtonDisabled(true)
                 try {
-                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, followAmount)
+                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, MaxUint256)
                     await handleTransactionResponse(res,
                         NotificationInfo.ApprovalSuccessfully,
                         NotificationInfo.ApprovalSuccessfullyDesc,
@@ -201,6 +201,8 @@ const FollowModal: React.FC<IProps> = (props) => {
                 const unitPrice = await coreContracts.processCenterContract.getLendStakeMoney(props.tradeId, 1)
                 setUnitPrice(unitPrice)
                 setFollowAmount(unitPrice)
+
+                checkAllowance(unitPrice)
 
                 setCheckingMax(false)
             }
