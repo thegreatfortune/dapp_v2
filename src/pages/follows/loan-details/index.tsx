@@ -345,71 +345,73 @@ const LoanDetails = () => {
     }
   }
 
-  const handleFollow = async () => {
-    if (!tradeId || !copies)
-      return
+  // const handleFollow = async () => {
+  //   if (!tradeId || !copies)
+  //     return
 
-    setExecuting(true)
+  //   setExecuting(true)
 
-    if (!browserContractService)
-      return
+  //   if (!browserContractService)
+  //     return
 
-    try {
-      setUsdcApproved(1)
+  //   try {
+  //     setUsdcApproved(1)
 
-      const allowance = await browserContractService.checkUsdcAllowance()
+  //     const allowance = await browserContractService.checkUsdcAllowance()
 
-      if (allowance >= followUSDCAmount) {
-        setUsdcApproved(2)
-      }
-      else {
-        const approveRes = await browserContractService.approveBeforeFollow(ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
-        if (approveRes?.status === 1)
-          setUsdcApproved(2)
-        else
-          throw new Error('Failed')
-      }
-    }
-    catch (error) {
-      console.log(error)
-      setUsdcApproved(3)
-      setExecuting(false)
-      message.error('Transaction failed!')
-      return
-    }
+  //     if (allowance >= followUSDCAmount) {
+  //       setUsdcApproved(2)
+  //     }
+  //     else {
+  //       const approveRes = await browserContractService.approveBeforeFollow(ethers.parseEther(BigNumber(2 * 10 ** 6).toString()))
+  //       if (approveRes?.status === 1)
+  //         setUsdcApproved(2)
+  //       else
+  //         throw new Error('Failed')
+  //     }
+  //   }
+  //   catch (error) {
+  //     console.log(error)
+  //     setUsdcApproved(3)
+  //     setExecuting(false)
+  //     message.error('Transaction failed!')
+  //     return
+  //   }
 
-    try {
-      setFollowed(1)
-      const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
-      console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
+  //   try {
+  //     setFollowed(1)
+  //     const result = await browserContractService.capitalPool_lend(BigInt(copies), BigInt(tradeId))
+  //     console.log('%c [ result ]-114', 'font-size:13px; background:#b71c0a; color:#fb604e;', result)
 
-      if (result?.status !== 1)
-        message.error('Transaction failed!')
+  //     if (result?.status !== 1)
+  //       message.error('Transaction failed!')
 
-      setFollowed(2)
-      setLentState(true)
-    }
-    catch (error) {
-      setFollowed(3)
-      message.error('Transaction failed!')
-      setExecuting(false)
-      console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
-      return
-    }
-    setTimeout(() => {
-      setFollowModalBtnText('Finished')
-      setLendingState(false)
-      setFollowModalOpen(false)
-      setExecuting(false)
-      location.reload()
-    }, 3000)
-  }
+  //     setFollowed(2)
+  //     setLentState(true)
+  //   }
+  //   catch (error) {
+  //     setFollowed(3)
+  //     message.error('Transaction failed!')
+  //     setExecuting(false)
+  //     console.log('%c [ error ]-87', 'font-size:13px; background:#90ef5a; color:#d4ff9e;', error)
+  //     return
+  //   }
+  //   setTimeout(() => {
+  //     setFollowModalBtnText('Finished')
+  //     setLendingState(false)
+  //     setFollowModalOpen(false)
+  //     setExecuting(false)
+  //     location.reload()
+  //   }, 3000)
+  // }
 
   const checkFofAmount = async () => {
     if (!browserContractService)
       return
     if (tradeId) {
       const withdrawed = await browserContractService.checkWithdrawed(Number(tradeId))
+
+      console.log('withdrawed:', withdrawed)
 
       if (!withdrawed) {
         const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))

@@ -319,13 +319,13 @@ const Swap: React.FC<IProps> = (props) => {
         }
     }, [tokenStates])
 
-    useEffect(() => {
-        console.log('inputToken changed:', inputToken)
-    }, [inputToken])
+    // useEffect(() => {
+    //     console.log('inputToken changed:', inputToken)
+    // }, [inputToken])
 
-    useEffect(() => {
-        console.log('outputToken changed:', outputToken)
-    }, [outputToken])
+    // useEffect(() => {
+    //     console.log('outputToken changed:', outputToken)
+    // }, [outputToken])
 
     useEffect(() => {
         if (props.ownerState) {

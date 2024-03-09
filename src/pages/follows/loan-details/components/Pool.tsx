@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Button, Divider, Image, Tabs } from 'antd'
-import { ZeroAddress, ethers } from 'ethers'
+import { ZeroAddress, ethers, formatUnits } from 'ethers'
 import { useChainId } from 'wagmi'
 
 // import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
@@ -18,6 +18,7 @@ import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import { executeTask } from '@/helpers/helpers'
 import usePoolAddress from '@/helpers/usePoolAddress'
+import { MessageError } from '@/enums/error'
 
 // import { PortfolioService } from '@/.generated/api'
 
@@ -80,7 +81,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const getTokenState = async (capitalPoolAddressOfLoan: string) => {
     const task = async () => {
       if (coreContracts && tradeId) {
-        const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
+        // const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
         const usdcDecimals = await coreContracts.usdcContract.decimals()
         // const usdcName = await coreContracts.usdcContract.name()
         const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfLoan)
@@ -143,24 +144,24 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     executeTask(task)
   }
 
-  async function refreshTokenState() {
-    await getTokenState(capitalPoolAddressOfLoan)
+  const refreshTokenState = async () => {
+    const task = async () => {
+      if (coreContracts) {
+        const usdcDecimals = await coreContracts.usdcContract.decimals()
+        const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfLoan)
 
-    // setSetIsModalOpen(false)
+        setTokenStates((prev) => {
+          const tokenStates = [...prev]
+          tokenStates[0].usd = formatUnits(usdcBalance, usdcDecimals)
+          return tokenStates
+        })
+      }
+      else {
+        return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+      }
+    }
+    executeTask(task)
   }
-
-  // function openSwapModal(tokenStates: Models.ITokenState[]) {
-  //   const item = new TokenInfo()
-  //   item.name = tokenStates[1].symbol
-  //   item.address = tokenStates[1].address
-  //   item.balance = tokenStates[1].balance
-  //   item.decimals = tokenStates[1].decimals
-  //   item.dollars = tokenStates[1].usd
-  //   item.icon = tokenStates[1].logo
-  //   item.ratio = tokenStates[1].ratio
-  //   setCurrentTokenInfo(item)
-  //   setSwapModalOpen(true)
-  // }
 
   useEffect(() => {
     const task = async () => {
@@ -199,6 +200,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         setOpen={setDepositModalOpen}
         tradeId={tradeId}
         capitalPoolAddress={capitalPoolAddressOfLoan}
+        refreshTokenState={refreshTokenState}
       ></DepositModal>
 
       <div className="w-full">

@@ -16,6 +16,7 @@ interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
     tradeId: bigint
     capitalPoolAddress: string
+    refreshTokenState: () => void
 }
 
 const DepositModal: React.FC<IProps> = (props) => {
@@ -53,10 +54,10 @@ const DepositModal: React.FC<IProps> = (props) => {
             const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].processCenter)
 
             if (allowance < parseUnits(amount, TokenEnums[chainId].USDC.decimals)) {
-                setDepositAmount(parseUnits(amount, TokenEnums[chainId].USDC.decimals))
                 setApproveButtonDisabled(false)
             }
             else {
+                setDepositAmount(parseUnits(amount, TokenEnums[chainId].USDC.decimals))
                 setApproveButtonDisabled(true)
                 setDepositButtonDisabled(false)
             }
@@ -87,7 +88,6 @@ const DepositModal: React.FC<IProps> = (props) => {
                 setDepositButtonDisabled(false)
             }
             else {
-                message.error(MessageError.ProviderOrSignerIsNotInitialized)
                 return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
@@ -116,12 +116,11 @@ const DepositModal: React.FC<IProps> = (props) => {
                     setDepositButtonDisabled(false)
                     return
                 }
-
                 try {
                     const res = await coreContracts.processCenterContract.supply(TokenEnums[chainId].USDC.address, depositAmount, props.tradeId)
                     await handleTransactionResponse(res,
-                        NotificationInfo.ApprovalSuccessfully,
-                        NotificationInfo.ApprovalSuccessfullyDesc,
+                        NotificationInfo.DepositSuccessfully,
+                        NotificationInfo.DepositSuccessfullyDesc,
                     )
                 }
                 catch (error) {
@@ -131,6 +130,7 @@ const DepositModal: React.FC<IProps> = (props) => {
                 }
                 setDepositing(false)
                 setDepositButtonDisabled(false)
+                props.refreshTokenState()
                 setDepositButtonText('Finish')
             }
             else {
