@@ -278,7 +278,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       <DepositModal
         open={depositModalOpen}
         setOpen={setDepositModalOpen}
-        title={'Deposit USDC to capital pool'}
         tradeId={tradeId}
       ></DepositModal>
 

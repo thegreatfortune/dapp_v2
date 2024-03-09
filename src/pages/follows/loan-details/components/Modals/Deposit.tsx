@@ -108,7 +108,7 @@ const DepositModal: React.FC<IProps> = (props) => {
     return <Modal open={props.open}
         onCancel={() => props.setOpen(false)}
         okText={props.okText}
-        title={props.title}
+        title={'Deposit USDC to capital pool'}
         footer={
             <div className='grid grid-cols-2 gap-16'>
                 <Button className={`h-40 text-16 ${!approveButtonDisabled ? 'primary-btn' : ''}`} type='primary'
