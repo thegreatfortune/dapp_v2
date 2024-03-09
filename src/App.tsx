@@ -14,7 +14,7 @@ const App = () => {
           },
           components: {
             Modal: {
-              titleFontSize: 20,
+              titleFontSize: 24,
             },
             List: {
               avatarMarginRight: 20,

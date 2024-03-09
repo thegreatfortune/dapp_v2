@@ -15,4 +15,6 @@ export enum NotificationInfo {
     ApprovalSuccessfullyDesc = 'You have approved successfully.',
     DepositSuccessfully = 'Deposit successful.',
     DepositSuccessfullyDesc = 'You have deposited successfully.',
+    FollowSuccessfully = 'Follow successfully.',
+    FollowSuccessfullyDesc = 'You have followed successfully.',
 }

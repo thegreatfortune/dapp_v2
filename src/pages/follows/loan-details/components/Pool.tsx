@@ -57,6 +57,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   const { capitalPoolAddress } = usePoolAddress()
   const [tokenStates, setTokenStates] = useState<Models.ITokenState[]>([])
   const [totalBalance, setTotalBalance] = useState(0)
+  const [capitalPoolAddressOfLoan, setCapitalPoolAddressOfLoan] = useState(ZeroAddress)
   // const [currentTokenState, setCurrentTokenState] = useState<Models.ITokenState>()
 
   // const [swapModalOpen, setSwapModalOpen] = useState(false)
@@ -76,16 +77,13 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   //   setSetIsModalOpen(true)
   // }
 
-  const getTokenState = async () => {
+  const getTokenState = async (capitalPoolAddressOfLoan: string) => {
     const task = async () => {
       if (coreContracts && tradeId) {
         // const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
-
-        const capitalPoolAddressOfTradeId = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
-
         const usdcDecimals = await coreContracts.usdcContract.decimals()
         // const usdcName = await coreContracts.usdcContract.name()
-        const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfTradeId)
+        const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfLoan)
 
         // get USDC state
         const usdcState: Models.ITokenState = {
@@ -111,7 +109,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
             const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][v])
             // const name = await tokenContract.name()
             const decimals = await tokenContract.decimals()
-            const balance = await tokenContract.balanceOf(capitalPoolAddressOfTradeId)
+            const balance = await tokenContract.balanceOf(capitalPoolAddressOfLoan)
             const liquidityContract = await coreContracts.getTestLiquidityContract()
             const price = await liquidityContract.getTokenPrice(
               ChainAddressEnums[chainId].USDC,
@@ -145,7 +143,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   }
 
   async function refreshTokenState() {
-    await getTokenState()
+    await getTokenState(capitalPoolAddressOfLoan)
 
     // setSetIsModalOpen(false)
   }
@@ -164,9 +162,14 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   // }
 
   useEffect(() => {
-    if (coreContracts)
-      // TODO 增加刷新时候的等待显示
-      getTokenState()
+    const task = async () => {
+      if (coreContracts) {
+        const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
+        getTokenState(capitalPoolAddress)
+        setCapitalPoolAddressOfLoan(capitalPoolAddress)
+      }
+    }
+    executeTask(task)
   }, [coreContracts])
 
   useEffect(() => {
@@ -194,7 +197,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         open={depositModalOpen}
         setOpen={setDepositModalOpen}
         tradeId={tradeId}
-        capitalPoolAddress={capitalPoolAddress}
+        capitalPoolAddress={capitalPoolAddressOfLoan}
       ></DepositModal>
 
       <div className="w-full">
@@ -207,12 +210,12 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               <div className='grid grid-cols-2 h-100 grow place-content-between max-md:my-30 md:ml-20 md:mt-35'>
                 <div className='flex'>
                   <div className='mr-4 text-18 font-semibold md:mr-10 md:text-20'>Pool:</div>
-                  <div className="text-16"><Address address={capitalPoolAddress} /></div>
+                  <div className="text-16"><Address address={capitalPoolAddressOfLoan} /></div>
                 </div>
                 <div className='flex justify-end'>
                   {/* <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button> */}
 
-                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)} disabled={capitalPoolAddress === ZeroAddress}>Deposit</Button>
+                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)} disabled={capitalPoolAddressOfLoan === ZeroAddress}>Deposit</Button>
 
                 </div>
                 <div className='text-24 font-semibold md:text-32'>Total:

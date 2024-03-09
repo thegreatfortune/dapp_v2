@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { ModalProps } from 'antd'
-import { Button, Modal, message } from 'antd'
+import { Button, Modal, message, notification } from 'antd'
 import { parseUnits } from 'ethers'
 import { useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
@@ -10,7 +10,7 @@ import useCoreContract from '@/hooks/useCoreContract'
 import useUserStore from '@/store/userStore'
 import { executeTask, handleTransactionResponse } from '@/helpers/helpers'
 import { NotificationInfo } from '@/enums/info'
-import { MessageError } from '@/enums/error'
+import { MessageError, NotificationError } from '@/enums/error'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
@@ -96,12 +96,27 @@ const DepositModal: React.FC<IProps> = (props) => {
 
     const deposit = async () => {
         const task = async () => {
-            if (depositButtonText === 'Finish')
+            if (depositButtonText === 'Finish') {
                 resetModal()
+                return
+            }
 
             if (coreContracts) {
                 setDepositing(true)
                 setDepositButtonDisabled(true)
+
+                const balance = await coreContracts.usdcContract.balanceOf(currentUser.address)
+                if (balance < depositAmount) {
+                    notification.error({
+                        message: NotificationError.InsufficientBalance,
+                        description: NotificationError.InsufficientBalanceDesc,
+                        placement: 'bottomRight',
+                    })
+                    setDepositing(false)
+                    setDepositButtonDisabled(false)
+                    return
+                }
+
                 try {
                     const res = await coreContracts.processCenterContract.supply(TokenEnums[chainId].USDC.address, depositAmount, props.tradeId)
                     await handleTransactionResponse(res,
@@ -129,7 +144,7 @@ const DepositModal: React.FC<IProps> = (props) => {
     return <Modal open={props.open}
         onCancel={() => resetModal()}
         okText={props.okText}
-        title={'Deposit USDC to capital pool'}
+        title={'Deposit'}
         centered={true}
         footer={
             <div className='grid grid-cols-2 gap-16'>
@@ -146,18 +161,18 @@ const DepositModal: React.FC<IProps> = (props) => {
             </div>
         }
     >
-        <div className='h-300 py-10'>
-            <div className='grid grid-rows-2 my-30 gap-4'>
-                <div className='text-16'>Capital Pool of this loan:</div>
+        <div className='h-320 py-10'>
+            <div className='grid grid-rows-2 mb-30 mt-20 gap-4'>
+                <div className='text-18'>Deposit USDC to Capital Pool:</div>
                 <div className='text-14 max-md:mt-5'>{props.capitalPoolAddress}</div>
             </div>
             <div className='grid grid-rows-2 my-30 gap-4'>
-                <div className='text-16'>Approve to Follow Process Center:</div>
+                <div className='text-18'>Approve to Follow Process Center:</div>
                 <div className='text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
             </div>
-            <div className='my-30'>
-                <div className='mt-15 text-16'>USDC Amount:</div>
-                <div className='mt-5 w-full flex'>
+            <div className='grid grid-rows-2 my-30 gap-4'>
+                <div className='mt-15 text-16'>USDC amount:</div>
+                <div className='mt-3 w-full flex'>
                     <CurrencyInput
                         className='font-semiBold h-40 w-full border-0 rounded-5 bg-black text-20 text-white outline-1 outline'
                         style={{ outlineColor: '#424242' }}

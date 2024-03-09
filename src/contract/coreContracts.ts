@@ -43,7 +43,7 @@ import LDOLogo from '@/assets/images/apply-loan/token-icons/LDO.png'
 import AAVELogo from '@/assets/images/apply-loan/token-icons/AAVE.png'
 import SOLLogo from '@/assets/images/apply-loan/token-icons/SOL.png'
 
-function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.Interface, signer: ethers.Signer): T {
+export function createContract<T>(address: string, abi: ethers.InterfaceAbi | ethers.Interface, signer: ethers.Signer): T {
   return new Contract(address, abi, signer) as T
 }
 
@@ -214,8 +214,16 @@ export class CoreContracts {
     return this._capitalPoolContract
   }
 
+  set capitalPoolContract(captitalPool: capitalPool) {
+    this._capitalPoolContract = captitalPool
+  }
+
   get refundPoolContract(): refundPool | undefined {
     return this._refundPoolContract
+  }
+
+  set refundPoolContract(refundPool: refundPool) {
+    this._refundPoolContract = refundPool
   }
 
   get capitalPoolAddress(): string {

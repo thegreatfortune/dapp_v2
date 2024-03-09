@@ -6,6 +6,9 @@ export enum NotificationError {
 
     CannotApplyLoan = 'Can not apply a loan.',
     CannotApplyLoanDesc = 'You have a un-liquidate loan, or you\'re in Blacklist.',
+
+    InsufficientBalance = 'Insufficient balance.',
+    InsufficientBalanceDesc = 'You have Insufficient Balance.',
 }
 
 export enum MessageError {
@@ -23,6 +26,7 @@ export enum MessageError {
     PoolsDoNotExist = 'Error Code: 2005', // The Pools exist.
     InBlacklist = 'Error Code: 2006',
     CanNotCreateDuplicateLoan = 'Error Code: 2007',
+    CalculationResultIsIncorrect = 'Error Code: 2008',
 
     InvalidFormData = 'Invalid form data, Please check your input!',
     NotLoggedIn = 'Please log in first.',

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { ModalProps } from 'antd'
-import { Button, Modal, message } from 'antd'
-import { parseUnits } from 'ethers'
-import { useState } from 'react'
+import { Button, Modal, message, notification } from 'antd'
+import { ZeroAddress, formatUnits } from 'ethers'
+import { useEffect, useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
 import { useChainId } from 'wagmi'
 import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
@@ -10,12 +10,16 @@ import useCoreContract from '@/hooks/useCoreContract'
 import useUserStore from '@/store/userStore'
 import { executeTask, handleTransactionResponse } from '@/helpers/helpers'
 import { NotificationInfo } from '@/enums/info'
-import { MessageError } from '@/enums/error'
+import { MessageError, NotificationError } from '@/enums/error'
+import { createContract } from '@/contract/coreContracts'
+import type {
+    FollowCapitalPool as capitalPool,
+} from '@/abis/types'
+import capitalPoolABI from '@/abis/FollowCapitalPool.json'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
     tradeId: bigint
-    capitalPoolAddress: string
 }
 
 const FollowModal: React.FC<IProps> = (props) => {
@@ -23,46 +27,59 @@ const FollowModal: React.FC<IProps> = (props) => {
     const { currentUser } = useUserStore()
     const { coreContracts } = useCoreContract()
 
+    const [maxShares, setMaxShares] = useState(0)
+    const [unitPrice, setUnitPrice] = useState(BigInt(0))
+    const [followShares, setFollowShares] = useState(1)
+    const [followAmount, setFollowAmount] = useState(BigInt(0))
+
+    const [checkingMax, setCheckingMax] = useState(false)
+
     const [approving, setApproving] = useState(false)
     const [approveButtonText, setApproveButtonText] = useState('Approve')
     const [approveButtonDisabled, setApproveButtonDisabled] = useState(true)
 
-    const [depositing, setDepositing] = useState(false)
-    const [depositButtonText, setDepositButtonText] = useState('Deposit')
-    const [depositButtonDisabled, setDepositButtonDisabled] = useState(true)
+    const [following, setFollowing] = useState(false)
+    const [followButtonText, setFollowButtonText] = useState('Follow')
+    const [followButtonDisabled, setFollowButtonDisabled] = useState(true)
 
-    const [depositAmount, setDepositAmount] = useState(BigInt(0))
+    const [capitalPoolAddressOfLoan, setCapitalPoolAddressOfLoan] = useState(ZeroAddress)
 
     const resetModal = () => {
+        setCheckingMax(false)
         setApproving(false)
         setApproveButtonText('Approve')
         setApproveButtonDisabled(true)
-        setDepositing(false)
-        setDepositButtonText('Deposit')
-        setDepositButtonDisabled(true)
-        setDepositAmount(BigInt(0))
+
+        setFollowing(false)
+        setFollowButtonText('Follow')
+        setFollowButtonDisabled(true)
+
+        setFollowShares(1)
+        setFollowAmount(BigInt(0))
         props.setOpen(false)
     }
 
-    const checkAllowance = async (amount: string) => {
+    const checkAllowance = async () => {
         if (coreContracts) {
             setApproving(true)
             setApproveButtonText('Checking...')
-            setDepositButtonDisabled(true)
+            setFollowButtonDisabled(true)
 
             const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].processCenter)
 
-            if (allowance < parseUnits(amount, TokenEnums[chainId].USDC.decimals)) {
-                setDepositAmount(parseUnits(amount, TokenEnums[chainId].USDC.decimals))
+            if (allowance < followAmount) {
                 setApproveButtonDisabled(false)
             }
             else {
                 setApproveButtonDisabled(true)
-                setDepositButtonDisabled(false)
+                setFollowButtonDisabled(false)
             }
 
             setApproving(false)
             setApproveButtonText('Approve')
+        }
+        else {
+            return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
         }
     }
 
@@ -72,7 +89,7 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setApproving(true)
                 setApproveButtonDisabled(true)
                 try {
-                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, depositAmount)
+                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, followAmount)
                     await handleTransactionResponse(res,
                         NotificationInfo.ApprovalSuccessfully,
                         NotificationInfo.ApprovalSuccessfullyDesc,
@@ -84,39 +101,53 @@ const FollowModal: React.FC<IProps> = (props) => {
                     return
                 }
                 setApproving(false)
-                setDepositButtonDisabled(false)
+                setFollowButtonDisabled(false)
             }
             else {
-                message.error(MessageError.ProviderOrSignerIsNotInitialized)
                 return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
         executeTask(task)
     }
 
-    const deposit = async () => {
+    const follow = async () => {
         const task = async () => {
-            if (depositButtonText === 'Finish')
+            if (followButtonText === 'Finish') {
                 resetModal()
+                return
+            }
 
             if (coreContracts) {
-                setDepositing(true)
-                setDepositButtonDisabled(true)
+                setFollowing(true)
+                setFollowButtonDisabled(true)
+
+                const balance = await coreContracts.usdcContract.balanceOf(currentUser.address)
+                if (balance < followAmount) {
+                    notification.error({
+                        message: NotificationError.InsufficientBalance,
+                        description: NotificationError.InsufficientBalanceDesc,
+                        placement: 'bottomRight',
+                    })
+                    setFollowing(false)
+                    setFollowButtonDisabled(false)
+                    return
+                }
+
                 try {
-                    const res = await coreContracts.processCenterContract.supply(TokenEnums[chainId].USDC.address, depositAmount, props.tradeId)
+                    const res = await coreContracts.routerContract.lendMoney(props.tradeId, followShares)
                     await handleTransactionResponse(res,
-                        NotificationInfo.ApprovalSuccessfully,
-                        NotificationInfo.ApprovalSuccessfullyDesc,
+                        NotificationInfo.FollowSuccessfully,
+                        NotificationInfo.FollowSuccessfullyDesc,
                     )
                 }
                 catch (error) {
-                    setDepositing(false)
-                    setDepositButtonDisabled(false)
-                    return
+                    setFollowing(false)
+                    setFollowButtonDisabled(false)
+                    return Promise.reject(error)
                 }
-                setDepositing(false)
-                setDepositButtonDisabled(false)
-                setDepositButtonText('Finish')
+                setFollowing(false)
+                setFollowButtonDisabled(false)
+                setFollowButtonText('Finish')
             }
             else {
                 message.error(MessageError.ProviderOrSignerIsNotInitialized)
@@ -126,108 +157,125 @@ const FollowModal: React.FC<IProps> = (props) => {
         executeTask(task)
     }
 
-    return <Modal open={followModalOpen}
-        className='h238 w464 b-rd-8'
-        okText={followModalBtnText}
-        onOk={() => handleFollow()}
-        onCancel={() => {
-            setCopies(1)
-            setUsdcApproved(0)
-            setFollowed(0)
-            setExecuting(false)
-            setFollowModalOpen(false)
-        }}
-        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
+    const onCheckingMax = async () => {
+        const task = async () => {
+            setCheckingMax(true)
+            const maxAmount = await coreContracts!.processCenterContract.getLendStakeMoney(props.tradeId, maxShares)
+            // TODO calculate max follow Amount
+            if (maxAmount < BigInt(maxShares) * unitPrice) {
+                message.error(MessageError.CalculationResultIsIncorrect)
+                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+            }
+            setFollowShares(maxShares)
+            setFollowAmount(maxAmount)
+            setCheckingMax(false)
+        }
+        executeTask(task)
+    }
+
+    const calculateAmount = async (followShares: number) => {
+        if (followShares <= maxShares) {
+            setApproveButtonText('Checking...')
+            setFollowButtonDisabled(true)
+
+            setFollowShares(followShares)
+            const amount = await coreContracts!.processCenterContract.getLendStakeMoney(props.tradeId, BigInt(followShares))
+            setFollowAmount(amount)
+
+            setApproveButtonText('Approve')
+            setFollowButtonDisabled(false)
+        }
+    }
+
+    useEffect(() => {
+        const task = async () => {
+            if (coreContracts) {
+                const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
+                setCapitalPoolAddressOfLoan(capitalPoolAddress)
+                const capitalPool = createContract<capitalPool>(capitalPoolAddress, capitalPoolABI, coreContracts.signer)
+                setCheckingMax(true)
+
+                const res = await capitalPool.getList(props.tradeId)
+                setMaxShares(Number(BigInt(res[7])) - Number(BigInt(res[9])))
+
+                const unitPrice = await coreContracts.processCenterContract.getLendStakeMoney(props.tradeId, 1)
+                setUnitPrice(unitPrice)
+                setFollowAmount(unitPrice)
+
+                setCheckingMax(false)
+            }
+            else {
+                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+            }
+        }
+        executeTask(task)
+    }, [coreContracts])
+
+    useEffect(() => {
+        checkAllowance()
+    }, [followAmount])
+
+    return <Modal open={props.open}
+        onCancel={() => resetModal()}
+        okText={props.okText}
+        title={'Follow'}
+        centered={true}
+        footer={
+            <div className='grid grid-cols-2 gap-16'>
+                <Button className={`h-40 text-16 ${!approveButtonDisabled ? 'primary-btn' : ''}`} type='primary'
+                    loading={approving}
+                    disabled={approveButtonDisabled}
+                    onClick={approve}
+                >{approveButtonText}</Button>
+                <Button className={`h-40 text-16 ${!followButtonDisabled ? 'primary-btn' : ''}`} type='primary'
+                    loading={following}
+                    disabled={followButtonDisabled}
+                    onClick={follow}
+                >{followButtonText}</Button>
+            </div>
+        }
     >
-        <div>
-            <h2 className='font-b m-10 w40 flex items-center text-20 c-#fff lh-21'>
-                {lendingState ? 'Processing' : 'Share'}
-            </h2>
-            <div className='w-full flex content-center items-center justify-end'>
-                <InputNumber
-                    size='large'
-                    value={copies}
-                    className='m-10 w-full w150 b-#808080 text-center'
-                    min={1}
-                    onChange={async (v) => {
-                        if (!browserContractService?.getSigner.address)
-                            return
-                        if (v) {
-                            if (v > maxCopies) {
-                                message.error('You can not follow over max shares!')
-                                v = maxCopies
-                            }
-                            else {
-                                const amount = await browserContractService.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(v))
-                                setFollowUSDCAmount(amount)
-                            }
-                        }
-                        setCopies(v)
-                    }}
-                    disabled={executing}
-                />
-                <Button type='primary' loading={checkMaxLoading} onClick={onSetMax} disabled={executing}>
-                    Max
-                </Button>
+        <div className='h-350 py-10'>
+            <div className='grid grid-rows-2 my-30 gap-4'>
+                <div className='text-18'>Lend USDC to Capital Pool:</div>
+                <div className='text-14 max-md:mt-5'>{capitalPoolAddressOfLoan}</div>
+            </div>
+            <div className='grid grid-rows-2 my-30 gap-4'>
+                <div className='text-18'>Approve to Follow Process Center:</div>
+                <div className='text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
+            </div>
+            <div className='grid grid-rows-2 mb-10 mt-30 gap-4'>
+                <div className='mt-15 text-16'>Share amount:</div>
+                <div className='mt-3 w-full flex justify-around'>
+                    <CurrencyInput
+                        className='font-semiBold h-40 w-full border-0 rounded-5 bg-black text-20 text-white outline-1 outline'
+                        style={{ outlineColor: '#424242' }}
+                        name="depositAmount"
+                        value={followShares}
+                        placeholder="0"
+                        allowDecimals={false}
+                        max={maxShares}
+                        allowNegativeValue={false}
+                        onValueChange={(_value, _name, values) => {
+                            if (values && values.value !== '0')
+                                calculateAmount(Number(values.value))
+                        }}
+                    />
+                    <div className='ml-20 flex items-center'>
+                        <Button type='primary' className='primary-btn' loading={checkingMax} onClick={onCheckingMax} disabled={checkingMax}>Max</Button>
+                    </div>
+                </div>
             </div>
             <div className='flex justify-end'>
-                {copies} Share = {copies === 1 ? formatUnits(unitPrice, 18) : formatUnits(followUSDCAmount, 18)} USDC
+                {followShares} {followShares === 1 ? 'Share' : 'Shares'} = {
+                    followShares === 1
+                        ? formatUnits(unitPrice, TokenEnums[chainId].USDC.decimals)
+                        : formatUnits(followAmount, TokenEnums[chainId].USDC.decimals)
+                } USDC
             </div>
-            <div className='mt-30'>
-                {
-                    usdcApproved === 0
-                        ? <div className='flex items-center justify-between'>
-                            <div className='flex'>
-                                <div className='mr-8'>1.</div>Approve your USDC for Follow Finance Protocol</div>
-                            <div className='m-8'><BorderOutlined /></div>
-                        </div>
-                        : usdcApproved === 1
-                            ? <div className='flex items-center justify-between'>
-                                <div className='flex'>
-                                    <div className='mr-8'>1.</div>Approve...</div>
-                                <div className='m-8'><LoadingOutlined /></div>
-                            </div>
-                            : usdcApproved === 2
-                                ? <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>1.</div>Approved successfully!</div>
-                                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
-                                </div>
-                                : <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>1.</div>Approval failed!</div>
-                                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                                </div>
-                }
-                {
-                    followed === 0
-                        ? <div className='flex items-center justify-between'>
-                            <div className='flex'>
-                                <div className='mr-8'>2.</div>Follow this loan</div>
-                            <div className='m-8'><BorderOutlined /></div>
-                        </div>
-                        : followed === 1
-                            ? <div className='flex items-center justify-between'>
-                                <div className='flex'>
-                                    <div className='mr-8'>2.</div>Following...</div>
-                                <div className='m-8'><LoadingOutlined /></div>
-                            </div>
-                            : followed === 2
-                                ? <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>2.</div>Followed successfully!</div>
-                                    <div className='m-8'><CheckOutlined className='text-green-500' /></div>
-                                </div>
-                                : <div className='flex items-center justify-between'>
-                                    <div className='flex'>
-                                        <div className='mr-8'>2.</div>Follow failed!</div>
-                                    <div className='m-8'><CloseSquareOutlined className='text-red-500' /></div>
-                                </div>
-                }
-            </div>
+
         </div>
     </Modal >
-
 }
 
 export default FollowModal

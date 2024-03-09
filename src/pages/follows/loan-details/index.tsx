@@ -17,6 +17,7 @@ import OperationRecord from './components/OperationRecord'
 import IncomeCalculation from './components/IncomeCalculation'
 
 // import { LoanService } from '@/.generated/api/Loan'
+import FollowModal from './components/Modals/Follow'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
@@ -91,7 +92,12 @@ const LoanDetails = () => {
 
   const [currentCopies, setCurrentCopies] = useState(0)
 
+  const [followModalOpenOld, setFollowModalOpenOld] = useState(false)
+
   const [followModalOpen, setFollowModalOpen] = useState(false)
+
+  // const { capitalPoolAddress } = usePoolAddress()
+
   const [usdcApproved, setUsdcApproved] = useState(0)
   const [followed, setFollowed] = useState(0)
 
@@ -735,7 +741,7 @@ const LoanDetails = () => {
           </div>
         </Modal>
 
-        <Modal open={followModalOpen}
+        {/* <Modal open={followModalOpenOld}
           className='h238 w464 b-rd-8'
           okText={followModalBtnText}
           onOk={() => handleFollow()}
@@ -744,7 +750,7 @@ const LoanDetails = () => {
             setUsdcApproved(0)
             setFollowed(0)
             setExecuting(false)
-            setFollowModalOpen(false)
+            setFollowModalOpenOld(false)
           }}
           okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: executing }}
         >
@@ -835,7 +841,12 @@ const LoanDetails = () => {
               }
             </div>
           </div>
-        </Modal >
+        </Modal > */}
+
+        <FollowModal open={followModalOpen}
+          setOpen={setFollowModalOpen}
+          tradeId={BigInt(tradeId)}
+        ></FollowModal>
 
         <div className='loan-detail-info'>
           <InfoCard item={loanInfo!} />
@@ -872,8 +883,8 @@ const LoanDetails = () => {
                     && <div className='flex'>
                       {/* <div className='m-8 w180'></div> */}
                       {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
+                      {/* <Button className='loan-detail-btn' onClick={() => setFollowModalOpenOld(true)}>Follow</Button> */}
                       <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
-                      {/* <Button className='loan-detail-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
 
                     </div>
                   }
