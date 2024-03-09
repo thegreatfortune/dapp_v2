@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { ModalProps } from 'antd'
-import { Button, Modal } from 'antd'
+import { Button, Modal, message } from 'antd'
 import { parseUnits } from 'ethers'
 import { useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
@@ -10,11 +10,12 @@ import useCoreContract from '@/hooks/useCoreContract'
 import useUserStore from '@/store/userStore'
 import { executeTask, handleTransactionResponse } from '@/helpers/helpers'
 import { NotificationInfo } from '@/enums/info'
+import { MessageError } from '@/enums/error'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
-    capitalPoolAddress?: string
     tradeId: bigint
+    capitalPoolAddress: string
 }
 
 const DepositModal: React.FC<IProps> = (props) => {
@@ -51,8 +52,6 @@ const DepositModal: React.FC<IProps> = (props) => {
 
             const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].processCenter)
 
-            console.log(allowance, parseUnits(amount, TokenEnums[chainId].USDC.decimals))
-
             if (allowance < parseUnits(amount, TokenEnums[chainId].USDC.decimals)) {
                 setDepositAmount(parseUnits(amount, TokenEnums[chainId].USDC.decimals))
                 setApproveButtonDisabled(false)
@@ -72,13 +71,24 @@ const DepositModal: React.FC<IProps> = (props) => {
             if (coreContracts) {
                 setApproving(true)
                 setApproveButtonDisabled(true)
-                const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, depositAmount)
-                await handleTransactionResponse(res,
-                    NotificationInfo.ApprovalSuccessfully,
-                    NotificationInfo.ApprovalSuccessfullyDesc,
-                )
+                try {
+                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, depositAmount)
+                    await handleTransactionResponse(res,
+                        NotificationInfo.ApprovalSuccessfully,
+                        NotificationInfo.ApprovalSuccessfullyDesc,
+                    )
+                }
+                catch (error) {
+                    setApproving(false)
+                    setApproveButtonDisabled(false)
+                    return
+                }
                 setApproving(false)
                 setDepositButtonDisabled(false)
+            }
+            else {
+                message.error(MessageError.ProviderOrSignerIsNotInitialized)
+                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
         executeTask(task)
@@ -92,23 +102,35 @@ const DepositModal: React.FC<IProps> = (props) => {
             if (coreContracts) {
                 setDepositing(true)
                 setDepositButtonDisabled(true)
-                const res = await coreContracts.processCenterContract.supply(TokenEnums[chainId].USDC.address, depositAmount, props.tradeId)
-                await handleTransactionResponse(res,
-                    NotificationInfo.ApprovalSuccessfully,
-                    NotificationInfo.ApprovalSuccessfullyDesc,
-                )
+                try {
+                    const res = await coreContracts.processCenterContract.supply(TokenEnums[chainId].USDC.address, depositAmount, props.tradeId)
+                    await handleTransactionResponse(res,
+                        NotificationInfo.ApprovalSuccessfully,
+                        NotificationInfo.ApprovalSuccessfullyDesc,
+                    )
+                }
+                catch (error) {
+                    setDepositing(false)
+                    setDepositButtonDisabled(false)
+                    return
+                }
                 setDepositing(false)
                 setDepositButtonDisabled(false)
                 setDepositButtonText('Finish')
+            }
+            else {
+                message.error(MessageError.ProviderOrSignerIsNotInitialized)
+                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
         executeTask(task)
     }
 
     return <Modal open={props.open}
-        onCancel={() => props.setOpen(false)}
+        onCancel={() => resetModal()}
         okText={props.okText}
         title={'Deposit USDC to capital pool'}
+        // afterClose={resetModal}
         footer={
             <div className='grid grid-cols-2 gap-16'>
                 <Button className={`h-40 text-16 ${!approveButtonDisabled ? 'primary-btn' : ''}`} type='primary'
@@ -124,25 +146,31 @@ const DepositModal: React.FC<IProps> = (props) => {
             </div>
         }
     >
-        <div className='h-130 py-20'>
-            <div className='md:flex md:justify-between'>
-                <div className='flex items-center text-16'>Capital Pool:</div>
-                <div className='flex items-center text-16 max-md:mt-5'>{props.capitalPoolAddress}</div>
+        <div className='h-250 py-20'>
+            <div className='my-20'>
+                <div className='text-16'>Capital Pool of this loan:</div>
+                <div className='text-right text-14 max-md:mt-5'>{props.capitalPoolAddress}</div>
             </div>
-            <div className='mt-15 text-16'>USDC Amount:</div>
-            <div className='mt-5 w-full flex'>
-                <CurrencyInput
-                    className='font-semiBold h-40 w-full border-0 rounded-5 bg-black text-20 text-white outline-1 outline'
-                    style={{ outlineColor: '#424242' }}
-                    name="depositAmount"
-                    placeholder="0"
-                    decimalsLimit={6}
-                    allowNegativeValue={false}
-                    onValueChange={(_value, _name, values) => {
-                        if (values && values.value !== '0')
-                            checkAllowance(values?.value)
-                    }}
-                />
+            <div className='my-20'>
+                <div className='text-16'>Approve to Follow Process Center:</div>
+                <div className='text-right text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
+            </div>
+            <div className='my-20'>
+                <div className='mt-15 text-16'>USDC Amount:</div>
+                <div className='mt-5 w-full flex'>
+                    <CurrencyInput
+                        className='font-semiBold h-40 w-full border-0 rounded-5 bg-black text-20 text-white outline-1 outline'
+                        style={{ outlineColor: '#424242' }}
+                        name="depositAmount"
+                        placeholder="0"
+                        decimalsLimit={6}
+                        allowNegativeValue={false}
+                        onValueChange={(_value, _name, values) => {
+                            if (values && values.value !== '0')
+                                checkAllowance(values?.value)
+                        }}
+                    />
+                </div>
             </div>
         </div>
     </Modal >

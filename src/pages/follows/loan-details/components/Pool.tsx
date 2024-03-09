@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Button, Divider, Image, Input, Tabs, message } from 'antd'
-import { ethers } from 'ethers'
+import { ZeroAddress, ethers } from 'ethers'
 import { useChainId } from 'wagmi'
 
 // import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
@@ -279,6 +279,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         open={depositModalOpen}
         setOpen={setDepositModalOpen}
         tradeId={tradeId}
+        capitalPoolAddress={capitalPoolAddress}
       ></DepositModal>
 
       <div className="w-full">
@@ -296,7 +297,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 <div className='flex justify-end'>
                   {/* <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={onDeposit}>Deposit</Button> */}
 
-                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)}>Deposit</Button>
+                  <Button className='h30 b-rd-30 primary-btn md:w120' type='primary' onClick={() => setDepositModalOpen(true)} disabled={capitalPoolAddress === ZeroAddress}>Deposit</Button>
 
                 </div>
                 <div className='text-24 font-semibold md:text-32'>Total:
