@@ -130,7 +130,7 @@ const DepositModal: React.FC<IProps> = (props) => {
         onCancel={() => resetModal()}
         okText={props.okText}
         title={'Deposit USDC to capital pool'}
-        // afterClose={resetModal}
+        centered={true}
         footer={
             <div className='grid grid-cols-2 gap-16'>
                 <Button className={`h-40 text-16 ${!approveButtonDisabled ? 'primary-btn' : ''}`} type='primary'
@@ -146,16 +146,16 @@ const DepositModal: React.FC<IProps> = (props) => {
             </div>
         }
     >
-        <div className='h-250 py-20'>
-            <div className='my-20'>
+        <div className='h-300 py-10'>
+            <div className='grid grid-rows-2 my-30 gap-4'>
                 <div className='text-16'>Capital Pool of this loan:</div>
-                <div className='text-right text-14 max-md:mt-5'>{props.capitalPoolAddress}</div>
+                <div className='text-14 max-md:mt-5'>{props.capitalPoolAddress}</div>
             </div>
-            <div className='my-20'>
+            <div className='grid grid-rows-2 my-30 gap-4'>
                 <div className='text-16'>Approve to Follow Process Center:</div>
-                <div className='text-right text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
+                <div className='text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
             </div>
-            <div className='my-20'>
+            <div className='my-30'>
                 <div className='mt-15 text-16'>USDC Amount:</div>
                 <div className='mt-5 w-full flex'>
                     <CurrencyInput

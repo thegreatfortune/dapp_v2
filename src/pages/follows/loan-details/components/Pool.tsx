@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { Button, Divider, Image, Input, Tabs, message } from 'antd'
+import { Button, Divider, Image, Tabs } from 'antd'
 import { ZeroAddress, ethers } from 'ethers'
 import { useChainId } from 'wagmi'
 
@@ -12,8 +12,6 @@ import LoanHistory from './LoanHistory'
 import BalanceChart from './BalanceChart'
 import Swap from './Swap'
 import DepositModal from './Modals/Deposit'
-import useBrowserContract from '@/hooks/useBrowserContract'
-import SModal from '@/pages/components/SModal'
 import type { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
@@ -44,80 +42,44 @@ export class TokenInfo {
 }
 
 const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
-  const { browserContractService } = useBrowserContract()
+  // const { browserContractService } = useBrowserContract()
 
   const { coreContracts } = useCoreContract()
 
-  const [isSwapModalOpen, setSetIsModalOpen] = useState(false)
+  // const [isSwapModalOpen, setSetIsModalOpen] = useState(false)
 
-  const [isDepositModalOpen, setDepositIsModalOpen] = useState(false)
-
-  const [depositValue, setDepositValue] = useState<string>()
-
-  const [currentTokenInfo, setCurrentTokenInfo] = useState<TokenInfo>(new TokenInfo())
-
-  const [topUpTitle, setTopUpTitle] = useState('Deposit')
+  // const [currentTokenInfo, setCurrentTokenInfo] = useState<TokenInfo>(new TokenInfo())
 
   const chainId = useChainId()
 
   const [depositModalOpen, setDepositModalOpen] = useState(false)
 
-  function onDeposit() {
-    setDepositIsModalOpen(true)
-  }
-
-  function onDepositValueChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const newCount = e.target.value.replace(/[^0-9.]/g, '')
-    setDepositValue(newCount ?? '0')
-  }
-
-  async function onDepositModalConfirm() {
-    if (!depositValue || !tradeId)
-      return 0
-
-    setTopUpTitle('Processing')
-    // setSupplyState('Processing')
-    try {
-      await browserContractService?.processCenter_supply(ethers.parseEther(depositValue), tradeId)
-      setTopUpTitle('Succeed')
-    }
-    catch (error) {
-      message.error('Transaction Failed')
-      console.log('%c [ error ]-97', 'font-size:13px; background:#f8b42a; color:#fff86e;', error)
-    }
-    finally {
-      setDepositIsModalOpen(false)
-      setTopUpTitle('Deposit')
-      // setSupplyState(undefined)
-    }
-  }
-
   const { capitalPoolAddress } = usePoolAddress()
   const [tokenStates, setTokenStates] = useState<Models.ITokenState[]>([])
   const [totalBalance, setTotalBalance] = useState(0)
-  const [currentTokenState, setCurrentTokenState] = useState<Models.ITokenState>()
+  // const [currentTokenState, setCurrentTokenState] = useState<Models.ITokenState>()
 
-  const [swapModalOpen, setSwapModalOpen] = useState(false)
+  // const [swapModalOpen, setSwapModalOpen] = useState(false)
 
-  function onOpenModal(tokenState: Models.ITokenState) {
-    console.log('???????:', tokenState)
-    const item = new TokenInfo()
-    item.name = tokenState.symbol
-    item.address = tokenState.address
-    item.balance = tokenState.balance
-    item.decimals = tokenState.decimals
-    item.dollars = tokenState.usd
-    item.icon = tokenState.logo
-    item.ratio = tokenState.ratio
-    setCurrentTokenInfo(item)
-    setCurrentTokenState(tokenState)
-    setSetIsModalOpen(true)
-  }
+  // function onOpenModal(tokenState: Models.ITokenState) {
+  //   console.log('???????:', tokenState)
+  //   const item = new TokenInfo()
+  //   item.name = tokenState.symbol
+  //   item.address = tokenState.address
+  //   item.balance = tokenState.balance
+  //   item.decimals = tokenState.decimals
+  //   item.dollars = tokenState.usd
+  //   item.icon = tokenState.logo
+  //   item.ratio = tokenState.ratio
+  //   setCurrentTokenInfo(item)
+  //   setCurrentTokenState(tokenState)
+  //   setSetIsModalOpen(true)
+  // }
 
   const getTokenState = async () => {
     const task = async () => {
       if (coreContracts && tradeId) {
-        const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
+        // const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
 
         const capitalPoolAddressOfTradeId = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
 
@@ -185,21 +147,21 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
   async function refreshTokenState() {
     await getTokenState()
 
-    setSetIsModalOpen(false)
+    // setSetIsModalOpen(false)
   }
 
-  function openSwapModal(tokenStates: Models.ITokenState[]) {
-    const item = new TokenInfo()
-    item.name = tokenStates[1].symbol
-    item.address = tokenStates[1].address
-    item.balance = tokenStates[1].balance
-    item.decimals = tokenStates[1].decimals
-    item.dollars = tokenStates[1].usd
-    item.icon = tokenStates[1].logo
-    item.ratio = tokenStates[1].ratio
-    setCurrentTokenInfo(item)
-    setSwapModalOpen(true)
-  }
+  // function openSwapModal(tokenStates: Models.ITokenState[]) {
+  //   const item = new TokenInfo()
+  //   item.name = tokenStates[1].symbol
+  //   item.address = tokenStates[1].address
+  //   item.balance = tokenStates[1].balance
+  //   item.decimals = tokenStates[1].decimals
+  //   item.dollars = tokenStates[1].usd
+  //   item.icon = tokenStates[1].logo
+  //   item.ratio = tokenStates[1].ratio
+  //   setCurrentTokenInfo(item)
+  //   setSwapModalOpen(true)
+  // }
 
   useEffect(() => {
     if (coreContracts)
@@ -228,53 +190,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   return (
     <div className='w-full'>
-      <SModal
-        open={isDepositModalOpen}
-        content={
-          (<div>
-            <h2>
-              {topUpTitle}
-            </h2>
-            {/* <Button type='primary' onClick={onDepositModalConfirm} >
-              Confirm
-            </Button>
-            <Button onClick={() => setSetIsModalOpen(false)}>
-              Cancel
-            </Button> */}
-            <div>
-              <Input onChange={onDepositValueChange} disabled={!((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed'))} />
-            </div>
-          </div>
-          )
-        }
-        onCancel={() => setDepositIsModalOpen(false)}
-        okText="Confirm"
-        onOk={onDepositModalConfirm}
-        okButtonProps={{ type: 'primary', className: 'primary-btn', disabled: !((topUpTitle !== 'Processing' && topUpTitle !== 'Succeed')) }}
-      >
-
-        {/* {
-          supplyState === undefined && <div>
-            <Input onChange={onDepositValueChange} />
-          </div>
-        } */}
-        {/* {
-          supplyState === 'Processing' && (
-            <div >
-              <h2>
-                Processing
-              </h2>
-              <Spin />
-            </div>
-          )
-        } */}
-        {/* {
-          supplyState === 'Succeed' && <div>
-            Succeed
-          </div>
-        } */}
-
-      </SModal>
       <DepositModal
         open={depositModalOpen}
         setOpen={setDepositModalOpen}

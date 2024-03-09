@@ -44,8 +44,6 @@ const LoanDetails = () => {
 
   const [loanInfo, setLoanInfo] = useState<Models.ILoanOrderVO>()
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
   const [extractIsModalOpen, setExtractIsModalOpen] = useState(false)
   const [extraModalLoading, setExtraModalLoading] = useState(false)
 
@@ -923,7 +921,10 @@ const LoanDetails = () => {
                   </div>
                 </div>
                 <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>
-                  <Progress percent={Number(currentCopies / (maxCopies + currentCopies)) * 100} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} /> Progress
+                  <Progress percent={Number((Number(currentCopies / (maxCopies + currentCopies)) * 100).toFixed(2))} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} />
+                  <div className='ml-20'>
+                    Progress
+                  </div>
                 </div>
               </div>
             </div>
