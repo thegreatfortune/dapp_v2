@@ -136,7 +136,7 @@ const Swap: React.FC<IProps> = (props) => {
                 setSwapDisabled(true)
                 setSwaping(false)
                 setOutputBalanceCalculating(false)
-                setSwapButtonText(`No enough ${inputToken.symbol}`)
+                setSwapButtonText(`Insufficient ${inputToken.symbol}`)
             }
             else {
                 setOutputBalanceCalculating(true)
@@ -481,12 +481,12 @@ const Swap: React.FC<IProps> = (props) => {
                 <div className='w-full flex items-center justify-between b-rd-6'>
                     <div className='flex items-center justify-between'>
                         <CurrencyInput
-                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-w-250 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
+                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-w-300 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
                             disabled={!props.ownerState}
                             value={outputBalanceCalculating ? '' : outputAmount}
                             name="outputTokenAmount"
                             placeholder="0"
-                            decimalsLimit={18}
+                            decimalsLimit={13}
                             onValueChange={(_value, _name, values) => {
                                 if (values && values.value !== outputAmount) {
                                     calculateTokenAmount(values.value, false)
