@@ -20,4 +20,6 @@ export enum NotificationInfo {
     FollowSuccessfullyDesc = 'You have followed successfully.',
     WithdrawSuccessfully = 'Withdraw successfully.',
     WithdrawSuccessfullyDesc = 'You have withdrawn successfully.',
+    ListSuccessfully = 'List successfully.',
+    ListSuccessfullyDesc = 'You have listed successfully.',
 }

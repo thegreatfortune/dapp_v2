@@ -204,7 +204,7 @@ h1 {
 }
 
 .token-info-item {
-  @apply rounded-18 h-150 border-2 border-solid border-#2d2f3d p-10 flex flex-col
+  @apply rounded-18 h-120 border-2 border-solid border-#2d2f3d p-10 flex flex-col
 }
 
 /* @apply border-2 b-rd-20 bg-cover bg-no-repeat h-180 border-solid border-#2d2f3d */
@@ -347,11 +347,11 @@ h1 {
   }
 
   .token-info-box {
-    @apply grid grid-cols-3 gap-y-10 gap-x-10
+    @apply grid grid-cols-3 gap-20
   }
 
   .token-info-item {
-    @apply rounded-18 h-130 border-2 border-solid border-#2d2f3d p-8
+    @apply rounded-18 h-120 border-2 border-solid border-#2d2f3d p-8
   }
 }
 
@@ -385,11 +385,11 @@ h1 {
   }
 
   .token-info-box {
-    @apply grid grid-cols-4 gap-6 gap-y-10
+    @apply grid grid-cols-4 gap-20
   }
 
   .token-info-item {
-    @apply rounded-18 h-150 border-2 border-solid border-#2d2f3d p-10
+    @apply rounded-18 h-120 border-2 border-solid border-#2d2f3d p-10
   }
 
 }
@@ -413,6 +413,10 @@ h1 {
 
   .show-more {
     @apply text-20 c-white
+  }
+
+  .token-info-box {
+    @apply grid grid-cols-6 gap-20
   }
 
 }

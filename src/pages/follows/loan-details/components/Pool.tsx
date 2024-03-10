@@ -228,7 +228,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 </div>
                 <div className='text-24 font-semibold md:text-32'>Total:
                 </div>
-                <div className="flex items-center justify-end text-right text-24 font-semibold md:text-32">{
+                <div className="slahed-zero flex items-center justify-end text-right text-24 font-semibold font-mono md:text-32">{
                   totalBalance === 0 && tokenStates.length === 0
                     ? <LoadingOutlined width={10} />
                     : `$ ${Number(Number(totalBalance).toFixed(2)).toLocaleString()}`
@@ -267,8 +267,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                       if (item) {
                         return (
                           <div key={item.symbol} className="token-info-item">
-                            <div className="flex grow items-center justify-between px-10 text-center xl:px-1">
-                              <div className='flex items-center'>
+                            <div className="h-1/2 px-10 pt-5 text-center xl:px-1">
+                              <div className='flex'>
                                 <Image preview={false} width={24} height={24} src={item.logo} />
                                 <div className='ml-10 flex items-center text-20 c-#fff md:text-16'>
                                   {item.symbol} ({
@@ -283,13 +283,15 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                                   }%)
                                 </div>
                               </div>
-                              <div className='flex items-center text-right text-20 c-#fff'>
-                                <span className='ml-10 mt-5 text-11 c-green lg:ml-5'>{BigNumber(item.balance).toFixed(4)} {item.symbol}</span>
-                              </div>
                             </div>
-                            <div className='mt-20 flex grow items-center justify-end px-10 xl:px-1'>
-                              <div className='slahed-zero h30 text-24 font-mono xl:text-22'>
-                                ${toCurrencyString((item.usd ? Number(BigNumber(item.usd)) : 0))}
+                            <div className='grow px-10 xl:px-1'>
+                              <div className='flex items-center justify-end'>
+                                <div className='slahed-zero text-24 font-mono xl:text-22'>
+                                  ${toCurrencyString((item.usd ? Number(BigNumber(item.usd)) : 0))}
+                                </div>
+                              </div>
+                              <div className='h-1/2 flex items-center justify-end'>
+                                <span className='ml-10 mt-5 text-14 c-green lg:ml-5'>{BigNumber(item.balance).toFixed(4)} {item.symbol}</span>
                               </div>
                               {/* {
                                 item.symbol !== 'USDC' && prePage === 'loan' && loanInfo.state === 'Trading'

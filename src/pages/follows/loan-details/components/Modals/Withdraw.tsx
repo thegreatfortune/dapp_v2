@@ -27,6 +27,7 @@ const WithdrawModal: React.FC<IProps> = (props) => {
     const { currentUser } = useUserStore()
     const { coreContracts } = useCoreContract()
 
+    const [withdrawn, setWithdrawn] = useState(false)
     const [withdrawAmount, setWithdrawAmount] = useState(BigInt(0))
 
     const [approving, setApproving] = useState(false)
@@ -138,6 +139,7 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                         setWithdrawButtonDisabled(false)
                         return Promise.reject(error)
                     }
+                    setWithdrawn(true)
                     setWithdrawing(false)
                     setWithdrawButtonDisabled(false)
                     setWithdrawButtonText('Finish')
@@ -154,22 +156,30 @@ const WithdrawModal: React.FC<IProps> = (props) => {
     useEffect(() => {
         const task = async () => {
             if (coreContracts) {
-                if (withdrawAmount === BigInt(0)) {
-                    const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
-                    const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
-                    setRefundPoolAddressOfLoan(refundPoolAddress)
+                if (!withdrawn) {
+                    // TODO wrong state？
+                    const withdrawn = await coreContracts.processCenterContract._getLenderIfWithdrawRefund(currentUser.address, props.tradeId)
+                    console.log('withdrawn', withdrawn)
+                    // TODO use withdrawn state
+                    if (withdrawAmount === BigInt(0)) {
+                        const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
+                        const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
+                        setRefundPoolAddressOfLoan(refundPoolAddress)
 
-                    if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
-                        const profit = await coreContracts.processCenterContract.getBorrowerToProfit(props.tradeId)
-                        console.log('profit:', profit)
-                        setWithdrawAmount(profit)
-                    }
-                    if (props.userState === 'lend' && props.loanState === 'PaidOff') {
-                        const tokenId = await coreContracts.sharesContract.getPersonalSlotToTokenId(currentUser.address, props.tradeId)
-                        setTokenId(tokenId)
-                        const profit = await coreContracts.processCenterContract.getUserTotalMoney(tokenId)
-                        setWithdrawAmount(profit)
-                        checkAllowance(reFundPoolAddressOfLoan, tokenId)
+                        if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
+                            const profit = await coreContracts.processCenterContract.getBorrowerToProfit(props.tradeId)
+                            console.log('profit:', profit)
+                            setWithdrawAmount(profit)
+                        }
+                        if (props.userState === 'lend' && props.loanState === 'PaidOff') {
+                            const tokenId = await coreContracts.sharesContract.getPersonalSlotToTokenId(currentUser.address, props.tradeId)
+                            setTokenId(tokenId)
+                            const profit = await coreContracts.processCenterContract.getUserTotalMoney(tokenId)
+                            if (profit !== BigInt(0)) {
+                                setWithdrawAmount(profit)
+                                checkAllowance(reFundPoolAddressOfLoan, tokenId)
+                            }
+                        }
                     }
                 }
                 else {
@@ -203,9 +213,11 @@ const WithdrawModal: React.FC<IProps> = (props) => {
     >
         <div className='mt-30 h-60 text-16'>
             {
-                withdrawAmount === BigInt(0)
-                    ? 'You have no profit.'
-                    : `You will receive ${formatUnits(withdrawAmount, 18)} USDC`
+                withdrawn
+                    ? 'You have withdrawn.'
+                    : withdrawAmount === BigInt(0)
+                        ? 'You have no profit.'
+                        : `You will receive ${formatUnits(withdrawAmount, 18)} USDC`
             }
         </div>
     </Modal >

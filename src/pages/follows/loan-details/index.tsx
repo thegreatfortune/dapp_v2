@@ -20,6 +20,7 @@ import IncomeCalculation from './components/IncomeCalculation'
 import FollowModal from './components/Modals/Follow'
 import WithdrawModal from './components/Modals/Withdraw'
 import ClaimModal from './components/Modals/Claim'
+import ListModal from './components/Modals/List'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
@@ -113,6 +114,7 @@ const LoanDetails = () => {
   const { coreContracts } = useCoreContract()
 
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false)
+  const [listModalOpen, setListModalOpen] = useState(false)
 
   // const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
   const loanStateELMap: Record<Models.LoanState & string, ReactElement> = {
@@ -712,7 +714,7 @@ const LoanDetails = () => {
           </div>
         </Modal>
 
-        <Modal open={extractIsModalOpen}
+        {/* <Modal open={extractIsModalOpen}
           className='h238 w464 b-rd-8'
           maskClosable={false}
           okText="Confirm"
@@ -727,7 +729,7 @@ const LoanDetails = () => {
               Extract: {extractMoney}
             </h2>
           </div>
-        </Modal>
+        </Modal> */}
 
         {/* <Modal open={claimModalOpenOld}
           className='h238 w464 b-rd-8'
@@ -751,6 +753,11 @@ const LoanDetails = () => {
           </div>
         </Modal> */}
 
+        <ListModal open={listModalOpen}
+          setOpen={setListModalOpen}
+          tradeId={Number(tradeId)}
+        ></ListModal>
+
         <ClaimModal open={claimModalOpen}
           setOpen={setClaimModalOpen}
           tradeId={Number(tradeId)}
@@ -763,6 +770,11 @@ const LoanDetails = () => {
           loanState={loanInfo!.state}
           loanOwner={loanInfo!.userId}
         ></WithdrawModal>
+
+        <FollowModal open={followModalOpen}
+          setOpen={setFollowModalOpen}
+          tradeId={BigInt(tradeId)}
+        ></FollowModal>
 
         {/* <Modal open={followModalOpenOld}
           className='h238 w464 b-rd-8'
@@ -866,11 +878,6 @@ const LoanDetails = () => {
           </div>
         </Modal > */}
 
-        <FollowModal open={followModalOpen}
-          setOpen={setFollowModalOpen}
-          tradeId={BigInt(tradeId)}
-        ></FollowModal>
-
         <div className='loan-detail-info'>
           <InfoCard item={loanInfo!} />
           {/* <div className="w-32"></div> */}
@@ -917,7 +924,13 @@ const LoanDetails = () => {
                     && <div className='flex'>
                       {
                         loanInfo!.state !== 'CloseByUncollected'
-                        && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
+                        && (
+                          <div>
+                            <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
+                            <Button className='loan-detail-btn' onClick={() => setListModalOpen(true)}>newSell</Button>
+                          </div>
+                        )
+
                       }
                       {/* <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button> */}
                       <Button className='loan-detail-btn' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>

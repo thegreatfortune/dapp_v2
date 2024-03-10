@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/indent */
 import type { ModalProps } from 'antd'
-import { Button, Modal, message, notification } from 'antd'
+import { Button, Modal, notification } from 'antd'
 import { MaxUint256, ZeroAddress, formatUnits } from 'ethers'
 import { useEffect, useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
@@ -16,6 +16,7 @@ import type {
     FollowCapitalPool as capitalPool,
 } from '@/abis/types'
 import capitalPoolABI from '@/abis/FollowCapitalPool.json'
+import { RedoOutlined } from '@ant-design/icons'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
@@ -28,11 +29,10 @@ const FollowModal: React.FC<IProps> = (props) => {
     const { coreContracts } = useCoreContract()
 
     const [maxShares, setMaxShares] = useState(0)
+    const [maxAmount, setMaxAmount] = useState(BigInt(0))
     const [unitPrice, setUnitPrice] = useState(BigInt(0))
     const [followShares, setFollowShares] = useState(1)
     const [followAmount, setFollowAmount] = useState(BigInt(0))
-
-    const [checkingMax, setCheckingMax] = useState(false)
 
     const [approving, setApproving] = useState(false)
     const [approveButtonText, setApproveButtonText] = useState('Approve')
@@ -44,8 +44,10 @@ const FollowModal: React.FC<IProps> = (props) => {
 
     const [capitalPoolAddressOfLoan, setCapitalPoolAddressOfLoan] = useState(ZeroAddress)
 
+    const [checking, setChecking] = useState(0)
+    const [calculated, setCalculated] = useState(true)
+
     const resetModal = () => {
-        setCheckingMax(false)
         setApproving(false)
         setApproveButtonText('Approve')
         setApproveButtonDisabled(true)
@@ -147,40 +149,25 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setFollowButtonText('Finish')
             }
             else {
-                // message.error(MessageError.ProviderOrSignerIsNotInitialized)
                 return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
-        }
-        executeTask(task)
-    }
-
-    const onCheckingMax = async () => {
-        const task = async () => {
-            setCheckingMax(true)
-            const maxAmount = await coreContracts!.processCenterContract.getLendStakeMoney(props.tradeId, maxShares)
-            // TODO calculate max follow Amount
-            if (maxAmount < BigInt(maxShares) * unitPrice) {
-                message.error(MessageError.CalculationResultIsIncorrect)
-                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-            }
-            setFollowShares(maxShares)
-            setFollowAmount(maxAmount)
-            setCheckingMax(false)
         }
         executeTask(task)
     }
 
     const calculateAmount = async (followShares: number) => {
         if (followShares <= maxShares) {
-            setApproveButtonText('Checking...')
-            setFollowButtonDisabled(true)
+            setCalculated(false)
 
-            setFollowShares(followShares)
-            const amount = await coreContracts!.processCenterContract.getLendStakeMoney(props.tradeId, BigInt(followShares))
+            const amount = await coreContracts!.processCenterContract.getLendStakeMoney(props.tradeId, followShares)
             setFollowAmount(amount)
-
-            setApproveButtonText('Approve')
-            setFollowButtonDisabled(false)
+            setCalculated(true)
+            setChecking(checking => checking + 1)
+        }
+        else {
+            setFollowAmount(BigInt(0))
+            setApproveButtonDisabled(true)
+            setFollowButtonDisabled(true)
         }
     }
 
@@ -190,18 +177,20 @@ const FollowModal: React.FC<IProps> = (props) => {
                 const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
                 setCapitalPoolAddressOfLoan(capitalPoolAddress)
                 const capitalPool = createContract<capitalPool>(capitalPoolAddress, capitalPoolABI, coreContracts.signer)
-                setCheckingMax(true)
+                // setCheckingMax(true)
 
                 const res = await capitalPool.getList(props.tradeId)
-                setMaxShares(Number(BigInt(res[7])) - Number(BigInt(res[9])))
+                const leftShare = Number(BigInt(res[7])) - Number(BigInt(res[9]))
+                setMaxShares(leftShare)
+
+                const leftShareAmount = await coreContracts.processCenterContract.getLendStakeMoney(props.tradeId, leftShare)
+                setMaxAmount(leftShareAmount)
 
                 const unitPrice = await coreContracts.processCenterContract.getLendStakeMoney(props.tradeId, 1)
+
                 setUnitPrice(unitPrice)
                 setFollowAmount(unitPrice)
-
-                checkAllowance(unitPrice)
-
-                setCheckingMax(false)
+                // setCheckingMax(false)
             }
         }
         executeTask(task)
@@ -209,7 +198,7 @@ const FollowModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         checkAllowance()
-    }, [followAmount])
+    }, [checking])
 
     return <Modal open={props.open}
         onCancel={() => resetModal()}
@@ -253,12 +242,26 @@ const FollowModal: React.FC<IProps> = (props) => {
                         max={maxShares}
                         allowNegativeValue={false}
                         onValueChange={(_value, _name, values) => {
-                            if (values && values.value !== '0')
-                                calculateAmount(Number(values.value))
+                            if (values && Number(values.value).toString() !== followShares.toString()) {
+                                if (values.value === '0' || values.value === '') {
+                                    setFollowShares(Number(values.value))
+                                    setFollowAmount(BigInt(0))
+                                    setApproveButtonDisabled(true)
+                                    setFollowButtonDisabled(true)
+                                }
+                                else {
+                                    setFollowShares(Number(values.value))
+                                    calculateAmount(Number(values.value))
+                                }
+                            }
                         }}
                     />
                     <div className='ml-20 flex items-center'>
-                        <Button type='primary' className='primary-btn' loading={checkingMax} onClick={onCheckingMax} disabled={checkingMax}>Max</Button>
+                        <Button type='primary' className='primary-btn'
+                            onClick={() => {
+                                setFollowShares(maxShares)
+                                setFollowAmount(maxAmount)
+                            }} >Max</Button>
                     </div>
                 </div>
             </div>
@@ -267,9 +270,8 @@ const FollowModal: React.FC<IProps> = (props) => {
                     followShares === 1
                         ? formatUnits(unitPrice, TokenEnums[chainId].USDC.decimals)
                         : formatUnits(followAmount, TokenEnums[chainId].USDC.decimals)
-                } USDC
+                } USDC <RedoOutlined spin={true} className='ml-5' hidden={calculated} />
             </div>
-
         </div>
     </Modal >
 }

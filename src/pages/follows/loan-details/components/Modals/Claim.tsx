@@ -74,6 +74,7 @@ const ClaimModal: React.FC<IProps> = (props) => {
                     if (!claimed) {
                         if (claimAmount === BigInt(0)) {
                             const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
+                            console.log(balance)
                             if (balance > BigInt(0)) {
                                 setClaimButtonDisabled(false)
                                 setClaimAmount(balance)
