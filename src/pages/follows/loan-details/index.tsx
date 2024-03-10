@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
 import { Button, Divider, InputNumber, Modal, Progress, Tabs, Tooltip, message } from 'antd'
 import BigNumber from 'bignumber.js'
-import { ethers, formatUnits } from 'ethers'
+import { ethers } from 'ethers'
 import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import Image from 'antd/es/image'
 import { useChainId } from 'wagmi'
@@ -19,11 +19,11 @@ import IncomeCalculation from './components/IncomeCalculation'
 // import { LoanService } from '@/.generated/api/Loan'
 import FollowModal from './components/Modals/Follow'
 import WithdrawModal from './components/Modals/Withdraw'
+import ClaimModal from './components/Modals/Claim'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
-import toCurrencyString from '@/utils/convertToCurrencyString'
 import loanService from '@/services/loanService'
 import NotFound from '@/pages/NotFound'
 import useCoreContract from '@/hooks/useCoreContract'
@@ -59,9 +59,11 @@ const LoanDetails = () => {
   const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
   const [totalPrice, setTotalPrice] = useState('1.00')
   const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
-  const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
   const [claimAmount, setClaimAmount] = useState(0)
   const [claimBtndisable, setClaimBtndisable] = useState(true)
+
+  const [claimModalOpen, setClaimModalOpen] = useState(false)
 
   const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
@@ -411,47 +413,47 @@ const LoanDetails = () => {
   //   }, 3000)
   // }
 
-  const checkFofAmount = async () => {
-    if (!browserContractService)
-      return
-    if (tradeId) {
-      const withdrawed = await browserContractService.checkWithdrawed(Number(tradeId))
+  // const checkFofAmount = async () => {
+  //   if (!browserContractService)
+  //     return
+  //   if (tradeId) {
+  //     const withdrawed = await browserContractService.checkWithdrawed(Number(tradeId))
 
-      console.log('withdrawed:', withdrawed)
+  //     console.log('withdrawed:', withdrawed)
 
-      if (!withdrawed) {
-        const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
-        if (fofBalance > 0)
-          setClaimBtndisable(false)
-        const result = formatUnits(fofBalance ?? 0, 18)
-        setClaimAmount(Number(result))
-      }
-      else {
-        setClaimAmount(0)
-      }
-    }
-  }
+  //     if (!withdrawed) {
+  //       const fofBalance = await browserContractService?.checkClaimableFofAmount(Number(tradeId))
+  //       if (fofBalance > 0)
+  //         setClaimBtndisable(false)
+  //       const result = formatUnits(fofBalance ?? 0, 18)
+  //       setClaimAmount(Number(result))
+  //     }
+  //     else {
+  //       setClaimAmount(0)
+  //     }
+  //   }
+  // }
 
-  const claim = async () => {
-    setClaimBtndisable(true)
-    if (!browserContractService || !tradeId)
-      return
+  // const claim = async () => {
+  //   setClaimBtndisable(true)
+  //   if (!browserContractService || !tradeId)
+  //     return
 
-    try {
-      const res = await browserContractService?.claimFof(Number(tradeId))
-      if (res?.status !== 1)
-        throw new Error('Failed')
-      message.success('Transaction successfully!')
-      setTimeout(() => {
-        setClaimAmount(0)
-        setClaimModalOpen(false)
-      }, 3000)
-    }
-    catch (error) {
-      message.error('Transaction failed!')
-      setClaimBtndisable(false)
-    }
-  }
+  //   try {
+  //     const res = await browserContractService?.claimFof(Number(tradeId))
+  //     if (res?.status !== 1)
+  //       throw new Error('Failed')
+  //     message.success('Transaction successfully!')
+  //     setTimeout(() => {
+  //       setClaimAmount(0)
+  //       setClaimModalOpen(false)
+  //     }, 3000)
+  //   }
+  //   catch (error) {
+  //     message.error('Transaction failed!')
+  //     setClaimBtndisable(false)
+  //   }
+  // }
 
   // async function onSetMax() {
   //   const amount = await browserContractService?.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(maxCopies))
@@ -727,7 +729,7 @@ const LoanDetails = () => {
           </div>
         </Modal>
 
-        <Modal open={claimModalOpen}
+        {/* <Modal open={claimModalOpenOld}
           className='h238 w464 b-rd-8'
           maskClosable={false}
           okText="Claim"
@@ -747,7 +749,12 @@ const LoanDetails = () => {
               You can claim {toCurrencyString(claimAmount)} $FOF!
             </div>
           </div>
-        </Modal>
+        </Modal> */}
+
+        <ClaimModal open={claimModalOpen}
+          setOpen={setClaimModalOpen}
+          tradeId={Number(tradeId)}
+        ></ClaimModal>
 
         <WithdrawModal open={withdrawModalOpen}
           setOpen={setWithdrawModalOpen}
@@ -943,8 +950,12 @@ const LoanDetails = () => {
 
                   </div>
                   <div>
-                    <Button className='loan-detail-btn' onClick={() => {
+                    {/* <Button className='loan-detail-btn' onClick={() => {
                       checkFofAmount()
+                      setClaimModalOpenOld(true)
+                    }}>Claim $FOF</Button> */}
+
+                    <Button className='loan-detail-btn' onClick={() => {
                       setClaimModalOpen(true)
                     }}>Claim $FOF</Button>
                   </div>

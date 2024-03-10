@@ -141,6 +141,7 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                     setWithdrawing(false)
                     setWithdrawButtonDisabled(false)
                     setWithdrawButtonText('Finish')
+                    setWithdrawAmount(BigInt(0))
                 }
             }
             else {
@@ -181,18 +182,6 @@ const WithdrawModal: React.FC<IProps> = (props) => {
         }
         executeTask(task)
     }, [coreContracts, props.open])
-
-    useEffect(() => {
-        const task = async () => {
-            if (coreContracts) {
-                //
-            }
-            else {
-                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-            }
-        }
-        executeTask(task)
-    }, [coreContracts])
 
     return <Modal open={props.open}
         onCancel={() => resetModal()}

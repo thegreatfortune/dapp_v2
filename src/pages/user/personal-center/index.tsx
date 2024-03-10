@@ -160,8 +160,8 @@ const PersonalCenter = () => {
       setClaiming(false)
       setClaimOkButtonDisabled(false)
       notification.info({
-        message: NotificationInfo.ClaimInSuccessfully,
-        description: NotificationInfo.ClaimInSuccessfullyDesc,
+        message: NotificationInfo.ClaimSuccessfully,
+        description: NotificationInfo.ClaimSuccessfullyDesc,
         placement: 'bottomRight',
       })
       setTimeout(() => {
