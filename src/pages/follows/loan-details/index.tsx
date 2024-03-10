@@ -18,6 +18,7 @@ import IncomeCalculation from './components/IncomeCalculation'
 
 // import { LoanService } from '@/.generated/api/Loan'
 import FollowModal from './components/Modals/Follow'
+import WithdrawModal from './components/Modals/Withdraw'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import useUserStore from '@/store/userStore'
@@ -39,6 +40,9 @@ const LoanDetails = () => {
 
   const prePage = searchParams.get('prePage')
 
+  if (!prePage || (prePage !== 'loan' && prePage !== 'lend' && prePage !== 'market' && prePage !== 'trade'))
+    return
+
   const { currentUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
@@ -54,7 +58,6 @@ const LoanDetails = () => {
   const [sellAmount, setSellAmount] = useState('1')
   const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
   const [totalPrice, setTotalPrice] = useState('1.00')
-
   const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
   const [claimModalOpen, setClaimModalOpen] = useState(false)
   const [claimAmount, setClaimAmount] = useState(0)
@@ -106,6 +109,8 @@ const LoanDetails = () => {
   const chainId = useChainId()
 
   const { coreContracts } = useCoreContract()
+
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false)
 
   // const loanStateELMap: Record<typeof loanInfo.state & string, ReactElement> = {
   const loanStateELMap: Record<Models.LoanState & string, ReactElement> = {
@@ -264,9 +269,10 @@ const LoanDetails = () => {
 
     // 对比当前登录用户id  判断是否是订单发起人
     try {
-      if (prePage === 'my-lend' && loanInfo!.state === 'PaidOff') {
+      if (prePage === 'lend' && loanInfo!.state === 'PaidOff') {
         console.log(1111)
-        return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
+        // return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
+        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(0))
       }
 
       if (currentUser.userId === loanInfo!.userId) {
@@ -447,11 +453,11 @@ const LoanDetails = () => {
     }
   }
 
-  async function onSetMax() {
-    const amount = await browserContractService?.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(maxCopies))
-    setFollowUSDCAmount(amount ?? BigInt(0))
-    setCopies(maxCopies)
-  }
+  // async function onSetMax() {
+  //   const amount = await browserContractService?.calculateFollowAmountFromCopies(BigInt(tradeId!), BigInt(maxCopies))
+  //   setFollowUSDCAmount(amount ?? BigInt(0))
+  //   setCopies(maxCopies)
+  // }
 
   // function confirmLend() {
   //   navigate('/my-lend')
@@ -743,6 +749,14 @@ const LoanDetails = () => {
           </div>
         </Modal>
 
+        <WithdrawModal open={withdrawModalOpen}
+          setOpen={setWithdrawModalOpen}
+          tradeId={BigInt(tradeId)}
+          userState={prePage}
+          loanState={loanInfo!.state}
+          loanOwner={loanInfo!.userId}
+        ></WithdrawModal>
+
         {/* <Modal open={followModalOpenOld}
           className='h238 w464 b-rd-8'
           okText={followModalBtnText}
@@ -898,7 +912,8 @@ const LoanDetails = () => {
                         loanInfo!.state !== 'CloseByUncollected'
                         && <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
                       }
-                      <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
+                      {/* <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button> */}
+                      <Button className='loan-detail-btn' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
                     </div>
                   }
 
@@ -912,7 +927,8 @@ const LoanDetails = () => {
                     {
                       prePage === 'loan'
                       && <div>
-                        <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button>
+                        {/* <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button> */}
+                        <Button className='loan-detail-btn' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
                       </div>
                     }
                     {
