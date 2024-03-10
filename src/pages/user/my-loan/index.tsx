@@ -19,7 +19,7 @@ const MyLoan = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const [loanOrderVOList, setLoanOrderVO] = useState<Models.LoanOrderVO[]>([])
+  const [loanOrderVOList, setLoanOrderVO] = useState<Models.ILoanOrderVO[]>([])
 
   const [total, setTotal] = useState<number | undefined>()
 
@@ -51,7 +51,7 @@ const MyLoan = () => {
           const uniqueRecords = res?.records?.filter((newRecord) => {
             return !prevData.some(existingRecord => existingRecord.tradeId === newRecord.tradeId)
           })
-          return [...prevData, ...uniqueRecords ?? []]
+          return [...prevData, ...uniqueRecords as Models.ILoanOrderVO[] ?? []]
         })
         setPage(page + 1)
       }
@@ -68,7 +68,7 @@ const MyLoan = () => {
     loadMoreData()
   }, [currentUser.userId])
 
-  const renderItem = (item: Models.LoanOrderVO) => {
+  const renderItem = (item: Models.ILoanOrderVO) => {
     return <List.Item key={item.tradeId} onClick={() => navigate(`/loan-details/?prePage=loan&tradeId=${item.tradeId}`)}>
       <TransparentCard item={item} btnText='Repay' >
         <Button className='mt-10 h30 w-110 primary-btn' >{`${t('personal.myLoan.button')}`}</Button>

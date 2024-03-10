@@ -20,6 +20,8 @@ interface CustomAvatarProps {
   twitter: string
 }
 
+// TODO 自动缩放，不定长宽，只锁定长宽比例
+
 const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
   return (
     <div className="flex items-center">

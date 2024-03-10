@@ -198,7 +198,7 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                     disabled={withdrawButtonDisabled}
                     onClick={withdraw}
                 >{withdrawButtonText}</Button>
-            </div >
+            </div>
         }
     >
         <div className='mt-30 h-60 text-16'>

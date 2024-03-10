@@ -410,7 +410,7 @@ const Swap: React.FC<IProps> = (props) => {
                 <div className='w-full flex items-center justify-between b-rd-6'>
                     <div className='relative z-1 mr-10 flex grow items-center justify-between'>
                         <CurrencyInput
-                            className={`${inputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-w-250 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
+                            className={`${inputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-250 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
                             disabled={!props.ownerState}
                             name="inputTokenAmount"
                             placeholder="0"
@@ -482,7 +482,7 @@ const Swap: React.FC<IProps> = (props) => {
                 <div className='w-full flex items-center justify-between b-rd-6'>
                     <div className='flex items-center justify-between'>
                         <CurrencyInput
-                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-w-300 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
+                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-300 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
                             disabled={!props.ownerState}
                             value={outputBalanceCalculating ? '' : outputAmount}
                             name="outputTokenAmount"

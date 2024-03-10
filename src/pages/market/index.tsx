@@ -51,7 +51,7 @@ const Market = () => {
             <div className='grid mr-32 mt-5 text-right'>
               <span className='h25 text-18 font-bold lh-20 font-mono uppercase slashed-zero'>{
                 isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'Not bound')}</span>
-              <span className='h18 w-full text-14 font-400 lh-18 c-#999'>@{item.user?.platformName ?? 'Not bound'}</span>
+              <span className='h18 w-full text-14 c-#999 font-400 lh-18'>@{item.user?.platformName ?? 'Not bound'}</span>
             </div>
           </div>
 
@@ -112,7 +112,6 @@ const Market = () => {
       </div>
 
       <div className='h80 w-full'></div>
-
       <ScrollableList
         grid={{ gutter: 16 }}
         api={MarketService.ApiMarketPageTradingLoan_GET}

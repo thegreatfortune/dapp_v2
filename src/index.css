@@ -172,7 +172,7 @@ h1 {
 }
 
 .loan-detail-btn {
-  @apply mr-8 h40 w-120 b-rd-20 primary-btn
+  @apply mr-8 h40 w-100 b-rd-20 primary-btn
 }
 
 .loan-detail-option {
