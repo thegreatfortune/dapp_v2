@@ -78,9 +78,6 @@ const FollowModal: React.FC<IProps> = (props) => {
             setApproving(false)
             setApproveButtonText('Approve')
         }
-        else {
-            return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-        }
     }
 
     const approve = async () => {
@@ -150,7 +147,7 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setFollowButtonText('Finish')
             }
             else {
-                message.error(MessageError.ProviderOrSignerIsNotInitialized)
+                // message.error(MessageError.ProviderOrSignerIsNotInitialized)
                 return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
@@ -205,9 +202,6 @@ const FollowModal: React.FC<IProps> = (props) => {
                 checkAllowance(unitPrice)
 
                 setCheckingMax(false)
-            }
-            else {
-                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
         executeTask(task)

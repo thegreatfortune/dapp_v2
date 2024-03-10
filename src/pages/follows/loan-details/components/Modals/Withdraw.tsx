@@ -176,9 +176,6 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                     checkAllowance(reFundPoolAddressOfLoan, tokenId)
                 }
             }
-            else {
-                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-            }
         }
         executeTask(task)
     }, [coreContracts, props.open])

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { message } from 'antd'
+
+// import { message } from 'antd'
 import { executeTask } from './helpers'
-import { MessageError } from '@/enums/error'
+
+// import { MessageError } from '@/enums/error'
 import useCoreContract from '@/hooks/useCoreContract'
 
 /* eslint-disable @typescript-eslint/indent */
@@ -16,10 +18,10 @@ const usePoolCreationState = () => {
             setCapitalPoolCreationState(capitalPoolState)
             setRefundPoolCreationState(refundPoolState)
         }
-        else {
-            message.error(MessageError.ProviderOrSignerIsNotInitialized)
-            return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-        }
+        // else {
+        //     message.error(MessageError.ProviderOrSignerIsNotInitialized)
+        //     return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+        // }
     }
     useEffect(() => {
         if (coreContracts)

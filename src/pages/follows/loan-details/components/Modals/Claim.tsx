@@ -67,22 +67,23 @@ const ClaimModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         const task = async () => {
-            if (coreContracts && !claimed) {
-                const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)
-                setClaimed(claimed)
-                if (claimAmount === BigInt(0)) {
-                    const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
-                    if (balance > BigInt(0)) {
-                        setClaimButtonDisabled(false)
-                        setClaimAmount(balance)
+            if (coreContracts) {
+                if (!claimed) {
+                    const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)
+                    setClaimed(claimed)
+                    if (!claimed) {
+                        if (claimAmount === BigInt(0)) {
+                            const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
+                            if (balance > BigInt(0)) {
+                                setClaimButtonDisabled(false)
+                                setClaimAmount(balance)
+                            }
+                        }
+                        else {
+                            setClaimButtonDisabled(false)
+                        }
                     }
                 }
-                else {
-                    setClaimButtonDisabled(false)
-                }
-            }
-            else {
-                return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
             }
         }
         executeTask(task)

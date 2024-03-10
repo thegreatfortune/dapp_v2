@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/indent */
 import { useEffect, useState } from 'react'
-import { message } from 'antd'
+
+// import { message } from 'antd'
 import { ZeroAddress } from 'ethers'
 import { executeTask } from './helpers'
-import { MessageError } from '@/enums/error'
+
+// import { MessageError } from '@/enums/error'
 import useCoreContract from '@/hooks/useCoreContract'
 import { createContract } from '@/contract/coreContracts'
 import type {
@@ -37,14 +39,13 @@ const usePoolAddress = () => {
                 }
             }
         }
-        else {
-            message.error(MessageError.ProviderOrSignerIsNotInitialized)
-            return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
-        }
+        // else {
+        //     message.error(MessageError.ProviderOrSignerIsNotInitialized)
+        //     return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
+        // }
     }
     useEffect(() => {
-        if (coreContracts)
-            executeTask(task)
+        executeTask(task)
     }, [coreContracts])
 
     return {

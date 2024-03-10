@@ -59,9 +59,9 @@ const LoanDetails = () => {
   const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
   const [totalPrice, setTotalPrice] = useState('1.00')
   const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
-  const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
-  const [claimAmount, setClaimAmount] = useState(0)
-  const [claimBtndisable, setClaimBtndisable] = useState(true)
+  // const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
+  // const [claimAmount, setClaimAmount] = useState(0)
+  // const [claimBtndisable, setClaimBtndisable] = useState(true)
 
   const [claimModalOpen, setClaimModalOpen] = useState(false)
 
@@ -71,13 +71,13 @@ const LoanDetails = () => {
 
   const [executing, setExecuting] = useState(false)
 
-  const [copies, setCopies] = useState<number | null>(1)
+  // const [copies, setCopies] = useState<number | null>(1)
 
-  const [lendingState, setLendingState] = useState(false)
+  // const [lendingState, setLendingState] = useState(false)
 
   const [lentState, setLentState] = useState(false)
 
-  const [checkMaxLoading, setCheckMaxLoading] = useState(false)
+  // const [checkMaxLoading, setCheckMaxLoading] = useState(false)
 
   const [refundPoolAddress, setRefundPoolAddress] = useState<string>()
 
@@ -97,16 +97,16 @@ const LoanDetails = () => {
 
   const [currentCopies, setCurrentCopies] = useState(0)
 
-  const [followModalOpenOld, setFollowModalOpenOld] = useState(false)
+  // const [followModalOpenOld, setFollowModalOpenOld] = useState(false)
 
   const [followModalOpen, setFollowModalOpen] = useState(false)
 
   // const { capitalPoolAddress } = usePoolAddress()
 
-  const [usdcApproved, setUsdcApproved] = useState(0)
-  const [followed, setFollowed] = useState(0)
+  // const [usdcApproved, setUsdcApproved] = useState(0)
+  // const [followed, setFollowed] = useState(0)
 
-  const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
+  // const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
 
   const chainId = useChainId()
 

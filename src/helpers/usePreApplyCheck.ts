@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/indent */
 
-import { message } from 'antd'
+// import { message } from 'antd'
 import { useEffect, useState } from 'react'
 import { executeTask } from './helpers'
-import { MessageError } from '@/enums/error'
+
+// import { MessageError } from '@/enums/error'
 import useCoreContract from '@/hooks/useCoreContract'
 
 const usePreApplyCheck = () => {
@@ -35,10 +36,10 @@ const usePreApplyCheck = () => {
             setChecked(true)
             return Promise.resolve(true)
         }
-        else {
-            message.error(MessageError.ProviderOrSignerIsNotInitialized)
-            return Promise.reject(new Error(MessageError.ProviderOrSignerIsNotInitialized))
-        }
+        // else {
+        //     message.error(MessageError.ProviderOrSignerIsNotInitialized)
+        //     return Promise.reject(new Error(MessageError.ProviderOrSignerIsNotInitialized))
+        // }
     }
 
     useEffect(() => {
