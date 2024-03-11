@@ -319,7 +319,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       <div className="h50" />
       {/* <Divider></Divider> */}
       {/* <div className="h800" /> */}
-      <RepaymentPlan lendState={lendState} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
+      <RepaymentPlan lendState={loanInfo.state!} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
 
       <div className="h50" />
       <Divider></Divider>

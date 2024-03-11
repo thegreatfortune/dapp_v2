@@ -12,11 +12,13 @@ import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 
+// TODO 已经清算过，没有欠款，但是还是显示逾期有欠款，必须要repay一次合约，0资金，才会正常
 interface IProps {
   tradeId: bigint
   repayCount: number
   refundPoolAddress: string | undefined
-  lendState: 'Processing' | 'Success' | undefined
+  // lendState: 'Processing' | 'Success' | undefined
+  lendState: Models.LoanState
 }
 
 function calculateOverdueDays(startTime: string): number {
@@ -36,6 +38,8 @@ function calculateOverdueDays(startTime: string): number {
 }
 
 const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
+  console.log(lendState)
+
   const chainId = useChainId()
 
   const { browserContractService } = useBrowserContract()
@@ -105,8 +109,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
   }
 
   useEffect(() => {
-    if (tradeId || lendState === 'Success')
-      fetchData()
+    // if (tradeId)
+    // if (tradeId || lendState === 'PaidOff')
+    fetchData()
   }, [tradeId, refundPoolAddress, lendState])
 
   useEffect(() => {
@@ -291,9 +296,9 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                       <li>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</li>
 
                       <li className='col-span-2 flex flex justify-center'>
-                        <Button loading={modalLoading} type='primary' onClick={() => onOpenModal(item, 'Liquidate')}
+                        {/* <Button loading={modalLoading} type='primary' onClick={() => onOpenModal(item, 'Liquidate')}
                           disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
-                          className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button>
+                          className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button> */}
                         <Button loading={modalLoading} type='primary' onClick={() => setLiquidateModalOpen(true)}
                           disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
                           className='h30 w120 b-rd-30 primary-btn'>liquidate</Button>

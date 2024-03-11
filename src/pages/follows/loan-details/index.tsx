@@ -32,14 +32,17 @@ import useUserStore from '@/store/userStore'
 const LoanDetails = () => {
   const navigate = useNavigate()
 
-  const { currentUser } = useUserStore()
-
   const [searchParams] = useSearchParams()
-
   const tradeId = searchParams.get('tradeId')
-
   if (!tradeId)
     setTimeout(() => navigate('/follows'), 3000)
+
+
+
+  const { currentUser } = useUserStore()
+
+
+
 
   const prePage = searchParams.get('prePage')
 
@@ -62,8 +65,6 @@ const LoanDetails = () => {
   // const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
   // const [totalPrice, setTotalPrice] = useState('1.00')
   // const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
-
-  const [claimModalOpen, setClaimModalOpen] = useState(false)
 
   // const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
@@ -89,8 +90,6 @@ const LoanDetails = () => {
 
   const [currentCopies, setCurrentCopies] = useState(0)
 
-  const [followModalOpen, setFollowModalOpen] = useState(false)
-
   // const [copies, setCopies] = useState<number | null>(1)
   // const [lendingState, setLendingState] = useState(false)
   // const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
@@ -108,6 +107,8 @@ const LoanDetails = () => {
 
   const chainId = useChainId()
 
+  const [claimModalOpen, setClaimModalOpen] = useState(false)
+  const [followModalOpen, setFollowModalOpen] = useState(false)
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false)
   const [listModalOpen, setListModalOpen] = useState(false)
 
@@ -129,35 +130,35 @@ const LoanDetails = () => {
       setActiveKey('3')
   }, [prePage])
 
-  useEffect(() => {
-    async function fetchData() {
-      if (tradeId && extractIsModalOpen && prePage) {
-        // setExtraBtnLoading(true)
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     if (tradeId && extractIsModalOpen && prePage) {
+  //       // setExtraBtnLoading(true)
 
-        if (prePage === 'loan') {
-          const pcc = await browserContractService?.getProcessCenterContract()
+  //       if (prePage === 'loan') {
+  //         const pcc = await browserContractService?.getProcessCenterContract()
 
-          const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
-          console.log('%c [ getBorrowerToProfit ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
+  //         const res = await pcc?.getBorrowerToProfit(BigInt(tradeId))
+  //         console.log('%c [ getBorrowerToProfit ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
 
-          setExtractMoney(ethers.formatUnits(res ?? 0))
-        }
-        else if (prePage === 'lend') {
-          const pcc = await browserContractService?.getProcessCenterContract()
-          const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
+  //         setExtractMoney(ethers.formatUnits(res ?? 0))
+  //       }
+  //       else if (prePage === 'lend') {
+  //         const pcc = await browserContractService?.getProcessCenterContract()
+  //         const tokenId = await browserContractService?.ERC3525_getTokenId(BigInt(tradeId))
 
-          if (tokenId) {
-            const res = await pcc?.getUserTotalMoney(BigInt(tokenId))
-            console.log('%c [ getUserTotalMoney ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
-            setExtractMoney(ethers.formatUnits(res ?? 0))
-          }
-        }
-        // setExtraBtnLoading(false)
-      }
-    }
+  //         if (tokenId) {
+  //           const res = await pcc?.getUserTotalMoney(BigInt(tokenId))
+  //           console.log('%c [ getUserTotalMoney ]-82', 'font-size:13px; background:#a88d14; color:#ecd158;', res)
+  //           setExtractMoney(ethers.formatUnits(res ?? 0))
+  //         }
+  //       }
+  //       // setExtraBtnLoading(false)
+  //     }
+  //   }
 
-    fetchData()
-  }, [tradeId, extractIsModalOpen, prePage])
+  //   fetchData()
+  // }, [tradeId, extractIsModalOpen, prePage])
 
   // useEffect(() => {
   //   if (!tradeId) {
@@ -1040,7 +1041,7 @@ const LoanDetails = () => {
               key: '1',
               label: 'Pool',
               children: <Pool
-                loanInfo={loanInfo!}
+                loanInfo={loanInfo}
                 prePage={prePage}
                 lendState={lentState ? 'Success' : 'Processing'}
                 refundPoolAddress={refundPoolAddress}

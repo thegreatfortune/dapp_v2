@@ -4,7 +4,7 @@ import { Image, Tooltip } from 'antd'
 import { Models } from '@/.generated/api/models'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import { isContractAddress } from '@/utils/regex'
-import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import { maskAddress } from '@/utils/maskAddress'
 import tlogo from '@/assets/images/portalImages/tLogo.png'
 
 interface CardProps {
@@ -29,7 +29,7 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ src, name, twitter }) => {
       {
         name && twitter
           ? <div className="ml-4">
-            <h2 className="m0 p0 text-12 font-semibold">{isContractAddress(name ?? '') ? maskWeb3Address(name) : name}</h2>
+            <h2 className="m0 p0 text-12 font-semibold">{isContractAddress(name ?? '') ? maskAddress(name, 3) : name}</h2>
             <span className="text-10 text-gray-500">@{twitter}</span>
           </div>
           : 'Not bound'
