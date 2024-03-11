@@ -5,6 +5,7 @@ import { MaxUint256, ZeroAddress, formatUnits } from 'ethers'
 import { useEffect, useState } from 'react'
 import CurrencyInput from 'react-currency-input-field'
 import { useChainId } from 'wagmi'
+import { RedoOutlined } from '@ant-design/icons'
 import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import useUserStore from '@/store/userStore'
@@ -16,7 +17,6 @@ import type {
     FollowCapitalPool as capitalPool,
 } from '@/abis/types'
 import capitalPoolABI from '@/abis/FollowCapitalPool.json'
-import { RedoOutlined } from '@ant-design/icons'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
@@ -261,6 +261,7 @@ const FollowModal: React.FC<IProps> = (props) => {
                             onClick={() => {
                                 setFollowShares(maxShares)
                                 setFollowAmount(maxAmount)
+                                setChecking(checking => checking + 1)
                             }} >Max</Button>
                     </div>
                 </div>

@@ -39,22 +39,28 @@ const ListModal: React.FC<IProps> = (props) => {
     const [listButtonText, setListButtonText] = useState('List')
     const [listButtonDisabled, setListButtonDisabled] = useState(true)
 
+    const [checking, setChecking] = useState(0)
+
     const resetModal = () => {
         setListing(false)
-        setListButtonText('Claim')
+        setListButtonText('List')
         setListButtonDisabled(true)
 
         props.setOpen(false)
     }
 
     const checkAllowance = async () => {
+        if (listShares === BigInt(0)) {
+            setApproveButtonDisabled(true)
+            setListButtonDisabled(true)
+            return
+        }
         if (coreContracts) {
             setApproving(true)
             setApproveButtonText('Checking...')
             setListButtonDisabled(true)
-            console.log('allowance')
-            const allowance = await coreContracts.sharesContract.allowance(tokenId, ChainAddressEnums[chainId].market)
 
+            const allowance = await coreContracts.sharesContract.allowance(tokenId, ChainAddressEnums[chainId].market)
             if (allowance < listShares) {
                 setApproveButtonDisabled(false)
             }
@@ -62,6 +68,7 @@ const ListModal: React.FC<IProps> = (props) => {
                 setApproveButtonDisabled(true)
                 setListButtonDisabled(false)
             }
+
             setApproving(false)
             setApproveButtonText('Approve')
         }
@@ -144,7 +151,7 @@ const ListModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         checkAllowance()
-    }, [listShares])
+    }, [checking])
 
     return <Modal open={props.open}
         onCancel={() => resetModal()}
@@ -188,13 +195,19 @@ const ListModal: React.FC<IProps> = (props) => {
                                 if (Number(values.value) <= Number(shareBalance)) {
                                     setListShares(BigInt(values.value))
                                     setTotalPrice((Number(values.value) * Number(sharePrice)).toString())
+                                    setChecking(checking => checking + 1)
                                 }
                             }
                         }}
                     />
                     <div className='ml-20 flex items-center'>
                         <Button type='primary' disabled={Number(shareBalance) === 0} className='primary-btn'
-                            onClick={() => setListShares(shareBalance)}>Max</Button>
+                            onClick={() => {
+                                setListShares(shareBalance)
+                                setTotalPrice((Number(shareBalance) * Number(sharePrice)).toString())
+                                setChecking(checking => checking + 1)
+                            }
+                            }>Max</Button>
                     </div>
                 </div>
                 <div className='mt-10 flex justify-end'>
@@ -218,6 +231,7 @@ const ListModal: React.FC<IProps> = (props) => {
                             if (values) {
                                 setSharePrice(values.value)
                                 setTotalPrice((Number(values.value) * Number(listShares)).toString())
+                                setChecking(checking => checking + 1)
                             }
                         }}
                     />
