@@ -1,12 +1,12 @@
+/* eslint-disable no-multiple-empty-lines */
 /* eslint-disable @typescript-eslint/indent */
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useEffect, useState } from 'react'
 import type { TabsProps } from 'antd'
-import { Button, Divider, InputNumber, Modal, Progress, Tabs, Tooltip, message } from 'antd'
+import { Button, Divider, Progress, Tabs, Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { BorderOutlined, CheckOutlined, CloseSquareOutlined, LoadingOutlined } from '@ant-design/icons'
 import Image from 'antd/es/image'
 import { useChainId } from 'wagmi'
 import InfoCard from './components/InfoCard'
@@ -14,7 +14,8 @@ import Countdown from './components/Countdown'
 import Pool from './components/Pool'
 import SharesMarket from './components/SharesMarket'
 import OperationRecord from './components/OperationRecord'
-import IncomeCalculation from './components/IncomeCalculation'
+
+// import ProfitsDetail from './components/ProfitsDetail'
 
 // import { LoanService } from '@/.generated/api/Loan'
 import FollowModal from './components/Modals/Follow'
@@ -23,14 +24,15 @@ import ClaimModal from './components/Modals/Claim'
 import ListModal from './components/Modals/List'
 import { Models } from '@/.generated/api/models'
 import useBrowserContract from '@/hooks/useBrowserContract'
-import useUserStore from '@/store/userStore'
 import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import loanService from '@/services/loanService'
 import NotFound from '@/pages/NotFound'
-import useCoreContract from '@/hooks/useCoreContract'
+import useUserStore from '@/store/userStore'
 
 const LoanDetails = () => {
   const navigate = useNavigate()
+
+  const { currentUser } = useUserStore()
 
   const [searchParams] = useSearchParams()
 
@@ -44,7 +46,7 @@ const LoanDetails = () => {
   if (!prePage || (prePage !== 'loan' && prePage !== 'lend' && prePage !== 'market' && prePage !== 'trade'))
     return
 
-  const { currentUser } = useUserStore()
+  // const { currentUser } = useUserStore()
 
   const { browserContractService } = useBrowserContract()
 
@@ -53,38 +55,27 @@ const LoanDetails = () => {
   const [extractIsModalOpen, setExtractIsModalOpen] = useState(false)
   const [extraModalLoading, setExtraModalLoading] = useState(false)
 
-  const [sellIsModalOpen, setSellIsModalOpen] = useState(false)
-  const [sellModalLoading, setSellModalLoading] = useState(false)
-  const [totalShares, setTotalShares] = useState(0)
-  const [sellAmount, setSellAmount] = useState('1')
-  const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
-  const [totalPrice, setTotalPrice] = useState('1.00')
-  const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
-  // const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
-  // const [claimAmount, setClaimAmount] = useState(0)
-  // const [claimBtndisable, setClaimBtndisable] = useState(true)
+  // const [sellIsModalOpen, setSellIsModalOpen] = useState(false)
+  // const [sellModalLoading, setSellModalLoading] = useState(false)
+  // const [totalShares, setTotalShares] = useState(0)
+  // const [sellAmount, setSellAmount] = useState('1')
+  // const [sellUnitPrice, setSellUnitPrice] = useState('1.00')
+  // const [totalPrice, setTotalPrice] = useState('1.00')
+  // const [sellConfirmModalOpen, setSellConfirmModalOpen] = useState(false)
 
   const [claimModalOpen, setClaimModalOpen] = useState(false)
 
-  const [approved, setApproved] = useState(0)
+  // const [approved, setApproved] = useState(0)
   const [sold, setSold] = useState(0)
-  const [okText, setOkText] = useState('Confirm')
+  // const [okText, setOkText] = useState('Confirm')
 
-  const [executing, setExecuting] = useState(false)
-
-  // const [copies, setCopies] = useState<number | null>(1)
-
-  // const [lendingState, setLendingState] = useState(false)
+  // const [executing, setExecuting] = useState(false)
 
   const [lentState, setLentState] = useState(false)
-
-  // const [checkMaxLoading, setCheckMaxLoading] = useState(false)
 
   const [refundPoolAddress, setRefundPoolAddress] = useState<string>()
 
   const [extractMoney, setExtractMoney] = useState<string>('0')
-
-  // const [extraBtnLoading, setExtraBtnLoading] = useState(false)
 
   const [refundLoading, setRefundLoading] = useState(false)
 
@@ -98,10 +89,16 @@ const LoanDetails = () => {
 
   const [currentCopies, setCurrentCopies] = useState(0)
 
-  // const [followModalOpenOld, setFollowModalOpenOld] = useState(false)
-
   const [followModalOpen, setFollowModalOpen] = useState(false)
 
+  // const [copies, setCopies] = useState<number | null>(1)
+  // const [lendingState, setLendingState] = useState(false)
+  // const [claimModalOpenOld, setClaimModalOpenOld] = useState(false)
+  // const [claimAmount, setClaimAmount] = useState(0)
+  // const [claimBtndisable, setClaimBtndisable] = useState(true)
+  // const [checkMaxLoading, setCheckMaxLoading] = useState(false)
+  // const [extraBtnLoading, setExtraBtnLoading] = useState(false)
+  // const [followModalOpenOld, setFollowModalOpenOld] = useState(false)
   // const { capitalPoolAddress } = usePoolAddress()
 
   // const [usdcApproved, setUsdcApproved] = useState(0)
@@ -110,8 +107,6 @@ const LoanDetails = () => {
   // const [followModalBtnText, setFollowModalBtnText] = useState('Follow')
 
   const chainId = useChainId()
-
-  const { coreContracts } = useCoreContract()
 
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false)
   const [listModalOpen, setListModalOpen] = useState(false)
@@ -157,7 +152,6 @@ const LoanDetails = () => {
             setExtractMoney(ethers.formatUnits(res ?? 0))
           }
         }
-
         // setExtraBtnLoading(false)
       }
     }
@@ -165,31 +159,31 @@ const LoanDetails = () => {
     fetchData()
   }, [tradeId, extractIsModalOpen, prePage])
 
-  useEffect(() => {
-    if (!tradeId) {
-      message.error('Not Found Loan!')
-    }
-    else {
-      async function fetchSharesData() {
-        if (browserContractService) {
-          const erc3525Contract = await browserContractService?.getERC3525Contract()
-          const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(currentUser.address, tradeId!)
-          const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
-          setTotalShares(Number.parseInt(shares!.toString()))
-        }
-      }
-      fetchSharesData()
-    }
-    setSellAmount('1')
-    setSellUnitPrice('1.00')
-    setTotalPrice('1.00')
-  }, [sellIsModalOpen])
+  // useEffect(() => {
+  //   if (!tradeId) {
+  //     message.error('Not Found Loan!')
+  //   }
+  //   else {
+  //     async function fetchSharesData() {
+  //       if (browserContractService) {
+  //         const erc3525Contract = await browserContractService?.getERC3525Contract()
+  //         const tokenId = await erc3525Contract?.getPersonalSlotToTokenId(currentUser.address, tradeId!)
+  //         const shares = await erc3525Contract?.tokenIdBalanceOf(tokenId!)
+  //         setTotalShares(Number.parseInt(shares!.toString()))
+  //       }
+  //     }
+  //     fetchSharesData()
+  //   }
+  //   setSellAmount('1')
+  //   setSellUnitPrice('1.00')
+  //   setTotalPrice('1.00')
+  // }, [sellIsModalOpen])
 
-  useEffect(() => {
-    // setApproved(0)
-    setSold(0)
-    setSellModalLoading(false)
-  }, [sellConfirmModalOpen])
+  // useEffect(() => {
+  //   // setApproved(0)
+  //   setSold(0)
+  //   setSellModalLoading(false)
+  // }, [sellConfirmModalOpen])
 
   useEffect(() => {
     async function fetchData() {
@@ -266,94 +260,94 @@ const LoanDetails = () => {
   //   },
   // ]
 
-  async function extractConfirm() {
-    if (!tradeId)
-      return
-    setExtraModalLoading(true)
+  // async function extractConfirm() {
+  //   if (!tradeId)
+  //     return
+  //   setExtraModalLoading(true)
 
-    // 对比当前登录用户id  判断是否是订单发起人
-    try {
-      if (prePage === 'lend' && loanInfo!.state === 'PaidOff') {
-        console.log(1111)
-        // return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
-        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(0))
-      }
+  //   // 对比当前登录用户id  判断是否是订单发起人
+  //   try {
+  //     if (prePage === 'lend' && loanInfo!.state === 'PaidOff') {
+  //       console.log(1111)
+  //       // return browserContractService?.followRouter_refundMoney(BigInt(tradeId))
+  //       await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(0))
+  //     }
 
-      if (currentUser.userId === loanInfo!.userId) {
-        console.log(2222)
+  //     if (currentUser.userId === loanInfo!.userId) {
+  //       console.log(2222)
 
-        console.log(coreContracts?.refundPoolAddress)
-        await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
-      }
-      else {
-        console.log(3333)
-        const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
-        console.log(balance)
-        if (balance === undefined || balance === BigInt(0)) {
-          message.warning('You have no balance')
-          throw new Error('You have no balance')
-        }
-        // const refundPoolContract = coreContracts!.refundPoolContract
-        // console.log(refundPoolContract)
-        await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
-      }
-    }
-    catch (error) {
-      console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
-    }
-    finally {
-      setExtraModalLoading(false)
-    }
-  }
+  //       console.log(coreContracts?.refundPoolAddress)
+  //       await browserContractService?.refundPool_borrowerWithdraw(BigInt(tradeId))
+  //     }
+  //     else {
+  //       console.log(3333)
+  //       const balance = await browserContractService?.ERC3525_balanceOf(BigInt(tradeId))
+  //       console.log(balance)
+  //       if (balance === undefined || balance === BigInt(0)) {
+  //         message.warning('You have no balance')
+  //         throw new Error('You have no balance')
+  //       }
+  //       // const refundPoolContract = coreContracts!.refundPoolContract
+  //       // console.log(refundPoolContract)
+  //       await browserContractService?.refundPool_lenderWithdraw(BigInt(tradeId), BigInt(balance)) // 订单份额
+  //     }
+  //   }
+  //   catch (error) {
+  //     console.log('%c [ error ]-91', 'font-size:13px; background:#f09395; color:#ffd7d9;', error)
+  //   }
+  //   finally {
+  //     setExtraModalLoading(false)
+  //   }
+  // }
 
-  async function sellConfirm() {
-    if (!tradeId || sellAmount === undefined || sellUnitPrice === undefined)
-      throw new Error('tradeId is undefined')
+  // async function sellConfirm() {
+  //   if (!tradeId || sellAmount === undefined || sellUnitPrice === undefined)
+  //     throw new Error('tradeId is undefined')
 
-    // setSellModalLoading(true)
-    setExecuting(true)
+  //   // setSellModalLoading(true)
+  //   setExecuting(true)
 
-    if (approved !== 2) {
-      setApproved(1)
-      try {
-        const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
-        if (approvedRes)
-          setApproved(2)
-        else
-          throw new Error('error')
-      }
-      catch {
-        setOkText('Retry')
-        setExecuting(false)
-        setApproved(3)
-        return
-      }
-    }
+  //   if (approved !== 2) {
+  //     setApproved(1)
+  //     try {
+  //       const approvedRes = await browserContractService?.followMarketContract_approveERC3525(BigInt(tradeId as string), BigInt(sellAmount))
+  //       if (approvedRes)
+  //         setApproved(2)
+  //       else
+  //         throw new Error('error')
+  //     }
+  //     catch {
+  //       setOkText('Retry')
+  //       setExecuting(false)
+  //       setApproved(3)
+  //       return
+  //     }
+  //   }
 
-    try {
-      setSold(1)
-      // const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_TOKEN_USDC)
-      const processedPrice = BigInt(Number.parseFloat(sellUnitPrice))
-      const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
-      console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
-      if (sellRes?.status !== 1) {
-        message.error('Sell Transaction Failed!')
-        throw new Error('Sell Transaction Failed!')
-      }
-      setSold(2)
-      setOkText('Confirm')
-      setSellConfirmModalOpen(false)
-      setSellIsModalOpen(false)
-      setExecuting(false)
-    }
-    catch (error) {
-      setSold(3)
-      setExecuting(false)
-      setOkText('Retry')
-      message.error('Transaction Failed!')
-      console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
-    }
-  }
+  //   try {
+  //     setSold(1)
+  //     // const decimals = await browserContractService?.ERC20_decimals(import.meta.env.VITE_TOKEN_USDC)
+  //     const processedPrice = BigInt(Number.parseFloat(sellUnitPrice))
+  //     const sellRes = await browserContractService?.followMarketContract_saleERC3525(BigInt(tradeId as string), processedPrice, BigInt(sellAmount))
+  //     console.log('%c [ sale ]-52', 'font-size:13px; background:#8ce238; color:#d0ff7c;', sellRes)
+  //     if (sellRes?.status !== 1) {
+  //       message.error('Sell Transaction Failed!')
+  //       throw new Error('Sell Transaction Failed!')
+  //     }
+  //     setSold(2)
+  //     setOkText('Confirm')
+  //     setSellConfirmModalOpen(false)
+  //     setSellIsModalOpen(false)
+  //     setExecuting(false)
+  //   }
+  //   catch (error) {
+  //     setSold(3)
+  //     setExecuting(false)
+  //     setOkText('Retry')
+  //     message.error('Transaction Failed!')
+  //     console.log('%c [ error ]-47', 'font-size:13px; background:#8354d6; color:#c798ff;', error)
+  //   }
+  // }
 
   // const handleFollow = async () => {
   //   if (!tradeId || !copies)
@@ -508,11 +502,9 @@ const LoanDetails = () => {
     : (loanInfo
       ? <div className='w-full'>
 
-        <Modal open={sellIsModalOpen}
-          // centered={true}
+        {/* <Modal open={sellIsModalOpen}
           className='h238 w464 b-rd-8'
           okText="Sell"
-          // onOk={() => sellConfirm()}
           onOk={() => setSellConfirmModalOpen(true)}
           onCancel={() => setSellIsModalOpen(false)}
           okButtonProps={{
@@ -555,7 +547,6 @@ const LoanDetails = () => {
                 <Button
                   className='mx-12'
                   type='primary'
-                  // loading={checkMaxLoading}
                   onClick={() => {
                     setSellAmount(totalShares.toString())
                     setTotalPrice((totalShares * Number.parseFloat(sellUnitPrice)).toFixed(2))
@@ -603,9 +594,9 @@ const LoanDetails = () => {
               </div>
             </div>
           </div>
-        </Modal>
+        </Modal> */}
 
-        <Modal open={sellConfirmModalOpen}
+        {/* <Modal open={sellConfirmModalOpen}
           className='h238 w464 b-rd-8'
           onOk={() => sellConfirm()}
           okText={okText}
@@ -652,7 +643,6 @@ const LoanDetails = () => {
 
             </div>
 
-            {/* <div hidden={!sellModalLoading}> */}
             <div className='mt-20'>
               <div className='h40 flex justify-between text-18'>
                 <div className='flex'>
@@ -712,7 +702,7 @@ const LoanDetails = () => {
               </div>
             </div>
           </div>
-        </Modal>
+        </Modal> */}
 
         {/* <Modal open={extractIsModalOpen}
           className='h238 w464 b-rd-8'
@@ -751,30 +741,7 @@ const LoanDetails = () => {
               You can claim {toCurrencyString(claimAmount)} $FOF!
             </div>
           </div>
-        </Modal> */}
-
-        <ListModal open={listModalOpen}
-          setOpen={setListModalOpen}
-          tradeId={Number(tradeId)}
-        ></ListModal>
-
-        <ClaimModal open={claimModalOpen}
-          setOpen={setClaimModalOpen}
-          tradeId={Number(tradeId)}
-        ></ClaimModal>
-
-        <WithdrawModal open={withdrawModalOpen}
-          setOpen={setWithdrawModalOpen}
-          tradeId={BigInt(tradeId)}
-          userState={prePage}
-          loanState={loanInfo!.state}
-          loanOwner={loanInfo!.userId}
-        ></WithdrawModal>
-
-        <FollowModal open={followModalOpen}
-          setOpen={setFollowModalOpen}
-          tradeId={BigInt(tradeId)}
-        ></FollowModal>
+        </Modal>  */}
 
         {/* <Modal open={followModalOpenOld}
           className='h238 w464 b-rd-8'
@@ -876,10 +843,34 @@ const LoanDetails = () => {
               }
             </div>
           </div>
-        </Modal > */}
+        </Modal>  */}
+
+        <ListModal open={listModalOpen}
+          setOpen={setListModalOpen}
+          tradeId={Number(tradeId)}
+          isLoanOwner={currentUser.userId === loanInfo.userId}
+        ></ListModal>
+
+        <WithdrawModal open={withdrawModalOpen}
+          setOpen={setWithdrawModalOpen}
+          tradeId={BigInt(tradeId)}
+          userState={prePage}
+          loanState={loanInfo!.state}
+          loanOwner={loanInfo!.userId}
+        ></WithdrawModal>
+
+        <FollowModal open={followModalOpen}
+          setOpen={setFollowModalOpen}
+          tradeId={BigInt(tradeId)}
+        ></FollowModal>
+
+        <ClaimModal open={claimModalOpen}
+          setOpen={setClaimModalOpen}
+          tradeId={Number(tradeId)}
+        ></ClaimModal>
 
         <div className='loan-detail-info'>
-          <InfoCard item={loanInfo!} />
+          <InfoCard loanDetail={loanInfo} />
           {/* <div className="w-32"></div> */}
           <div className='ml-30 grow max-md:ml-0'>
             <div className='flex flex-col max-md:mt-30 md:min-h-420'>
@@ -909,31 +900,30 @@ const LoanDetails = () => {
               <div className='lg:flex'>
                 <div className='flex'>
                   {
-                    prePage === 'market' && loanInfo!.state === 'Following'
+                    prePage === 'market' && loanInfo.state === 'Following'
                     && <div className='flex'>
                       {/* <div className='m-8 w180'></div> */}
                       {/* <Button className='m-8 h40 w180 b-rd-30 primary-btn' onClick={() => setIsModalOpen(true)}>Follow</Button> */}
                       {/* <Button className='loan-detail-btn' onClick={() => setFollowModalOpenOld(true)}>Follow</Button> */}
-                      <Button className='loan-detail-btn' onClick={() => setFollowModalOpen(true)}>Follow</Button>
+                      <Button className='loan-detail-btn' type='primary' onClick={() => setFollowModalOpen(true)}>Follow</Button>
 
                     </div>
                   }
-
                   {
-                    prePage === 'lend'
+                    prePage === 'lend' && currentUser.userId !== loanInfo.userId
                     && <div className='flex'>
                       {
                         loanInfo!.state !== 'CloseByUncollected'
                         && (
                           <div>
-                            <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button>
-                            <Button className='loan-detail-btn' onClick={() => setListModalOpen(true)}>newSell</Button>
+                            {/* <Button className='loan-detail-btn' onClick={() => setSellIsModalOpen(true)}>Sell</Button> */}
+                            <Button className='loan-detail-btn' type='primary' onClick={() => setListModalOpen(true)}>Sell</Button>
                           </div>
                         )
 
                       }
                       {/* <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button> */}
-                      <Button className='loan-detail-btn' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
+                      <Button className='loan-detail-btn' type='primary' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
                     </div>
                   }
 
@@ -941,25 +931,30 @@ const LoanDetails = () => {
                     {
                       (prePage === 'lend' || prePage === 'loan') && loanInfo!.state === 'CloseByUncollected'
                       && <div>
-                        <Button className='loan-detail-btn' loading={refundLoading} onClick={refund}>Liquidate</Button>
+                        <Button className='loan-detail-btn' type='primary' loading={refundLoading} onClick={refund}>Liquidate</Button>
                       </div>
                     }
                     {
                       prePage === 'loan'
                       && <div>
                         {/* <Button className='loan-detail-btn' onClick={() => setExtractIsModalOpen(true)}>Withdraw</Button> */}
-                        <Button className='loan-detail-btn' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
+                        <Button className='loan-detail-btn' type='primary' onClick={() => setWithdrawModalOpen(true)}>Withdraw</Button>
                       </div>
                     }
                     {
+                    // TODO Profit Detail
+                    /* {
                       // Income calculate
                       loanInfo!.state !== 'Invalid'
                       && <div>
                         {(prePage === 'loan' || prePage === 'lend')
-                          && <IncomeCalculation tradeId={tradeId ? BigInt(tradeId) : null} isOrderOriginator={prePage === 'loan'} />
+                          && <ProfitsDetail
+                            tradeId={BigInt(tradeId)}
+                            isLoanOwner={prePage === 'loan' && loanInfo.userId === currentUser.userId}
+                          />
                         }
                       </div>
-                    }
+                    } */}
 
                   </div>
                   <div>
@@ -967,15 +962,12 @@ const LoanDetails = () => {
                       checkFofAmount()
                       setClaimModalOpenOld(true)
                     }}>Claim $FOF</Button> */}
-
-                    <Button className='loan-detail-btn' onClick={() => {
-                      setClaimModalOpen(true)
-                    }}>Claim $FOF</Button>
+                    <Button className='loan-detail-btn' type='primary' onClick={() => setClaimModalOpen(true)}>Claim $FOF</Button>
                   </div>
                 </div>
                 <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>
                   <Progress percent={Number((Number(currentCopies / (maxCopies + currentCopies)) * 100).toFixed(2))} strokeColor={{ '0%': '#5eb6d2', '100%': '#8029e8' }} />
-                  <div className='ml-20'>
+                  <div className='ml-10'>
                     Progress
                   </div>
                 </div>

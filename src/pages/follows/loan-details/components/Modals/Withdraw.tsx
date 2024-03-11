@@ -38,7 +38,7 @@ const WithdrawModal: React.FC<IProps> = (props) => {
     const [withdrawButtonText, setWithdrawButtonText] = useState('Withdraw')
     const [withdrawButtonDisabled, setWithdrawButtonDisabled] = useState(true)
 
-    const [reFundPoolAddressOfLoan, setRefundPoolAddressOfLoan] = useState(ZeroAddress)
+    const [refundPoolAddressOfLoan, setRefundPoolAddressOfLoan] = useState(ZeroAddress)
     const [tokenId, setTokenId] = useState(BigInt(0))
 
     const resetModal = () => {
@@ -115,36 +115,41 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                 return
             }
             if (coreContracts) {
-                if (props.userState === 'loan' && currentUser.address === props.loanOwner && props.loanState === 'PaidOff') {
-                    const refundPoolContract = createContract<refundPool>(reFundPoolAddressOfLoan, refundPoolABI, coreContracts.signer)
-                    const res = await refundPoolContract.borrowerWithdraw(props.tradeId)
-                    await handleTransactionResponse(res,
-                        NotificationInfo.WithdrawSuccessfully,
-                        NotificationInfo.WithdrawSuccessfullyDesc,
-                    )
-                }
-                if (props.userState === 'lend' && props.loanState === 'PaidOff') {
-                    setWithdrawing(true)
-                    setWithdrawButtonDisabled(true)
-                    try {
-                        const refundPoolContract = createContract<refundPool>(reFundPoolAddressOfLoan, refundPoolABI, coreContracts.signer)
+                setWithdrawing(true)
+                setWithdrawButtonDisabled(true)
+
+                const refundPoolContract = createContract<refundPool>(refundPoolAddressOfLoan, refundPoolABI, coreContracts.signer)
+
+                console.log(refundPoolAddressOfLoan)
+
+                try {
+                    if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
+                        console.log('111111111111111111111111111111111111111111111')
+                        const res = await refundPoolContract.borrowerWithdraw(props.tradeId)
+                        await handleTransactionResponse(res,
+                            NotificationInfo.WithdrawSuccessfully,
+                            NotificationInfo.WithdrawSuccessfullyDesc,
+                        )
+                    }
+                    if (props.userState === 'lend' && props.loanState === 'PaidOff') {
                         const res = await refundPoolContract.lenderWithdraw(tokenId)
                         await handleTransactionResponse(res,
                             NotificationInfo.WithdrawSuccessfully,
                             NotificationInfo.WithdrawSuccessfullyDesc,
                         )
                     }
-                    catch (error) {
-                        setWithdrawing(false)
-                        setWithdrawButtonDisabled(false)
-                        return Promise.reject(error)
-                    }
-                    setWithdrawn(true)
+                }
+                catch (error) {
                     setWithdrawing(false)
                     setWithdrawButtonDisabled(false)
-                    setWithdrawButtonText('Finish')
-                    setWithdrawAmount(BigInt(0))
+                    return Promise.reject(error)
                 }
+
+                setWithdrawn(true)
+                setWithdrawing(false)
+                setWithdrawButtonDisabled(false)
+                setWithdrawButtonText('Finish')
+                setWithdrawAmount(BigInt(0))
             }
             else {
                 return Promise.reject(MessageError.ProviderOrSignerIsNotInitialized)
@@ -155,35 +160,73 @@ const WithdrawModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         const task = async () => {
+            // TODO 第一是 borrower提取过后，检测profit没有变化，withdraw仍是false状态
+            // TODO 第二是 lender的withdraw状态，如果领取过后继续follow的话，状态无更新
             if (coreContracts) {
-                if (!withdrawn) {
-                    // TODO wrong state？
-                    const withdrawn = await coreContracts.processCenterContract._getLenderIfWithdrawRefund(currentUser.address, props.tradeId)
-                    console.log('withdrawn', withdrawn)
-                    // TODO use withdrawn state
-                    if (withdrawAmount === BigInt(0)) {
-                        const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
-                        const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
-                        setRefundPoolAddressOfLoan(refundPoolAddress)
+                // borrower withdraw
+                if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
+                    setWithdrawing(true)
+                    setWithdrawButtonDisabled(true)
+                    setWithdrawButtonText('Checking...')
+                    const withdrawn = await coreContracts.processCenterContract._getBorrowerIfWithdrawProfit(currentUser.address, props.tradeId)
+                    console.log('#####', withdrawn)
+                    if (!withdrawn) {
+                        if (withdrawAmount === BigInt(0)) {
+                            const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
+                            const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
+                            setRefundPoolAddressOfLoan(refundPoolAddress)
 
-                        if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
                             const profit = await coreContracts.processCenterContract.getBorrowerToProfit(props.tradeId)
-                            console.log('profit:', profit)
                             setWithdrawAmount(profit)
+                            if (profit > BigInt(0))
+                                setWithdrawButtonDisabled(false)
                         }
-                        if (props.userState === 'lend' && props.loanState === 'PaidOff') {
+                        else {
+                            setWithdrawButtonDisabled(false)
+                        }
+                        setWithdrawing(false)
+                        setWithdrawButtonDisabled(false)
+                        setWithdrawButtonText('Withdraw')
+                    }
+                    else {
+                        //
+                        console.log('#####2', withdrawn)
+                        setWithdrawn(true)
+                        setWithdrawing(false)
+                        setWithdrawButtonDisabled(true)
+                        setWithdrawButtonText('Withdraw')
+                    }
+                }
+
+                // lender withdraw
+                if (props.userState === 'lend' && props.loanState === 'PaidOff') {
+                    setWithdrawing(true)
+                    setWithdrawButtonDisabled(true)
+                    setWithdrawButtonText('Checking...')
+                    const withdrawn = await coreContracts.processCenterContract._getLenderIfWithdrawRefund(currentUser.address, props.tradeId)
+                    if (!withdrawn) {
+                        if (withdrawAmount === BigInt(0)) {
+                            const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
+                            const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
+                            setRefundPoolAddressOfLoan(refundPoolAddress)
                             const tokenId = await coreContracts.sharesContract.getPersonalSlotToTokenId(currentUser.address, props.tradeId)
                             setTokenId(tokenId)
                             const profit = await coreContracts.processCenterContract.getUserTotalMoney(tokenId)
                             if (profit !== BigInt(0)) {
                                 setWithdrawAmount(profit)
-                                checkAllowance(reFundPoolAddressOfLoan, tokenId)
+                                checkAllowance(refundPoolAddressOfLoan, tokenId)
                             }
                         }
+                        else {
+                            checkAllowance(refundPoolAddressOfLoan, tokenId)
+                        }
                     }
-                }
-                else {
-                    checkAllowance(reFundPoolAddressOfLoan, tokenId)
+                    else {
+                        setWithdrawn(true)
+                    }
+                    setWithdrawing(false)
+                    setWithdrawButtonDisabled(false)
+                    setWithdrawButtonText('Withdraw')
                 }
             }
         }

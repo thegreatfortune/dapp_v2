@@ -46,7 +46,7 @@ export default function BalanceChart() {
     const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
         if (active && payload && payload.length) {
             return (
-                <div className="custom-tooltip h-100 items-center rounded-6 bg-white p-2 text-18 font-bold text-black">
+                <div className="custom-tooltip h-100 items-center rounded-6 bg-white p-2 text-18 text-black font-bold">
                     <div className='mt-8 flex items-center justify-between'>
                         <div className='mx-12 my-6 w-80'>Date:</div>
                         <div className="label mx-12">{label}</div>

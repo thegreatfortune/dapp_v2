@@ -8,12 +8,12 @@ import { Models } from '@/.generated/api/models'
 import type { IColumn } from '@/pages/components/ScrollabletList'
 import ScrollableList from '@/pages/components/ScrollabletList'
 import { MarketService } from '@/.generated/api/Market'
-import type { User } from '@/models/User'
+import type { IUser } from '@/models/User'
 
 interface IProps {
   renderItem: (params: any, index: number) => React.ReactNode
   tradeId: number
-  currentUser: User
+  currentUser: IUser
   grid?: ListGridType
   containerId: string
 }

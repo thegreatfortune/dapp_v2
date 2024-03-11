@@ -6,8 +6,8 @@ import { useChainId } from 'wagmi'
 
 // import tradingPairTokenMap, { tokenList } from '../../../../contract/tradingPairTokenMap'
 import { LoadingOutlined } from '@ant-design/icons'
+import Address from '../../../components/Address'
 import RepaymentPlan from './RepaymentPlan'
-import Address from './Address'
 import LoanHistory from './LoanHistory'
 import BalanceChart from './BalanceChart'
 import Swap from './Swap'
@@ -19,6 +19,7 @@ import useCoreContract from '@/hooks/useCoreContract'
 import { executeTask } from '@/helpers/helpers'
 import usePoolAddress from '@/helpers/usePoolAddress'
 import { MessageError } from '@/enums/error'
+import useUserStore from '@/store/userStore'
 
 // import { PortfolioService } from '@/.generated/api'
 
@@ -51,6 +52,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
   // const [currentTokenInfo, setCurrentTokenInfo] = useState<TokenInfo>(new TokenInfo())
 
+  const { currentUser } = useUserStore()
   const chainId = useChainId()
 
   const [depositModalOpen, setDepositModalOpen] = useState(false)
@@ -241,7 +243,8 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 resetSwapTokenInfo={refreshTokenState}
                 tradeId={tradeId}
                 tokenStates={tokenStates}
-                ownerState={prePage === 'loan' && loanInfo.state === 'Trading'}
+                isLoanOwner={currentUser.userId === loanInfo.userId}
+              // isLoanOwner={prePage === 'loan' && loanInfo.state === 'Trading' && currentUser.userId === loanInfo.userId}
               >
               </Swap>
             </div>

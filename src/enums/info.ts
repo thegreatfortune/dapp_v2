@@ -22,4 +22,6 @@ export enum NotificationInfo {
     WithdrawSuccessfullyDesc = 'You have withdrawn successfully.',
     ListSuccessfully = 'List successfully.',
     ListSuccessfullyDesc = 'You have listed successfully.',
+    LiquidateSuccessfully = 'Liquidation successfully.',
+    LiquidateSuccessfullyDesc = 'You have liquidated successfully.',
 }

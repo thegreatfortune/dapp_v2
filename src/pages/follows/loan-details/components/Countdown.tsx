@@ -44,10 +44,10 @@ function Countdown(props: Props) {
       {/* 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
       {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。 */}
 
-      <div className='flex text-14 font-400 items-center text-center'>
+      <div className='flex items-center text-center text-14 font-400'>
         Raising time Countdown:
       </div>
-      <div className='ml-10 flex  text-16 c-#FDB600 items-center text-center'>
+      <div className='ml-10 flex items-center text-center text-16 c-#FDB600'>
         {timeRemaining.days}day {timeRemaining.hours}:{timeRemaining.minutes}:{timeRemaining.seconds}
       </div>
     </div>

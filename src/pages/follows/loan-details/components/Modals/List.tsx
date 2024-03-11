@@ -15,6 +15,7 @@ import { ChainAddressEnums } from '@/enums/chain'
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
     tradeId: number
+    isLoanOwner: boolean
 }
 
 const ListModal: React.FC<IProps> = (props) => {
@@ -136,8 +137,9 @@ const ListModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         const task = async () => {
-            if (coreContracts) {
+            if (coreContracts && !props.isLoanOwner) {
                 const tokenId = await coreContracts.sharesContract.getPersonalSlotToTokenId(currentUser.address, props.tradeId)
+                console.log(props.isLoanOwner, tokenId, 'tokenId')
                 setTokenId(tokenId)
                 const shareBalance = await coreContracts.sharesContract.tokenIdBalanceOf(tokenId)
                 if (shareBalance !== BigInt(0)) {
