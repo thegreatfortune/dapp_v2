@@ -177,6 +177,7 @@ export class BrowserContractService {
   async getCapitalPoolAddress(tradeId?: bigint): Promise<string> {
     const followFactoryContract = await this.getFollowFactoryContract()
 
+    console.log('tradeId:', Number(tradeId), tradeId)
     if (Number(tradeId) >= 0 && tradeId) {
       const followManageContract = await this.getFollowManageContract()
       return followManageContract?.getTradeIdToCapitalPool(tradeId)
@@ -772,6 +773,7 @@ export class BrowserContractService {
    * @memberof BrowserContractService
    */
   async getRefundPoolAddress(tradeId: bigint) {
+
     const cp = await this.getCapitalPoolAddress(tradeId)
 
     const pcc = await this.getProcessCenterContract()

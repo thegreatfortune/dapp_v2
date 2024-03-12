@@ -69,12 +69,13 @@ const ClaimModal: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         const task = async () => {
-            if (coreContracts) {
+            if (coreContracts && props.open) {
+                setClaiming(true)
                 if (!claimed) {
                     const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)
                     setClaimed(claimed)
                     if (!claimed) {
-                        if (props.loanState === 'PaidOff' && claimAmount === BigInt(0)) {
+                        if (claimAmount === BigInt(0)) {
                             const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
                             // console.log(balance)
                             if (balance > BigInt(0)) {
@@ -87,6 +88,7 @@ const ClaimModal: React.FC<IProps> = (props) => {
                         }
                     }
                 }
+                setClaiming(false)
             }
         }
         executeTask(task)
@@ -109,8 +111,8 @@ const ClaimModal: React.FC<IProps> = (props) => {
         <div className='mt-30 h-60 text-16'>
             {
                 claimed
-                    ? 'You have claimed $FOF successfully.'
-                    : `You will receive ${formatUnits(claimAmount, 18)} $FOF`
+                    ? 'You have claimed $FOF token successfully.'
+                    : `You can claim ${formatUnits(claimAmount, 18)} $FOF token.`
             }
         </div>
     </Modal >

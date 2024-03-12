@@ -122,7 +122,6 @@ const WithdrawModal: React.FC<IProps> = (props) => {
 
                 try {
                     if (props.userState === 'loan' && props.loanState === 'PaidOff' && currentUser.userId === props.loanOwner) {
-                        console.log('111111111111111111111111111111111111111111111')
                         const res = await refundPoolContract.borrowerWithdraw(props.tradeId)
                         await handleTransactionResponse(res,
                             NotificationInfo.WithdrawSuccessfully,

@@ -193,7 +193,7 @@ const LoanDetails = () => {
       if (!tradeId || !browserContractService)
         return
 
-      const address = await browserContractService?.getRefundPoolAddress(BigInt(tradeId))
+      const address = await browserContractService?.getRefundPoolAddress(BigInt(tradeId === '0' ? 0 : tradeId))
 
       setRefundPoolAddress(address)
     }
@@ -874,7 +874,9 @@ const LoanDetails = () => {
         ></ClaimModal>
 
         <div className='loan-detail-info'>
-          <InfoCard loanDetail={loanInfo} />
+          <div className='max-md:flex max-md:justify-center max-md:w-full w-300'>
+            <InfoCard loanDetail={loanInfo} />
+          </div>
           {/* <div className="w-32"></div> */}
           <div className='ml-30 grow max-md:ml-0'>
             <div className='flex flex-col max-md:mt-30 md:min-h-420'>
@@ -894,7 +896,7 @@ const LoanDetails = () => {
                   </div>
                 </div>
                 <div className='flex items-center max-md:mt-20 max-md:justify-between'>
-                  <div className='flex text-14 font-400'>
+                  <div className='flex text-14 font-400 md:ml-20'>
                     Raising time Countdown:
                   </div>
                   <div className='flex items-center lg:mx-20'>

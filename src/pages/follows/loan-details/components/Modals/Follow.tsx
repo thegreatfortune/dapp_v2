@@ -67,7 +67,7 @@ const FollowModal: React.FC<IProps> = (props) => {
             setApproveButtonText('Checking...')
             setFollowButtonDisabled(true)
 
-            const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].processCenter)
+            const allowance = await coreContracts.usdcContract.allowance(currentUser.address, ChainAddressEnums[chainId].router)
 
             if (allowance < (unitPrice || followAmount)) {
                 setApproveButtonDisabled(false)
@@ -88,7 +88,7 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setApproving(true)
                 setApproveButtonDisabled(true)
                 try {
-                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].processCenter, MaxUint256)
+                    const res = await coreContracts.usdcContract.approve(ChainAddressEnums[chainId].router, MaxUint256)
                     await handleTransactionResponse(res,
                         NotificationInfo.ApprovalSuccessfully,
                         NotificationInfo.ApprovalSuccessfullyDesc,
@@ -174,6 +174,9 @@ const FollowModal: React.FC<IProps> = (props) => {
     useEffect(() => {
         const task = async () => {
             if (coreContracts) {
+                setApproving(true)
+                setApproveButtonText('Checking...')
+
                 const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(props.tradeId)
                 setCapitalPoolAddressOfLoan(capitalPoolAddress)
                 const capitalPool = createContract<capitalPool>(capitalPoolAddress, capitalPoolABI, coreContracts.signer)
@@ -191,10 +194,12 @@ const FollowModal: React.FC<IProps> = (props) => {
                 setUnitPrice(unitPrice)
                 setFollowAmount(unitPrice)
                 // setCheckingMax(false)
+                checkAllowance()
             }
         }
-        executeTask(task)
-    }, [coreContracts])
+        if (props.open)
+            executeTask(task)
+    }, [coreContracts, props.open])
 
     useEffect(() => {
         checkAllowance()
@@ -226,8 +231,8 @@ const FollowModal: React.FC<IProps> = (props) => {
                 <div className='text-14 max-md:mt-5'>{capitalPoolAddressOfLoan}</div>
             </div>
             <div className='grid grid-rows-2 my-30 gap-4'>
-                <div className='text-18'>Approve to Follow Process Center:</div>
-                <div className='text-14 max-md:mt-5'>{ChainAddressEnums[chainId].processCenter}</div>
+                <div className='text-18'>Approve to Follow Router:</div>
+                <div className='text-14 max-md:mt-5'>{ChainAddressEnums[chainId].router}</div>
             </div>
             <div className='grid grid-rows-2 mb-10 mt-30 gap-4'>
                 <div className='mt-15 text-16'>Share amount:</div>

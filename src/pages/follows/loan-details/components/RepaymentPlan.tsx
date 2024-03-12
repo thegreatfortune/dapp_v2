@@ -38,8 +38,6 @@ function calculateOverdueDays(startTime: string): number {
 }
 
 const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddress, lendState }) => {
-  console.log(lendState)
-
   const chainId = useChainId()
 
   const { browserContractService } = useBrowserContract()
