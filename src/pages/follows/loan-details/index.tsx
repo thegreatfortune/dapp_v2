@@ -878,20 +878,28 @@ const LoanDetails = () => {
           {/* <div className="w-32"></div> */}
           <div className='ml-30 grow max-md:ml-0'>
             <div className='flex flex-col max-md:mt-30 md:min-h-420'>
-              <div className='mb-20 flex items-center'>
-                <div className='loan-detail-title mr-30'>
-                  {loanInfo!.loanName}
+              <div className='mb-20 md:flex md:items-center'>
+                <div className='flex items-center max-md:justify-between'>
+                  <div className='loan-detail-title mr-30'>
+                    {loanInfo!.loanName}
+                  </div>
+                  <div className=''>
+                    {
+                      loanInfo!.state === 'Following'
+                        ? <div className='items-center lg:flex'>
+                          {loanStateELMap[loanInfo!.state]}
+                        </div>
+                        : <> {loanInfo!.state && loanStateELMap[loanInfo!.state]}</>
+                    }
+                  </div>
                 </div>
-                <div>
-                  {
-                    // Loan status && countdown
-                    loanInfo!.state === 'Following'
-                      ? <div className='items-center lg:flex'>
-                        {loanStateELMap[loanInfo!.state]}
-                        <div className='flex items-center lg:mx-10' > {<Countdown targetTimestamp={Number(loanInfo!.collectEndTime)} />}</div>
-                      </div>
-                      : <> {loanInfo!.state && loanStateELMap[loanInfo!.state]}</>
-                  }
+                <div className='flex items-center max-md:mt-20 max-md:justify-between'>
+                  <div className='flex text-14 font-400'>
+                    Raising time Countdown:
+                  </div>
+                  <div className='flex items-center lg:mx-20'>
+                    <Countdown targetTimestamp={Number(loanInfo!.collectEndTime)} />
+                  </div>
                 </div>
               </div>
               <div className='mb20 grow'>

@@ -26,8 +26,8 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
 
   const renderItem = (item: Models.LoanOrderVO, index: number) => {
     return (
-      <div className='w-full'>
-        <div className='max-md:hidden'>
+      <>
+        <div className='w-full max-md:hidden'>
           <ul className='grid grid-cols-4 h68 w-full list-none items-center rounded-11 bg-#171822' key={item.tradeId}>
             {/* <li className='flex justify-center'>{index}</li> */}
             <li className=''>
@@ -48,7 +48,7 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
             {/* <li className='flex justify-center'>{item.tradeId}</li> */}
           </ul>
         </div>
-        <div className='md:hidden'>
+        <div className='w-full md:hidden'>
           <div key={index} className='items-between h-150 w-full flex flex-col border-2 border-#2d2f3d rounded-20 border-solid px-20 py-20 text-14'>
             {/* <ul className='h68 w-full list-none items-center rounded-11 bg-#171822'> */}
             <div className='my-4 flex grow justify-between text-15 font-bold'>
@@ -75,8 +75,7 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
             </div>
           </div>
         </div>
-
-      </div>
+      </>
     )
   }
 
@@ -84,7 +83,7 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
     <span className='text-32 font-400'>Loan History</span>
     <div className='h-30'></div>
     <div className='max-md:hidden'>
-      <ul className='grid grid-cols-4 list-none c-#666873'>
+      <ul className='grid grid-cols-4 w-full list-none c-#666873'>
         {/* <li className='flex justify-center text-16'>SN</li> */}
         <li>Time</li>
         <li>Loan Amount</li>
@@ -99,11 +98,13 @@ const LoanHistory: React.FC<IProps> = ({ tradeId }) => {
         containerId='LoanHistoryScrollable' renderItem={renderItem} />
     </div>
     <div className='md:hidden'>
-      <ScrollableList
-        api={LoanService.ApiLoanPageLoanContract_GET}
-        chainId={chainId}
-        params={params}
-        containerId='LoanHistoryScrollable' renderItem={renderItem} grid={{ column: 1, gutter: 4 }} />
+      <div className=''>
+        <ScrollableList
+          api={LoanService.ApiLoanPageLoanContract_GET}
+          chainId={chainId}
+          params={params}
+          containerId='LoanHistoryScrollable' renderItem={renderItem} grid={{ column: 1, gutter: 4 }} />
+      </div>
     </div>
   </div>)
 }

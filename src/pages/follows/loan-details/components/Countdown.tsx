@@ -39,18 +39,13 @@ function Countdown(props: Props) {
     }
   }, [props.targetTimestamp])
 
-  return (
-    <div className='flex items-center text-center max-lg:mt-10'>
-      {/* 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
-      {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。 */}
+  // 距离结束还有 {timeRemaining.days} 天, {timeRemaining.hours} 小时,{' '}
+  //   {timeRemaining.minutes} 分钟，{timeRemaining.seconds} 秒。
 
-      <div className='flex items-center text-center text-14 font-400'>
-        Raising time Countdown:
-      </div>
-      <div className='ml-10 flex items-center text-center text-16 c-#FDB600'>
-        {timeRemaining.days}day {timeRemaining.hours}:{timeRemaining.minutes}:{timeRemaining.seconds}
-      </div>
-    </div>
+  return (
+    < div className='ml-10 text-16 c-#FDB600' >
+      {timeRemaining.days}day {timeRemaining.hours}: {timeRemaining.minutes}: {timeRemaining.seconds}
+    </div >
   )
 }
 

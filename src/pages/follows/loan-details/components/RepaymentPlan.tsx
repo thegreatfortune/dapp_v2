@@ -84,9 +84,6 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         page: (pagination.page ?? 0) + 1,
         tradeId: Number(tradeId),
       })
-
-      console.log('RepaymentPlanData:', res)
-
       if (res) {
         setResult(prevResult => ({
           ...res,

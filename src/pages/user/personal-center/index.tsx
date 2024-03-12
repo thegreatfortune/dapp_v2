@@ -18,11 +18,11 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
-import { ChainAddressEnums } from '@/enums/chain'
+import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import { NotificationInfo } from '@/enums/info'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
 import useTokenBalance from '@/hooks/useTokenBalance'
-import { handlePreCheckState } from '@/helpers/helpers'
+import { executeTask, handlePreCheckState } from '@/helpers/helpers'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -128,12 +128,21 @@ const PersonalCenter = () => {
 
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
-      const canClaim = await claimStatusFromFaucet(ChainAddressEnums[chain?.id as number].usdc)
-      if (!canClaim) {
-        setClaimText(t('faucet.claimedText'))
-        setClaimOkButtonDisabled(true)
+      const task = async () => {
+        if (coreContracts) {
+          try {
+            await coreContracts.faucetContract.faucet.staticCall(TokenEnums[chainId].USDC.address)
+          }
+          catch (error) {
+            if (error instanceof Error && error.toString().includes('Not withdraw')) {
+              setClaimText(t('faucet.claimedText'))
+              setClaimOkButtonDisabled(true)
+            }
+          }
+          setClaimModalOpen(true)
+        }
       }
-      setClaimModalOpen(true)
+      executeTask(task)
     }
     else {
       window.open(ChainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
