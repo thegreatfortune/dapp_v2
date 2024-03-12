@@ -103,11 +103,11 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
                 twitter={item.userInfo?.platformName ?? 'Not bound'} />}
             </li> */}
           </ul>
-          <ul className='m0 flex flex-col list-none gap-8 p0'>
+          <ul className='m0 flex flex-col list-none items-end gap-8 p0'>
             <li className='h18 flex flex-col text-14 c-#999999'>
               {copies ? `Share ${copies}` : 'Risk Level'}
             </li>
-            <li className='h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== Models.SpecifiedTradingTypeEnum.Spot ? 'red' : '#FFFFFF' }}>
+            <li className='mr-5 h29 flex text-16 c-#FFFFFF' style={{ color: item.tradingForm !== Models.SpecifiedTradingTypeEnum.Spot ? 'red' : '#FFFFFF' }}>
               {item.tradingForm === Models.SpecifiedTradingTypeEnum.Spot ? 'Low' : 'High'}
               <Tooltip color='#303241' overlayInnerStyle={{ padding: 25, width: 349 }}
                 title={
