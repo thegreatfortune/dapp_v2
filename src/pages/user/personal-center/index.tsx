@@ -1,5 +1,5 @@
 import type { TabsProps } from 'antd'
-import { Avatar, Button, Divider, Image, Modal, Select, Tabs, message, notification } from 'antd'
+import { Avatar, Button, Divider, Image, Modal, Select, Tabs, message } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
@@ -7,10 +7,11 @@ import { useEffect, useState } from 'react'
 // @ts-expect-error
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
-import { ethers, formatUnits } from 'ethers'
+import { formatUnits } from 'ethers'
 import { useChainId, useNetwork } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
 import NftDetail from './components/NftDetai'
+import FaucetModal from './components/Modals/Faucet'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
 import copyImg from '@/assets/images/loan-details/copy.svg'
 import { TwitterService, UserInfoService } from '@/.generated/api'
@@ -18,11 +19,10 @@ import useUserStore from '@/store/userStore'
 import { Models } from '@/.generated/api/models'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 import useCoreContract from '@/hooks/useCoreContract'
-import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
-import { NotificationInfo } from '@/enums/info'
+import { ChainAddressEnums } from '@/enums/chain'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
 import useTokenBalance from '@/hooks/useTokenBalance'
-import { executeTask, handlePreCheckState } from '@/helpers/helpers'
+import { handlePreCheckState } from '@/helpers/helpers'
 
 const PersonalCenter = () => {
   const { t } = useTranslation()
@@ -96,12 +96,8 @@ const PersonalCenter = () => {
 
   const [userScore, setUserScore] = useState(new Models.UserScore())
   const [fofAmount, setFofAmount] = useState(0)
-  const [claimModalOpen, setClaimModalOpen] = useState(false)
-  const [claimOkButtonDisabled, setClaimOkButtonDisabled] = useState(false)
-  const [claimOkButtonText, setClaimOkButtonText] = useState(`${t('claim')}`)
-  const [claimCancelButtonHidden, setClaimCancelButtonHidden] = useState(false)
-  const [claiming, setClaiming] = useState(false)
-  const [claimText, setClaimText] = useState(`${t('faucet.claimText')}`)
+
+  const [faucetModalOpen, setFaucetModalOpen] = useState(false)
 
   const { inBlacklist, canCreateLoan, checked } = usePreApplyCheck()
   const [applyed, setApplyed] = useState(false)
@@ -113,84 +109,30 @@ const PersonalCenter = () => {
       navigate('/apply-loan')
   }
 
-  const addUsdcToWallet = async () => {
-    const provider = new ethers.BrowserProvider(window.ethereum)
-    await provider.send('wallet_watchAsset', {
-      type: 'ERC20',
-      options: {
-        address: ChainAddressEnums[chainId].USDC,
-        symbol: 'USDC',
-        decimals: 18,
-        // "image": "https://foo.io/token-image.svg"
-      },
-    })
-  }
-
   const faucetSelect = async (value: string) => {
     if (value === 'USDC') {
-      const task = async () => {
-        if (coreContracts) {
-          try {
-            await coreContracts.faucetContract.faucet.staticCall(TokenEnums[chainId].USDC.address)
-          }
-          catch (error) {
-            if (error instanceof Error && error.toString().includes('Not withdraw')) {
-              setClaimText(t('faucet.claimedText'))
-              setClaimOkButtonDisabled(true)
-            }
-          }
-          setClaimModalOpen(true)
-        }
-      }
-      executeTask(task)
+      // const task = async () => {
+      //   // if (coreContracts) {
+      //   //   try {
+      //   //     await coreContracts.faucetContract.faucet.staticCall(TokenEnums[chainId].USDC.address)
+      //   //   }
+      //   //   catch (error) {
+      //   //     if (error instanceof Error && error.toString().includes('Not withdraw')) {
+      //   //       setClaimText(t('faucet.claimedText'))
+      //   //       setClaimOkButtonDisabled(true)
+      //   //     }
+      //   //   }
+      //   //   // setClaimModalOpen(true)
+      //   //   setFaucetModalOpen(true)
+      //   // }
+      // }
+      // executeTask(task)
+      setFaucetModalOpen(true)
     }
     else {
       window.open(ChainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
     }
   }
-
-  const claim = async () => {
-    if (claimOkButtonText === t('completed')) {
-      setClaimOkButtonText(t('claim'))
-      setClaiming(false)
-      setClaimOkButtonDisabled(false)
-      setClaimCancelButtonHidden(true)
-      setClaimModalOpen(false)
-      return true
-    }
-
-    setClaiming(true)
-    setClaimOkButtonDisabled(true)
-    setClaimCancelButtonHidden(true)
-
-    try {
-      await claimTokenFromFaucet(ChainAddressEnums[chainId].USDC)
-      setClaimOkButtonText(t('completed'))
-      setClaiming(false)
-      setClaimOkButtonDisabled(false)
-      notification.info({
-        message: NotificationInfo.ClaimSuccessfully,
-        description: NotificationInfo.ClaimSuccessfullyDesc,
-        placement: 'bottomRight',
-      })
-      setTimeout(() => {
-        setClaimCancelButtonHidden(true)
-        setClaimOkButtonText(t('claim'))
-        setClaimModalOpen(false)
-      }, 3000)
-    }
-    catch (error) {
-      setClaiming(false)
-      setClaimOkButtonDisabled(false)
-      setClaimCancelButtonHidden(false)
-    }
-  }
-
-  // const setFofBalance = async () => {
-  //   const fofBalance = await getFofBalance()
-  //   const result = formatUnits(fofBalance, 18)
-  //   setFofAmount(Number(result))
-  // }
 
   useEffect(() => {
     setFofAmount(Number(formatUnits(fofBalance, 18)))
@@ -233,28 +175,9 @@ const PersonalCenter = () => {
       </div >
       : (<div className="flex justify-center">
         <div className='w-full'>
-          <Modal open={claimModalOpen}
-            onCancel={() => {
-              setClaimText(t('faucet.claimText'))
-              setClaiming(false)
-              setClaimOkButtonDisabled(false)
-              setClaimCancelButtonHidden(false)
-              setClaimModalOpen(false)
-            }}
-            okText={claimOkButtonText}
-            onOk={claim}
-            okButtonProps={{ disabled: claimOkButtonDisabled, className: 'primary-btn', loading: claiming }}
-            cancelButtonProps={{ hidden: claimCancelButtonHidden }}
-            className='rounded-20'
-          >
-            <div>
-              <h2>{t('faucet.title')}</h2>
-              <div className='mb-30 flex items-center justify-between'>
-                <div>{claimText}{chain?.name}</div>
-                <button className='ml-20 h-30 rounded-20 primary-btn' onClick={addUsdcToWallet}>{t('faucet.addToWallet')}</button>
-              </div>
-            </div>
-          </Modal>
+          <FaucetModal open={faucetModalOpen}
+            setOpen={setFaucetModalOpen}
+          ></FaucetModal>
           <div
             className="personal-banner"
             style={{ backgroundImage: 'url(/static/bg-header.jpg)' }}
