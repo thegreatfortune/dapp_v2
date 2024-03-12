@@ -79,7 +79,7 @@ const TransparentCard: React.FC<CardProps> = ({ item, children, btnText, copies 
       >
         <div className='h10 w-full'></div>
         <div className='flex justify-between'>
-          <h2 className="m0 h35 w-100 truncate p0 text-20 c-#37A4F8 font-semibold">{item.loanName}</h2>
+          <h2 className="m0 h35 w-100 flex items-center truncate p0 text-20 c-#37A4F8 font-semibold">{item.loanName}</h2>
           <div className='flex items-center'>
             <Badge dot={item.state === 'PaidButArrears'}>
               <div className={`rounded-5 px-5 text-14 h-30 flex items-center ${Models.LoanStateEnums[item.state!].bgColor}`}>{Models.LoanStateEnums[item.state!].state}</div>
