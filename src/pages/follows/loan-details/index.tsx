@@ -118,9 +118,11 @@ const LoanDetails = () => {
     Following: <div className='loan-detail-status bg-#165dff'>Fundraising </div>,
     Trading: <div className='loan-detail-status bg-#00b42a'>Ongoing</div>,
     PaidOff: <div className='loan-detail-status bg-#2d5c9a'>Settled</div>,
-    PaidButArrears: <div className='loan-detail-status bg-#ff7d00'>Amount due</div>,
+    // PaidButArrears: <div className='loan-detail-status bg-#ff7d00'>Amount due</div>,
+    PaidButArrears: <div className='loan-detail-status bg-#2d5c9a'>Settled</div>,
     Blacklist: <div className='loan-detail-status bg-#2b2b2b'>Blocked</div>,
-    CloseByUncollected: <div className='loan-detail-status bg-#a9e1d7'>Settled</div>,
+    // CloseByUncollected: <div className='loan-detail-status bg-#a9e1d7'>Raising failed</div>,
+    CloseByUncollected: <div className='loan-detail-status bg-#ff7d00'>Raising failed</div>,
     Fail: <div>Failed</div>,
     ClearingFail: <div>ClearingFail</div>,
   }
@@ -868,6 +870,7 @@ const LoanDetails = () => {
         <ClaimModal open={claimModalOpen}
           setOpen={setClaimModalOpen}
           tradeId={Number(tradeId)}
+          loanState={loanInfo.state!}
         ></ClaimModal>
 
         <div className='loan-detail-info'>

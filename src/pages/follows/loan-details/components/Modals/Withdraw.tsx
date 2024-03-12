@@ -209,6 +209,8 @@ const WithdrawModal: React.FC<IProps> = (props) => {
                     const withdrawn = await coreContracts.processCenterContract._getLenderIfWithdrawRefund(currentUser.address, props.tradeId)
                 }
 
+                // other
+
                 setWithdrawing(false)
                 setWithdrawButtonText('Withdraw')
             }

@@ -7,10 +7,12 @@ import useCoreContract from '@/hooks/useCoreContract'
 import { executeTask, handleTransactionResponse } from '@/helpers/helpers'
 import { NotificationInfo } from '@/enums/info'
 import { MessageError } from '@/enums/error'
+import type { Models } from '@/.generated/api/models'
 
 interface IProps extends ModalProps {
     setOpen: (isOpen: boolean) => void
     tradeId: number
+    loanState: Models.LoanState
 }
 
 const ClaimModal: React.FC<IProps> = (props) => {
@@ -72,9 +74,9 @@ const ClaimModal: React.FC<IProps> = (props) => {
                     const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)
                     setClaimed(claimed)
                     if (!claimed) {
-                        if (claimAmount === BigInt(0)) {
+                        if (props.loanState === 'PaidOff' && claimAmount === BigInt(0)) {
                             const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
-                            console.log(balance)
+                            // console.log(balance)
                             if (balance > BigInt(0)) {
                                 setClaimButtonDisabled(false)
                                 setClaimAmount(balance)

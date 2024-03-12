@@ -340,6 +340,29 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "point",
+				"type": "uint256"
+			}
+		],
+		"name": "capitalSetPoint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_blackAddress",
 				"type": "address"
 			}
@@ -557,6 +580,25 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_tradeId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTradeIdToRefundPool",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "userAddress",
 				"type": "address"
@@ -625,6 +667,29 @@
 			}
 		],
 		"name": "refundWithdrawEvent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "userAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "orderId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "point",
+				"type": "uint256"
+			}
+		],
+		"name": "routerSetPoint",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -741,29 +806,6 @@
 			}
 		],
 		"name": "setMultiFee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "userAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "orderId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "point",
-				"type": "uint256"
-			}
-		],
-		"name": "setPersonalPoint",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

@@ -23,7 +23,7 @@
   "applyLoan.formItem.minimumRequiredCopies.label": "Minimum required shares",
   "applyLoan.formItem.interest.label": "Interest",
   "applyLoan.formItem.dividend.label": "Dividend",
-  "applyLoan.formItem.raisingTime.label": "Raising time (day)",
+  "applyLoan.formItem.raisingTime.label": "Raising time (days)",
   "applyLoan.formItem.designatedTransaction.label": "Designated Transaction",
   "applyLoan.submitBtn": "申请",
   "market.CardsContainer1.title": "Trending Loans",

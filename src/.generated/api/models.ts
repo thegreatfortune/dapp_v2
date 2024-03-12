@@ -796,4 +796,44 @@ Canceled :订单取消 */
     logo: string
   }
 
+  export const LoanStateEnums: { [key: string]: { state: string; bgColor: string } } = {
+    Invalid: {
+      state: 'Invalid',
+      bgColor: 'bg-yellow',
+    },
+    Following: {
+      state: 'Fundraising',
+      bgColor: 'bg-#165dff',
+    },
+    Trading: {
+      state: 'Ongoing',
+      bgColor: 'bg-#00b42a',
+    },
+    PaidOff: {
+      state: 'Settled',
+      bgColor: 'bg-#2d5c9a',
+    },
+    PaidButArrears: {
+      state: 'Settled',
+      bgColor: 'bg-#2d5c9a',
+    },
+    CloseByUncollected: {
+      state: 'Raising failed',
+      bgColor: 'bg-#ff7d00',
+    },
+    Blacklist: {
+      state: 'Blocked',
+      // bgColor: 'bg-#2b2b2b',
+      bgColor: 'bg-red-500'
+    },
+    Fail: {
+      state: 'Failed',
+      bgColor: '',
+    },
+    ClearingFail: {
+      state: 'Clearing Failed',
+      bgColor: '',
+    },
+  }
+
 }

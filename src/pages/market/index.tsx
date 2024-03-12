@@ -9,7 +9,7 @@ import ScrollableList from '../components/ScrollabletList'
 import { Models } from '@/.generated/api/models'
 import marketBanner from '@/assets/images/market/banner.png'
 import { isContractAddress } from '@/utils/regex'
-import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import { maskAddress } from '@/utils/maskAddress'
 import logo from '@/assets/images/portalImages/logo.png'
 import toCurrencyString from '@/utils/convertToCurrencyString'
 
@@ -50,7 +50,7 @@ const Market = () => {
             </div>
             <div className='grid mr-32 mt-5 text-right'>
               <span className='h25 text-18 font-bold lh-20 font-mono uppercase slashed-zero'>{
-                isContractAddress(item.user?.nickName ?? '') ? maskWeb3Address(item.user?.nickName ?? '') : (item.user?.nickName ?? 'Not bound')}</span>
+                isContractAddress(item.user?.nickName ?? '') ? maskAddress(item.user?.nickName ?? '', 3) : (item.user?.nickName ?? 'Not bound')}</span>
               <span className='h18 w-full text-14 c-#999 font-400 lh-18'>@{item.user?.platformName ?? 'Not bound'}</span>
             </div>
           </div>

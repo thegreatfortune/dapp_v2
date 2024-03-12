@@ -23,7 +23,7 @@ import infoIconIcon from '@/assets/images/apply-loan/InfoIcon.png'
 import defaultImage from '@/assets/images/default.png'
 import { FileService } from '@/.generated/api/File'
 import { handleImageCanvas } from '@/utils/handleImageCanvas'
-import { maskWeb3Address } from '@/utils/maskWeb3Address'
+import { maskAddress } from '@/utils/maskAddress'
 import useUserStore from '@/store/userStore'
 import useCoreContract from '@/hooks/useCoreContract'
 import usePreApplyCheck from '@/helpers/usePreApplyCheck'
@@ -307,7 +307,7 @@ const ApplyLoan = () => {
       if (useDiagram && !file) {
         const { name, loanAmount, specifiedTradingType, interest, dividend } = loanForm
         const newFile = await handleImageCanvas(defaultImage, [name,
-          coreContracts!.signer.address ? maskWeb3Address(coreContracts!.signer.address) : '',
+          coreContracts!.signer.address ? maskAddress(coreContracts!.signer.address, 3) : '',
           String(loanAmount ?? 0),
           specifiedTradingType === 'Spot' ? 'Low' : 'Hight',
           `${interest ?? 0}%`, `${dividend ?? 0}%`])
