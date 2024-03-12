@@ -3,6 +3,7 @@ import React, { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import type { IRouter } from '..'
 import BasicLayout from '@/layouts/BasicLayout'
+import Loan from '@/pages/follows/loan'
 
 const Portal = lazy(() => import('../../pages/Portal'))
 
@@ -58,6 +59,17 @@ export const whiteList: IRouter[] = [
         </React.Suspense>
       </BasicLayout>
     ),
+  },
+  {
+    path: '/loan/:Id',
+    element: (
+      <BasicLayout>
+        <React.Suspense fallback={<div> <Spin size="large" />Loading...</div>}>
+          <Loan />
+        </React.Suspense>
+      </BasicLayout>
+    ),
+    id: '2',
   },
   {
     path: '/view-all',
