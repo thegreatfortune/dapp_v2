@@ -12,19 +12,6 @@ const PointsDetail = () => {
 
     const [params] = useState({ ...new Models.ApiIntegralRecordPageGETParams(), limit: 10, page: 1, userId: currentUser.userId })
 
-    //   useEffect(() => {
-    //     async function fetchData() {
-    //       const params = new Models.ApiIntegralRecordPageGETParams()
-    //       params.limit = 10
-    //       params
-    //       params.userId = currentUser.userId
-
-    //       await IntegralRecordService.ApiIntegralRecordPage_GET(params)
-    //     }
-
-    //     fetchData()
-    //   }, [currentUser])
-
     const renderItem = (item: Models.IntegralVo) => {
         return (<><ul className='grid grid-cols-3 w-full list-none text-14'>
             <li>{item.createDate}</li>

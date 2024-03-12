@@ -17,7 +17,6 @@ import toCurrencyString from '@/utils/convertToCurrencyString'
 import { ChainAddressEnums, TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import { executeTask } from '@/helpers/helpers'
-import usePoolAddress from '@/helpers/usePoolAddress'
 import { MessageError } from '@/enums/error'
 import useUserStore from '@/store/userStore'
 
@@ -27,9 +26,9 @@ interface IProps {
   tradeId: bigint
   transactionPair: string[]
   repayCount: number
-  refundPoolAddress: string | undefined
-  lendState: 'Processing' | 'Success' | undefined
-  prePage: string | null
+  // refundPoolAddress: string | undefined
+  // lendState: 'Processing' | 'Success' | undefined
+  // prePage: string | null
   loanInfo: Models.ILoanOrderVO
 }
 
@@ -43,49 +42,20 @@ export class TokenInfo {
   icon: string | undefined
 }
 
-const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount, refundPoolAddress, lendState, prePage }) => {
-  // const { browserContractService } = useBrowserContract()
-
+const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount }) => {
   const { coreContracts } = useCoreContract()
-
-  // const [isSwapModalOpen, setSetIsModalOpen] = useState(false)
-
-  // const [currentTokenInfo, setCurrentTokenInfo] = useState<TokenInfo>(new TokenInfo())
-
   const { currentUser } = useUserStore()
   const chainId = useChainId()
-
   const [depositModalOpen, setDepositModalOpen] = useState(false)
-
-  const { capitalPoolAddress } = usePoolAddress()
   const [tokenStates, setTokenStates] = useState<Models.ITokenState[]>([])
   const [totalBalance, setTotalBalance] = useState(0)
   const [capitalPoolAddressOfLoan, setCapitalPoolAddressOfLoan] = useState(ZeroAddress)
-  // const [currentTokenState, setCurrentTokenState] = useState<Models.ITokenState>()
+  const [refundPoolAddressOfLoan, setRefundPoolAddressOfLoan] = useState(ZeroAddress)
 
-  // const [swapModalOpen, setSwapModalOpen] = useState(false)
-
-  // function onOpenModal(tokenState: Models.ITokenState) {
-  //   console.log('???????:', tokenState)
-  //   const item = new TokenInfo()
-  //   item.name = tokenState.symbol
-  //   item.address = tokenState.address
-  //   item.balance = tokenState.balance
-  //   item.decimals = tokenState.decimals
-  //   item.dollars = tokenState.usd
-  //   item.icon = tokenState.logo
-  //   item.ratio = tokenState.ratio
-  //   setCurrentTokenInfo(item)
-  //   setCurrentTokenState(tokenState)
-  //   setSetIsModalOpen(true)
-  // }
-
-  const getTokenState = async (capitalPoolAddressOfLoan: string) => {
+  const getTokenState = async () => {
     const task = async () => {
       if (coreContracts && tradeId >= 0) {
-        // const tokenStates = Array<Models.ITokenState>(transactionPair.length + 1)
         const usdcDecimals = await coreContracts.usdcContract.decimals()
-        // const usdcName = await coreContracts.usdcContract.name()
         const usdcBalance = await coreContracts.usdcContract.balanceOf(capitalPoolAddressOfLoan)
 
         // get USDC state
@@ -105,18 +75,18 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
           tokenStates[0] = usdcState
           return tokenStates
         })
-        console.log('$$$$', tokenStates, transactionPair)
+
         // get all others token state, v is token symbol
+        const liquidityContract = await coreContracts.getTestLiquidityContract()
+
         transactionPair.forEach((v) => {
           const task = async () => {
-            const tokenContract = await coreContracts.getERC20Contract(ChainAddressEnums[chainId][v])
-            // const name = await tokenContract.name()
-            const decimals = await tokenContract.decimals()
+            const tokenContract = await coreContracts.getERC20Contract(TokenEnums[chainId][v].address)
+            const decimals = TokenEnums[chainId][v].decimals
             const balance = await tokenContract.balanceOf(capitalPoolAddressOfLoan)
-            const liquidityContract = await coreContracts.getTestLiquidityContract()
             const price = await liquidityContract.getTokenPrice(
-              ChainAddressEnums[chainId].USDC,
-              ChainAddressEnums[chainId][v],
+              TokenEnums[chainId].USDC.address,
+              TokenEnums[chainId][v].address,
               3000,
               ethers.parseEther(String(1)),
             )
@@ -126,23 +96,20 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
               name: TokenEnums[chainId][v].name,
               symbol: TokenEnums[chainId][v].symbol,
               balance: ethers.formatUnits(balance ?? 0, decimals),
-              decimals: Number(decimals),
-              address: ChainAddressEnums[chainId][v],
+              decimals,
+              address: TokenEnums[chainId][v].address,
               ratio: ratio.toString(),
               usd: String(Number(ethers.formatUnits(balance ?? 0, decimals)) / (Number(ratio))),
               logo: TokenEnums[chainId][v].logo,
             }
-            console.log('??', tokenState)
             setTokenStates((prev) => {
               const tokenStates = [...prev]
-              // tokenStates[tokenState.index] = tokenState
               tokenStates.push(tokenState)
               return tokenStates
             })
           }
           task()
         })
-        console.log(tokenStates)
       }
     }
     executeTask(task)
@@ -171,15 +138,22 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
     const task = async () => {
       if (coreContracts) {
         const capitalPoolAddress = await coreContracts.manageContract.getTradeIdToCapitalPool(tradeId)
-        getTokenState(capitalPoolAddress)
+        const refundPoolAddress = await coreContracts.processCenterContract._getRefundPool(capitalPoolAddress)
         setCapitalPoolAddressOfLoan(capitalPoolAddress)
+        setRefundPoolAddressOfLoan(refundPoolAddress)
       }
     }
     executeTask(task)
   }, [coreContracts])
 
   useEffect(() => {
-    console.log(tokenStates)
+    if (capitalPoolAddressOfLoan !== ZeroAddress && tokenStates.length === 0) {
+      console.log(tokenStates)
+      getTokenState()
+    }
+  }, [capitalPoolAddressOfLoan])
+
+  useEffect(() => {
     if (tokenStates.length > 0) {
       let total = 0
       tokenStates.forEach((state) => {
@@ -187,15 +161,6 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
       })
       setTotalBalance(total)
     }
-  }, [tokenStates])
-
-  useEffect(() => {
-    // if (tokenStates.length > 0) {
-    //   console.log(Array.from(
-    //     { length: Math.ceil(tokenStates.length / 3) },
-    //     (_, index) => tokenStates.slice(index * 3, (index + 1) * 3),
-    //   ))
-    // }
   }, [tokenStates])
 
   return (
@@ -210,7 +175,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
 
       <div className="w-full">
         <div className='flex items-center justify-between'>
-          <div className='w-full md:flex'>
+          <div className='w-full md:flex md:justify-between'>
             <div className='balance-chart'>
               <div className='h-380'>
                 <BalanceChart />
@@ -241,17 +206,17 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 </div>
               </div>
             </div>
-            <div className='balance-chart md:ml-30'>
+            <div className='balance-chart md:ml-50'>
               <Swap
                 resetSwapTokenInfo={refreshTokenState}
                 tradeId={tradeId}
                 tokenStates={tokenStates}
                 isLoanOwner={currentUser.userId === loanInfo.userId}
+                loanState={loanInfo.state!}
               // isLoanOwner={prePage === 'loan' && loanInfo.state === 'Trading' && currentUser.userId === loanInfo.userId}
               >
               </Swap>
             </div>
-
           </div>
         </div>
         <div className=''>
@@ -320,10 +285,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
         </div>
       </div>
       <div className="h50" />
-      {/* <Divider></Divider> */}
-      {/* <div className="h800" /> */}
-      <RepaymentPlan lendState={loanInfo.state!} refundPoolAddress={refundPoolAddress} tradeId={tradeId} repayCount={repayCount} />
-
+      <RepaymentPlan lendState={loanInfo.state!} refundPoolAddress={refundPoolAddressOfLoan} tradeId={tradeId} repayCount={repayCount} />
       <div className="h50" />
       <Divider></Divider>
       <LoanHistory tradeId={String(tradeId ?? '')} />

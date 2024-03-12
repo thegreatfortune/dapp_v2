@@ -23,6 +23,7 @@ interface IProps extends ModalProps {
     tokenStates: Models.ITokenState[]
     tradeId: bigint
     isLoanOwner: boolean
+    loanState: Models.LoanState
     resetSwapTokenInfo: () => Promise<void>
 }
 
@@ -45,7 +46,7 @@ const Swap: React.FC<IProps> = (props) => {
 
     const [swaping, setSwaping] = useState(false)
 
-    const [swapDisabled, setSwapDisabled] = useState(!props.isLoanOwner)
+    const [swapDisabled, setSwapDisabled] = useState(!props.isLoanOwner || props.loanState !== 'Trading')
     const [swapLoading, setSwapLoading] = useState(false)
     const [swapButtonText, setSwapButtonText] = useState('Swap')
 
@@ -403,8 +404,8 @@ const Swap: React.FC<IProps> = (props) => {
                 <div className='w-full flex items-center justify-between b-rd-6'>
                     <div className='relative z-1 mr-10 flex grow items-center justify-between'>
                         <CurrencyInput
-                            className={`${inputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-250 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
-                            disabled={!props.isLoanOwner}
+                            className={`${inputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-250 border-none bg-transparent text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
+                            disabled={!props.isLoanOwner || props.loanState !== 'Trading'}
                             name="inputTokenAmount"
                             placeholder="0"
                             value={inputBalanceCalculating ? '' : inputAmount}
@@ -419,23 +420,9 @@ const Swap: React.FC<IProps> = (props) => {
                                 // console.log('INPUT: inputAmountRef: %s, outputAmountRef: %s, value: %s', inputAmountRef.current, outputAmountRef.current, values?.value)
                             }}
                         />
-
-                        <div className='absolute right-10 z-3 bg-black' hidden={!props.isLoanOwner}>
-                            <div className='flex cursor-pointer select-none items-center border-1 rounded-4 border-solid px-8 py-2 text-center text-12'
-                                style={{ borderColor: '#3898FF', color: '#3898FF' }}
-                                onClick={() => {
-                                    setInputAmount(formatUnits(inputBalance, inputToken.decimals))
-                                    setInputToken((prev) => {
-                                        return { ...prev, amount: formatUnits(inputBalance, inputToken.decimals) }
-                                    })
-                                    calculateTokenAmount(formatUnits(inputBalance, inputToken.decimals), true)
-                                }}>
-                                Max
-                            </div>
-                        </div>
                     </div>
                     <div className='flex justify-center'>
-                        <Button disabled={!props.isLoanOwner} shape="round" size='large' className='w-150'
+                        <Button disabled={!props.isLoanOwner || props.loanState !== 'Trading'} shape="round" size='large' className='w-150'
                             onClick={() => {
                                 if (inputToken.index !== 0)
                                     setOpenTokenList(true)
@@ -451,7 +438,7 @@ const Swap: React.FC<IProps> = (props) => {
                         </Button>
                     </div>
                 </div>
-                <div className='mt-5 w-full flex items-center justify-end b-rd-6'>
+                <div className='mt-10 w-full flex items-center justify-end b-rd-6'>
                     <span className={`${!props.isLoanOwner ? 'text-white/20' : 'text-white'}`}>Balances:</span>
                     <div className={`ml-20 mr-10 ${!props.isLoanOwner || checkingInputBalance ? 'text-white/20' : 'text-white'}`}>
                         {
@@ -462,10 +449,23 @@ const Swap: React.FC<IProps> = (props) => {
                                     : formatUnits(inputBalance, inputToken.decimals)
                         }
                     </div>
+                    <div className='bg-transparent' hidden={!props.isLoanOwner || props.loanState !== 'Trading'}>
+                        <div className='flex cursor-pointer select-none items-center border-1 rounded-4 border-solid px-8 py-2 text-center text-12'
+                            style={{ borderColor: '#3898FF', color: '#3898FF' }}
+                            onClick={() => {
+                                setInputAmount(formatUnits(inputBalance, inputToken.decimals))
+                                setInputToken((prev) => {
+                                    return { ...prev, amount: formatUnits(inputBalance, inputToken.decimals) }
+                                })
+                                calculateTokenAmount(formatUnits(inputBalance, inputToken.decimals), true)
+                            }}>
+                            Max
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className='w-full flex justify-center'>
-                <button disabled={!props.isLoanOwner} className='transform b-transparent b-rd-10 b-solid bg-transparent text-34 text-#fff transition-transform active:scale-98 hover:scale-102'
+                <button disabled={!props.isLoanOwner || props.loanState !== 'Trading'} className='transform b-transparent b-rd-10 b-solid bg-transparent text-34 text-#fff transition-transform active:scale-98 hover:scale-102'
                     onClick={changeDirection} >
                     <ArrowDownOutlined size={20} className={`${!props.isLoanOwner ? 'text-white/20' : 'text-white'}`} />
                     {/* <VerticalAlignMiddleOutlined size={20} className={`${!props.isLoanOwner ? 'text-white/20' : 'text-white'}`} /> */}
@@ -475,8 +475,8 @@ const Swap: React.FC<IProps> = (props) => {
                 <div className='w-full flex items-center justify-between b-rd-6'>
                     <div className='flex items-center justify-between'>
                         <CurrencyInput
-                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-300 border-none bg-black text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
-                            disabled={!props.isLoanOwner}
+                            className={`${outputBalanceCalculating ? 'text-white/20' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-300 border-none bg-transparent text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
+                            disabled={!props.isLoanOwner || props.loanState !== 'Trading'}
                             value={outputBalanceCalculating ? '' : outputAmount}
                             name="outputTokenAmount"
                             placeholder="0"
@@ -492,7 +492,7 @@ const Swap: React.FC<IProps> = (props) => {
                         />
                     </div>
                     <div className='flex justify-center'>
-                        <Button shape="round" size='large' className='w-150' disabled={!props.isLoanOwner}
+                        <Button shape="round" size='large' className='w-150' disabled={!props.isLoanOwner || props.loanState !== 'Trading'}
                             onClick={() => {
                                 if (outputToken.index !== 0)
                                     setOpenTokenList(true)

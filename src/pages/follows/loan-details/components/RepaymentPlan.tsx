@@ -233,7 +233,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
             Repayment Plan
           </div>
           <div className='flex items-center text-center c-#D1D1D1 max-sm:my-10 md:mx-10'>
-            <div className='mr-10 text-18 font-semibold'>Address:</div>
+            <div className='mr-10 text-18 font-semibold'>Refund Pool:</div>
             <Address address={refundPoolAddress ?? ''} />
           </div>
           <div className='flex items-end text-center c-#D1D1D1 max-sm:my-10 md:ml-10'>

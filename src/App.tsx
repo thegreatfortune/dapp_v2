@@ -19,6 +19,9 @@ const App = () => {
             List: {
               avatarMarginRight: 20,
             },
+            Select: {
+              borderRadiusLG: 8,
+            },
           },
         }}
       >

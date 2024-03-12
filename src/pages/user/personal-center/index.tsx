@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { formatUnits } from 'ethers'
 import { useChainId, useNetwork } from 'wagmi'
 import PointsDetail from './components/PointsDetail'
-import NftDetail from './components/NftDetai'
+import NftDetail from './components/NftDetail'
 import FaucetModal from './components/Modals/Faucet'
 import defaultAvatar from '@/assets/images/personal-center/panda.png'
 import copyImg from '@/assets/images/loan-details/copy.svg'
@@ -29,7 +29,7 @@ const PersonalCenter = () => {
 
   const navigate = useNavigate()
 
-  const { coreContracts, claimStatusFromFaucet, claimTokenFromFaucet } = useCoreContract()
+  const { coreContracts } = useCoreContract()
   const { fofBalance } = useTokenBalance()
 
   // const [applyLoanLoading, setApplyLoanLoading] = useState(false)
@@ -87,9 +87,11 @@ const PersonalCenter = () => {
 
   const renderTabBar: TabsProps['renderTabBar'] = (props): React.ReactElement => {
     return (<div className='mb-10'>
-      <div className='h80 flex items-center gap-x-30 rounded-14 bg-#12131d px-30 text-center' >
-        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`} onClick={() => setActiveKey('1')} >NFT</div>
-        <div className={`w-200 h50 max-md:w-1/2 rounded-10 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`} onClick={() => setActiveKey('2')} >Points detail</div>
+      <div className='h80 flex items-center gap-x-30 rounded-8 bg-#12131d px-30 text-center' >
+        <div className={`text-18 font-semibold w-200 h50 max-md:w-1/2 rounded-8 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '1' && 'primary-btn'}`}
+          onClick={() => setActiveKey('1')} >NFT</div>
+        <div className={`text-18 font-semibold w-200 h50 max-md:w-1/2 rounded-8 cursor-pointer hover:c-blue bg-#2d2d32 lh-49 ${props.activeKey === '2' && 'primary-btn'}`}
+          onClick={() => setActiveKey('2')} >Points detail</div>
       </div>
     </div>)
   }
@@ -110,28 +112,10 @@ const PersonalCenter = () => {
   }
 
   const faucetSelect = async (value: string) => {
-    if (value === 'USDC') {
-      // const task = async () => {
-      //   // if (coreContracts) {
-      //   //   try {
-      //   //     await coreContracts.faucetContract.faucet.staticCall(TokenEnums[chainId].USDC.address)
-      //   //   }
-      //   //   catch (error) {
-      //   //     if (error instanceof Error && error.toString().includes('Not withdraw')) {
-      //   //       setClaimText(t('faucet.claimedText'))
-      //   //       setClaimOkButtonDisabled(true)
-      //   //     }
-      //   //   }
-      //   //   // setClaimModalOpen(true)
-      //   //   setFaucetModalOpen(true)
-      //   // }
-      // }
-      // executeTask(task)
+    if (value === 'USDC')
       setFaucetModalOpen(true)
-    }
-    else {
+    else
       window.open(ChainAddressEnums[chain?.id as number].nativeFaucetUrl, '_blank')
-    }
   }
 
   useEffect(() => {
@@ -165,11 +149,11 @@ const PersonalCenter = () => {
             setBindModalOpen(false)
             navigate('/personal-center')
           }}
+          title='Congratulations!'
           cancelButtonProps={{ hidden: true }}
         >
           <div>
-            <h2>Congratulations!</h2>
-            <h3>Your X acount has been bound successfully.</h3>
+            <h3>Your X acount has been bound successfully!</h3>
           </div>
         </Modal>
       </div >
@@ -200,7 +184,7 @@ const PersonalCenter = () => {
                       {
                         currentUser.platformName
                           ? <Link className='text-18' to={`https://twitter.com/${currentUser.platformName}`}>@{currentUser.platformName}</Link>
-                          : <Button loading={bindXLoading} onClick={onBind} className='h30 w98 rounded-15 primary-btn'>Link to X</Button>
+                          : <Button loading={bindXLoading} onClick={onBind} className='h30 w98 rounded-15 primary-btn' type='primary'>Link to X</Button>
                       }
                     </div>
                     <div className='ml-20 mt-20'>
@@ -212,23 +196,18 @@ const PersonalCenter = () => {
                       </CopyToClipboard>
                     </div>
                   </div>
-                  {/* <div className="mt-20">
-                  {
-                    currentUser.address ? <Address address={currentUser.address} /> : null
-                  }
-                </div> */}
                 </div>
               </div>
               <div className='mt-65 items-center max-md:mt-30'>
-                <div className='flex flex justify-between gap-x-10 max-md:mx-13'>
+                <div className='flex flex items-center justify-between gap-x-10 max-md:mx-13'>
                   <Button
                     loading={applyed}
                     onClick={() => {
                       setApplyed(true)
                     }}
-                    className='h40 rounded-30 primary-btn'>Apply a loan</Button>
+                    className='h30 rounded-30 primary-btn' type='primary'>Apply a loan</Button>
                   <Select
-                    className='h40 w120'
+                    className='h30 w-150'
                     size='large'
                     defaultValue={`${t('faucet.title')}`}
                     options={[
@@ -245,23 +224,23 @@ const PersonalCenter = () => {
             <Divider></Divider>
             <div className='mt-30 box-border items-center'>
               <div className='point-box'>
-                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-10 bg-#333341 py-10'>
                   <span>$FOF</span>
                   <span>{toCurrencyString(fofAmount)}</span>
                 </div>
-                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-15 bg-#333341 py-10'>
+                <div className='m-10 flex grow flex-col items-center justify-center gap-y-10 rounded-10 bg-#333341 py-10'>
                   <span>Points</span>
                   <span>{((userScore.integral?.points ?? 0) / 100).toFixed(2)}</span>
                 </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-10 bg-#333341 py-10'>
                   <span className='text-16'>Credit score</span>
                   <span className='flex justify-center text-16'>{(userScore.credit?.totalPoints ?? 0) / 100}</span>
                 </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-10 bg-#333341 py-10'>
                   <span className='text-16'>Initial Points</span>
                   <span className='flex justify-center text-16'>{(userScore.credit?.initialPoints ?? 0) / 100}</span>
                 </div>
-                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-15 bg-#333341 py-10'>
+                <div className='m-10 flex flex-col items-center justify-around gap-y-10 rounded-10 bg-#333341 py-10'>
                   <span className='text-16'>Additional Points</span>
                   <span className='flex justify-center text-16'>{(userScore.credit?.additionalPoints ?? 0) / 100}</span>
                 </div>
@@ -270,7 +249,6 @@ const PersonalCenter = () => {
           </div>
           <Divider></Divider>
           <div className="h30" />
-
           <div className='m-x-a'>
             <Tabs defaultActiveKey="1" items={items} activeKey={activeKey} onChange={key => setActiveKey(key)} renderTabBar={renderTabBar} />
           </div>

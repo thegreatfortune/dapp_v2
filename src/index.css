@@ -172,7 +172,7 @@ h1 {
 }
 
 .loan-detail-btn {
-  @apply mr-8 h40 w-100 b-rd-20 primary-btn
+  @apply mr-8 h35 w-100 b-rd-20 primary-btn
 }
 
 .loan-detail-option {
@@ -253,6 +253,10 @@ h1 {
     @apply text-24 font-bold
   }
 
+  .loan-detail-btn {
+    @apply loan-detail-btn h40
+  }
+
   .loan-detail-option {
     @apply grid grid-cols-2 gap-4
   }
@@ -277,7 +281,7 @@ h1 {
     @apply grid grid-cols-2 gap-20
   }
 
-  
+
 
 }
 
@@ -413,10 +417,6 @@ h1 {
 
   .show-more {
     @apply text-20 c-white
-  }
-
-  .token-info-box {
-    @apply grid grid-cols-6 gap-20
   }
 
 }

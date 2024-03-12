@@ -874,7 +874,7 @@ const LoanDetails = () => {
         ></ClaimModal>
 
         <div className='loan-detail-info'>
-          <div className='max-md:flex max-md:justify-center max-md:w-full w-300'>
+          <div className='w-300 max-md:w-full max-md:flex max-md:justify-center'>
             <InfoCard loanDetail={loanInfo} />
           </div>
           {/* <div className="w-32"></div> */}
@@ -882,10 +882,10 @@ const LoanDetails = () => {
             <div className='flex flex-col max-md:mt-30 md:min-h-420'>
               <div className='mb-20 md:flex md:items-center'>
                 <div className='flex items-center max-md:justify-between'>
-                  <div className='loan-detail-title mr-30'>
+                  <div className='loan-detail-title'>
                     {loanInfo!.loanName}
                   </div>
-                  <div className=''>
+                  <div className='ml-30'>
                     {
                       loanInfo!.state === 'Following'
                         ? <div className='items-center lg:flex'>
@@ -904,7 +904,7 @@ const LoanDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className='mb20 grow'>
+              <div className='mb-20 grow'>
                 <div>
                   <Tooltip title={loanInfo!.usageIntro}>
                     {loanInfo!.usageIntro}
@@ -1046,6 +1046,7 @@ const LoanDetails = () => {
           </div>
         </div>
         <Divider></Divider>
+        <div className='h-50'></div>
         <Tabs
           defaultActiveKey="1"
           // items={items}
@@ -1055,9 +1056,9 @@ const LoanDetails = () => {
               label: 'Pool',
               children: <Pool
                 loanInfo={loanInfo}
-                prePage={prePage}
-                lendState={lentState ? 'Success' : 'Processing'}
-                refundPoolAddress={refundPoolAddress}
+                // prePage={prePage}
+                // lendState={lentState ? 'Success' : 'Processing'}
+                // refundPoolAddress={refundPoolAddress}
                 repayCount={loanInfo!.repayCount ?? 0}
                 tradeId={BigInt(tradeId)}
                 transactionPair={loanInfo!.transactionPairs ?? []}

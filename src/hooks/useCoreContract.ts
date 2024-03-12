@@ -445,6 +445,7 @@ const useCoreContract = () => {
   }
 
   /**
+   * @deprecated
    * check if the token has been claimed
    * @param token
    */
@@ -465,6 +466,7 @@ const useCoreContract = () => {
 
   /**
    * claim the test token from faucet, like usdc
+   * @deprecated
    * @param token
    */
   const claimTokenFromFaucet = async (token: string) => {
