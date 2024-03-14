@@ -73,14 +73,22 @@ const ClaimModal: React.FC<IProps> = (props) => {
                 setClaiming(true)
                 if (!claimed) {
                     const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)
+                    console.log(claimed)
                     setClaimed(claimed)
                     if (!claimed) {
                         if (claimAmount === BigInt(0)) {
-                            const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
-                            console.log(balance, 'balance')
-                            if (balance > BigInt(0)) {
-                                setClaimButtonDisabled(false)
-                                setClaimAmount(balance)
+                            try {
+                                const balance = await coreContracts.routerContract.getUserEarnTokenAmount(props.tradeId)
+                                console.log(balance, 'balance')
+                                if (balance > BigInt(0)) {
+                                    setClaimButtonDisabled(false)
+                                    setClaimAmount(balance)
+                                }
+                            }
+                            catch (error) {
+                                if (error instanceof Error && error.toString().includes('Not Time'))
+                                    setClaiming(false)
+                                return Promise.reject(error)
                             }
                         }
                         else {
