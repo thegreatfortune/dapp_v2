@@ -976,7 +976,7 @@ const LoanDetails = () => {
                       checkFofAmount()
                       setClaimModalOpenOld(true)
                     }}>Claim $FOF</Button> */}
-                    <Button className='loan-detail-btn' type='primary' onClick={() => setClaimModalOpen(true)}>Claim $FOF</Button>
+                    <Button className='loan-detail-btn' disabled={loanInfo.state !== 'Trading'} type='primary' onClick={() => setClaimModalOpen(true)}>Claim $FOF</Button>
                   </div>
                 </div>
                 <div className='flex grow items-center justify-center lg:ml-20 max-lg:mt-30'>

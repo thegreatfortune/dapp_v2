@@ -65,6 +65,12 @@ dependencies:
   recharts:
     specifier: ^2.11.0
     version: 2.11.0(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+  rxjs:
+    specifier: ^7.8.1
+    version: 7.8.1
+  rxjs-use-hooks:
+    specifier: ^1.0.0
+    version: 1.0.0(react@18.2.0)(rxjs@7.8.1)
   viem:
     specifier: ^1.19.0
     version: 1.19.0(typescript@5.2.2)
@@ -2775,7 +2781,7 @@ packages:
       '@types/debug': 4.1.12
       debug: 4.3.4(supports-color@8.1.1)
       pony-cause: 2.1.10
-      semver: 7.5.4
+      semver: 7.6.0
       superstruct: 1.0.3
     transitivePeerDependencies:
       - supports-color
@@ -11703,6 +11709,23 @@ packages:
     resolution: {integrity: sha512-4VlvkRUuCJvr2J6Y0ImW7NvTCriMi7ErOAqWk1y69vAdoNIzCF3yPmgeNzx+RQTLEDFq5sHfscn1MwHxP9hNfA==}
     dev: true
 
+  /rxjs-use-hooks@1.0.0(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-C3zhS3Ugru08VaE39hP4CHcdykc2KqLfGUZB8YpXZiZhhLx4uLT68sEumlC9DO5agiVanqHmPlwo/BtKZUAWjQ==}
+    engines: {node: '>=18.0.0', npm: '>= 99999.0.0', pnpm: '>= 8.0.0'}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      rxjs: '>=6.0.0'
+    dependencies:
+      react: 18.2.0
+      rxjs: 7.8.1
+    dev: false
+
+  /rxjs@7.8.1:
+    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
   /safe-array-concat@1.0.1:
     resolution: {integrity: sha512-6XbUAseYE2KtOuGueyeobCySj9L4+66Tn6KQMOPQJrAJEowYKW/YR/MGJZl7FdydUdaFu4LYyDZjxf4/Nmo23Q==}
     engines: {node: '>=0.4'}
@@ -11808,7 +11831,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /serialize-javascript@6.0.0:
     resolution: {integrity: sha512-Qr3TosvguFt8ePWqsvRfrKyQXIiW+nGbYpy8XK24NQHE83caxWt+mIymTT19DGFbNWNLfEwsrkSmN64lVWB9ag==}

@@ -7,10 +7,13 @@ import { useChainId } from 'wagmi'
 import { RepayPlanService } from '../../../../.generated/api/RepayPlan'
 import Address from '../../../components/Address'
 import Liquidate from './Modals/Liquidate'
+import RepayModal from './Modals/Repay'
 import { Models } from '@/.generated/api/models'
 import SModal from '@/pages/components/SModal'
 import useBrowserContract from '@/hooks/useBrowserContract'
 import toCurrencyString from '@/utils/convertToCurrencyString'
+import useCoreContract from '@/hooks/useCoreContract'
+import { executeTask } from '@/helpers/helpers'
 
 // TODO 已经清算过，没有欠款，但是还是显示逾期有欠款，必须要repay一次合约，0资金，才会正常
 interface IProps {
@@ -42,6 +45,10 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   const { browserContractService } = useBrowserContract()
 
+  const { coreContracts } = useCoreContract()
+
+  const [loanState, setLoanState] = useState(BigInt(9))
+
   const [pagination, setPagination] = useState<Models.ApiRepayPlanPageInfoGETParams>({
     ...new Models.ApiRepayPlanPageInfoGETParams(),
     limit: 10,
@@ -69,6 +76,7 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
   const [currentBtnType, setCurrentBtnType] = useState<'Liquidate' | 'Repay'>()
 
   const [liquidateModalOpen, setLiquidateModalOpen] = useState(false)
+  const [repayModalOpen, setRepayModalOpen] = useState(false)
 
   async function fetchData() {
     if (loading)
@@ -111,11 +119,13 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
   useEffect(() => {
     async function fetchData() {
-      if (!tradeId || !browserContractService)
+      if (!browserContractService)
         return
       const processCenterContract = await browserContractService.getProcessCenterContract()
 
       const count = await processCenterContract.getOrderReapyMoney(tradeId)
+
+      console.log('repay money:', count)
 
       if (count)
         setArrears(ethers.formatUnits(count))
@@ -123,6 +133,16 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
 
     fetchData()
   }, [browserContractService, tradeId])
+
+  useEffect(() => {
+    const task = async () => {
+      if (coreContracts && !liquidateModalOpen && !repayModalOpen) {
+        const state = await coreContracts.processCenterContract.getOrderState(tradeId)
+        setLoanState(state)
+      }
+    }
+    executeTask(task)
+  }, [coreContracts, liquidateModalOpen, repayModalOpen])
 
   async function onConfirm() {
     if (!tradeId)
@@ -227,6 +247,11 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
         installments={repayCount}
       ></Liquidate>
 
+      <RepayModal open={repayModalOpen}
+        setOpen={setRepayModalOpen}
+        tradeId={Number(tradeId)}
+      ></RepayModal>
+
       <div className=''>
         <div className='items-end gap-4 sm:flex'>
           <div className='w-280 items-center text-24 font-400 md:text-32'>
@@ -295,14 +320,16 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                           disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
                           className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button> */}
                         <Button loading={modalLoading} type='primary' onClick={() => setLiquidateModalOpen(true)}
-                          disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                          // disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                          disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
                           className='h30 w120 b-rd-30 primary-btn'>liquidate</Button>
                         {/* {
                           item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
                             className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>
                         } */}
-                        <Button loading={modalLoading} type='primary' onClick={() => onOpenModal(item, 'Repay')}
-                          disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                        <Button loading={modalLoading} type='primary' onClick={() => setRepayModalOpen(true)}
+                          // disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                          disabled={loanState !== BigInt(6)}
                           className='ml-10 h30 w120 b-rd-30 primary-btn'>Repay</Button>
                       </li>
                     </ul>
@@ -351,10 +378,17 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                       <div className='text-right'>{(item.state === 'OVERDUE' || item.state === 'OVERDUE_ARREARS') && item.repayTime && calculateOverdueDays(item.repayTime)}</div>
                     </div>
                     <div className='my-4 flex grow justify-end'>
-                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
-                        className='h30 w80 b-rd-30 primary-btn'>Liquidate</Button>
-                      {item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
-                        className='ml-30 h30 w80 b-rd-30 primary-btn'>Repay</Button>}
+                      {/* <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Liquidate')}
+                        disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                        className='h30 w80 b-rd-30 primary-btn'>Liquidate</Button> */}
+                      <Button loading={modalLoading} type='primary' onClick={() => setLiquidateModalOpen(true)}
+                        // disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
+                        disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                        className='h30 w80 b-rd-30 primary-btn'>liquidate</Button>
+                      <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
+                        className='ml-30 h30 w80 b-rd-30 primary-btn'
+                        disabled={loanState !== BigInt(6)}
+                      >Repay</Button>
                     </div>
                   </div>
                 </List.Item>

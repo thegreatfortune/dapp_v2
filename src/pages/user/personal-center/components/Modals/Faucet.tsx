@@ -94,8 +94,9 @@ const FaucetModal: React.FC<IProps> = (props) => {
                     //     setFaucetText(t('faucet.claimedText'))
                     //     setClaimOkButtonDisabled(true)
                     // }
-                    console.log(error)
-                    return Promise.reject(error)
+                    // console.log(error)
+                    // return Promise.reject(error)
+                    return Promise.resolve(true)
                 }
                 setFaucetText(`${t('faucet.claimText')}${chain?.name}`)
                 setFaucetButtonDisabled(false)
