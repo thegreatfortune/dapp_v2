@@ -321,7 +321,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                           className='h30 w120 b-rd-30 primary-btn'>Liquidate</Button> */}
                         <Button loading={modalLoading} type='primary' onClick={() => setLiquidateModalOpen(true)}
                           // disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
-                          disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                          // disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                          disabled={loanState !== BigInt(5)}
                           className='h30 w120 b-rd-30 primary-btn'>liquidate</Button>
                         {/* {
                           item.state === 'OVERDUE_ARREARS' && <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
@@ -383,7 +384,8 @@ const RepaymentPlan: React.FC<IProps> = ({ tradeId, repayCount, refundPoolAddres
                         className='h30 w80 b-rd-30 primary-btn'>Liquidate</Button> */}
                       <Button loading={modalLoading} type='primary' onClick={() => setLiquidateModalOpen(true)}
                         // disabled={dayjs(item.repayTime).isAfter(dayjs()) || item.state === 'UNPAID' || item.state === 'REPAID' || item.state === 'OVERDUE_REPAID'}
-                        disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                        // disabled={loanState === BigInt(6) || loanState === BigInt(7) || loanState === BigInt(8)}
+                        disabled={loanState === BigInt(5)}
                         className='h30 w80 b-rd-30 primary-btn'>liquidate</Button>
                       <Button loading={modalLoading} onClick={() => onOpenModal(item, 'Repay')}
                         className='ml-30 h30 w80 b-rd-30 primary-btn'

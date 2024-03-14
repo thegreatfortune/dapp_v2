@@ -8,7 +8,7 @@ import { ArrowDownOutlined, DownOutlined, LoadingOutlined } from '@ant-design/ic
 import { useChainId } from 'wagmi'
 import CurrencyInput from 'react-currency-input-field'
 import type { Subscription } from 'rxjs'
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
+import { ReplaySubject, debounceTime, distinctUntilChanged } from 'rxjs'
 import { TokenEnums } from '@/enums/chain'
 import useCoreContract from '@/hooks/useCoreContract'
 import type { Models } from '@/.generated/api/models'
@@ -54,6 +54,7 @@ const Swap: React.FC<IProps> = (props) => {
 
     const [checkingInputTokenBalance, setCheckingInputTokenBalance] = useState(true)
     const [checkingOutputTokenBalance, setCheckingOutputTokenBalance] = useState(true)
+
     const [inputTokenBalance, setInputTokenBalance] = useState(BigInt(0))
     const [outputTokenBalance, setOutputTokenBalance] = useState(BigInt(0))
 
@@ -65,7 +66,9 @@ const Swap: React.FC<IProps> = (props) => {
 
     const [openTokenList, setOpenTokenList] = useState(false)
 
-    const [changingDirection, setChangingDirection] = useState(false)
+    const [changingToken, setChangingToken] = useState(false)
+
+    const [direction, setDirection] = useState(true)
 
     const [inputToken, setInputToken] = useState<IToken>({
         index: TokenEnums[chainId].USDC.index,
@@ -87,23 +90,18 @@ const Swap: React.FC<IProps> = (props) => {
         logo: tokenStates[1] ? tokenStates[1].logo : '',
     })
 
-    /**
-     *
-     * @param amount
-     * @param isInputToken
-     */
-    const calculateTokenAmount = async (amount: string, isInputToken: boolean) => {
-        if (!props.isLoanOwner) {
-            console.log('This is Guest Mode, or the loan is due!', isInputToken)
-            return
-        }
-        else {
-            console.log('This is Main Mode!', isInputToken)
-        }
+    const debounceInput$ = useRef(new ReplaySubject<[string, boolean, boolean, bigint]>(1)).current
 
+    const debounceInputPipe$ = useRef(debounceInput$.pipe(
+        distinctUntilChanged(),
+        debounceTime(1000),
+    )).current
+
+    const [debounceInputSubscription, setDebounceInputSubscription] = useState<Subscription>()
+
+    const calculateTokenAmount = async (amount: string, direction: boolean, position: boolean, outputTokenBalance: bigint) => {
         if (amount === '') {
-            console.log('yes!')
-            isInputToken ? setOutputAmount('') : setInputAmount('')
+            direction ? setOutputAmount('') : setInputAmount('')
 
             setInputToken((prev) => {
                 return { ...prev, amount: '0' }
@@ -111,8 +109,6 @@ const Swap: React.FC<IProps> = (props) => {
             setOutputToken((prev) => {
                 return { ...prev, amount: '0' }
             })
-
-            setOutputAmount('')
 
             setSwapDisabled(true)
             return
@@ -123,30 +119,24 @@ const Swap: React.FC<IProps> = (props) => {
         setSwapDisabled(false)
 
         const liquidityContract = await coreContracts!.getTestLiquidityContract()
-
         const price = await liquidityContract.getTokenPrice(
             inputToken.symbol === TokenEnums[chainId].USDC.symbol ? inputToken.address : outputToken.address,
             inputToken.symbol === TokenEnums[chainId].USDC.symbol ? outputToken.address : inputToken.address,
             3000,
             ethers.parseEther(String(1)),
         )
-
-        // const ratio = BigNumber(ethers.formatUnits(price ?? 0)).toFixed(18)
         const ratio = formatUnits(price ?? '0')
-        if (isInputToken) {
-            if (BigInt(parseUnits(amount, inputToken.decimals)) > BigInt(inputTokenBalance)) {
-                setSwapDisabled(true)
-                setSwaping(false)
-                // setOutputAmountCalculating(false)
-                setSwapButtonText(`Insufficient ${inputToken.symbol}`)
-            }
-            else {
-                // setOutputAmountCalculating(true)
-                if (amount !== inputToken.amount) {
+        if (direction) {
+            if (position) {
+                if (BigInt(parseUnits(amount, inputToken.decimals)) > BigInt(inputTokenBalance)) {
+                    setSwaping(false)
+                    setSwapDisabled(true)
+                    setSwapButtonText(`Insufficient ${inputToken.symbol}`)
+                }
+                else {
                     setInputToken((prev) => {
                         return { ...prev, amount }
                     })
-                    console.log(ratio, inputToken.symbol)
                     const outputAmount = amount !== '0'
                         ? Number(
                             inputToken.symbol === TokenEnums[chainId].USDC.symbol
@@ -161,30 +151,22 @@ const Swap: React.FC<IProps> = (props) => {
                         }
                     })
                     setOutputAmount(outputAmount)
-                    console.log('Input Amount: %s, Outout Amount: %s', amount, outputAmount)
-                }
-                // setCalculatedOutputAmount(Number(outputAmount).toFixed(9))
-                // setOutputAmount(Number(outputAmount).toFixed(9))
-                setTimeout(() => {
                     setSwapDisabled(false)
                     setSwaping(false)
-                    // setOutputAmountCalculating(false)
                     setSwapButtonText('Swap')
-                }, 1000)
+                }
             }
-        }
-        else {
-            // setInputAmountCalculating(true)
-
-            if (amount !== outputToken.amount) {
+            else {
                 setOutputToken((prev) => {
                     return { ...prev, amount }
                 })
 
+                const calculatedInputAmount = inputToken.symbol === TokenEnums[chainId].USDC.symbol
+                    ? BigNumber(amount).dividedBy(ratio).toString()
+                    : BigNumber(amount).multipliedBy(ratio).toString()
+
                 const inputAmount = amount !== '0'
-                    ? Number(inputToken.symbol === TokenEnums[chainId].USDC.symbol
-                        ? BigNumber(amount).dividedBy(ratio).toString()
-                        : BigNumber(amount).multipliedBy(ratio).toString()).toFixed(9)
+                    ? Number(calculatedInputAmount).toFixed(9)
                     : '0'
 
                 setInputToken((prev) => {
@@ -194,22 +176,83 @@ const Swap: React.FC<IProps> = (props) => {
                     }
                 })
                 setInputAmount(inputAmount)
-            }
 
-            // setInputAmount(Number(inputAmount).toFixed(9))
-            if (BigInt(parseUnits(Number(inputAmount).toFixed(18), inputToken.decimals)) > BigInt(inputTokenBalance)) {
-                setSwapDisabled(true)
-                setSwaping(false)
-                // setInputAmountCalculating(false)
-                setSwapButtonText('Swap')
+                if (BigInt(parseUnits(Number(calculatedInputAmount).toFixed(18), inputToken.decimals)) > BigInt(inputTokenBalance)) {
+                    setSwapDisabled(true)
+                    setSwaping(false)
+                    setSwapButtonText(`Insufficient ${inputToken.symbol}`)
+                }
+                else {
+                    setSwapDisabled(false)
+                    setSwaping(false)
+                    setSwapButtonText('Swap')
+                }
+            }
+        }
+        else {
+            if (position) {
+                if (BigInt(parseUnits(amount, outputToken.decimals)) > BigInt(outputTokenBalance)) {
+                    setSwapDisabled(true)
+                    setSwaping(false)
+                    setSwapButtonText(`Insufficient ${outputToken.symbol}`)
+                }
+                else {
+                    setOutputToken((prev) => {
+                        return { ...prev, amount }
+                    })
+
+                    const calculatedInputAmount = inputToken.symbol === TokenEnums[chainId].USDC.symbol
+                        ? BigNumber(amount).dividedBy(ratio).toString()
+                        : BigNumber(amount).multipliedBy(ratio).toString()
+
+                    const inputAmount = amount !== '0'
+                        ? Number(calculatedInputAmount).toFixed(9)
+                        : '0'
+
+                    setInputToken((prev) => {
+                        return {
+                            ...prev,
+                            amount: inputAmount,
+                        }
+                    })
+                    setInputAmount(inputAmount)
+
+                    setSwapDisabled(false)
+                    setSwaping(false)
+                    setSwapButtonText('Swap')
+                }
             }
             else {
-                setSwapDisabled(false)
-                setTimeout(() => {
+                setInputToken((prev) => {
+                    return { ...prev, amount }
+                })
+
+                const calculateOutputAmount = inputToken.symbol === TokenEnums[chainId].USDC.symbol
+                    ? BigNumber(amount).multipliedBy(ratio).toString()
+                    : BigNumber(amount).dividedBy(ratio).toString()
+
+                const outputAmount = amount !== '0'
+                    ? Number(calculateOutputAmount).toFixed(9)
+                    : '0'
+
+                setOutputToken((prev) => {
+                    return {
+                        ...prev,
+                        amount: outputAmount,
+                    }
+                })
+                setOutputAmount(outputAmount)
+
+                if (BigInt(parseUnits(Number(calculateOutputAmount).toFixed(18), outputToken.decimals)) > BigInt(outputTokenBalance)) {
+                    setSwapDisabled(true)
                     setSwaping(false)
-                    // setInputAmountCalculating(false)
+                    setSwapButtonText(`Insufficient ${outputToken.symbol}`)
+                }
+                else {
+                    setSwapDisabled(false)
+                    setSwaping(false)
                     setSwapButtonText('Swap')
-                }, 2000)
+                }
             }
         }
     }
@@ -222,17 +265,16 @@ const Swap: React.FC<IProps> = (props) => {
                     const handles = await coreContracts.manageContract.getAllAllowHandle()
                     const handleAddress = coreContracts.chainAddresses.handle
                     const hIndex = handles.findIndex(handle => handle === handleAddress)
-
-                    if (inputToken.symbol === TokenEnums[chainId].USDC.symbol) {
-                        // console.log('USDC to ...', props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
-                        const res = await coreContracts.routerContract.doV3Swap(props.tradeId, outputToken.index, hIndex, 0, parseUnits(inputToken.amount, inputToken.decimals), 3000)
-                        await handleTransactionResponse(res)
-                        setSwaping(false)
-                    }
-                    else {
-                        // const res = await coreContracts.routerContract.doV3Swap(props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
-                        // console.log('... to USDC', props.tradeId, inputToken.index, hIndex, 1, inputToken.amount, 3000)
-                    }
+                    const res = await coreContracts.routerContract.doV3Swap(
+                        props.tradeId,
+                        outputToken.index,
+                        hIndex,
+                        direction ? 0 : 1,
+                        direction
+                            ? parseUnits(inputToken.amount, inputToken.decimals)
+                            : parseUnits(outputToken.amount, outputToken.decimals),
+                        3000)
+                    await handleTransactionResponse(res)
                     setSwaping(false)
                 }
                 catch (error) {
@@ -245,6 +287,7 @@ const Swap: React.FC<IProps> = (props) => {
         }
         executeTask(task)
     }
+
     const fetchTokenBalance = async (token: string) => {
         if (coreContracts && capitalPoolAddress !== ZeroAddress) {
             if (token === TokenEnums[chainId].USDC.address) {
@@ -265,36 +308,25 @@ const Swap: React.FC<IProps> = (props) => {
         }
     }
 
-    const changeDirection = async () => {
+    useEffect(() => {
         const task = async () => {
-            // setSwaping(true)
-            const tempInput = { ...inputToken }
-            const tempOutput = { ...outputToken }
-            setInputToken(tempOutput)
-            setOutputToken(tempInput)
+            if (coreContracts) {
+                if (coreContracts && changingToken) {
+                    if (debounceInputSubscription)
+                        debounceInputSubscription.unsubscribe()
 
-            const tempInputBalance = inputTokenBalance
-            const tempOutputBalance = outputTokenBalance
-            setInputTokenBalance(tempOutputBalance)
-            setOutputTokenBalance(tempInputBalance)
-
-            // const tempInputAmount = inputAmount
-            // const tempOutputAmount = outputAmount
-            console.log('deriection:', tempOutput.amount, tempInput.amount)
-            setInputAmount(tempOutput.amount)
-            setOutputAmount(tempInput.amount)
-
-            setChangingDirection(true)
+                    const s = debounceInputPipe$.subscribe({
+                        next: ([amount, isInputToken, position, outputTokenBalance]) => {
+                            calculateTokenAmount(amount, isInputToken, position, outputTokenBalance)
+                        },
+                    })
+                    setDebounceInputSubscription(s)
+                    setChangingToken(false)
+                }
+            }
         }
         executeTask(task)
-    }
-
-    useEffect(() => {
-        if (coreContracts) {
-            calculateTokenAmount(inputAmount ?? '0', true)
-            setChangingDirection(false)
-        }
-    }, [changingDirection])
+    }, [coreContracts, changingToken])
 
     useEffect(() => {
         const task = async () => {
@@ -320,7 +352,6 @@ const Swap: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         if (tokenStates[1] && outputToken.index === -1) {
-            // console.log(tokenStates[1])
             setOutputToken(() => {
                 return {
                     index: tokenStates[1].index,
@@ -332,54 +363,23 @@ const Swap: React.FC<IProps> = (props) => {
                     logo: tokenStates[1].logo,
                 }
             })
+
+            setChangingToken(true)
         }
     }, [tokenStates])
-
-    // useEffect(() => {
-    //     console.log('inputToken changed:', inputToken)
-    // }, [inputToken])
-
-    // useEffect(() => {
-    //     console.log('outputToken changed:', outputToken)
-    // }, [outputToken])
 
     useEffect(() => {
         if (props.isLoanOwner) {
             setSwapLoading(checkingInputTokenBalance
                 || checkingOutputTokenBalance
-                // || inputAmountCalculating
-                // || outputAmountCalculating
                 || swaping)
         }
     },
         [
             checkingInputTokenBalance,
             checkingOutputTokenBalance,
-            // inputAmountCalculating,
-            // outputAmountCalculating,
             swaping,
         ])
-
-    const debounceInput$ = useRef(new Subject<[string, boolean]>()).current
-
-    const debounceInputPipe$ = useRef(debounceInput$.pipe(
-        distinctUntilChanged(),
-        debounceTime(1000),
-    )).current
-
-    const [debounceInputSubscription, setDebounceInputSubscription] = useState<Subscription>()
-
-    useEffect(() => {
-        if (coreContracts && outputToken.index !== -1 && !debounceInputSubscription) {
-            const s = debounceInputPipe$.subscribe({
-                next: ([amount, isInputToken]) => {
-                    console.log('debounce:', amount)
-                    calculateTokenAmount(amount, isInputToken)
-                },
-            })
-            setDebounceInputSubscription(s)
-        }
-    }, [coreContracts, outputToken])
 
     return (
         <div className=''>
@@ -401,33 +401,18 @@ const Swap: React.FC<IProps> = (props) => {
                             else {
                                 return (<List.Item className='cursor-pointer hover:bg-neutral-800'
                                     onClick={() => {
-                                        if (inputToken.index === 0) {
-                                            setOutputToken({
-                                                index: item.index,
-                                                name: item.name,
-                                                symbol: item.symbol,
-                                                decimals: item.decimals,
-                                                address: item.address,
-                                                amount: '0',
-                                                logo: item.logo,
-                                            })
-
-                                            calculateTokenAmount(inputAmount, true)
-                                        }
-                                        else {
-                                            setInputToken({
-                                                index: item.index,
-                                                name: item.name,
-                                                symbol: item.symbol,
-                                                decimals: item.decimals,
-                                                address: item.address,
-                                                amount: '0',
-                                                logo: item.logo,
-                                            })
-
-                                            calculateTokenAmount(outputAmount, false)
-                                        }
-
+                                        setOutputToken({
+                                            index: item.index,
+                                            name: item.name,
+                                            symbol: item.symbol,
+                                            decimals: item.decimals,
+                                            address: item.address,
+                                            amount: '0',
+                                            logo: item.logo,
+                                        })
+                                        setChangingToken(true)
+                                        setCheckingOutputTokenBalance(true)
+                                        debounceInput$.next([inputAmount, direction, direction, outputTokenBalance])
                                         setOpenTokenList(false)
                                     }}>
                                     <List.Item.Meta
@@ -452,72 +437,49 @@ const Swap: React.FC<IProps> = (props) => {
                             name="inputTokenAmount"
                             placeholder="0"
                             value={
-                                inputAmountCalculating
-                                    ? inputToken.amount
-                                    : inputAmount
+                                direction
+                                    ? inputAmountCalculating
+                                        ? inputToken.amount
+                                        : inputAmount
+                                    : outputAmountCalculating
+                                        ? outputToken.amount
+                                        : outputAmount
                             }
                             decimalsLimit={9}
                             allowNegativeValue={false}
                             onValueChange={(_value, _name, values) => {
-                                // console.log(values?.value, inputAmount)
-                                // setA(a => a + 1)
-
-                                console.log('?????', inputAmount, inputToken.amount, values?.value)
-
-                                if (values && values.value !== inputAmount) {
-                                    //
-
-                                    // console.log('inpuRef.current2', inputRef, inputRef.current)
-                                    //
-                                    setInputAmount(values.value)
-
-                                    // debounceInput$.next(values.value)
-
-                                    debounceInput$.next([values.value, true])
-
-                                    // debounce(() => test(values.value), 1)
-                                    // handleOnClick(values.value)
-                                    // console.log('a', a)
-                                    //
-                                    //
-                                    // console.log(outputAmountCalculating, inputAmount, calculatedInputAmount)
-                                    // setCalculatedInputAmount(values.value === '' ? '' : values.value)
-                                    // setInputAmount(values.value === '' ? '' : values.value)
-                                    // calculateTokenAmount(values.value, true)
+                                if (values && values.value !== (direction ? inputAmount : outputAmount)) {
+                                    direction
+                                        ? setInputAmount(values.value)
+                                        : setOutputAmount(values.value)
+                                    debounceInput$.next([values.value, direction, true, outputTokenBalance])
                                 }
-                                // console.log('INPUT: inputAmountRef: %s, outputAmountRef: %s, value: %s', inputAmountRef.current, outputAmountRef.current, values?.value)
                             }}
                             onFocus={() => {
-                                //     inputRef.current = inputToken.amount
-                                // setInputAmount(inputToken.amount)
-                                // setInputAmount(calculatedInputAmount)
-                                // setCalculatedOutputAmount(outputToken.amount)
-                                setInputAmountCalculating(false)
-                                // console.log('inpuRef.current', inputRef.current)
-                                // setInputAmount('-1')
-                                // console.log('inputToken.amount2:', inputToken.amount)
-                                setOutputAmountCalculating(true)
+                                if (direction) {
+                                    setInputAmountCalculating(false)
+                                    setOutputAmountCalculating(true)
+                                }
+                                else {
+                                    setInputAmountCalculating(true)
+                                    setOutputAmountCalculating(false)
+                                }
                             }}
-                        // onBlur={() => {
-                        //     // setInputAmount(calculatedInputAmount)
-                        //     // setCalculatedInputAmount(inputToken.amount)
-                        //     // setInputAmount(inputToken.amount)
-                        // }}
                         />
                     </div>
                     <div className='flex justify-center'>
                         <Button disabled={!props.isLoanOwner || props.loanState !== 'Trading'} shape="round" size='large' className='w-150'
                             onClick={() => {
-                                if (inputToken.index !== 0)
+                                if (!direction)
                                     setOpenTokenList(true)
                             }}
                         >
                             <div className='flex items-center justify-between'>
                                 <div className='flex items-center'>
-                                    <Image preview={false} src={inputToken.logo} width={24}></Image>
-                                    <span className='ml-6 flex items-center text-center'> {inputToken.symbol}</span>
+                                    <Image preview={false} src={direction ? inputToken.logo : outputToken.logo} width={24}></Image>
+                                    <span className='ml-6 flex items-center text-center'> {direction ? inputToken.symbol : outputToken.symbol}</span>
                                 </div>
-                                <DownOutlined hidden={inputToken.index === 0} />
+                                <DownOutlined hidden={direction} />
                             </div>
                         </Button>
                     </div>
@@ -530,18 +492,27 @@ const Swap: React.FC<IProps> = (props) => {
                                 ? '0.0'
                                 : checkingInputTokenBalance
                                     ? <LoadingOutlined width={10} className='text-white' />
-                                    : formatUnits(inputTokenBalance, inputToken.decimals)
+                                    : formatUnits(direction ? inputTokenBalance : outputTokenBalance, direction ? inputToken.decimals : outputToken.decimals)
                         }
                     </div>
                     <div className='bg-transparent' hidden={!props.isLoanOwner || props.loanState !== 'Trading'}>
                         <div className='flex cursor-pointer select-none items-center border-1 rounded-4 border-solid px-8 py-2 text-center text-12'
                             style={{ borderColor: '#3898FF', color: '#3898FF' }}
                             onClick={() => {
-                                setInputAmount(formatUnits(inputTokenBalance, inputToken.decimals))
-                                setInputToken((prev) => {
-                                    return { ...prev, amount: formatUnits(inputTokenBalance, inputToken.decimals) }
-                                })
-                                calculateTokenAmount(formatUnits(inputTokenBalance, inputToken.decimals), true)
+                                const amount = formatUnits(direction ? inputTokenBalance : outputTokenBalance, direction ? inputToken.decimals : outputToken.decimals)
+                                if (direction) {
+                                    setInputAmount(amount)
+                                    setInputToken((prev) => {
+                                        return { ...prev, amount }
+                                    })
+                                }
+                                else {
+                                    setOutputAmount(amount)
+                                    setOutputToken((prev) => {
+                                        return { ...prev, amount }
+                                    })
+                                }
+                                calculateTokenAmount(amount, direction, true, outputTokenBalance)
                             }}>
                             Max
                         </div>
@@ -550,7 +521,15 @@ const Swap: React.FC<IProps> = (props) => {
             </div>
             <div className='w-full flex justify-center'>
                 <button disabled={!props.isLoanOwner || props.loanState !== 'Trading'} className='transform b-transparent b-rd-10 b-solid bg-transparent text-34 text-#fff transition-transform active:scale-98 hover:scale-102'
-                    onClick={changeDirection} >
+                    onClick={() => {
+                        setDirection(d => !d)
+                        calculateTokenAmount(
+                            inputAmount,
+                            !direction,
+                            !direction,
+                            outputTokenBalance,
+                        )
+                    }} >
                     <ArrowDownOutlined size={20} className={`${!props.isLoanOwner ? 'text-white/20' : 'text-white'}`} />
                     {/* <VerticalAlignMiddleOutlined size={20} className={`${!props.isLoanOwner ? 'text-white/20' : 'text-white'}`} /> */}
                 </button>
@@ -561,58 +540,52 @@ const Swap: React.FC<IProps> = (props) => {
                         <CurrencyInput
                             className={`${outputAmountCalculating ? 'text-white' : 'text-white'} font-semiBold h-30 max-xl:w-150 xl:w-300 border-none bg-transparent text-28 focus:border-0 focus:border-none focus:bg-black focus:outline-none`}
                             disabled={!props.isLoanOwner || props.loanState !== 'Trading'}
-                            value={outputAmountCalculating
-                                ? outputToken.amount
-                                : outputAmount
+                            value={
+                                direction
+                                    ? outputAmountCalculating
+                                        ? outputToken.amount
+                                        : outputAmount
+                                    : inputAmountCalculating
+                                        ? inputToken.amount
+                                        : inputAmount
                             }
                             name="outputTokenAmount"
                             placeholder="0"
                             decimalsLimit={9}
                             onValueChange={(_value, _name, values) => {
-                                // console.log(values?.value, outputAmount)
-                                // if (values && values.value !== outputAmount) {
+                                if (values && values.value !== (direction ? outputAmount : inputAmount)) {
+                                    direction
+                                        ? setOutputAmount(values.value)
+                                        : setInputAmount(values.value)
 
-                                // console.log('value changed:', values?.value)
-                                // setOutputAmountCalculating(false)
-                                if (values && values.value !== outputAmount) {
-                                    setOutputAmount(values.value)
-                                    // setOutputAmount(values.value === '' ? '' : values.value)
-                                    // setOutputAmount('-1')
-
-                                    debounceInput$.next([values.value === '' ? '0' : values.value, false])
-                                    // calculateTokenAmount(values.value, false)
+                                    debounceInput$.next([values.value, direction, false, outputTokenBalance])
                                 }
-                                // console.log('OUTPUT: inputAmountRef: %s, outputAmountRef: %s, value: %s', inputAmountRef.current, outputAmountRef.current, values?.value)
                             }}
                             onFocus={() => {
-                                // setCalculatedOutputAmount(inputToken.amount)
-                                // setOutputAmount(outputToken.amount)
-                                // console.log('inputToken.amount1:', inputToken.amount)
-                                // console.log('outputToken.amount1:', outputToken.amount)
-                                // setInputAmount(inputToken.amount)
-                                setOutputAmountCalculating(false)
-                                setInputAmountCalculating(true)
+                                if (direction) {
+                                    setInputAmountCalculating(true)
+                                    setOutputAmountCalculating(false)
+                                }
+                                else {
+                                    setInputAmountCalculating(false)
+                                    setOutputAmountCalculating(true)
+                                }
                             }}
-                        // onBlur={() => {
-                        //     // setCalculatedOutputAmount(outputToken.amount)
-                        //     setOutputAmount(outputToken.amount)
-                        // }}
                         />
                     </div>
                     <div className='flex justify-center'>
                         <Button shape="round" size='large' className='w-150' disabled={!props.isLoanOwner || props.loanState !== 'Trading'}
                             onClick={() => {
-                                if (outputToken.index !== 0)
+                                if (direction)
                                     setOpenTokenList(true)
-                            }
-                            }
+                            }}
                         >
                             <div className='flex items-center justify-between'>
                                 <div className='flex items-center'>
-                                    <Image preview={false} src={outputToken.logo} width={24}></Image>
-                                    <span className='ml-6 flex items-center text-center'> {outputToken.symbol}</span>
+                                    <Image preview={false} src={direction ? outputToken.logo : inputToken.logo} width={24}></Image>
+                                    <span className='ml-6 flex items-center text-center'> {direction ? outputToken.symbol : inputToken.symbol}</span>
                                 </div>
-                                <DownOutlined hidden={outputToken.index === 0} />
+                                <DownOutlined hidden={!direction} />
                             </div>
                         </Button>
                     </div>
@@ -624,7 +597,7 @@ const Swap: React.FC<IProps> = (props) => {
                             ? '0.0'
                             : checkingOutputTokenBalance
                                 ? <LoadingOutlined width={10} className='text-white' />
-                                : formatUnits(outputTokenBalance, outputToken.decimals)
+                                : formatUnits(direction ? outputTokenBalance : inputTokenBalance, direction ? outputToken.decimals : inputToken.decimals)
                     }</div>
                 </div>
             </div>
