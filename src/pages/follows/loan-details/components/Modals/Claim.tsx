@@ -70,6 +70,7 @@ const ClaimModal: React.FC<IProps> = (props) => {
     useEffect(() => {
         const task = async () => {
             if (coreContracts && props.open) {
+                console.log(coreContracts.signer.address, coreContracts.routerContract)
                 setClaiming(true)
                 if (!claimed) {
                     const claimed = await coreContracts.routerContract.getUserIfWithdraw(props.tradeId)

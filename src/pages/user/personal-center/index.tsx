@@ -161,6 +161,7 @@ const PersonalCenter = () => {
         <div className='w-full'>
           <FaucetModal open={faucetModalOpen}
             setOpen={setFaucetModalOpen}
+            key={currentUser.address}
           ></FaucetModal>
           <div
             className="personal-banner"

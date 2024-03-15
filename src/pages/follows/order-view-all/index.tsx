@@ -92,7 +92,7 @@ const OrderViewAll = () => {
           renderItem={(item: Models.ILoanOrderVO) => <div onClick={() => {
             navigate(`/loan-details?prePage=market&tradeId=${item.tradeId}`)
           }
-          } ><TransparentCard key={item.tradeId} item={item} /></div>} />
+          } ><TransparentCard key={item.tradeId} item={item}/></div>} />
       }
 
       {

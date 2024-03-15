@@ -852,6 +852,7 @@ const LoanDetails = () => {
           setOpen={setListModalOpen}
           tradeId={Number(tradeId)}
           isLoanOwner={currentUser.userId === loanInfo.userId}
+          key={currentUser.address}
         ></ListModal>
 
         <WithdrawModal open={withdrawModalOpen}
@@ -860,17 +861,20 @@ const LoanDetails = () => {
           userState={prePage}
           loanState={loanInfo!.state}
           loanOwner={loanInfo!.userId}
+          key={currentUser.address}
         ></WithdrawModal>
 
         <FollowModal open={followModalOpen}
           setOpen={setFollowModalOpen}
           tradeId={BigInt(tradeId)}
+          key={currentUser.address}
         ></FollowModal>
 
         <ClaimModal open={claimModalOpen}
           setOpen={setClaimModalOpen}
           tradeId={Number(tradeId)}
           loanState={loanInfo.state!}
+          key={currentUser.address}
         ></ClaimModal>
 
         <div className='loan-detail-info'>

@@ -19,7 +19,7 @@ const useCoreContract = () => {
     const provider = new ethers.BrowserProvider(window.ethereum)
     const signer = await provider.getSigner()
     const coreContracts = CoreContracts.getCoreContractsInstance(signer, chainId)
-    setCoreContracts(() => coreContracts)
+    setCoreContracts(coreContracts)
   }
 
   type Task<T> = (coreContracts: CoreContracts) => Promise<T>

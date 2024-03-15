@@ -8,6 +8,7 @@ import dolphin from '@/assets/images/nft/dolphin.png'
 import shark from '@/assets/images/nft/shark.png'
 import whale from '@/assets/images/nft/whale.png'
 import useTokenBalance from '@/hooks/useTokenBalance'
+import useUserStore from '@/store/userStore'
 
 const NftEnums: { [key: number]: string } = {
     0: octopus,
@@ -17,6 +18,8 @@ const NftEnums: { [key: number]: string } = {
 }
 
 const NftDetail = () => {
+    const { currentUser } = useUserStore()
+
     const { nftBalance, isFinished } = useTokenBalance()
 
     const [id, setId] = useState(0)
@@ -49,6 +52,7 @@ const NftDetail = () => {
         <MintModal open={mintModalOpen}
             setOpen={setMintModalOpen}
             id={id}
+            key={currentUser.address}
         ></MintModal>
 
         {

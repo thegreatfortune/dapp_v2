@@ -213,6 +213,7 @@ const Pool: React.FC<IProps> = ({ transactionPair, tradeId, loanInfo, repayCount
                 tokenStates={tokenStates}
                 isLoanOwner={currentUser.userId === loanInfo.userId}
                 loanState={loanInfo.state!}
+                key={currentUser.address}
               // isLoanOwner={prePage === 'loan' && loanInfo.state === 'Trading' && currentUser.userId === loanInfo.userId}
               >
               </Swap>

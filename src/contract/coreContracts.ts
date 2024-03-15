@@ -113,16 +113,16 @@ export class CoreContracts {
 
   private static _instance: CoreContracts
   public static getCoreContractsInstance(signer: ethers.JsonRpcSigner, chainId: number) {
-    if (!CoreContracts._instance || CoreContracts._instance.chainId !== chainId)
+    if (!CoreContracts._instance || CoreContracts._instance.chainId !== chainId || CoreContracts._instance.signer.address !== signer.address)
       return CoreContracts._instance = new CoreContracts(signer, chainId)
-    if (CoreContracts._instance.signer.address !== signer.address) {
-      CoreContracts._instance._capitalPoolContract = undefined
-      CoreContracts._instance._capitalPoolAddress = ZeroAddress
+    // if (CoreContracts._instance.signer.address !== signer.address) {
+    //   CoreContracts._instance._capitalPoolContract = undefined
+    //   CoreContracts._instance._capitalPoolAddress = ZeroAddress
 
-      CoreContracts._instance._refundPoolContract = undefined
-      CoreContracts._instance._refundPoolAddress = ZeroAddress
-      CoreContracts._instance._signer = signer
-    }
+    //   CoreContracts._instance._refundPoolContract = undefined
+    //   CoreContracts._instance._refundPoolAddress = ZeroAddress
+    //   CoreContracts._instance._signer = signer
+    // }
     return CoreContracts._instance
   }
 
